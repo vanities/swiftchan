@@ -2,15 +2,14 @@
 //  ContentView.swift
 //  swiftchan
 //
-//  Created by vanities on 10/30/20.
+//  Created by vanities on 10/31/20.
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        BoardsView()
     }
 }
 
