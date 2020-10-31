@@ -23,7 +23,7 @@ struct Thread: Decodable {
     let ext: String
     let replyCount: Int
     let imageCount: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case number = "no"
         case sticky
@@ -41,11 +41,11 @@ struct Thread: Decodable {
         case replyCount = "replies"
         case imageCount = "images"
     }
-    
+
     func getMediaUrl(boardId: String) -> URL {
         return URL(string: "https://i.4cdn.org/" + boardId + "/" + String(tim) + ext)!
     }
-    
+
     func getDatePosted() -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(self.time))
         let dateFormatter = DateFormatter()

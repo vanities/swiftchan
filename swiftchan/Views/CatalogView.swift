@@ -11,21 +11,21 @@ import URLImage
 
 struct CatalogView: View {
     let boardName: String
-    
+
     @State var loaded: Bool = false
-    
+
     @State var pages: [Page] = []
-    
+
     var body: some View {
         return
-            ScrollView() {
+            ScrollView {
                 LazyVGrid(columns: [GridItem(.fixed(20))],
                           alignment: .center,
                           spacing: 20,
                           pinnedViews: [],
                           content: {
                             ForEach(self.pages, id: \.self.number) { page in
-                                ForEach(page.threads, id: \.self.number){ thread in
+                                ForEach(page.threads, id: \.self.number) { thread in
                                     OPView(boardName: boardName, thread: thread)
                                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                                     }
@@ -42,15 +42,15 @@ struct CatalogView: View {
                 }
             }
     }
-    
+
     private func getCatalog() {
         let url = "https://a.4cdn.org/" + self.boardName + "/catalog.json"
-        
+
         AF.request(url)
             .validate()
             .responseDecodable(of: [Page].self) { (response) in
-                guard let pages = response.value else { return }
-                self.pages = pages
+                guard let data = response.value else { return }
+                self.pages = data
             }
     }
 }

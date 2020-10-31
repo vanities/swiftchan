@@ -16,3 +16,11 @@ struct Page: Decodable {
         case threads
     }
 }
+
+struct ThreadPage: Decodable {
+    let posts: [Post]
+
+    enum CodingKeys: String, CodingKey {
+        case posts
+    }
+}

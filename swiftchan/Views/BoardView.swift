@@ -17,8 +17,8 @@ struct BoardView: View {
             Rectangle()
                 .fill(Color(.systemBackground))
                 .border(Color(.black))
-            HStack (alignment: .center) {
-                VStack (alignment: .leading) {
+            HStack(alignment: .center) {
+                VStack(alignment: .leading) {
                     Text(self.name + " - " + self.title)
                     Text(self.description)
                         .lineLimit(nil)

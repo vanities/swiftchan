@@ -7,64 +7,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "25784A36-22FE-4EBC-8185-384D916655D3"
-            shouldBeEnabled = "Yes"
+            uuid = "2EB17027-0448-4058-8217-0F4CD773F56B"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "swiftchan/Views/CatalogView.swift"
+            filePath = "swiftchan/Views/ThreadView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "getCatalog()"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "getThread()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "25784A36-22FE-4EBC-8185-384D916655D3 - e59c36be22d89f67"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "swiftchan.CatalogView.(getCatalog in _FAE25C1ECFC07642994259FFFE1A823F)() -&gt; ()"
-                  moduleName = "swiftchan"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/vanities/git/fun/swiftchan/swiftchan/Views/CatalogView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "42"
-                  endingLineNumber = "42"
-                  offsetFromSymbolStart = "771">
-               </Location>
-               <Location
-                  uuid = "25784A36-22FE-4EBC-8185-384D916655D3 - 34e346e6de4f87cc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.Array&lt;swiftchan.Page&gt;, Alamofire.AFError&gt;) -&gt; () in swiftchan.CatalogView.(getCatalog in _FAE25C1ECFC07642994259FFFE1A823F)() -&gt; ()"
-                  moduleName = "swiftchan"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/vanities/git/fun/swiftchan/swiftchan/Views/CatalogView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43"
-                  offsetFromSymbolStart = "121">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8E9F7833-4CAA-43BF-A453-18A72870A518"
-            shouldBeEnabled = "Yes"
+            uuid = "DF933BD0-B7EB-4F94-A266-C41E5BA0386F"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "swiftchan/Views/CatalogView.swift"
+            filePath = "swiftchan/Views/ThreadView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "getCatalog()"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "getThread()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21838EB2-DD6D-4852-BADF-15F1CE0B84A1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftchan/Views/ThreadView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "getThread()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "68B8954D-BE44-4B0C-B07B-D739A2932A4A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftchan/Views/ThreadView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "getThread()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1,5 +1,5 @@
 //
-//  OPView.swift
+//  PostView.swift
 //  swiftchan
 //
 //  Created by vanities on 10/31/20.
@@ -9,9 +9,9 @@ import SwiftUI
 import URLImage
 import WebKit
 
-struct OPView: View {
+struct PostView: View {
     let boardName: String
-    let thread: Thread
+    let thread: Post
 
     var body: some View {
         return
@@ -23,8 +23,6 @@ struct OPView: View {
                             .fill(Color(.systemBackground))
                             .border(Color(.black))
                         VStack(alignment: .leading, spacing: 0 ) {
-                            Text(thread.subject ?? "")
-                                .padding(.bottom, 5)
                             HStack(alignment: .top) {
                                 URLImage(url: thread.getMediaUrl(boardId: boardName)) { image in
                                     image
@@ -36,8 +34,6 @@ struct OPView: View {
                                     Text(thread.name)
                                     HStack {
                                         Text(thread.getDatePosted())
-                                        Text("•")
-                                        Text(String(thread.replyCount) + "R | " + String(thread.imageCount) + "F")
                                     }
                                 }
                             }
@@ -51,7 +47,7 @@ struct OPView: View {
     }
 }
 
-struct OPView_Previews: PreviewProvider {
+struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         CatalogView(boardName: "fit")
     }
