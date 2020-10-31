@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Alamofire
+import URLImage
 
 struct CatalogView: View {
     let boardName: String
@@ -16,26 +17,30 @@ struct CatalogView: View {
     @State var pages: [Page] = []
     
     var body: some View {
-        return LazyVGrid(columns: [GridItem(.fixed(20))],
-                         alignment: .center,
-                         spacing: 20,
-                         pinnedViews: [],
-                         content: {
-                            /*
-                            ForEach(self.pages, id: \.self) {
+        return
+            ScrollView() {
+                LazyVGrid(columns: [GridItem(.fixed(20))],
+                          alignment: .center,
+                          spacing: 20,
+                          pinnedViews: [],
+                          content: {
+                            ForEach(self.pages, id: \.self.number) { page in
+                                ForEach(page.threads, id: \.self.number){ thread in
+                                    OPView(boardName: boardName, thread: thread)
+                                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                                    }
+                                    .frame(width: UIScreen.main.bounds.width - 20, height: UIScreen.main.bounds.height/3)
                             }
- */
-                            Text("Placeholder")
-                            Text("Placeholder")
-                         }
-        )
-        .onAppear {
-            if !self.loaded {
-            self.getCatalog()
-                self.loaded
-                    .toggle()
+                          }
+                )
             }
-        }
+            .onAppear {
+                if !self.loaded {
+                    self.getCatalog()
+                    self.loaded
+                        .toggle()
+                }
+            }
     }
     
     private func getCatalog() {

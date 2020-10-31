@@ -32,7 +32,6 @@ struct BoardsView: View {
                 .navigationBarTitle("4chan")
             }
         }
-        .ignoresSafeArea()
         .onAppear {
             if !self.loaded {
                 self.getBoards()
