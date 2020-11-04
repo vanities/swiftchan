@@ -7,7 +7,6 @@
 
 import SwiftUI
 import URLImage
-import WebKit
 
 struct OPView: View {
     let boardName: String
@@ -41,9 +40,8 @@ struct OPView: View {
                                     }
                                 }
                             }
-                            WebView(text: thread.comment ?? "")
-                                .padding(.top, 10)
-
+                            Text(thread.getComment())
+                            .padding(.top, 10)
                         }
                         .padding(.all, 5)
                     }
