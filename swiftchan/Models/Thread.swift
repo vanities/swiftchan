@@ -55,7 +55,7 @@ struct Thread: Decodable {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
         return dateFormatter.string(from: date)
     }
-    
+
     func getComment() -> String {
         do {
             if let comment = self.comment {

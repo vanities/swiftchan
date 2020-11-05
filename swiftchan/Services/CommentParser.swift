@@ -11,53 +11,33 @@ import SwiftSoup
 class CommentParser {
     var comment: String
     var textBuffer: [String] = []
-    var commentViews: [AnyView] = []
 
     init(comment: String) {
         self.comment = comment
     }
-    
-    func getViews() -> [AnyView] {
+
+    func getComment() -> Text {
         let document = self.parseComment()
-        
+        var comment = Text("")
+
         if let document = document {
             let documentText = try! document.text()
             let text = documentText.replacingOccurrences(of: "/n", with: "\n")
-            
-            let components = text.components(separatedBy: " ")
+
+            let components = text.components(separatedBy: "\n")
             for s in components {
                 if s.starts(with: ">>") {
-                    self.joinBuffer()
-
                     // post link
-                    self.commentViews.append(AnyView(
-                        Text(s)
-                            .foregroundColor(.blue)
-                    ))
-                }
-                else if s.starts(with: ">") {
-                    self.joinBuffer()
-
+                    comment = comment + Text(s + "\n").foregroundColor(.blue)
+                } else if s.starts(with: ">") {
                     // quote
-                    self.commentViews.append(AnyView(
-                        Text(s)
-                            .foregroundColor(.green)
-                    ))
-                }
-                else {
-                    self.textBuffer.append(s)
+                    comment = comment + Text(s + "\n").foregroundColor(.green)
+                } else {
+                    comment = comment + Text(s + "\n")
                 }
             }
         }
-        return []
-    }
-    
-    private func joinBuffer() {
-        self.commentViews.append(
-            AnyView(
-                Text(self.textBuffer.joined(separator: " "))
-            )
-        )
+        return comment
     }
 
     private func parseComment() -> Document? {

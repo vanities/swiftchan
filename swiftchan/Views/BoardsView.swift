@@ -13,11 +13,14 @@ struct BoardsView: View {
     @State var boards: [Board] = []
     @State var loaded: Bool = false
 
-    var body: some View {
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
+    var body: some View {
         return NavigationView {
             ScrollView {
-                LazyVStack {
+                LazyVGrid(columns: columns,
+                          alignment: .center,
+                          spacing: 0) {
                     ForEach(self.boards, id: \.self.board) { board in
                         NavigationLink(
                             destination: CatalogView(boardName: board.board)

@@ -20,7 +20,7 @@ struct OPView: View {
                     ZStack(alignment: .topLeading) {
                         Rectangle()
                             .fill(Color(.systemBackground))
-                            .border(Color(.black))
+                            .border(Color(.gray))
                         VStack(alignment: .leading, spacing: 0 ) {
                             Text(thread.subject ?? "")
                                 .padding(.bottom, 5)
@@ -40,8 +40,11 @@ struct OPView: View {
                                     }
                                 }
                             }
-                            Text(thread.getComment())
-                            .padding(.top, 10)
+                            if let comment = self.thread.comment {
+                                CommentView(message: comment)
+                                .padding(.top, 10)
+
+                            }
                         }
                         .padding(.all, 5)
                     }

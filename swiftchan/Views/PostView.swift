@@ -11,7 +11,7 @@ import URLImage
 struct PostView: View {
     let boardName: String
     let thread: Post
-    
+
     var body: some View {
         return
             ZStack(alignment: .topLeading) {
@@ -25,7 +25,7 @@ struct PostView: View {
                                 image
                                     .resizable()
                                     .frame(width: 100, height: 100)
-                            
+
                             }
                         }
                         VStack(alignment: .leading) {
@@ -36,8 +36,10 @@ struct PostView: View {
                             }
                         }
                     }
-                    Text(thread.getComment())
-                    .padding(.top, 10)
+                    if let comment = self.thread.comment {
+                        CommentView(message: comment)
+                            .padding(.top, 10)
+                    }
 
                 }
                 .padding(.all, 5)

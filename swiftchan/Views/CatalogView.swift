@@ -15,24 +15,21 @@ struct CatalogView: View {
     @State var loaded: Bool = false
 
     @State var pages: [Page] = []
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center), GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
         return
             ScrollView {
-                LazyVGrid(columns: [GridItem(.fixed(20))],
+                    LazyVGrid(columns: columns,
                           alignment: .center,
-                          spacing: 20,
-                          pinnedViews: [],
-                          content: {
-                            ForEach(self.pages, id: \.self.number) { page in
-                                ForEach(page.threads, id: \.self.number) { thread in
-                                    OPView(boardName: boardName, thread: thread)
-                                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                                    }
-                                    .frame(width: UIScreen.main.bounds.width - 20, height: UIScreen.main.bounds.height/3)
-                            }
-                          }
-                )
+                          spacing: 0) {
+                    ForEach(self.pages, id: \.self.number) { page in
+                        ForEach(page.threads, id: \.self.number) { thread in
+                            OPView(boardName: boardName, thread: thread)
+                                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                        }
+                    }
+                }
             }
             .onAppear {
                 if !self.loaded {

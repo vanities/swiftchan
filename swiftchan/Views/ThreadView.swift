@@ -15,12 +15,13 @@ struct ThreadView: View {
     @State var loaded: Bool = false
     @State var posts: [Post] = []
 
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
+
     var body: some View {
         return ScrollView {
-            LazyVGrid(columns: [GridItem(.fixed(20))],
+            LazyVGrid(columns: columns,
                       alignment: .center,
                       spacing: 20,
-                      pinnedViews: [],
                       content: {
                         ForEach(self.posts, id: \.self.number) { post in
                             PostView(boardName: boardName, thread: post)
