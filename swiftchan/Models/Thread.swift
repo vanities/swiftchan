@@ -55,18 +55,4 @@ struct Thread: Decodable {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
         return dateFormatter.string(from: date)
     }
-
-    func getComment() -> String {
-        do {
-            if let comment = self.comment {
-                let doc: Document = try SwiftSoup.parse(comment)
-                return try doc.text()
-            }
-        } catch Exception.Error(let type, let message) {
-            print(message)
-        } catch {
-            print("error")
-        }
-        return ""
-    }
 }

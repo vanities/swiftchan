@@ -21,10 +21,10 @@ struct ThreadView: View {
         return ScrollView {
             LazyVGrid(columns: columns,
                       alignment: .center,
-                      spacing: 20,
+                      spacing: 0,
                       content: {
-                        ForEach(self.posts, id: \.self.number) { post in
-                            PostView(boardName: boardName, thread: post)
+                        ForEach(self.posts.indices) { index in
+                            PostView(boardName: boardName, post: self.posts[index], index: index)
                                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                         }
                         .frame(width: UIScreen.main.bounds.width - 20, height: UIScreen.main.bounds.height/3)
@@ -55,7 +55,20 @@ struct ThreadView: View {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        Text("asdaa")
-        //ThreadView()
+        ThreadView(id: 17018018,
+                   boardName: "fit",
+                   loaded: false,
+                   posts: [
+                    Post(number: 01234567890,
+                         name: "Anonymous",
+                         id: "1",
+                         comment: "cool comment!",
+                         capcode: "",
+                         country: "",
+                         time: 1604547871,
+                         tim: 1358180697001,
+                         ext: ".jpg"),
+                   ]
+        )
     }
 }

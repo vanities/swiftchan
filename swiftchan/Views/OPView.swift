@@ -54,6 +54,22 @@ struct OPView: View {
 
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
-        CatalogView(boardName: "fit")
+        OPView(boardName: "fit",
+               thread: Thread.init(number: 0123456789,
+                                   sticky: 1,
+                                   closed: 1,
+                                   name: "Anonymous",
+                                   id: "12345",
+                                   subject: "SUBJECT",
+                                   comment: "comment",
+                                   trip: "",
+                                   capcode: "",
+                                   country: "",
+                                   time: 1604547871,
+                                   tim: 1358180697001,
+                                   ext: ".jpg",
+                                   replyCount: 5,
+                                   imageCount: 10)
+        )
     }
 }

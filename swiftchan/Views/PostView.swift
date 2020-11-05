@@ -10,17 +10,18 @@ import URLImage
 
 struct PostView: View {
     let boardName: String
-    let thread: Post
+    let post: Post
+    let index: Int
 
     var body: some View {
         return
             ZStack(alignment: .topLeading) {
                 Rectangle()
                     .fill(Color(.systemBackground))
-                    .border(Color(.black))
+                    .border(Color(.gray))
                 VStack(alignment: .leading, spacing: 0 ) {
                     HStack(alignment: .top) {
-                        if let imageURL = thread.getMediaUrl(boardId: boardName) {
+                        if let imageURL = post.getMediaUrl(boardId: boardName) {
                             URLImage(url: imageURL) { image in
                                 image
                                     .resizable()
@@ -29,14 +30,15 @@ struct PostView: View {
                             }
                         }
                         VStack(alignment: .leading) {
-                            Text("#" + String(thread.number))
-                            Text(thread.name)
                             HStack {
-                                Text(thread.getDatePosted())
+                                Text(String(index))
+                                Text("•")
+                                Text("#" + String(post.number))
                             }
+                            Text(post.getDatePosted())
                         }
                     }
-                    if let comment = self.thread.comment {
+                    if let comment = self.post.comment {
                         CommentView(message: comment)
                             .padding(.top, 10)
                     }
@@ -49,6 +51,18 @@ struct PostView: View {
 
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
-        CatalogView(boardName: "fit")
+        PostView(boardName: "fit",
+                 post:
+                    Post(number: 01234567890,
+                         name: "Anonymous",
+                         id: "1",
+                         comment: "cool comment!",
+                         capcode: "",
+                         country: "",
+                         time: 1604547871,
+                         tim: 1358180697001,
+                         ext: ".jpg"),
+                 index: 0
+        )
     }
 }
