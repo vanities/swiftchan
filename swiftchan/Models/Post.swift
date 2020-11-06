@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSoup
 
-struct Thread: Decodable {
+struct Post: Decodable {
     let number: Int
     let sticky: Int?
     let closed: Int?
@@ -20,10 +20,10 @@ struct Thread: Decodable {
     let capcode: String? // admin/mod status
     let country: String? // Poster's ISO 3166-1 alpha-2 country code https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
     let time: Int // UNIX timestamp the post was created
-    let tim: Int
-    let ext: String
-    let replyCount: Int
-    let imageCount: Int
+    let tim: Int?
+    let ext: String?
+    let replyCount: Int?
+    let imageCount: Int?
 
     enum CodingKeys: String, CodingKey {
         case number = "no"
@@ -43,8 +43,12 @@ struct Thread: Decodable {
         case imageCount = "images"
     }
 
-    func getMediaUrl(boardId: String) -> URL {
-        return URL(string: "https://i.4cdn.org/" + boardId + "/" + String(tim) + ext)!
+    func getMediaUrl(boardId: String) -> URL? {
+        if let filename = tim,
+           let extens = ext {
+            return URL(string: "https://i.4cdn.org/" + boardId + "/" + String(filename) + extens)!
+        }
+        return nil
     }
 
     func getDatePosted() -> String {
@@ -54,5 +58,24 @@ struct Thread: Decodable {
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
         return dateFormatter.string(from: date)
+    }
+    
+    static func example(sticky: Int, closed: Int, subject: String, comment: String) -> Post {
+        return self.init(number: Int.random(in: 0..<9999999),
+                       sticky: sticky,
+                       closed: closed,
+                       name: "Anonymous",
+                       id: "12345",
+                       subject: subject,
+                       comment: comment,
+                       trip: "",
+                       capcode: "",
+                       country: "",
+                       time: 1604547871,
+                       tim: 1358180697001,
+                       ext: ".jpg",
+                       replyCount: 5,
+                       imageCount: 10
+        )
     }
 }

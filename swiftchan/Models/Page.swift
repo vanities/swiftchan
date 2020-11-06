@@ -9,7 +9,7 @@ import Foundation
 
 struct Page: Decodable {
     let number: Int
-    let threads: [Thread]
+    let threads: [Post]
 
     enum CodingKeys: String, CodingKey {
         case number = "page"

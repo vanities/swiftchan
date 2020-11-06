@@ -16,7 +16,7 @@ struct BoardView: View {
         ZStack {
             Rectangle()
                 .fill(Color(.systemBackground))
-                .border(Color(.black))
+                .border(Color(.gray))
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
                     Text(self.name + " - " + self.title)

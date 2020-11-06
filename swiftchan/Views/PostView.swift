@@ -52,16 +52,11 @@ struct PostView: View {
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostView(boardName: "fit",
-                 post:
-                    Post(number: 01234567890,
-                         name: "Anonymous",
-                         id: "1",
-                         comment: "cool comment!",
-                         capcode: "",
-                         country: "",
-                         time: 1604547871,
-                         tim: 1358180697001,
-                         ext: ".jpg"),
+                 post: Post.example(sticky: 1,
+                                closed: 1,
+                                subject: LoremLipsum.full,
+                                comment: LoremLipsum.full
+                 ),
                  index: 0
         )
     }

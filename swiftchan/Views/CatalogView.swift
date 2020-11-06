@@ -20,17 +20,18 @@ struct CatalogView: View {
     var body: some View {
         return
             ScrollView {
-                    LazyVGrid(columns: columns,
+                LazyVGrid(columns: columns,
                           alignment: .center,
                           spacing: 0) {
                     ForEach(self.pages, id: \.self.number) { page in
                         ForEach(page.threads, id: \.self.number) { thread in
-                            OPView(boardName: boardName, thread: thread)
-                                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                            OPView(boardName: boardName,
+                                   thread: thread)
                         }
                     }
                 }
             }
+            .navigationBarTitle(Text(self.boardName), displayMode: .inline)
             .onAppear {
                 if !self.loaded {
                     self.getCatalog()
@@ -54,6 +55,20 @@ struct CatalogView: View {
 
 struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
-        CatalogView(boardName: "fit")
+        CatalogView(boardName: "fit", pages: [
+            Page(number: 0, threads: [
+                Post.example(sticky: 1,
+                               closed: 1,
+                               subject: LoremLipsum.full,
+                               comment: LoremLipsum.full
+                ),
+                Post.example(sticky: 0,
+                               closed: 0,
+                               subject: "",
+                               comment: LoremLipsum.full
+                ),
+            ])
+        ]
+        )
     }
 }
