@@ -66,7 +66,7 @@ struct CatalogView_Previews: PreviewProvider {
                                closed: 0,
                                subject: "",
                                comment: LoremLipsum.full
-                ),
+                )
             ])
         ]
         )

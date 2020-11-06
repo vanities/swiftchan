@@ -59,7 +59,7 @@ struct Post: Decodable {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
         return dateFormatter.string(from: date)
     }
-    
+
     static func example(sticky: Int, closed: Int, subject: String, comment: String) -> Post {
         return self.init(number: Int.random(in: 0..<9999999),
                        sticky: sticky,

@@ -13,6 +13,8 @@ struct PostView: View {
     let post: Post
     let index: Int
 
+    @Binding var isPresentingGallery: Bool
+
     var body: some View {
         return
             ZStack(alignment: .topLeading) {
@@ -27,6 +29,11 @@ struct PostView: View {
                                     .resizable()
                                     .frame(width: 100, height: 100)
 
+                            }
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    self.isPresentingGallery = true
+                                }
                             }
                         }
                         VStack(alignment: .leading) {
@@ -57,7 +64,8 @@ struct PostView_Previews: PreviewProvider {
                                 subject: LoremLipsum.full,
                                 comment: LoremLipsum.full
                  ),
-                 index: 0
+                 index: 0,
+                 isPresentingGallery: .constant(false)
         )
     }
 }

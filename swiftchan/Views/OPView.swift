@@ -11,7 +11,7 @@ import URLImage
 struct OPView: View {
     let boardName: String
     let thread: Post
-    
+
     var body: some View {
         return NavigationLink(
             destination: ThreadView(id: thread.number, boardName: boardName),
@@ -42,6 +42,7 @@ struct OPView: View {
                             if let sticky = thread.sticky,
                                sticky == 1 {
                                 Image(systemName: "pin")
+                                    .rotationEffect(.degrees(45))
                             }
                             if let closed = thread.closed,
                                closed == 1 {

@@ -11,24 +11,6 @@
         }
       },
       {
-        "package": "FourChan",
-        "repositoryURL": "https://github.com/jackpal/FourChanAPI",
-        "state": {
-          "branch": null,
-          "revision": "5effc804c3d06bfb3344645f39e1fc4466d81706",
-          "version": "1.1.24"
-        }
-      },
-      {
-        "package": "Request",
-        "repositoryURL": "https://github.com/carson-katri/swift-request",
-        "state": {
-          "branch": null,
-          "revision": "1b4493f01e4d968ab17ed5e17a91a117a22d636f",
-          "version": "1.3.0"
-        }
-      },
-      {
         "package": "SwiftSoup",
         "repositoryURL": "https://github.com/scinfu/SwiftSoup",
         "state": {

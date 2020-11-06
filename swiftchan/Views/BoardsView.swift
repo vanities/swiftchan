@@ -64,10 +64,6 @@ struct BoardsView: View {
             .responseDecodable(of: Boards.self) { (response) in
                 guard let boards = response.value else { return }
                 self.boards = boards.all
-                for board in self.boards {
-                    print(board.board, board.title, board.descriptionText
-                    )
-                }
             }
     }
 }
