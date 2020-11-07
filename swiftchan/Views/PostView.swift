@@ -7,6 +7,7 @@
 
 import SwiftUI
 import URLImage
+import UIKit
 
 struct PostView: View {
     let boardName: String
@@ -23,28 +24,43 @@ struct PostView: View {
                     .border(Color(.gray))
                 VStack(alignment: .leading, spacing: 0 ) {
                     HStack(alignment: .top) {
-                        if let imageURL = post.getMediaUrl(boardId: boardName) {
-                            URLImage(url: imageURL) { image in
-                                image
-                                    .resizable()
-                                    .frame(width: 100, height: 100)
-
-                            }
-                            .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    self.isPresentingGallery = true
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.gray)
+                            if let url = post.getMediaUrl(boardId: boardName) {
+                                // media
+                                if MediaDetector.isImage(url: url) {
+                                    URLImage(url: url) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                        
+                                    }
+                                }
+                                else if MediaDetector.isWebm(url: url){
+                                    VLCVideoView(url: url,
+                                                 preview: true)
+                                    
                                 }
                             }
                         }
+                        .frame(width: 100, height: 100)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                self.isPresentingGallery = true
+                            }
+                        }
+                        // index, postnumber, date
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(String(index))
+                                Text(String(self.index))
                                 Text("•")
-                                Text("#" + String(post.number))
+                                Text("#" + String(self.post.number))
                             }
-                            Text(post.getDatePosted())
+                            Text(self.post.getDatePosted())
                         }
                     }
+                    // comment
                     if let comment = self.post.comment {
                         CommentView(message: comment)
                             .padding(.top, 10)

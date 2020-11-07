@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52C3815F565F4FAD63E3BE20 /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */; };
 		95181791254CFB600032616E /* swiftchanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95181790254CFB600032616E /* swiftchanApp.swift */; };
 		95181793254CFB600032616E /* BoardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95181792254CFB600032616E /* BoardsView.swift */; };
 		95181795254CFB620032616E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95181794254CFB620032616E /* Assets.xcassets */; };
@@ -21,6 +22,11 @@
 		9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9580613D254F884B0003FFF3 /* SwiftSoup */; };
 		95806146254FB5330003FFF3 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95806145254FB5330003FFF3 /* CommentView.swift */; };
 		9580614C255263FA0003FFF3 /* CommentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580614B255263FA0003FFF3 /* CommentParser.swift */; };
+		9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582CB98255631B9008B235D /* VLCVideoView.swift */; };
+		95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DCA25566F66002CB2A1 /* GIFView.swift */; };
+		95851DD1255670D2002CB2A1 /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = 95851DD0255670D2002CB2A1 /* SwiftyGif */; };
+		95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DD525567314002CB2A1 /* MediaDetector.swift */; };
+		9587A51C255726D80028A143 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9587A51B255726D80028A143 /* CacheService.swift */; };
 		958D0998254D346A00AD4849 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D0997254D346A00AD4849 /* CatalogView.swift */; };
 		958D099A254D35FE00AD4849 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D0999254D35FE00AD4849 /* Post.swift */; };
 		958D099C254D3D7C00AD4849 /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D099B254D3D7C00AD4849 /* Page.swift */; };
@@ -28,6 +34,9 @@
 		958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D2C98254D2DF200E54C41 /* ContentView.swift */; };
 		9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA95254DF8C0002EB026 /* ThreadView.swift */; };
 		9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA9F254DFDA1002EB026 /* PostView.swift */; };
+		9599D61E255655A700BBC8B7 /* VLCPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */; };
+		9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */; };
+		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95D06D2C2554D75200924EED /* Lipsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D06D2B2554D75200924EED /* Lipsum.swift */; };
 /* End PBXBuildFile section */
@@ -50,6 +59,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
+		584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
 		9518178D254CFB600032616E /* swiftchan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = swiftchan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95181790254CFB600032616E /* swiftchanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanApp.swift; sourceTree = "<group>"; };
 		95181792254CFB600032616E /* BoardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsView.swift; sourceTree = "<group>"; };
@@ -67,6 +79,10 @@
 		955814B7254D24B900A966BA /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		95806145254FB5330003FFF3 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		9580614B255263FA0003FFF3 /* CommentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentParser.swift; sourceTree = "<group>"; };
+		9582CB98255631B9008B235D /* VLCVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoView.swift; sourceTree = "<group>"; };
+		95851DCA25566F66002CB2A1 /* GIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFView.swift; sourceTree = "<group>"; };
+		95851DD525567314002CB2A1 /* MediaDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetector.swift; sourceTree = "<group>"; };
+		9587A51B255726D80028A143 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
 		958D0997254D346A00AD4849 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		958D0999254D35FE00AD4849 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		958D099B254D3D7C00AD4849 /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
@@ -74,6 +90,9 @@
 		958D2C98254D2DF200E54C41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9599CA95254DF8C0002EB026 /* ThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadView.swift; sourceTree = "<group>"; };
 		9599CA9F254DFDA1002EB026 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
+		9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerUIView.swift; sourceTree = "<group>"; };
+		9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryPreviewView.swift; sourceTree = "<group>"; };
+		9599D62D2556661600BBC8B7 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		95A94EFB2554F8D1001D155E /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		95D06D2B2554D75200924EED /* Lipsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lipsum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,6 +105,8 @@
 				955814B0254D0F1F00A966BA /* Alamofire in Frameworks */,
 				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
 				9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */,
+				52C3815F565F4FAD63E3BE20 /* libPods-swiftchan.a in Frameworks */,
+				95851DD1255670D2002CB2A1 /* SwiftyGif in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +127,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F247CFCC7FD961876E62B1C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		95181784254CFB600032616E = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +142,8 @@
 				951817A1254CFB620032616E /* swiftchanTests */,
 				951817AC254CFB620032616E /* swiftchanUITests */,
 				9518178E254CFB600032616E /* Products */,
+				FF4A11C5390644ACDA29A498 /* Pods */,
+				8F247CFCC7FD961876E62B1C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,6 +160,7 @@
 		9518178F254CFB600032616E /* swiftchan */ = {
 			isa = PBXGroup;
 			children = (
+				9599D61C2556556E00BBC8B7 /* UIView */,
 				9580614A255263DB0003FFF3 /* Services */,
 				955814B6254D249B00A966BA /* Views */,
 				955814B1254D102800A966BA /* Models */,
@@ -189,6 +221,10 @@
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
 				95806145254FB5330003FFF3 /* CommentView.swift */,
 				95A94EFB2554F8D1001D155E /* GalleryView.swift */,
+				9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */,
+				9582CB98255631B9008B235D /* VLCVideoView.swift */,
+				9599D62D2556661600BBC8B7 /* ImageView.swift */,
+				95851DCA25566F66002CB2A1 /* GIFView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -198,8 +234,27 @@
 			children = (
 				9580614B255263FA0003FFF3 /* CommentParser.swift */,
 				95D06D2B2554D75200924EED /* Lipsum.swift */,
+				95851DD525567314002CB2A1 /* MediaDetector.swift */,
+				9587A51B255726D80028A143 /* CacheService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		9599D61C2556556E00BBC8B7 /* UIView */ = {
+			isa = PBXGroup;
+			children = (
+				9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */,
+			);
+			path = UIView;
+			sourceTree = "<group>";
+		};
+		FF4A11C5390644ACDA29A498 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */,
+				584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,6 +264,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 951817B2254CFB620032616E /* Build configuration list for PBXNativeTarget "swiftchan" */;
 			buildPhases = (
+				38A2631E4277D980EF13F99E /* [CP] Check Pods Manifest.lock */,
 				95181789254CFB600032616E /* Sources */,
 				9518178A254CFB600032616E /* Frameworks */,
 				9518178B254CFB600032616E /* Resources */,
@@ -222,6 +278,7 @@
 				955814A5254CFFC200A966BA /* URLImage */,
 				955814AF254D0F1F00A966BA /* Alamofire */,
 				9580613D254F884B0003FFF3 /* SwiftSoup */,
+				95851DD0255670D2002CB2A1 /* SwiftyGif */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -298,6 +355,7 @@
 				955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */,
 				955814AE254D0F1F00A966BA /* XCRemoteSwiftPackageReference "Alamofire" */,
 				9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				95851DCF255670D2002CB2A1 /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -336,20 +394,52 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		38A2631E4277D980EF13F99E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-swiftchan-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		95181789254CFB600032616E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */,
+				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95D06D2C2554D75200924EED /* Lipsum.swift in Sources */,
+				95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */,
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				95806146254FB5330003FFF3 /* CommentView.swift in Sources */,
+				9599D61E255655A700BBC8B7 /* VLCPlayerUIView.swift in Sources */,
+				9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
+				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
 				958D099A254D35FE00AD4849 /* Post.swift in Sources */,
+				95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */,
 				958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */,
 				955814B8254D24B900A966BA /* BoardView.swift in Sources */,
 				955814B5254D11F800A966BA /* Boards.swift in Sources */,
@@ -510,6 +600,7 @@
 		};
 		951817B3254CFB620032616E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -532,6 +623,7 @@
 		};
 		951817B4254CFB620032616E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -702,6 +794,14 @@
 				minimumVersion = 2.3.2;
 			};
 		};
+		95851DCF255670D2002CB2A1 /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -719,6 +819,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
+		};
+		95851DD0255670D2002CB2A1 /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95851DCF255670D2002CB2A1 /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

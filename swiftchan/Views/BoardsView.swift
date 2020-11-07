@@ -19,8 +19,8 @@ struct BoardsView: View {
         return NavigationView {
             ScrollView {
                 LazyVGrid(columns: columns,
-                          alignment: .center,
-                          spacing: 0) {
+                          alignment: .leading,
+                          spacing: 5) {
                     ForEach(self.boards, id: \.self.board) { board in
                         NavigationLink(
                             destination: CatalogView(boardName: board.board)
@@ -28,6 +28,7 @@ struct BoardsView: View {
                             BoardView(name: board.board,
                                       title: board.title,
                                       description: board.descriptionText)
+                                .padding(5)
                         }
                     }
                 }

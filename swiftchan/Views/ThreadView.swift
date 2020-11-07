@@ -14,7 +14,7 @@ struct ThreadView: View {
 
     @State var loaded: Bool = false
     @State var posts: [Post] = []
-    @State var imagesUrls: [URL] = []
+    @State var mediaUrl: [URL] = []
     @State var isPresentingGallery: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
@@ -38,7 +38,7 @@ struct ThreadView: View {
                               }
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {
-                    GalleryView(imageUrls: self.imagesUrls)
+                    GalleryView(urls: self.mediaUrl)
                 }
             }
             .onAppear {
@@ -60,8 +60,8 @@ struct ThreadView: View {
                 self.posts = data.posts
 
                 for post in self.posts {
-                    if let imageURL = post.getMediaUrl(boardId: boardName) {
-                        self.imagesUrls.append(imageURL)
+                    if let mediaUrl = post.getMediaUrl(boardId: boardName) {
+                        self.mediaUrl.append(mediaUrl)
                     }
                 }
             }

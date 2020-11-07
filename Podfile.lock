@@ -1,0 +1,20 @@
+PODS:
+  - HanekeSwift (0.10.1)
+  - MobileVLCKit (3.3.15)
+
+DEPENDENCIES:
+  - HanekeSwift
+  - MobileVLCKit
+
+SPEC REPOS:
+  trunk:
+    - HanekeSwift
+    - MobileVLCKit
+
+SPEC CHECKSUMS:
+  HanekeSwift: 08e47d3d0f2899ec58e5d257beba0de619aca9e8
+  MobileVLCKit: 9a04c9fa19e35c376ddf59425dd82e397d5899ad
+
+PODFILE CHECKSUM: d4af1466d4f5de6310782d3d48f74014ba6f53b1
+
+COCOAPODS: 1.9.3

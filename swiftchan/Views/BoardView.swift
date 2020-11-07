@@ -14,9 +14,6 @@ struct BoardView: View {
 
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(Color(.systemBackground))
-                .border(Color(.gray))
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
                     Text(self.name + " - " + self.title)
@@ -27,6 +24,7 @@ struct BoardView: View {
             }
             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
         }
+        .border(Color.gray)
     }
 }
 

@@ -22,11 +22,16 @@ struct OPView: View {
                         .border(Color(.gray))
                     VStack(alignment: .leading, spacing: 0 ) {
                         // image
-                        if let imageUrl = thread.getMediaUrl(boardId: boardName) {
-                            URLImage(url: imageUrl) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
+                        if let url = thread.getMediaUrl(boardId: boardName) {
+                            if MediaDetector.isImage(url: url) {
+                                URLImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                }
+                            }
+                            else if MediaDetector.isWebm(url: url) {
+                                VLCVideoView(url: url, preview: true)
                             }
                         }
                         // sticky, closed, image count, thread count
