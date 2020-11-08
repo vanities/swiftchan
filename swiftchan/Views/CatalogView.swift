@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Alamofire
-import URLImage
 
 struct CatalogView: View {
     let boardName: String

@@ -1,4 +1,4 @@
 target 'swiftchan' do
   pod 'MobileVLCKit'
-  pod 'HanekeSwift'
+  pod 'Cache'
 end

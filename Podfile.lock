@@ -1,20 +1,20 @@
 PODS:
-  - HanekeSwift (0.10.1)
+  - Cache (6.0.0)
   - MobileVLCKit (3.3.15)
 
 DEPENDENCIES:
-  - HanekeSwift
+  - Cache
   - MobileVLCKit
 
 SPEC REPOS:
   trunk:
-    - HanekeSwift
+    - Cache
     - MobileVLCKit
 
 SPEC CHECKSUMS:
-  HanekeSwift: 08e47d3d0f2899ec58e5d257beba0de619aca9e8
+  Cache: 4ca7e00363fca5455f26534e5607634c820ffc2d
   MobileVLCKit: 9a04c9fa19e35c376ddf59425dd82e397d5899ad
 
-PODFILE CHECKSUM: d4af1466d4f5de6310782d3d48f74014ba6f53b1
+PODFILE CHECKSUM: e0e3d3015bae8897f4b1b4bebeeabe264782e5fa
 
 COCOAPODS: 1.9.3
