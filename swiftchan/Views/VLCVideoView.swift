@@ -19,14 +19,10 @@ struct VLCVideoView: UIViewRepresentable {
                                url: url,
                                preview: preview)
     }
-
+    
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         if let uiView = uiView as? VLCPlayerUIView {
-        self.play ? uiView.play() : uiView.pause()
-
-            if let observerTime = context.coordinator.observerTime, time != observerTime {
-                uiView.seek(to: time, toleranceBefore: time, toleranceAfter: time, completion: { _ in })
-            }
+            self.play ? uiView.play() : uiView.pause()
         }
     }
 
@@ -52,14 +48,6 @@ struct VLCVideoView: UIViewRepresentable {
            func startObserver(uiView: VLCVideoView) {
                guard observer == nil else { return }
 
-               observer = uiView.addPeriodicTimeObserver(forInterval: .init(seconds: 0.25, preferredTimescale: 60)) { [weak self, uiView] time in
-                   guard let `self` = self else { return }
-
-                   self.videoPlayer.time = time
-                   self.observerTime = time
-
-                   self.updateBuffer(uiView: uiView)
-               }
            }
     }
 }

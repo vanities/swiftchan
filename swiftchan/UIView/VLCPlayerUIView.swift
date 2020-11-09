@@ -52,12 +52,14 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
     public func pause() {
         if self.mediaPlayer.canPause {
             self.mediaPlayer.pause()
+            print("pausing", self.url)
         }
     }
 
     public func play() {
         if !self.mediaPlayer.isPlaying && self.mediaPlayer.willPlay {
             self.mediaPlayer.play()
+            print("playing", self.url)
         }
     }
 
