@@ -12,17 +12,17 @@ struct ImageView: View {
     let index: Int
     let url: URL
     let isSelected: Bool
-    
+
     @State var scale: CGFloat = 1.0
     @State var offset = CGSize.zero
     @State var canDrag: Bool = false
-    
+
     var body: some View {
         return URLImage(url: url) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-            
+
         }
         .tag(self.index)
         .scaleEffect(self.scale)

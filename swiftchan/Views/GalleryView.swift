@@ -10,8 +10,9 @@ import URLImage
 
 struct GalleryView: View {
     @State var selection: Int = 0
+    @State var playWebm: Bool = false
     var urls: [URL]
-    
+
     var body: some View {
         return ZStack {
             Color.black
@@ -23,10 +24,12 @@ struct GalleryView: View {
                         ImageView(index: index,
                                   url: url,
                                   isSelected: index == selection)
-                    }
-                    else if MediaDetector
+                    } else if MediaDetector
                                 .isWebm(url: url) {
-                        VLCVideoView(url: url)
+                        VLCVideoView(url: url, play: self.$playWebm)
+                            .onChange(of: self.selection, perform: { _ in
+                                self.playWebm = index == self.selection
+                            })
                     }
                 }
             }

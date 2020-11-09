@@ -34,13 +34,13 @@ struct PostView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
-                                        
+
                                     }
-                                }
-                                else if MediaDetector.isWebm(url: url){
+                                } else if MediaDetector.isWebm(url: url) {
                                     VLCVideoView(url: url,
-                                                 preview: true)
-                                    
+                                                 preview: true,
+                                                 play: .constant(false))
+
                                 }
                             }
                         }

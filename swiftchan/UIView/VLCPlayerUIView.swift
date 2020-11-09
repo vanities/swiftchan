@@ -7,30 +7,40 @@
 
 import MobileVLCKit
 import Cache
+import AVKit
 
-class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate, ObservableObject {
+class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let url: URL
     var preview: Bool = false
-    @Published var mediaPlayer = VLCMediaPlayer()
-    //@Published var time: VLCTime = .init(int: 0)
-    
+    var mediaPlayer = VLCMediaPlayer()
+
     init(frame: CGRect, url: URL, preview: Bool) {
         self.url = url
         self.preview = preview
         super.init(frame: frame)
 
-        CacheService.shared.getOrSet(key: self.url) { [weak self] complete in
-            self?.setMediaPlayer(cacheUrl: complete)
+        CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
+
+            switch result {
+            case .success(let url):
+                // do some magic with path to saved video
+                self.setMediaPlayer(cacheUrl: url)
+
+                break
+            case .failure(let error):
+                // handle errror
+                print(error, " failure in the Cache of video")
+                break
+            }
         }
     }
-    
-    
+
     private func setMediaPlayer(cacheUrl: URL) {
-        self.mediaPlayer.media = VLCMedia(url: cacheUrl)
-        self.mediaPlayer.delegate = self
-        self.mediaPlayer.drawable = self
-        if !self.preview {
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            self.mediaPlayer.media = VLCMedia(url: cacheUrl)
+            self.mediaPlayer.delegate = self
+            self.mediaPlayer.drawable = self
+            if !self.preview {
                 self.mediaPlayer.play()
             }
         }
@@ -44,21 +54,21 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate, ObservableObject {
             self.mediaPlayer.pause()
         }
     }
-    
+
     public func play() {
         if !self.mediaPlayer.isPlaying && self.mediaPlayer.willPlay {
             self.mediaPlayer.play()
         }
     }
-    
+
     public func getLastSnapshot() -> UIImage {
         return self.mediaPlayer.lastSnapshot
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
     }

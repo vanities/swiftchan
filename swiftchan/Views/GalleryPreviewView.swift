@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GalleryPreviewView: View {
     let mediaUrls: [URL] = []
-    
+
     var body: some View {
         return ScrollView(.horizontal,
                           showsIndicators: false) {

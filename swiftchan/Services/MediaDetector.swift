@@ -13,11 +13,11 @@ struct MediaDetector {
             url.absoluteString.hasSuffix("jpeg") ||
             url.absoluteString.hasSuffix("png")
     }
-    
+
     static func isGIF(url: URL) -> Bool {
         return url.absoluteString.hasSuffix("gif")
     }
-    
+
     static func isWebm(url: URL) -> Bool {
         return url.absoluteString.hasSuffix("webm")
     }

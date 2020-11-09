@@ -6,113 +6,77 @@
 //
 
 import Foundation
-import Cache
 
-final class CacheService {
-    static let shared = CacheService()
-    static var storage: Storage<URL, String>?
-    
-    private init() {
-        let diskConfig = DiskConfig(
-            // The name of disk storage, this will be used as folder name within directory
-            name: "swiftchan",
-            // Expiry date that will be applied by default for every added object
-            // if it's not overridden in the `setObject(forKey:expiry:)` method
-            expiry: .date(Date().addingTimeInterval(2*3600)),
-            // Maximum size of the disk cache storage (in bytes)
-            maxSize: 10000,
-            // Where to store the disk cache. If nil, it is placed in `cachesDirectory` directory.
-            directory: try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask,
-                                                    appropriateFor: nil, create: true).appendingPathComponent("MyPreferences"),
-            // Data protection is used to store files in an encrypted format on disk and to decrypt them on demand
-            protectionType: .complete
-        )
-        let memoryConfig = MemoryConfig(
-            // Expiry date that will be applied by default for every added object
-            // if it's not overridden in the `setObject(forKey:expiry:)` method
-            expiry: .date(Date().addingTimeInterval(2*60)),
-            /// The maximum number of objects in memory the cache should hold
-            countLimit: 50,
-            /// The maximum total cost that the cache can hold before it starts evicting objects
-            totalCostLimit: 0
-        )
-        
-        do {
-            print("Initializing Cache Service")
-            CacheService.storage = try Storage<URL, String>(
-                diskConfig: diskConfig,
-                memoryConfig: memoryConfig,
-                transformer: TransformerFactory.forCodable(ofType: String.self) // Storage<String, String>
-            )
-        } catch {
-            print(error)
-            CacheService.storage = nil
+public enum Result<T> {
+    case success(T)
+    case failure(NSError)
+}
+
+class CacheManager {
+
+    static let shared = CacheManager()
+    private let fileManager = FileManager.default
+    private var checked = Set<String>()
+    private lazy var mainDirectoryUrl: URL = {
+        let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return documentsUrl
+    }()
+
+    func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL>) -> Void ) {
+
+        guard checked.contains(stringUrl) == false else {
+            print("\(stringUrl) caching already" )
+            return
         }
-    }
-    
-    func getOrSet(key: URL, complete: @escaping (URL) -> Void) {
-        self.exists(key: key) { exists in
-            if exists {
-                self.get(key: key) { value in
-                    complete(value)
+        checked.insert(stringUrl)
+
+        let file = directoryFor(stringUrl: stringUrl)
+
+        //return file path if already exists in cache directory
+        guard !fileManager.fileExists(atPath: file.path)  else {
+            print("file exists in cache \(file.path)" )
+            completionHandler(Result.success(file))
+            return
+        }
+
+        DispatchQueue.global().async {
+
+            if let videoData = NSData(contentsOf: URL(string: stringUrl)!) {
+                print("writing file to cache \(file.path)" )
+                videoData.write(to: file, atomically: true)
+                DispatchQueue.main.async {
+                    completionHandler(Result.success(file))
+                    print("completed writing file to cache \(file.path)" )
                 }
-            }
-            else {
-                self.set(key: key) {
-                    self.get(key: key) { value in
-                        complete(value)
-                    }
+            } else {
+                DispatchQueue.main.async {
+                    print("failed writing file to cache \(file.path)" )
+                    let error = NSError(domain: "SomeErrorDomain", code: -2001 /* some error code */, userInfo: ["description": "Can't download video"])
+
+                    completionHandler(Result.failure(error))
                 }
             }
         }
     }
-    
-    func exists(key: URL, value: @escaping (Bool) -> Void) {
-        if let storage = CacheService.storage {
-            storage.async.existsObject(forKey: key) { result in
-                if case .value(let exists) = result, exists {
-                    print("cache service found \(key) exists")
-                    value(exists)
-                }
+
+    private func deleteAll() {
+        let enumerator = self.fileManager.enumerator(atPath: self.mainDirectoryUrl.absoluteString)
+        if let enumerator = enumerator {
+            for url in enumerator.allObjects {
+                print("removing \((url as! NSURL).path!) from cache")
+                try! fileManager.removeItem(at: self.mainDirectoryUrl)
+                print("removed \((url as! NSURL).path!) from cache")
             }
-        }
-        else {
-            print("could not get storage!!")
+        } else {
+            print("not enumerator for deleteAll cache")
         }
     }
-    
-    func set(key: URL, value: @escaping () -> Void) {
-        if let storage = CacheService.storage {
-            let cacheUrl = ""
-            storage.async.setObject(cacheUrl, forKey: key) { result in
-                switch result {
-                case .value:
-                    print("successfully set \(key) to cache")
-                    value()
-                case .error(let error):
-                    print(error)
-                }
-            }
-        }
-        else {
-            print("could not get storage!!")
-        }
+
+    private func directoryFor(stringUrl: String) -> URL {
+
+        let fileURL = URL(string: stringUrl)!.lastPathComponent
+        let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
+        return file
     }
-    
-    func get(key: URL, value: @escaping (URL) -> Void) {
-        if let storage = CacheService.storage {
-            storage.async.object(forKey: key) { result in
-                switch result {
-                case .value(let cacheUrl):
-                    print("successfully got \(cacheUrl) from cache")
-                    value(URL(string: cacheUrl)!)
-                case .error(let error):
-                    print(error)
-                }
-            }
-        }
-        else {
-            print("could not get storage!!")
-        }
-    }
+
 }
