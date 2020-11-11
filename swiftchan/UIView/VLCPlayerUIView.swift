@@ -5,43 +5,66 @@
 //  Created by vanities on 11/6/20.
 //
 
-import MobileVLCKit
-import Cache
+import SwiftUI
 import AVKit
 
+import MobileVLCKit
+
 class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
-    let url: URL
-    var preview: Bool = false
-    var mediaPlayer = VLCMediaPlayer()
+    let player: VLCMediaPlayer
+    
+    private let url: URL
+    private let autoPlay: Bool
 
-    init(frame: CGRect, url: URL, preview: Bool) {
+    weak var delegate: VLCPlayerUIViewDelegate?
+
+    init(frame: CGRect,
+         player: VLCMediaPlayer,
+         url: URL,
+         autoPlay: Bool) {
+        self.player = player
         self.url = url
-        self.preview = preview
+        self.autoPlay = autoPlay
+
         super.init(frame: frame)
-
+        
         CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
-
             switch result {
             case .success(let url):
-                // do some magic with path to saved video
+                self.player.delegate = self
+                self.player.drawable = self
                 self.setMediaPlayer(cacheUrl: url)
-
                 break
             case .failure(let error):
-                // handle errror
                 print(error, " failure in the Cache of video")
                 break
             }
         }
     }
+    
+    func mediaPlayerSnapshot(_ aNotification: Notification!) {
+        self.delegate?.onSnapshot(snapshot: self.player.lastSnapshot)
+    }
+    
+    func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+        if let time = self.player.time {
+            self.delegate?.onPlayerTimeChange(time: time)
+        }
+    }
+    
+    func mediaPlayerStateChanged(_ aNotification: Notification!) {
+        self.delegate?.onStateChange(state: self.player.state)
+    }
 
-    private func setMediaPlayer(cacheUrl: URL) {
+    func setMediaPlayer(cacheUrl: URL) {
         DispatchQueue.main.async {
-            self.mediaPlayer.media = VLCMedia(url: cacheUrl)
-            self.mediaPlayer.delegate = self
-            self.mediaPlayer.drawable = self
-            if !self.preview {
-                self.mediaPlayer.play()
+            print("setting media player \(cacheUrl)")
+            self.player.media = VLCMedia(url: cacheUrl)
+            self.player.delegate = self
+            self.player.drawable = self
+            
+            if self.autoPlay {
+                self.player.play()
             }
         }
         #if DEBUG
@@ -50,21 +73,30 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
     }
 
     public func pause() {
-        if self.mediaPlayer.canPause {
-            self.mediaPlayer.pause()
-            print("pausing", self.url)
+        DispatchQueue.main.async {
+            if self.player.canPause {
+                self.player.pause()
+                print("paused", self.url)
+            }
         }
     }
 
     public func play() {
-        if !self.mediaPlayer.isPlaying && self.mediaPlayer.willPlay {
-            self.mediaPlayer.play()
-            print("playing", self.url)
+        DispatchQueue.main.async {
+            if !self.player.isPlaying {
+                self.player.play()
+                print("played", self.url)
+            }
         }
     }
-
-    public func getLastSnapshot() -> UIImage {
-        return self.mediaPlayer.lastSnapshot
+    
+    public func getTime() -> VLCTime {
+        guard self.player.media != nil else {
+            print("media is nil")
+            return VLCTime(int: 0)
+            
+        }
+        return self.player.time
     }
 
     required init?(coder: NSCoder) {
@@ -74,4 +106,10 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
     override func layoutSubviews() {
         super.layoutSubviews()
     }
+}
+
+protocol VLCPlayerUIViewDelegate: class {
+    func onPlayerTimeChange(time: VLCTime)
+    func onSnapshot(snapshot: UIImage)
+    func onStateChange(state: VLCMediaPlayerState)
 }

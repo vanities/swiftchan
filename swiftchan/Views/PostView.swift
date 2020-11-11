@@ -37,9 +37,11 @@ struct PostView: View {
 
                                     }
                                 } else if MediaDetector.isWebm(url: url) {
-                                    VLCVideoView(url: url,
-                                                 preview: true,
-                                                 play: .constant(false))
+                                    /*
+                                    VLCContainerView(url: url,
+                                                     autoPlay: false,
+                                                     play: false)
+ */
 
                                 }
                             }

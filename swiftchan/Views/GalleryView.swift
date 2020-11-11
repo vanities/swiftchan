@@ -10,7 +10,6 @@ import URLImage
 
 struct GalleryView: View {
     @State var selection: Int = 0
-    @State var playWebm: Bool = false
     var urls: [URL]
 
     var body: some View {
@@ -26,15 +25,14 @@ struct GalleryView: View {
                                   isSelected: index == selection)
                     } else if MediaDetector
                                 .isWebm(url: url) {
-                        VLCVideoView(url: url, play: self.$playWebm)
-                            .onChange(of: self.selection, perform: { _ in
-                                self.playWebm = index == self.selection
-                            })
+                        VLCContainerView(url: url,
+                                         autoPlay: true,
+                                         play: index == self.selection)
                     }
                 }
             }
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle())
         }
     }

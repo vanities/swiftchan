@@ -30,9 +30,13 @@ struct OPView: View {
                                         .aspectRatio(contentMode: .fit)
                                 }
                             } else if MediaDetector.isWebm(url: url) {
-                                VLCVideoView(url: url, preview: true,
-                                             play: .constant(false)
-                                             )
+                                
+                                
+                                /*
+                                VLCContainerView(url: url,
+                                                 autoPlay: false,
+                                                 play: false)
+ */
                             }
                         }
                         // sticky, closed, image count, thread count

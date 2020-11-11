@@ -27,6 +27,8 @@
 		95851DD1255670D2002CB2A1 /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = 95851DD0255670D2002CB2A1 /* SwiftyGif */; };
 		95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DD525567314002CB2A1 /* MediaDetector.swift */; };
 		9587A51C255726D80028A143 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9587A51B255726D80028A143 /* CacheService.swift */; };
+		9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9589342A2558ED11000DEEDC /* VLCContainerView.swift */; };
+		958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */; };
 		958D0998254D346A00AD4849 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D0997254D346A00AD4849 /* CatalogView.swift */; };
 		958D099A254D35FE00AD4849 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D0999254D35FE00AD4849 /* Post.swift */; };
 		958D099C254D3D7C00AD4849 /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D099B254D3D7C00AD4849 /* Page.swift */; };
@@ -83,6 +85,8 @@
 		95851DCA25566F66002CB2A1 /* GIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFView.swift; sourceTree = "<group>"; };
 		95851DD525567314002CB2A1 /* MediaDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetector.swift; sourceTree = "<group>"; };
 		9587A51B255726D80028A143 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		9589342A2558ED11000DEEDC /* VLCContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCContainerView.swift; sourceTree = "<group>"; };
+		958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerControlsView.swift; sourceTree = "<group>"; };
 		958D0997254D346A00AD4849 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		958D0999254D35FE00AD4849 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		958D099B254D3D7C00AD4849 /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
@@ -213,6 +217,7 @@
 		955814B6254D249B00A966BA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				95893437255B7FBF000DEEDC /* VLC */,
 				95181792254CFB600032616E /* BoardsView.swift */,
 				958D0997254D346A00AD4849 /* CatalogView.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
@@ -222,7 +227,6 @@
 				95806145254FB5330003FFF3 /* CommentView.swift */,
 				95A94EFB2554F8D1001D155E /* GalleryView.swift */,
 				9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */,
-				9582CB98255631B9008B235D /* VLCVideoView.swift */,
 				9599D62D2556661600BBC8B7 /* ImageView.swift */,
 				95851DCA25566F66002CB2A1 /* GIFView.swift */,
 			);
@@ -238,6 +242,16 @@
 				9587A51B255726D80028A143 /* CacheService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		95893437255B7FBF000DEEDC /* VLC */ = {
+			isa = PBXGroup;
+			children = (
+				9589342A2558ED11000DEEDC /* VLCContainerView.swift */,
+				9582CB98255631B9008B235D /* VLCVideoView.swift */,
+				958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */,
+			);
+			path = VLC;
 			sourceTree = "<group>";
 		};
 		9599D61C2556556E00BBC8B7 /* UIView */ = {
@@ -426,6 +440,7 @@
 			files = (
 				9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */,
 				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
+				958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95D06D2C2554D75200924EED /* Lipsum.swift in Sources */,
 				95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */,
@@ -437,6 +452,7 @@
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
+				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
 				958D099A254D35FE00AD4849 /* Post.swift in Sources */,
 				95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */,
