@@ -62,7 +62,7 @@ Here's why:
 
 
 ### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+Dev requirements used in the app with CocoaPods and Swift Package Manager.
 
 * [URLImage](https://github.com/dmytro-anokhin/url-image)
 * [Alamofire](https://github.com/Alamofire/Alamofire)
@@ -81,6 +81,7 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 Download [xCode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
 
 ### Installation
 
@@ -92,6 +93,7 @@ git clone https://github.com/vanities/swiftchan
 ```sh
 pod install
 ```
+3. That's it! Open the workspacefile in Xcode.
 
 
 <!-- USAGE EXAMPLES -->
