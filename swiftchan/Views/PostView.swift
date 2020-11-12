@@ -29,20 +29,15 @@ struct PostView: View {
                                 .fill(Color.gray)
                             if let url = post.getMediaUrl(boardId: boardName) {
                                 // media
-                                if MediaDetector.isImage(url: url) {
+                                if MediaDetector.detect(url: url) == .image {
                                     URLImage(url: url) { image in
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
-
                                     }
-                                } else if MediaDetector.isWebm(url: url) {
-                                    /*
-                                    VLCContainerView(url: url,
-                                                     autoPlay: false,
-                                                     play: false)
- */
-
+                                } else if MediaDetector.detect(url: url) == .gif {
+                                    GIFView(url: url, playGif: .constant(true))
+                                        .aspectRatio(contentMode: .fit)
                                 }
                             }
                         }

@@ -76,8 +76,7 @@ struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
         ImageView(
             index: 0,
-            url:
-                URL(string: "https://picsum.photos/1020/900")!,
+            url: URLExamples.image,
             isSelected: true)
     }
 }

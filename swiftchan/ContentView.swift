@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        //VLCVideoView(url: URL(string: "https://dl5.webmfiles.org/big-buck-bunny_trailer.webm")!)
         BoardsView()
     }
 }

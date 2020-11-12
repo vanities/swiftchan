@@ -7,18 +7,29 @@
 
 import Foundation
 
+enum MediaType {
+    case image
+    case webm
+    case gif
+    case none
+}
+
 struct MediaDetector {
-    static func isImage(url: URL) -> Bool {
-        return url.absoluteString.hasSuffix("jpg") ||
+    static func detect(url: URL) -> MediaType {
+        if url.absoluteString.hasSuffix("jpg") ||
             url.absoluteString.hasSuffix("jpeg") ||
-            url.absoluteString.hasSuffix("png")
-    }
-
-    static func isGIF(url: URL) -> Bool {
-        return url.absoluteString.hasSuffix("gif")
-    }
-
-    static func isWebm(url: URL) -> Bool {
-        return url.absoluteString.hasSuffix("webm")
+            url.absoluteString.hasSuffix("png") {
+            return .image
+        }
+        else if url.absoluteString.hasSuffix("gif") {
+            return .gif
+        }
+        else if url.absoluteString.hasSuffix("webm") {
+            return .webm
+        }
+        else {
+            print("Error! cannot detect media extension", url)
+            return .none
+        }
     }
 }

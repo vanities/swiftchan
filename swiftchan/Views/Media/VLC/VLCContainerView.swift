@@ -66,9 +66,7 @@ struct VLCContainerView: View {
 
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        let url = URL(string:
-                        "http://dl5.webmfiles.org/big-buck-bunny_trailer.webm")!
-        return VLCContainerView(url: url,
+        return VLCContainerView(url: URLExamples.webm,
                          autoPlay: true,
                          play: true)
             .background(Color.black)

@@ -66,12 +66,9 @@ struct VLCVideoView: UIViewRepresentable {
 
 struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
-        let url = URL(string:
-                        "http://dl5.webmfiles.org/big-buck-bunny_trailer.webm")!
-
         return ZStack {
             VLCVideoView(player: VLCMediaPlayer(),
-                         url: url,
+                         url: URLExamples.webm,
                          autoPlay: true,
                          preview: .constant(.init()),
                          state: .constant(.playing),

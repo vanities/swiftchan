@@ -6,16 +6,19 @@
 //
 
 import SwiftUI
+import SwiftyGif
 
-/*
 struct GIFView: UIViewRepresentable {
+    let url: URL
+    
     @Binding var playGif: Bool
     
     func makeUIView(context: Context) -> UIImageView {
-        let gif = try! UIImage(gifName: "bugs.gif")
-        let imageview = UIImageView(gifImage: gif, loopCount: 3)
-         imageview.frame = .zero 
-        return imageview
+        let imageView = UIImageView()
+        let loader = UIActivityIndicatorView(style: .medium)
+        imageView.setGifFromURL(url, customLoader: loader)
+        imageView.frame = .zero
+        return imageView
     }
     
     func updateUIView(_ gifImageView: UIImageView, context: Context) {
@@ -30,7 +33,9 @@ struct GIFView: UIViewRepresentable {
 
 struct GIFView_Previews: PreviewProvider {
     static var previews: some View {
-        GIFView()
+        GIFView(url: URLExamples.gif,
+                playGif: .constant(true))
+            .frame(width: 250, height: 250)
+            .aspectRatio(contentMode: .fit)
     }
 }
- */

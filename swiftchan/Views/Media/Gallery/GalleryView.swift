@@ -19,16 +19,10 @@ struct GalleryView: View {
             TabView(selection: self.$selection) {
                 ForEach(self.urls.indices, id: \.self) { index in
                     let url = self.urls[index]
-                    if MediaDetector.isImage(url: url) {
-                        ImageView(index: index,
-                                  url: url,
-                                  isSelected: index == selection)
-                    } else if MediaDetector
-                                .isWebm(url: url) {
-                        VLCContainerView(url: url,
-                                         autoPlay: true,
-                                         play: index == self.selection)
-                    }
+                    MediaView(url: url,
+                              index: index,
+                              selected: self.selection == index,
+                              autoPlay: true)
                 }
             }
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
@@ -41,7 +35,7 @@ struct GalleryView: View {
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
         GalleryView(urls: Array.init(
-                        repeating: URL(string: "https://picsum.photos/1020/900")!,
+                        repeating: URLExamples.image,
                         count: 5)
         )
     }
