@@ -9,67 +9,113 @@ import SwiftUI
 
 import MobileVLCKit
 
-struct VLCPlayerControlsView : View {
+struct VLCPlayerControlsView: View {
     @Binding private(set) var player: VLCMediaPlayer
     @Binding private(set) var state: VLCMediaPlayerState
     @Binding private(set) var videoPos: VLCTime
     @Binding private(set) var remainingTime: VLCTime
     @Binding private(set) var seeking: Bool
-    
+
     @State private var playerPaused = true
-    
-    var body: some View {
-        return HStack {
-            // Play/pause button
-            Button(action: togglePlayPause) {
-                Image(systemName: self.state == .paused ? "play" : "pause")
-                    .padding(.trailing, 10)
+    @State private var sliderPos: CGFloat = 0
+
+    private var totalDuration: CGFloat {
+        get {
+            CGFloat(abs(self.remainingTime.intValue)) + CGFloat(self.videoPos.intValue)
+        }
+    }
+    private var calcSliderPos: CGFloat {
+        get {
+            if totalDuration != 0 {
+                return CGFloat(self.videoPos.intValue) / self.totalDuration
             }
-            // Current video time
-            Text(videoPos.description)
-            // Slider for seeking / showing video progress
-           // Slider(value: $videoPos, in: 0...1, onEditingChanged: sliderEditingChanged)
-            // Video duration
-            Text(remainingTime.description)
-        }
-        .padding(.leading, 10)
-        .padding(.trailing, 10)
-    }
-    
-    private func togglePlayPause() {
-        pausePlayer(!playerPaused)
-    }
-    
-    private func pausePlayer(_ pause: Bool) {
-        print(self.state.rawValue)
-        playerPaused = pause
-        if self.state == .playing {
-            self.player.stop()
-        }
-        else {
-            self.player.play()
+            return 0
         }
     }
 
-    /*
-    private func sliderEditingChanged(editingStarted: Bool) {
-        if editingStarted {
-            // Set a flag stating that we're seeking so the slider doesn't
-            // get updated by the periodic time observer on the player
-            seeking = true
-            pausePlayer(true)
-        }
-        
-        // Do the seek if we're finished
-        if !editingStarted {
-            let targetTime = CMTime(seconds: videoPos * videoDuration,
-                                    preferredTimescale: 600)
-            player.seek(to: targetTime) { _ in
-                // Now the seek is finished, resume normal operation
-                self.seeking = false
-                self.pausePlayer(false)
+    private var playbackImage: String {
+        get {
+            switch self.state {
+            case .ended, .stopped:
+                return "gobackward"
+            case .paused:
+                return "play"
+            case .playing, .buffering:
+                return "pause"
+            default:
+                return ""
             }
         }
     }
- */
+
+    var body: some View {
+        return HStack(alignment: .center) {
+            Button(action: self.togglePlayPause) {
+                Image(systemName: self.playbackImage)
+                    .font(Font.system(size: 25))
+                    .padding()
+            }
+
+            Text(videoPos.description)
+                .fixedSize()
+
+            Slider(value: self.$sliderPos,
+                   in: 0...1,
+                   onEditingChanged: self.sliderEditingChanged)
+                .onChange(of: self.videoPos, perform: { _ in
+                    self.sliderPos = self.calcSliderPos
+                })
+
+            Text(remainingTime.description)
+                .fixedSize()
+        }
+        .foregroundColor(.white)
+        .padding(.trailing, 20)
+    }
+
+    private func togglePlayPause() {
+        self.pausePlayer(!playerPaused)
+    }
+
+    private func pausePlayer(_ pause: Bool) {
+        print(self.state.rawValue)
+        playerPaused = pause
+
+        switch self.state {
+        case .ended, .stopped:
+            self.player.restart()
+        case .paused:
+            self.player.play()
+            break
+        case .playing, .buffering:
+            self.player.pause()
+            break
+        default:
+            break
+        }
+    }
+
+    private func sliderEditingChanged(editingStarted: Bool) {
+        if editingStarted {
+            seeking = true
+            pausePlayer(true)
+        }
+
+        if !editingStarted {
+            videoPos = VLCTime(number: self.calcSliderPos * self.totalDuration as NSNumber)
+            self.pausePlayer(false)
+        }
+    }
+}
+
+struct VLCPlayerControlsView_Previews: PreviewProvider {
+    static var previews: some View {
+        VLCPlayerControlsView(player: .constant(VLCMediaPlayer()),
+                              state: .constant(.ended),
+                              videoPos: .constant(.init(int: 5000)),
+                              remainingTime: .constant(.init(int: -10000)),
+                              seeking: .constant(false)
+        )
+        .background(Color.black)
+    }
 }

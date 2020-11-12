@@ -12,11 +12,15 @@ import Alamofire
 struct BoardsView: View {
     @State var boards: [Board] = []
     @State var loaded: Bool = false
+    @State var searchText: String = ""
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
+
         return NavigationView {
+            VStack(alignment: .leading, spacing: 0) {
+            SearchTextView(searchText: self.$searchText)
             ScrollView {
                 LazyVGrid(columns: columns,
                           alignment: .leading,
@@ -25,15 +29,18 @@ struct BoardsView: View {
                         NavigationLink(
                             destination: CatalogView(boardName: board.board)
                         ) {
+                            if board.board.starts(with: self.searchText.lowercased()) {
                             BoardView(name: board.board,
                                       title: board.title,
                                       description: board.descriptionText)
                                 .padding(5)
+                            }
                         }
                     }
                 }
                 .navigationBarTitle("4chan")
             }
+        }
         }
         .onAppear {
             if !self.loaded {

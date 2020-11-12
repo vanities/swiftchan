@@ -19,7 +19,7 @@ struct VLCVideoView: UIViewRepresentable {
     @Binding private(set) var videoPos: VLCTime
     @Binding private(set) var remainingTime: VLCTime
     @Binding private(set) var seeking: Bool
-    
+
     func makeUIView(context: Context) -> UIView {
         let vlc = VLCPlayerUIView(frame: .zero,
                                   player: self.player,
@@ -28,7 +28,7 @@ struct VLCVideoView: UIViewRepresentable {
         vlc.delegate = context.coordinator
         return vlc
     }
-    
+
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         if let player = uiView as? VLCPlayerUIView {
         }
@@ -37,27 +37,27 @@ struct VLCVideoView: UIViewRepresentable {
     public static func dismantleUIView(_ uiView: VLCPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         uiView.pause()
     }
-    
+
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, VLCPlayerUIViewDelegate, VLCMediaPlayerDelegate {
         var parent: VLCVideoView
-        
+
         init(_ parent: VLCVideoView) {
             self.parent = parent
         }
-        
+
         func onStateChange(state: VLCMediaPlayerState) {
             self.parent.state = state
         }
-        
+
         func onPlayerTimeChange(time: VLCTime) {
             self.parent.videoPos = time
             self.parent.remainingTime = self.parent.player.remainingTime
         }
-        
+
         func onSnapshot(snapshot: UIImage) {
             self.parent.preview = snapshot
         }

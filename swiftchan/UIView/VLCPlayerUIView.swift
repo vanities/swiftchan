@@ -12,7 +12,7 @@ import MobileVLCKit
 
 class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let player: VLCMediaPlayer
-    
+
     private let url: URL
     private let autoPlay: Bool
 
@@ -27,12 +27,10 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
         self.autoPlay = autoPlay
 
         super.init(frame: frame)
-        
+
         CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
             switch result {
             case .success(let url):
-                self.player.delegate = self
-                self.player.drawable = self
                 self.setMediaPlayer(cacheUrl: url)
                 break
             case .failure(let error):
@@ -41,28 +39,28 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
         }
     }
-    
+
     func mediaPlayerSnapshot(_ aNotification: Notification!) {
         self.delegate?.onSnapshot(snapshot: self.player.lastSnapshot)
     }
-    
+
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         if let time = self.player.time {
             self.delegate?.onPlayerTimeChange(time: time)
         }
     }
-    
+
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         self.delegate?.onStateChange(state: self.player.state)
     }
 
     func setMediaPlayer(cacheUrl: URL) {
         DispatchQueue.main.async {
-            print("setting media player \(cacheUrl)")
-            self.player.media = VLCMedia(url: cacheUrl)
+            let media = VLCMedia(url: cacheUrl)
+            self.player.media = media
             self.player.delegate = self
             self.player.drawable = self
-            
+
             if self.autoPlay {
                 self.player.play()
             }
@@ -89,14 +87,12 @@ class VLCPlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
         }
     }
-    
-    public func getTime() -> VLCTime {
-        guard self.player.media != nil else {
-            print("media is nil")
-            return VLCTime(int: 0)
-            
+
+    public func restart() {
+        DispatchQueue.main.async {
+            self.player.position = 0
+            self.player.play()
         }
-        return self.player.time
     }
 
     required init?(coder: NSCoder) {
@@ -112,4 +108,14 @@ protocol VLCPlayerUIViewDelegate: class {
     func onPlayerTimeChange(time: VLCTime)
     func onSnapshot(snapshot: UIImage)
     func onStateChange(state: VLCMediaPlayerState)
+}
+
+extension VLCMediaPlayer {
+    public func restart() {
+        DispatchQueue.main.async {
+            let media = self.media
+            self.media = media
+            self.play()
+        }
+    }
 }

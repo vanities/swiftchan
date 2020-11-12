@@ -39,6 +39,7 @@
 		9599D61E255655A700BBC8B7 /* VLCPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */; };
 		9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */; };
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
+		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95D06D2C2554D75200924EED /* Lipsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D06D2B2554D75200924EED /* Lipsum.swift */; };
 /* End PBXBuildFile section */
@@ -97,6 +98,7 @@
 		9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerUIView.swift; sourceTree = "<group>"; };
 		9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryPreviewView.swift; sourceTree = "<group>"; };
 		9599D62D2556661600BBC8B7 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		959E6147255CCFAB0003638E /* SearchTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextView.swift; sourceTree = "<group>"; };
 		95A94EFB2554F8D1001D155E /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		95D06D2B2554D75200924EED /* Lipsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lipsum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -219,6 +221,7 @@
 			children = (
 				95893437255B7FBF000DEEDC /* VLC */,
 				95181792254CFB600032616E /* BoardsView.swift */,
+				959E6147255CCFAB0003638E /* SearchTextView.swift */,
 				958D0997254D346A00AD4849 /* CatalogView.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
 				958D099F254D444F00AD4849 /* OPView.swift */,
@@ -438,6 +441,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */,
 				9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */,
 				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
 				958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */,
