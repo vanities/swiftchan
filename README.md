@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/vanities/swiftchan">
-    <img src="icon.png" alt="Logo" width="80" height="80">
+    <img src="icon.png" alt="Logo" width="300" height="300">
   </a>
 
   <h3 align="center">swiftchan</h3>
