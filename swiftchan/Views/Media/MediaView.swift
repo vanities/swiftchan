@@ -12,7 +12,7 @@ struct MediaView: View {
     let index: Int
     let selected: Bool
     let autoPlay: Bool
-    
+
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:

@@ -14,33 +14,34 @@ struct BoardsView: View {
     @State var loaded: Bool = false
     @State var searchText: String = ""
 
-    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
     var body: some View {
 
         return NavigationView {
-            VStack(alignment: .leading, spacing: 0) {
-            SearchTextView(searchText: self.$searchText)
-            ScrollView {
-                LazyVGrid(columns: columns,
-                          alignment: .leading,
-                          spacing: 5) {
-                    ForEach(self.boards, id: \.self.board) { board in
-                        NavigationLink(
-                            destination: CatalogView(boardName: board.board)
-                        ) {
-                            if board.board.starts(with: self.searchText.lowercased()) {
-                            BoardView(name: board.board,
-                                      title: board.title,
-                                      description: board.descriptionText)
-                                .padding(5)
+            VStack(spacing: 0) {
+                SearchTextView(textPlaceholder: "Search Boards",
+                               searchText: self.$searchText)
+                ScrollView {
+                    LazyVGrid(columns: columns,
+                              alignment: .leading,
+                              spacing: 2) {
+                        ForEach(self.boards, id: \.self.board) { board in
+                            NavigationLink(
+                                destination: CatalogView(boardName: board.board)
+                            ) {
+                                if board.board.starts(with: self.searchText.lowercased()) {
+                                    BoardView(name: board.board,
+                                              title: board.title,
+                                              description: board.descriptionText)
+                                        .padding(.horizontal, 5)
+                                }
                             }
                         }
                     }
+                    .navigationBarTitle("4chan")
                 }
-                .navigationBarTitle("4chan")
             }
-        }
         }
         .onAppear {
             if !self.loaded {

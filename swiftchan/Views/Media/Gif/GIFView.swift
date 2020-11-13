@@ -10,9 +10,9 @@ import SwiftyGif
 
 struct GIFView: UIViewRepresentable {
     let url: URL
-    
+
     @Binding var playGif: Bool
-    
+
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
         let loader = UIActivityIndicatorView(style: .medium)
@@ -20,7 +20,7 @@ struct GIFView: UIViewRepresentable {
         imageView.frame = .zero
         return imageView
     }
-    
+
     func updateUIView(_ gifImageView: UIImageView, context: Context) {
         if playGif == true {
             gifImageView.startAnimatingGif()
@@ -29,7 +29,6 @@ struct GIFView: UIViewRepresentable {
         }
     }
 }
-
 
 struct GIFView_Previews: PreviewProvider {
     static var previews: some View {

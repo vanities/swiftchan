@@ -20,14 +20,11 @@ struct MediaDetector {
             url.absoluteString.hasSuffix("jpeg") ||
             url.absoluteString.hasSuffix("png") {
             return .image
-        }
-        else if url.absoluteString.hasSuffix("gif") {
+        } else if url.absoluteString.hasSuffix("gif") {
             return .gif
-        }
-        else if url.absoluteString.hasSuffix("webm") {
+        } else if url.absoluteString.hasSuffix("webm") {
             return .webm
-        }
-        else {
+        } else {
             print("Error! cannot detect media extension", url)
             return .none
         }
