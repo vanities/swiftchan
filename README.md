@@ -81,6 +81,7 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 Download [xCode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+
 Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
 
 ### Installation
