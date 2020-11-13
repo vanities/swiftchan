@@ -14,7 +14,7 @@ struct OPView: View {
 
     var body: some View {
         return NavigationLink(
-            destination: ThreadView(id: thread.number, boardName: boardName),
+            destination: ThreadView(viewModel: ThreadView.ViewModel(boardName: self.boardName, id: self.thread.number)),
             label: {
                 ZStack(alignment: .topLeading) {
                     Rectangle()

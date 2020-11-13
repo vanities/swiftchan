@@ -15,6 +15,21 @@ struct Page: Decodable {
         case number = "page"
         case threads
     }
+
+    static func example() -> Page {
+        return Page(number: 0, threads: [
+            Post.example(sticky: 1,
+                           closed: 1,
+                           subject: LoremLipsum.full,
+                           comment: LoremLipsum.full
+            ),
+            Post.example(sticky: 0,
+                           closed: 0,
+                           subject: "",
+                           comment: LoremLipsum.full
+            )
+        ])
+    }
 }
 
 struct ThreadPage: Decodable {

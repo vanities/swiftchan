@@ -9,12 +9,8 @@ import SwiftUI
 import Alamofire
 
 struct ThreadView: View {
-    let id: Int
-    let boardName: String
+    @ObservedObject var viewModel: ViewModel
 
-    @State var loaded: Bool = false
-    @State var posts: [Post] = []
-    @State var mediaUrl: [URL] = []
     @State var isPresentingGallery: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
@@ -27,9 +23,9 @@ struct ThreadView: View {
                               alignment: .center,
                               spacing: 0,
                               content: {
-                                ForEach(self.posts.indices, id: \.self) { index in
-                                    PostView(boardName: self.boardName,
-                                             post: self.posts[index],
+                                ForEach(self.viewModel.posts.indices, id: \.self) { index in
+                                    PostView(boardName: self.viewModel.boardName,
+                                             post: self.viewModel.posts[index],
                                              index: index,
                                              isPresentingGallery: self.$isPresentingGallery)
                                         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
@@ -38,31 +34,7 @@ struct ThreadView: View {
                               }
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {
-                    GalleryView(urls: self.mediaUrl)
-                }
-            }
-            .onAppear {
-                if !self.loaded {
-                    self.getThread()
-                    self.loaded
-                        .toggle()
-                }
-
-            }
-    }
-    private func getThread() {
-        let url = "https://a.4cdn.org/" + self.boardName + "/thread/" + String(self.id) + ".json"
-
-        AF.request(url)
-            .validate()
-            .responseDecodable(of: ThreadPage.self) { (response) in
-                guard let data = response.value else { return }
-                self.posts = data.posts
-
-                for post in self.posts {
-                    if let mediaUrl = post.getMediaUrl(boardId: boardName) {
-                        self.mediaUrl.append(mediaUrl)
-                    }
+                    GalleryView(urls: self.viewModel.mediaUrls)
                 }
             }
     }
@@ -70,16 +42,7 @@ struct ThreadView: View {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadView(id: 17018018,
-                   boardName: "fit",
-                   loaded: false,
-                   posts: [
-                    Post.example(sticky: 0,
-                                 closed: 0,
-                                 subject: "",
-                                 comment: LoremLipsum.full
-                    )
-                   ]
-        )
+        let viewModel = ThreadView.ViewModel(boardName: "fit", id: 5551578)
+        ThreadView(viewModel: viewModel)
     }
 }
