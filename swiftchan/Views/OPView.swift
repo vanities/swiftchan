@@ -14,7 +14,11 @@ struct OPView: View {
 
     var body: some View {
         return NavigationLink(
-            destination: ThreadView(viewModel: ThreadView.ViewModel(boardName: self.boardName, id: self.thread.number)),
+            destination:
+                ThreadView(viewModel:
+                            ThreadView.ViewModel(boardName: self.boardName,
+                                                 id: self.thread.number)
+                ),
             label: {
                 ZStack(alignment: .topLeading) {
                     Rectangle()
@@ -72,6 +76,7 @@ struct OPView: View {
                     .padding(.all, 5)
                 }
             })
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

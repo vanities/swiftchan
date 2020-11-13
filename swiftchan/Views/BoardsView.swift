@@ -38,6 +38,7 @@ struct BoardsView: View {
                             }
                         }
                     }
+                    .buttonStyle(PlainButtonStyle())
                     .navigationBarTitle("4chan")
                 }
             }

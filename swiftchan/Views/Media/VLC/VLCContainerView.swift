@@ -8,6 +8,12 @@
 import SwiftUI
 import MobileVLCKit
 
+enum MediaState {
+    case play
+    case pause
+    case seek
+}
+
 struct VLCContainerView: View {
     let url: URL
     let autoPlay: Bool
