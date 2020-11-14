@@ -12,6 +12,7 @@ enum MediaState {
     case play
     case pause
     case seek(VLCTime)
+    case restart
 }
 
 struct VLCContainerView: View {
@@ -52,6 +53,9 @@ struct VLCContainerView: View {
                     }
                 }
             }
+            .onChange(of: self.play, perform: { shouldPlay in
+                self.controlState = shouldPlay ? .play : .pause
+            })
 
             .onTapGesture {
                 withAnimation(.linear(duration: 0.2)) {

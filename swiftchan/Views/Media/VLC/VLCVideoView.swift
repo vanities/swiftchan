@@ -56,10 +56,15 @@ struct VLCVideoView: UIViewRepresentable {
             }
         case .seek(let time):
             DispatchQueue.main.async {
-                print("setting time to", Float(time.intValue))
                 context.coordinator.parent.player.time = time
             }
+        case .restart:
+        DispatchQueue.main.async {
+            context.coordinator.parent.player.time = VLCTime(int: 0)
+                context.coordinator.parent.player.play()
         }
+        }
+
     }
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
@@ -79,7 +84,7 @@ struct VLCVideoView: UIViewRepresentable {
             }
         }
         #if DEBUG
-        //self.mediaPlayer.pause()
+            self.player.audio.isMuted = true
         #endif
     }
 

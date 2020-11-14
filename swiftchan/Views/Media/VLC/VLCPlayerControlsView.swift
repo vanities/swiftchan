@@ -24,14 +24,14 @@ struct VLCPlayerControlsView: View {
         get {
             guard self.totalTime.intValue != 0 else { return .zero }
             return CGFloat(self.currentTime.intValue) / CGFloat(self.totalTime.intValue)
-            }
+        }
     }
 
     private var playbackImage: String {
         get {
             switch self.state {
             case .ended, .stopped:
-                return "gobackward"
+                return "restart"
             case .paused:
                 return "play"
             case .playing, .buffering:
@@ -74,18 +74,13 @@ struct VLCPlayerControlsView: View {
     }
 
     private func togglePlayer() {
-        print(self.state.rawValue)
-
         switch self.state {
         case .ended, .stopped:
-            self.mediaState = .play
-            break
+            self.mediaState = .restart
         case .paused:
             self.mediaState = .play
-            break
         case .playing, .buffering:
             self.mediaState = .pause
-            break
         default:
             break
         }
@@ -111,6 +106,6 @@ struct VLCPlayerControlsView_Previews: PreviewProvider {
                               currentTime: .constant(.init(int: 0)),
                               remainingTime: .constant(.init(int: 30000)),
                               totalTime: .constant(.init(int: 500000)))
-        .background(Color.black)
+            .background(Color.black)
     }
 }
