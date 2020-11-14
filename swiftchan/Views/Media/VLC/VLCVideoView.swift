@@ -10,56 +10,111 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
-    let player: VLCMediaPlayer
+    let player: VLCMediaPlayer = VLCMediaPlayer()
     let url: URL
     let autoPlay: Bool
+    let mediaState: MediaState
 
-    @Binding private(set) var preview: UIImage
     @Binding private(set) var state: VLCMediaPlayerState
-    @Binding private(set) var videoPos: VLCTime
-    @Binding private(set) var remainingTime: VLCTime
-    @Binding private(set) var seeking: Bool
+    @Binding private(set) var currentTime: VLCTime
+    @Binding var remainingTime: VLCTime
+    @Binding private(set) var totalTime: VLCTime
 
     func makeUIView(context: Context) -> UIView {
-        let vlc = VLCPlayerUIView(frame: .zero,
-                                  player: self.player,
-                                  url: self.url,
-                                  autoPlay: self.autoPlay)
-        vlc.delegate = context.coordinator
-        return vlc
+        let uiView = UIView()
+
+        #if DEBUG
+            self.setMediaPlayer(cacheUrl: url, context: context)
+        #else
+            CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
+                switch result {
+                case .success(let url):
+                    self.setMediaPlayer(cacheUrl: url, context: context)
+                    break
+                case .failure(let error):
+                    print(error, " failure in the Cache of video")
+                    break
+                }
+            }
+        #endif
+
+        self.player.drawable = uiView
+        self.player.delegate = context.coordinator
+
+        return uiView
     }
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
-        if let player = uiView as? VLCPlayerUIView {
+        switch mediaState {
+        case .play:
+            DispatchQueue.main.async {
+                context.coordinator.parent.player.play()
+            }
+        case .pause:
+            DispatchQueue.main.async {
+                context.coordinator.parent.player.pause()
+            }
+        case .seek(let time):
+            DispatchQueue.main.async {
+                print("setting time to", Float(time.intValue))
+                context.coordinator.parent.player.time = time
+            }
         }
     }
 
-    public static func dismantleUIView(_ uiView: VLCPlayerUIView, coordinator: VLCVideoView.Coordinator) {
-        uiView.pause()
+    public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
+        coordinator.parent.player.stop()
+        coordinator.parent.player.media = nil
     }
 
+    // MARK: Private
+    private func setMediaPlayer(cacheUrl: URL, context: VLCVideoView.Context) {
+        DispatchQueue.main.async {
+            let media = VLCMedia(url: cacheUrl)
+            self.player.media = media
+            self.player.media.delegate = context.coordinator
+
+            if self.autoPlay {
+                self.player.play()
+            }
+        }
+        #if DEBUG
+        //self.mediaPlayer.pause()
+        #endif
+    }
+
+    // MARK: Coordinator
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, VLCPlayerUIViewDelegate, VLCMediaPlayerDelegate {
+    class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate, VLCMediaThumbnailerDelegate {
+
         var parent: VLCVideoView
 
         init(_ parent: VLCVideoView) {
             self.parent = parent
         }
 
-        func onStateChange(state: VLCMediaPlayerState) {
-            self.parent.state = state
-        }
-
-        func onPlayerTimeChange(time: VLCTime) {
-            self.parent.videoPos = time
+        // MARK: Player Delegate
+        func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+            self.parent.currentTime = self.parent.player.time
             self.parent.remainingTime = self.parent.player.remainingTime
+            self.parent.totalTime = VLCTime(int: self.parent.player.time.intValue + abs(self.parent.player.remainingTime.intValue))
+            //print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
         }
 
-        func onSnapshot(snapshot: UIImage) {
-            self.parent.preview = snapshot
+        func mediaPlayerStateChanged(_ aNotification: Notification!) {
+            self.parent.state = self.parent.player.state
+        }
+
+        // MARK: Thumbnailer Delegate
+        func mediaThumbnailerDidTimeOut(_ mediaThumbnailer: VLCMediaThumbnailer!) {
+            return
+        }
+
+        func mediaThumbnailer(_ mediaThumbnailer: VLCMediaThumbnailer!, didFinishThumbnail thumbnail: CGImage!) {
+            return
         }
     }
 }
@@ -67,14 +122,13 @@ struct VLCVideoView: UIViewRepresentable {
 struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            VLCVideoView(player: VLCMediaPlayer(),
-                         url: URLExamples.webm,
+            VLCVideoView(url: URLExamples.webm,
                          autoPlay: true,
-                         preview: .constant(.init()),
+                         mediaState: .play,
                          state: .constant(.playing),
-                         videoPos: .constant(.init(int: 0)),
+                         currentTime: .constant(.init(int: 0)),
                          remainingTime: .constant(.init(int: 0)),
-                         seeking: .constant(false)
+                         totalTime: .constant(.init(int: 0))
             )
         }
     }

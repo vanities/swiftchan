@@ -11,7 +11,7 @@ import MobileVLCKit
 enum MediaState {
     case play
     case pause
-    case seek
+    case seek(VLCTime)
 }
 
 struct VLCContainerView: View {
@@ -20,40 +20,34 @@ struct VLCContainerView: View {
     let play: Bool
 
     @State private var showControls: Bool = true
-    @State private var player = VLCMediaPlayer()
     @State private var preview = UIImage()
-    @State private var state = VLCMediaPlayerState(rawValue: 0)!
-    @State private var videoPos: VLCTime = VLCTime.init(int: 0)
+    @State private var controlState: MediaState = .play
+    @State private var state: VLCMediaPlayerState = .stopped
+    @State private var currentTime: VLCTime = VLCTime.init(int: 0)
     @State private var remainingTime: VLCTime = VLCTime.init(int: 0)
-    @State private var seeking = false
+    @State private var totalTime: VLCTime = VLCTime.init(int: 0)
     @State private var cachedUrl: URL?
 
     var body: some View {
-        if play {
-            self.player.play()
-        } else {
-            self.player.pause()
-        }
         return
             ZStack {
                 Image(uiImage: preview)
-                VLCVideoView(player: self.player,
-                             url: url,
+                VLCVideoView(url: url,
                              autoPlay: self.autoPlay,
-                             preview: self.$preview,
+                             mediaState: self.controlState,
                              state: self.$state,
-                             videoPos: self.$videoPos,
+                             currentTime: self.$currentTime,
                              remainingTime: self.$remainingTime,
-                             seeking: self.$seeking)
+                             totalTime: self.$totalTime)
                 VStack {
                     Spacer()
                     if self.showControls {
                         VLCPlayerControlsView(
-                            player: self.$player,
+                            mediaState: self.$controlState,
                             state: self.$state,
-                            videoPos: self.$videoPos,
+                            currentTime: self.$currentTime,
                             remainingTime: self.$remainingTime,
-                            seeking: self.$seeking)
+                            totalTime: self.$totalTime)
                             .transition(.opacity)
                     }
                 }
@@ -63,9 +57,6 @@ struct VLCContainerView: View {
                 withAnimation(.linear(duration: 0.2)) {
                     self.showControls.toggle()
                 }
-            }
-            .onDisappear {
-                self.player.pause()
             }
     }
 }

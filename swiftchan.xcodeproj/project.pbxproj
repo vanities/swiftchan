@@ -41,7 +41,6 @@
 		958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D2C98254D2DF200E54C41 /* ContentView.swift */; };
 		9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA95254DF8C0002EB026 /* ThreadView.swift */; };
 		9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA9F254DFDA1002EB026 /* PostView.swift */; };
-		9599D61E255655A700BBC8B7 /* VLCPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */; };
 		9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */; };
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
@@ -106,7 +105,6 @@
 		958D2C98254D2DF200E54C41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9599CA95254DF8C0002EB026 /* ThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadView.swift; sourceTree = "<group>"; };
 		9599CA9F254DFDA1002EB026 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
-		9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerUIView.swift; sourceTree = "<group>"; };
 		9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryPreviewView.swift; sourceTree = "<group>"; };
 		9599D62D2556661600BBC8B7 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		959E6147255CCFAB0003638E /* SearchTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextView.swift; sourceTree = "<group>"; };
@@ -208,7 +206,6 @@
 			isa = PBXGroup;
 			children = (
 				9574CDEC255E2332000C99B6 /* ViewModels */,
-				9599D61C2556556E00BBC8B7 /* UIView */,
 				9580614A255263DB0003FFF3 /* Services */,
 				955814B6254D249B00A966BA /* Views */,
 				955814B1254D102800A966BA /* Models */,
@@ -304,14 +301,6 @@
 				958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */,
 			);
 			path = VLC;
-			sourceTree = "<group>";
-		};
-		9599D61C2556556E00BBC8B7 /* UIView */ = {
-			isa = PBXGroup;
-			children = (
-				9599D61D255655A700BBC8B7 /* VLCPlayerUIView.swift */,
-			);
-			path = UIView;
 			sourceTree = "<group>";
 		};
 		959E6152255CD4750003638E /* Gallery */ = {
@@ -510,7 +499,6 @@
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				95806146254FB5330003FFF3 /* CommentView.swift in Sources */,
-				9599D61E255655A700BBC8B7 /* VLCPlayerUIView.swift in Sources */,
 				9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
