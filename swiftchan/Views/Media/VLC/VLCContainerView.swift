@@ -12,7 +12,6 @@ enum MediaState {
     case play
     case pause
     case seek(VLCTime)
-    case restart
 }
 
 struct VLCContainerView: View {

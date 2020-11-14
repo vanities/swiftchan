@@ -10,7 +10,7 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
-    let player: VLCMediaPlayer = VLCMediaPlayer()
+    let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
     let url: URL
     let autoPlay: Bool
     let mediaState: MediaState
@@ -26,20 +26,12 @@ struct VLCVideoView: UIViewRepresentable {
         #if DEBUG
             self.setMediaPlayer(cacheUrl: url, context: context)
         #else
-            CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
-                switch result {
-                case .success(let url):
-                    self.setMediaPlayer(cacheUrl: url, context: context)
-                    break
-                case .failure(let error):
-                    print(error, " failure in the Cache of video")
-                    break
-                }
-            }
+            self.setCachedMediaPlayer(context: context)
         #endif
 
-        self.player.drawable = uiView
-        self.player.delegate = context.coordinator
+        self.playerList.mediaPlayer.drawable = uiView
+        self.playerList.mediaPlayer.delegate = context.coordinator
+        self.playerList.repeatMode = .repeatCurrentItem
 
         return uiView
     }
@@ -47,45 +39,60 @@ struct VLCVideoView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         switch mediaState {
         case .play:
-            DispatchQueue.main.async {
-                context.coordinator.parent.player.play()
+            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying {
+                DispatchQueue.main.async {
+                    context.coordinator.parent.playerList.play()
+                }
             }
         case .pause:
-            DispatchQueue.main.async {
-                context.coordinator.parent.player.pause()
+            if context.coordinator.parent.playerList.mediaPlayer.canPause {
+                DispatchQueue.main.async {
+                    context.coordinator.parent.playerList.pause()
+                }
             }
         case .seek(let time):
-            DispatchQueue.main.async {
-                context.coordinator.parent.player.time = time
+            if context.coordinator.parent.playerList.mediaPlayer.isSeekable {
+                DispatchQueue.main.async {
+                    context.coordinator.parent.playerList.mediaPlayer.time = time
+                }
             }
-        case .restart:
-        DispatchQueue.main.async {
-            context.coordinator.parent.player.time = VLCTime(int: 0)
-                context.coordinator.parent.player.play()
-        }
         }
 
     }
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
-        coordinator.parent.player.stop()
-        coordinator.parent.player.media = nil
+        coordinator.parent.playerList.stop()
+        coordinator.parent.playerList.mediaList = nil
     }
 
     // MARK: Private
     private func setMediaPlayer(cacheUrl: URL, context: VLCVideoView.Context) {
         DispatchQueue.main.async {
             let media = VLCMedia(url: cacheUrl)
-            self.player.media = media
-            self.player.media.delegate = context.coordinator
+            let mediaList = VLCMediaList()
+            mediaList.add(media)
+            self.playerList.mediaList = mediaList
 
             if self.autoPlay {
-                self.player.play()
+                self.playerList.play(media)
             }
         }
         #if DEBUG
-            self.player.audio.isMuted = true
+        self.playerList.mediaPlayer.audio.isMuted = true
         #endif
+    }
+
+    private func setCachedMediaPlayer(context: VLCVideoView.Context) {
+        CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
+            switch result {
+            case .success(let url):
+                self.setMediaPlayer(cacheUrl: url, context: context)
+                break
+            case .failure(let error):
+                print(error, " failure in the Cache of video")
+                break
+            }
+        }
     }
 
     // MARK: Coordinator
@@ -103,14 +110,14 @@ struct VLCVideoView: UIViewRepresentable {
 
         // MARK: Player Delegate
         func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-            self.parent.currentTime = self.parent.player.time
-            self.parent.remainingTime = self.parent.player.remainingTime
-            self.parent.totalTime = VLCTime(int: self.parent.player.time.intValue + abs(self.parent.player.remainingTime.intValue))
+            self.parent.currentTime = self.parent.playerList.mediaPlayer.time
+            self.parent.remainingTime = self.parent.playerList.mediaPlayer.remainingTime
+            self.parent.totalTime = VLCTime(int: self.parent.currentTime.intValue + abs(self.parent.remainingTime.intValue))
             //print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
         }
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
-            self.parent.state = self.parent.player.state
+            self.parent.state = self.parent.playerList.mediaPlayer.state
         }
 
         // MARK: Thumbnailer Delegate

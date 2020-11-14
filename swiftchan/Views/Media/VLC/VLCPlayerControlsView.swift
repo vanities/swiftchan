@@ -37,7 +37,7 @@ struct VLCPlayerControlsView: View {
             case .playing, .buffering:
                 return "pause"
             default:
-                return ""
+                return "pause"
             }
         }
     }
@@ -76,7 +76,7 @@ struct VLCPlayerControlsView: View {
     private func togglePlayer() {
         switch self.state {
         case .ended, .stopped:
-            self.mediaState = .restart
+            break
         case .paused:
             self.mediaState = .play
         case .playing, .buffering:
