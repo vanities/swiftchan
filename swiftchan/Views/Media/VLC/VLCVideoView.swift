@@ -17,14 +17,14 @@ struct VLCVideoView: UIViewRepresentable {
 
     @Binding private(set) var state: VLCMediaPlayerState
     @Binding private(set) var currentTime: VLCTime
-    @Binding var remainingTime: VLCTime
+    @Binding private(set) var remainingTime: VLCTime
     @Binding private(set) var totalTime: VLCTime
 
     func makeUIView(context: Context) -> UIView {
         let uiView = UIView()
 
         #if DEBUG
-            self.setMediaPlayer(cacheUrl: url, context: context)
+            self.setMediaPlayer(cacheUrl: url)
         #else
             self.setCachedMediaPlayer(context: context)
         #endif
@@ -62,17 +62,17 @@ struct VLCVideoView: UIViewRepresentable {
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()
-        coordinator.parent.playerList.mediaList = nil
+        //coordinator.parent.playerList.mediaList = nil
     }
 
     // MARK: Private
-    private func setMediaPlayer(cacheUrl: URL, context: VLCVideoView.Context) {
+    private func setMediaPlayer(cacheUrl: URL) {
         DispatchQueue.main.async {
             let media = VLCMedia(url: cacheUrl)
             let mediaList = VLCMediaList()
             mediaList.add(media)
             self.playerList.mediaList = mediaList
-
+            
             if self.autoPlay {
                 self.playerList.play(media)
             }
@@ -81,16 +81,14 @@ struct VLCVideoView: UIViewRepresentable {
         self.playerList.mediaPlayer.audio.isMuted = true
         #endif
     }
-
+    
     private func setCachedMediaPlayer(context: VLCVideoView.Context) {
         CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
             switch result {
             case .success(let url):
-                self.setMediaPlayer(cacheUrl: url, context: context)
-                break
+                self.setMediaPlayer(cacheUrl: url)
             case .failure(let error):
                 print(error, " failure in the Cache of video")
-                break
             }
         }
     }
@@ -100,8 +98,7 @@ struct VLCVideoView: UIViewRepresentable {
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate, VLCMediaThumbnailerDelegate {
-
+    class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate {
         var parent: VLCVideoView
 
         init(_ parent: VLCVideoView) {
@@ -118,15 +115,6 @@ struct VLCVideoView: UIViewRepresentable {
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
             self.parent.state = self.parent.playerList.mediaPlayer.state
-        }
-
-        // MARK: Thumbnailer Delegate
-        func mediaThumbnailerDidTimeOut(_ mediaThumbnailer: VLCMediaThumbnailer!) {
-            return
-        }
-
-        func mediaThumbnailer(_ mediaThumbnailer: VLCMediaThumbnailer!, didFinishThumbnail thumbnail: CGImage!) {
-            return
         }
     }
 }

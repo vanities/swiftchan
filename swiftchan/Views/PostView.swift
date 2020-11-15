@@ -15,6 +15,7 @@ struct PostView: View {
     let index: Int
 
     @Binding var isPresentingGallery: Bool
+    @Binding var galleryIndex: Int
 
     var body: some View {
         return
@@ -28,23 +29,14 @@ struct PostView: View {
                             Rectangle()
                                 .fill(Color.gray)
                             if let url = post.getMediaUrl(boardId: boardName) {
-                                // media
-                                if MediaDetector.detect(url: url) == .image {
-                                    URLImage(url: url) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                    }
-                                } else if MediaDetector.detect(url: url) == .gif {
-                                    GIFView(url: url, playGif: .constant(true))
-                                        .aspectRatio(contentMode: .fit)
-                                }
+                                ThumbnailMediaView(url: url, index: 0, selected: true, autoPlay: false)
                             }
                         }
                         .frame(width: 100, height: 100)
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 self.isPresentingGallery = true
+                                self.galleryIndex = index
                             }
                         }
                         // index, postnumber, date
@@ -78,7 +70,8 @@ struct PostView_Previews: PreviewProvider {
                                 comment: LoremLipsum.full
                  ),
                  index: 0,
-                 isPresentingGallery: .constant(false)
+                 isPresentingGallery: .constant(false),
+                 galleryIndex: .constant(0)
         )
     }
 }

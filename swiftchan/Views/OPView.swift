@@ -27,17 +27,8 @@ struct OPView: View {
                     VStack(alignment: .leading, spacing: 0 ) {
                         // image
                         if let url = thread.getMediaUrl(boardId: boardName) {
-                            if MediaDetector.detect(url: url) == .image {
-                                URLImage(url: url) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                }
-                            } else if MediaDetector.detect(url: url) == .gif {
-                                GIFView(url: url, playGif: .constant(true))
-                                        .frame(width: UIScreen.main.bounds.width/2 - 10, height: 250)
-                                    .aspectRatio(contentMode: .fit)
-                            }
+                            ThumbnailMediaView(url: url,
+                                               index: 0, selected: true, autoPlay: false)
                         }
                         // sticky, closed, image count, thread count
                         HStack(alignment: .center) {
@@ -71,7 +62,6 @@ struct OPView: View {
                                 .lineLimit(5)
                                 .padding(.top, 10)
                         }
-                        //
                     }
                     .padding(.all, 5)
                 }

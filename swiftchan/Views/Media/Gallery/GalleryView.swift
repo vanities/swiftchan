@@ -9,7 +9,7 @@ import SwiftUI
 import URLImage
 
 struct GalleryView: View {
-    @State var selection: Int = 0
+    @Binding var selection: Int
     var urls: [URL]
 
     var body: some View {
@@ -34,7 +34,8 @@ struct GalleryView: View {
 
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
-        GalleryView(urls: Array.init(
+        GalleryView(selection: .constant(0),
+                    urls: Array.init(
                         repeating: URLExamples.image,
                         count: 5)
         )
