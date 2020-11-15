@@ -29,9 +29,8 @@ struct ThreadView: View {
                                              index: index,
                                              isPresentingGallery: self.$isPresentingGallery,
                                              galleryIndex: self.$galleryIndex)
-                                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                                 }
-                                .frame(width: UIScreen.main.bounds.width - 20, height: UIScreen.main.bounds.height/3)
+                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height/3)
                               }
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {

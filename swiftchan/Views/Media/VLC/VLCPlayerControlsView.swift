@@ -30,7 +30,7 @@ struct VLCPlayerControlsView: View {
         get {
             switch self.state {
             case .ended, .stopped:
-                return "restart"
+                return "stop"
             case .paused:
                 return "play"
             case .playing, .buffering:

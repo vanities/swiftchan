@@ -25,11 +25,14 @@ struct MediaView: View {
             return AnyView(
                 VLCContainerView(url: self.url,
                              autoPlay: true,
-                             play: self.selected))
+                             play: self.selected)
+            )
         case .gif:
             return AnyView(
                 GIFView(url: self.url,
-                        playGif: .constant(true)))
+                        playGif: .constant(true))
+                    .aspectRatio(contentMode: .fit)
+            )
         case .none:
             return AnyView(EmptyView())
         }

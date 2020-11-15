@@ -23,14 +23,19 @@ struct ThumbnailMediaView: View {
         )
         case .webm:
             return AnyView(EmptyView())
+            /*
+         TODO: get webm thumbnails working
             return AnyView(
                 VLCContainerView(url: self.url,
                              autoPlay: true,
                              play: self.selected))
+ */
         case .gif:
             return AnyView(
                 GIFView(url: self.url,
-                        playGif: .constant(true)))
+                        playGif: .constant(true))
+                    .aspectRatio(contentMode: .fit)
+            )
         case .none:
             return AnyView(EmptyView())
         }

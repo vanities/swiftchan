@@ -22,11 +22,11 @@ struct VLCVideoView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let uiView = UIView()
 
-        #if DEBUG
-            self.setMediaPlayer(cacheUrl: url)
-        #else
+        //#if DEBUG
+        //    self.setMediaPlayer(cacheUrl: url)
+        //#else
             self.setCachedMediaPlayer(context: context)
-        #endif
+        //#endif
 
         self.playerList.mediaPlayer.drawable = uiView
         self.playerList.mediaPlayer.delegate = context.coordinator
