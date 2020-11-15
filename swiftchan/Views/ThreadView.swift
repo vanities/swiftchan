@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Alamofire
 
 struct ThreadView: View {
     @ObservedObject var viewModel: ViewModel

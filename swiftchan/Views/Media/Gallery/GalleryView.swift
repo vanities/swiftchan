@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import URLImage
 
 struct GalleryView: View {
     @Binding var selection: Int

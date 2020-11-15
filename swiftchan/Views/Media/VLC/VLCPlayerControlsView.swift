@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import MobileVLCKit
 
 struct VLCPlayerControlsView: View {

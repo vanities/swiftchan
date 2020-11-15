@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Alamofire
 
 struct CatalogView: View {
     @ObservedObject var viewModel: ViewModel

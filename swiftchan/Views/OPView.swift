@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import URLImage
 
 struct OPView: View {
     let boardName: String

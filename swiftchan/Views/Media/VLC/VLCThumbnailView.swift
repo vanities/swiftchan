@@ -5,7 +5,6 @@
 //  Created by vanities on 11/6/20.
 //
 
-import AVFoundation
 import SwiftUI
 import MobileVLCKit
 

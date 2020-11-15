@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import URLImage
-import UIKit
 
 struct PostView: View {
     let boardName: String

@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import Combine
-import Alamofire
 
 struct BoardsView: View {
     @ObservedObject var viewModel: ViewModel

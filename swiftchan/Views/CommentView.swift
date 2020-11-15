@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftSoup
 
 struct CommentView: View {
     let message: String

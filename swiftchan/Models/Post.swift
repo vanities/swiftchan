@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftSoup
 
 struct Post: Decodable {
     let number: Int
