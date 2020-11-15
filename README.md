@@ -18,7 +18,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/vanities/swiftchan">
-    <img src="icon.png" alt="Logo" width="300" height="300">
+    <img src="assets/icon.png" alt="Logo" width="300" height="300">
   </a>
 
   <h3 align="center">swiftchan</h3>
@@ -51,7 +51,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
+[![swiftchan screenshot][product-screenshot]](https://github.com/vanities/swiftchan)
 
 Why aren't there many open source apps? idk, pls help.
 
@@ -163,4 +163,4 @@ Project Link: [https://github.com/vanities/swiftchan](https://github.com/vanitie
 [issues-url]: https://github.com/vanities/swiftchan/issues
 [license-shield]: https://img.shields.io/github/license/vanities/swiftchan.svg?style=flat-square
 [license-url]: https://github.com/vanities/swiftchanblob/master/LICENSE.txt
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: assets/screenshot.png
