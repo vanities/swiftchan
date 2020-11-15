@@ -135,7 +135,7 @@ Distributed under the GPL3 License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@vanities](https://twitter.com/vanities)
+Maintainer - [@vanities](https://twitter.com/vanities)
 
 Project Link: [https://github.com/vanities/swiftchan](https://github.com/vanities/swiftchan)
 
