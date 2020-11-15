@@ -33,7 +33,7 @@ class FourchanService {
             }
     }
 
-    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL]) -> Void) {
+    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL], [Int: Int]) -> Void) {
         let url = "https://a.4cdn.org/" + boardName + "/thread/" + String(id) + ".json"
 
         AF.request(url)
@@ -43,13 +43,19 @@ class FourchanService {
                 let posts = data.posts
 
                 var mediaUrls: [URL] = []
+                var postMediaMapping: [Int: Int] = [:]
+                var postIndex = 0
+                var mediaIndex = 0
                 for post in posts {
                     if let mediaUrl = post.getMediaUrl(boardId: boardName) {
+                        postMediaMapping[postIndex] = mediaIndex
+                        mediaIndex += 1
                         mediaUrls.append(mediaUrl)
                     }
+                    postIndex += 1
                 }
 
-                complete(posts, mediaUrls)
+                complete(posts, mediaUrls, postMediaMapping)
             }
     }
 

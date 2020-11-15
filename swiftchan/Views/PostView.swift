@@ -20,13 +20,16 @@ struct PostView: View {
             Rectangle()
                 .fill(Color(.systemBackground))
                 .border(Color(.gray))
-            VStack(alignment: .leading, spacing: 0 ) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName) {
                         ZStack {
                             Rectangle()
                                 .fill(Color.gray)
-                            ThumbnailMediaView(url: url, index: 0, selected: true, autoPlay: false)
+                            ThumbnailMediaView(url: url,
+                                               index: 0,
+                                               selected: true,
+                                               autoPlay: false)
                         }
                         .aspectRatio(contentMode: .fit)
                         .frame(width: UIScreen.main.bounds.width/2)

@@ -11,6 +11,7 @@ struct ThreadView: View {
     @ObservedObject var viewModel: ViewModel
 
     @State var isPresentingGallery: Bool = false
+    @State var postIndex: Int = 0
     @State var galleryIndex: Int = 0
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
@@ -28,16 +29,24 @@ struct ThreadView: View {
                                              post: self.viewModel.posts[index],
                                              index: index,
                                              isPresentingGallery: self.$isPresentingGallery,
-                                             galleryIndex: self.$galleryIndex)
+                                             galleryIndex: self.$postIndex)
+                                        .onChange(of: self.isPresentingGallery, perform: { _ in
+                                            if self.postIndex == index {
+                                                self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+
+                                            }
+                                        })
                                 }
-                                .frame(minWidth: UIScreen.main.bounds.width, minHeight: geo.size.height/3)
+                                .frame(minWidth: UIScreen.main.bounds.width,
+                                       minHeight: geo.size.height/3)
                               }
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {
-                    GalleryView(selection: self.$galleryIndex, urls: self.viewModel.mediaUrls)
+                    GalleryView(selection: self.$galleryIndex,
+                                urls: self.viewModel.mediaUrls)
                 }
             }
-    }
+        }
     }
 }
 
