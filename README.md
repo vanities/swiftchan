@@ -51,9 +51,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="assets/screenshot.png" alt="screenshot" width="300">
-<img src="assets/board_screenshot_.png" alt="screenshot" width="300">
-<img src="assets/thread_screenshot.png" alt="screenshot" width="300">
+<img src="assets/screenshot.png" alt="screenshot" width="300"><img src="assets/board_screenshot.png" alt="screenshot" width="300"><img src="assets/thread_screenshot.png" alt="screenshot" width="300">
 
 
 Why aren't there many open source apps? idk, pls help.
