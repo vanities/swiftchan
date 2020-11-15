@@ -16,47 +16,46 @@ struct PostView: View {
     @Binding var galleryIndex: Int
 
     var body: some View {
-        return
-                ZStack(alignment: .topLeading) {
-                    Rectangle()
-                        .fill(Color(.systemBackground))
-                        .border(Color(.gray))
-                    VStack(alignment: .leading, spacing: 0 ) {
-                        HStack(alignment: .top) {
-                            if let url = post.getMediaUrl(boardId: boardName) {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Color.gray)
-                                    ThumbnailMediaView(url: url, index: 0, selected: true, autoPlay: false)
-                                }
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: UIScreen.main.bounds.width/2)
-                                .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        self.isPresentingGallery = true
-                                        self.galleryIndex = index
-                                    }
-                                }
-                            }
-                            // index, postnumber, date
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(String(self.index))
-                                    Text("•")
-                                    Text("#" + String(self.post.number))
-                                }
-                                Text(self.post.getDatePosted())
+        return ZStack(alignment: .topLeading) {
+            Rectangle()
+                .fill(Color(.systemBackground))
+                .border(Color(.gray))
+            VStack(alignment: .leading, spacing: 0 ) {
+                HStack(alignment: .top) {
+                    if let url = post.getMediaUrl(boardId: boardName) {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.gray)
+                            ThumbnailMediaView(url: url, index: 0, selected: true, autoPlay: false)
+                        }
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: UIScreen.main.bounds.width/2)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                self.isPresentingGallery = true
+                                self.galleryIndex = index
                             }
                         }
-                        // comment
-                        if let comment = self.post.comment {
-                            CommentView(message: comment)
-                                .padding(.top, 20)
-                        }
-
                     }
-                    .padding(.all, 5)
+                    // index, postnumber, date
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(String(self.index))
+                            Text("•")
+                            Text("#" + String(self.post.number))
+                        }
+                        Text(self.post.getDatePosted())
+                    }
                 }
+                // comment
+                if let comment = self.post.comment {
+                    CommentView(message: comment)
+                        .padding(.top, 20)
+                }
+
+            }
+            .padding(.all, 5)
+        }
     }
 }
 
