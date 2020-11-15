@@ -51,7 +51,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![swiftchan screenshot][product-screenshot]](https://github.com/vanities/swiftchan)
+<img src="assets/screenshot.png" alt="screenshot" width="300">
 
 Why aren't there many open source apps? idk, pls help.
 
@@ -163,4 +163,3 @@ Project Link: [https://github.com/vanities/swiftchan](https://github.com/vanitie
 [issues-url]: https://github.com/vanities/swiftchan/issues
 [license-shield]: https://img.shields.io/github/license/vanities/swiftchan.svg?style=flat-square
 [license-url]: https://github.com/vanities/swiftchanblob/master/LICENSE.txt
-[product-screenshot]: assets/screenshot.png
