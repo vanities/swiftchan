@@ -153,8 +153,7 @@ class VLCThumbnailView: VLCMediaThumbnailerDelegate {
     let url: URL
 
     let thumbnail: (UIImage) -> Void
-    
-    
+
     init(url: URL, thumbnail: @escaping (UIImage) -> Void) {
         self.url = url
         self.thumbnail = thumbnail
@@ -182,7 +181,6 @@ class VLCThumbnailView: VLCMediaThumbnailerDelegate {
             }
         }
     }
-
 
         // MARK: Thumbnailer Delegate
         func mediaThumbnailerDidTimeOut(_ mediaThumbnailer: VLCMediaThumbnailer!) {

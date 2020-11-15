@@ -71,7 +71,7 @@ struct VLCVideoView: UIViewRepresentable {
             let mediaList = VLCMediaList()
             mediaList.add(media)
             self.playerList.mediaList = mediaList
-            
+
             if self.autoPlay {
                 self.playerList.play(media)
             }
@@ -80,7 +80,7 @@ struct VLCVideoView: UIViewRepresentable {
         self.playerList.mediaPlayer.audio.isMuted = true
         #endif
     }
-    
+
     private func setCachedMediaPlayer(context: VLCVideoView.Context) {
         CacheManager.shared.getFileWith(stringUrl: self.url.absoluteString) { result in
             switch result {

@@ -16,7 +16,7 @@ struct ThreadView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
-        return
+        return GeometryReader { geo in
             ZStack {
                 ScrollView {
                     LazyVGrid(columns: self.columns,
@@ -30,13 +30,14 @@ struct ThreadView: View {
                                              isPresentingGallery: self.$isPresentingGallery,
                                              galleryIndex: self.$galleryIndex)
                                 }
-                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height/3)
+                                .frame(minWidth: UIScreen.main.bounds.width, minHeight: geo.size.height/3)
                               }
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {
                     GalleryView(selection: self.$galleryIndex, urls: self.viewModel.mediaUrls)
                 }
             }
+    }
     }
 }
 

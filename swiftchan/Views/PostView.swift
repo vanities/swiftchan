@@ -11,13 +11,12 @@ struct PostView: View {
     let boardName: String
     let post: Post
     let index: Int
-    
+
     @Binding var isPresentingGallery: Bool
     @Binding var galleryIndex: Int
-    
+
     var body: some View {
         return
-            GeometryReader { geo in
                 ZStack(alignment: .topLeading) {
                     Rectangle()
                         .fill(Color(.systemBackground))
@@ -31,7 +30,7 @@ struct PostView: View {
                                     ThumbnailMediaView(url: url, index: 0, selected: true, autoPlay: false)
                                 }
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: geo.size.width/2, height: geo.size.height)
+                                .frame(width: UIScreen.main.bounds.width/2)
                                 .onTapGesture {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         self.isPresentingGallery = true
@@ -54,11 +53,10 @@ struct PostView: View {
                             CommentView(message: comment)
                                 .padding(.top, 20)
                         }
-                        
+
                     }
                     .padding(.all, 5)
                 }
-            }
     }
 }
 
