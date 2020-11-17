@@ -36,7 +36,7 @@ struct MediaView: View {
 
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaView(url: URL(string: "")!,
+        MediaView(url: URLExamples.image,
                   index: 0,
                   selected: true,
                   autoPlay: true)

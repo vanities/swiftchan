@@ -22,11 +22,13 @@ struct PostView: View {
                 .border(Color(.gray))
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
-                    if let url = post.getMediaUrl(boardId: boardName) {
+                    if let url = post.getMediaUrl(boardId: boardName),
+                       let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                         ZStack {
                             Rectangle()
                                 .fill(Color.gray)
                             ThumbnailMediaView(url: url,
+                                               thumbnailUrl: thumbnailUrl,
                                                index: 0,
                                                selected: true,
                                                autoPlay: false)

@@ -22,7 +22,7 @@ struct CatalogView: View {
                             id: \.self.number) { page in
                         ForEach(page.threads, id: \.self.number) { thread in
                             OPView(boardName: self.viewModel.boardName,
-                                   thread: thread)
+                                   post: thread)
                         }
                     }
                 }

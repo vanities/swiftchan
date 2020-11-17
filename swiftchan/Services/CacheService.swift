@@ -16,7 +16,7 @@ class CacheManager {
         let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
     }()
-    
+
     func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
 
         guard checked.contains(stringUrl) == false else {
@@ -35,7 +35,7 @@ class CacheManager {
         }
 
         URLSession.shared.downloadTask(with: URL(string: stringUrl)!) {
-            urlOrNil, responseOrNil, errorOrNil in
+            urlOrNil, _, errorOrNil in
             guard let fileURL = urlOrNil else { return }
             do {
                 try self.fileManager.moveItem(at: fileURL, to: file)

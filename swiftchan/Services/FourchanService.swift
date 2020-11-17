@@ -16,15 +16,6 @@ class FourchanService {
     class func getBoards(complete: @escaping ([Board]) -> Void) {
         let url = "https://a.4cdn.org/boards.json"
 
-        /*
-         see json
-         AF.request(url, headers: headers)
-         .validate()
-         .responseJSON { (data) in
-         print(data)
-         }
-         */
-
         AF.request(url, headers: self.headers)
             .validate()
             .responseDecodable(of: Boards.self) { (response) in
@@ -34,7 +25,7 @@ class FourchanService {
     }
 
     class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL], [Int: Int]) -> Void) {
-        let url = "https://a.4cdn.org/" + boardName + "/thread/" + String(id) + ".json"
+        let url = "https://a.4cdn.org/\(boardName)/thread/\(String(id)).json"
 
         AF.request(url)
             .validate()
@@ -60,7 +51,7 @@ class FourchanService {
     }
 
     class func getCatalog(boardName: String, complete: @escaping ([Page]) -> Void) {
-        let url = "https://a.4cdn.org/" + boardName + "/catalog.json"
+        let url = "https://a.4cdn.org/\(boardName)/catalog.json"
 
         AF.request(url)
             .validate()

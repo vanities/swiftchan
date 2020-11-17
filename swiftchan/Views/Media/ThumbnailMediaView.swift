@@ -9,45 +9,41 @@ import SwiftUI
 
 struct ThumbnailMediaView: View {
     let url: URL
+    let thumbnailUrl: URL
     let index: Int
     let selected: Bool
     let autoPlay: Bool
 
+    @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            return AnyView(
-                ImageView(index: self.index,
+            ImageView(index: self.index,
                       url: self.url,
                       isSelected: self.selected)
-        )
         case .webm:
-            return AnyView(EmptyView())
-            /*
-         TODO: get webm thumbnails working
-            return AnyView(
-                VLCThumbnailView(url: self.url) { _ in
-                    
-                }
-                )
- */
+            ZStack {
+                ImageView(index: self.index,
+                          url: self.thumbnailUrl,
+                          isSelected: self.selected)
+                Image(systemName: "play.circle")
+            }
         case .gif:
-            return AnyView(
-                GIFView(url: self.url,
-                        playGif: .constant(true))
-                    .aspectRatio(contentMode: .fit)
-            )
+            GIFView(url: self.url,
+                    playGif: .constant(true))
+                .aspectRatio(contentMode: .fit)
         case .none:
-            return AnyView(EmptyView())
+            EmptyView()
         }
     }
 }
 
 struct ThumbnailMediaView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailMediaView(url: URL(string: "")!,
-                  index: 0,
-                  selected: true,
-                  autoPlay: true)
+        ThumbnailMediaView(url: URLExamples.image,
+                           thumbnailUrl: URLExamples.image,
+                           index: 0,
+                           selected: true,
+                           autoPlay: true)
     }
 }

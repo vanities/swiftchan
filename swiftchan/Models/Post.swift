@@ -42,10 +42,12 @@ struct Post: Decodable {
         case imageCount = "images"
     }
 
-    func getMediaUrl(boardId: String) -> URL? {
+    func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
+        let thumb = thumbnail ? "s" : ""
         if let filename = tim,
            let extens = ext {
-            return URL(string: "https://i.4cdn.org/" + boardId + "/" + String(filename) + extens)!
+            let extens = thumbnail ? ".jpg" : extens
+            return URL(string: "https://i.4cdn.org/\(boardId)/\(String(filename))\(thumb)\(extens)")!
         }
         return nil
     }
