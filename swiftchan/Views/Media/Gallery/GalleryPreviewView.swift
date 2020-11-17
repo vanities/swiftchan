@@ -8,22 +8,37 @@
 import SwiftUI
 
 struct GalleryPreviewView: View {
-    let mediaUrls: [URL] = []
+    let urls: [URL]
+
+    @Binding var selection: Int
 
     var body: some View {
-        return ScrollView(.horizontal,
-                          showsIndicators: false) {
-            VStack(alignment: .center,
-                   spacing: nil) {
-                // horizontal, scrollable, media preview with
-                // a callback to scroll tabview
+        return
+            GeometryReader { geo in
+                ScrollView(.horizontal,
+                           showsIndicators: false) {
+                    HStack(alignment: .center,
+                           spacing: nil) {
+                        ForEach(self.urls.indices, id: \.self) { index in
+                            ThumbnailMediaView(url: urls[index],
+                                               thumbnailUrl: urls[index],
+                                               selected: true)
+                                .onTapGesture {
+                                    withAnimation(.linear(duration: 0.2)) {
+                                        self.selection = index
+                                    }
+                                }
+                        }
+                    }
+                           }
+                .frame(width: geo.size.width, height: geo.size.height / 10)
             }
-        }
     }
 }
 
 struct GalleryPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        GalleryPreviewView()
+        GalleryPreviewView(urls: URLExamples.imageSet,
+                           selection: .constant(0))
     }
 }

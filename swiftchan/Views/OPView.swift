@@ -29,9 +29,7 @@ struct OPView: View {
                             let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                             ThumbnailMediaView(url: url,
                                                thumbnailUrl: thumbnailUrl,
-                                               index: 0,
-                                               selected: true,
-                                               autoPlay: false)
+                                               selected: true)
                         }
                         // sticky, closed, image count, thread count
                         HStack(alignment: .center) {

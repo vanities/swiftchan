@@ -14,6 +14,7 @@ extension ThreadView {
 
         @Published private(set) var posts = [Post]()
         @Published private(set) var mediaUrls = [URL]()
+        @Published private(set) var thumbnailMediaUrls = [URL]()
         @Published private(set) var postMediaMapping = [Int: Int]()
 
         init(boardName: String, id: Int) {
@@ -24,9 +25,10 @@ extension ThreadView {
 
         func load() {
             FourchanService.getPosts(boardName: self.boardName,
-                                     id: self.id) { [weak self] (result, mediaUrls, postMediaMapping) in
+                                     id: self.id) { [weak self] (result, mediaUrls, thumbnailMediaUrls, postMediaMapping) in
                 self?.posts = result
                 self?.mediaUrls = mediaUrls
+                self?.thumbnailMediaUrls = thumbnailMediaUrls
                 self?.postMediaMapping = postMediaMapping
 
             }

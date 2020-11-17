@@ -43,7 +43,9 @@ struct ThreadView: View {
                     )
                 }.sheet(isPresented: self.$isPresentingGallery) {
                     GalleryView(selection: self.$galleryIndex,
-                                urls: self.viewModel.mediaUrls)
+                                urls: self.viewModel.mediaUrls,
+                                thumbnailUrls: self.viewModel.thumbnailMediaUrls
+                    )
                 }
             }
         }

@@ -9,7 +9,6 @@ import SwiftUI
 import URLImage
 
 struct ImageView: View {
-    let index: Int
     let url: URL
     let isSelected: Bool
 
@@ -24,7 +23,6 @@ struct ImageView: View {
                 .aspectRatio(contentMode: .fit)
 
         }
-        .tag(self.index)
         .scaleEffect(self.scale)
         .offset(self.offset)
         .gesture(MagnificationGesture()
@@ -74,9 +72,6 @@ struct ImageView: View {
 
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageView(
-            index: 0,
-            url: URLExamples.image,
-            isSelected: true)
+        ImageView(url: URLExamples.image, isSelected: true)
     }
 }

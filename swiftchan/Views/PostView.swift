@@ -29,9 +29,8 @@ struct PostView: View {
                                 .fill(Color.gray)
                             ThumbnailMediaView(url: url,
                                                thumbnailUrl: thumbnailUrl,
-                                               index: 0,
-                                               selected: true,
-                                               autoPlay: false)
+                                               selected: true)
+
                         }
                         .aspectRatio(contentMode: .fit)
                         .frame(width: UIScreen.main.bounds.width/2)

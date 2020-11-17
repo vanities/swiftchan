@@ -61,7 +61,6 @@ struct VLCVideoView: UIViewRepresentable {
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()
-        //coordinator.parent.playerList.mediaList = nil
     }
 
     // MARK: Private

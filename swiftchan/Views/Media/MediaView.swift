@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MediaView: View {
     let url: URL
-    let index: Int
     let selected: Bool
     let autoPlay: Bool
 
@@ -17,8 +16,7 @@ struct MediaView: View {
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(index: self.index,
-                      url: self.url,
+            ImageView(url: self.url,
                       isSelected: self.selected)
         case .webm:
                 VLCContainerView(url: self.url,
@@ -37,7 +35,6 @@ struct MediaView: View {
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
         MediaView(url: URLExamples.image,
-                  index: 0,
                   selected: true,
                   autoPlay: true)
     }
