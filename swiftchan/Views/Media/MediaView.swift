@@ -10,7 +10,6 @@ import SwiftUI
 struct MediaView: View {
     let url: URL
     let selected: Bool
-    let autoPlay: Bool
 
     @ViewBuilder
     var body: some View {
@@ -19,15 +18,15 @@ struct MediaView: View {
             ImageView(url: self.url,
                       isSelected: self.selected)
         case .webm:
-                VLCContainerView(url: self.url,
+            VLCContainerView(url: self.url,
                              autoPlay: true,
                              play: self.selected)
         case .gif:
-                GIFView(url: self.url,
-                        playGif: .constant(true))
-                    .aspectRatio(contentMode: .fit)
+            GIFView(url: self.url,
+                    playGif: .constant(true))
+                .aspectRatio(contentMode: .fit)
         case .none:
-             EmptyView()
+            EmptyView()
         }
     }
 }
@@ -35,7 +34,6 @@ struct MediaView: View {
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
         MediaView(url: URLExamples.image,
-                  selected: true,
-                  autoPlay: true)
+                  selected: true)
     }
 }

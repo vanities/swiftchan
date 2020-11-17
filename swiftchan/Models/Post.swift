@@ -54,11 +54,7 @@ struct Post: Decodable {
 
     func getDatePosted() -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(self.time))
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT") //Set timezone that you want
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
-        return dateFormatter.string(from: date)
+        return DateFormatterService.shared.dateFormatter.string(from: date)
     }
 
     static func example(sticky: Int, closed: Int, subject: String, comment: String) -> Post {

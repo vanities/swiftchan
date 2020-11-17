@@ -20,9 +20,9 @@ struct GalleryPreviewView: View {
                     HStack(alignment: .center,
                            spacing: nil) {
                         ForEach(self.urls.indices, id: \.self) { index in
-                            ThumbnailMediaView(url: urls[index],
-                                               thumbnailUrl: urls[index],
-                                               selected: true)
+                            ThumbnailMediaView(
+                                url: urls[index],
+                                thumbnailUrl: urls[index])
                                 .onTapGesture {
                                     withAnimation(.linear(duration: 0.2)) {
                                         self.selection = index

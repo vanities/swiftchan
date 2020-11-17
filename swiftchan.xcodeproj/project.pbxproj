@@ -48,6 +48,7 @@
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95D06D2C2554D75200924EED /* Lipsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D06D2B2554D75200924EED /* Lipsum.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
+		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
 		95D06D2B2554D75200924EED /* Lipsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lipsum.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
+		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +294,7 @@
 				95851DD525567314002CB2A1 /* MediaDetector.swift */,
 				9587A51B255726D80028A143 /* CacheService.swift */,
 				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
+				95F7CFCC25639BD70063149B /* DateFormatterService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -522,6 +525,7 @@
 				9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */,
 				9580614C255263FA0003FFF3 /* CommentParser.swift in Sources */,
 				955814B3254D104800A966BA /* Board.swift in Sources */,
+				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

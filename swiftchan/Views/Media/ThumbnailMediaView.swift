@@ -10,18 +10,17 @@ import SwiftUI
 struct ThumbnailMediaView: View {
     let url: URL
     let thumbnailUrl: URL
-    let selected: Bool
 
     @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
             ImageView(url: self.url,
-                      isSelected: self.selected)
+                      isSelected: true)
         case .webm:
             ZStack {
                 ImageView(url: self.thumbnailUrl,
-                          isSelected: self.selected)
+                          isSelected: true)
                 Image(systemName: "play.circle")
             }
         case .gif:
@@ -37,8 +36,7 @@ struct ThumbnailMediaView: View {
 struct ThumbnailMediaView_Previews: PreviewProvider {
     static var previews: some View {
         ThumbnailMediaView(url: URLExamples.image,
-                           thumbnailUrl: URLExamples.image,
-                           selected: true)
+                           thumbnailUrl: URLExamples.image)
 
     }
 }

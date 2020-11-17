@@ -1,0 +1,19 @@
+//
+//  DateFormatterService.swift
+//  swiftchan
+//
+//  Created by vanities on 11/16/20.
+//
+
+import Foundation
+
+class DateFormatterService {
+    static let shared = DateFormatterService()
+    let dateFormatter = DateFormatter()
+    
+    init() {
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT") //Set timezone that you want
+        dateFormatter.locale = NSLocale.current
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
+    }
+}

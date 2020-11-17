@@ -19,7 +19,9 @@ struct BoardView: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text(self.name + " - " + self.title)
+                        .font(Font.system(size: 17, weight: .bold, design: .monospaced))
                     Text(self.description)
+                        .font(Font.system(size: 15, weight: .regular, design: .rounded))
                         .lineLimit(nil)
                 }
             }

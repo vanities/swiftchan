@@ -27,9 +27,9 @@ struct PostView: View {
                         ZStack {
                             Rectangle()
                                 .fill(Color.gray)
-                            ThumbnailMediaView(url: url,
-                                               thumbnailUrl: thumbnailUrl,
-                                               selected: true)
+                            ThumbnailMediaView(
+                                url: url,
+                                thumbnailUrl: thumbnailUrl)
 
                         }
                         .aspectRatio(contentMode: .fit)

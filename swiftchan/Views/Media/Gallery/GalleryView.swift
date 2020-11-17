@@ -22,8 +22,7 @@ struct GalleryView: View {
                 ForEach(self.urls.indices, id: \.self) { index in
                     let url = self.urls[index]
                     MediaView(url: url,
-                              selected: self.selection == index,
-                              autoPlay: true)
+                              selected: self.selection == index)
                         .tag(index)
                 }
             }

@@ -28,8 +28,8 @@ struct OPView: View {
                         if let url = post.getMediaUrl(boardId: boardName),
                             let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                             ThumbnailMediaView(url: url,
-                                               thumbnailUrl: thumbnailUrl,
-                                               selected: true)
+                                               thumbnailUrl: thumbnailUrl)
+                                              
                         }
                         // sticky, closed, image count, thread count
                         HStack(alignment: .center) {
@@ -45,10 +45,12 @@ struct OPView: View {
                                sticky == 1 {
                                 Image(systemName: "pin")
                                     .rotationEffect(.degrees(45))
+                                    .foregroundColor(.yellow)
                             }
                             if let closed = post.closed,
                                closed == 1 {
                                 Image(systemName: "lock")
+                                    .foregroundColor(.red)
                             }
                         }
                         // subject
