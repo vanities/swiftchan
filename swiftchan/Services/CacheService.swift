@@ -7,11 +7,6 @@
 
 import Foundation
 
-public enum Result<T> {
-    case success(T)
-    case failure(NSError)
-}
-
 class CacheManager {
 
     static let shared = CacheManager()
@@ -21,8 +16,8 @@ class CacheManager {
         let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
     }()
-
-    func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL>) -> Void ) {
+    
+    func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
 
         guard checked.contains(stringUrl) == false else {
             print("\(stringUrl) caching already" )
@@ -35,37 +30,32 @@ class CacheManager {
         //return file path if already exists in cache directory
         guard !fileManager.fileExists(atPath: file.path)  else {
             print("file exists in cache \(file.path)" )
-            completionHandler(Result.success(file))
+            completionHandler(.success(file))
             return
         }
 
-        DispatchQueue.global().async {
-
-            if let videoData = NSData(contentsOf: URL(string: stringUrl)!) {
-                print("writing file to cache \(file.path)" )
-                videoData.write(to: file, atomically: true)
-                DispatchQueue.main.async {
-                    completionHandler(Result.success(file))
-                    print("completed writing file to cache \(file.path)" )
-                }
-            } else {
-                DispatchQueue.main.async {
-                    print("failed writing file to cache \(file.path)" )
-                    let error = NSError(domain: "SomeErrorDomain", code: -2001 /* some error code */, userInfo: ["description": "Can't download video"])
-
-                    completionHandler(Result.failure(error))
-                }
+        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) {
+            urlOrNil, responseOrNil, errorOrNil in
+            guard let fileURL = urlOrNil else { return }
+            do {
+                try self.fileManager.moveItem(at: fileURL, to: file)
+                print("completed writing file to cache \(file.path)" )
+                completionHandler(.success(file))
+            } catch {
+                guard let error = errorOrNil else { return }
+                print("failed writing file to cache \(file.path)" )
+                completionHandler(.failure(error))
             }
-        }
+        }.resume()
     }
 
     private func deleteAll() {
         let enumerator = self.fileManager.enumerator(atPath: self.mainDirectoryUrl.absoluteString)
         if let enumerator = enumerator {
             for url in enumerator.allObjects {
-                print("removing \((url as! NSURL).path!) from cache")
+                print("removing \(url) from cache")
                 try! fileManager.removeItem(at: self.mainDirectoryUrl)
-                print("removed \((url as! NSURL).path!) from cache")
+                print("removed \(url) from cache")
             }
         } else {
             print("not enumerator for deleteAll cache")
@@ -73,7 +63,6 @@ class CacheManager {
     }
 
     private func directoryFor(stringUrl: String) -> URL {
-
         let fileURL = URL(string: stringUrl)!.lastPathComponent
         let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
         return file

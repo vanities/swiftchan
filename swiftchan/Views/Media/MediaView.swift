@@ -13,28 +13,23 @@ struct MediaView: View {
     let selected: Bool
     let autoPlay: Bool
 
+    @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            return AnyView(
-                ImageView(index: self.index,
+            ImageView(index: self.index,
                       url: self.url,
                       isSelected: self.selected)
-        )
         case .webm:
-            return AnyView(
                 VLCContainerView(url: self.url,
                              autoPlay: true,
                              play: self.selected)
-            )
         case .gif:
-            return AnyView(
                 GIFView(url: self.url,
                         playGif: .constant(true))
                     .aspectRatio(contentMode: .fit)
-            )
         case .none:
-            return AnyView(EmptyView())
+             EmptyView()
         }
     }
 }
