@@ -10,7 +10,7 @@ import Foundation
 class DateFormatterService {
     static let shared = DateFormatterService()
     let dateFormatter = DateFormatter()
-    
+
     init() {
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT") //Set timezone that you want
         dateFormatter.locale = NSLocale.current

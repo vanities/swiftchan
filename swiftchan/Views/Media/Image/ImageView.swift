@@ -11,12 +11,12 @@ import URLImage
 struct ImageView: View {
     let url: URL
     let isSelected: Bool
-    
+
     let imageOptions = URLImageOptions(identifier: nil,
                                        expireAfter: 24 * 60 * 60,
                                        cachePolicy: .returnCacheElseLoad(cacheDelay: nil, downloadDelay: 0.25),
                                        maxPixelSize: CGSize(width: 5120, height: 2880))
-    
+
     @State var scale: CGFloat = 1.0
     @State var offset = CGSize.zero
     @State var canDrag: Bool = false

@@ -12,6 +12,8 @@ struct GalleryView: View {
     var urls: [URL]
     var thumbnailUrls: [URL]
 
+    @State var showPreview: Bool = true
+
     var body: some View {
         return ZStack {
             // background
@@ -30,10 +32,19 @@ struct GalleryView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle())
             // preview
-            VStack {
-                Spacer()
-                GalleryPreviewView(urls: self.thumbnailUrls,
-                                   selection: self.$selection)
+            if self.showPreview {
+                VStack {
+                    Spacer()
+                    GalleryPreviewView(urls: self.thumbnailUrls,
+                                       selection: self.$selection)
+                        .padding(.bottom, 50)
+                }
+                .transition(.opacity)
+            }
+        }
+        .onTapGesture {
+            withAnimation(.linear(duration: 0.2)) {
+                self.showPreview.toggle()
             }
         }
     }
@@ -41,13 +52,19 @@ struct GalleryView: View {
 
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
-        GalleryView(selection: .constant(0),
-                    urls: Array.init(
-                        repeating: URLExamples.image,
-                        count: 1),
-                    thumbnailUrls: Array.init(
-                        repeating: URLExamples.image,
-                        count: 1)
-        )
+        Group {
+            GalleryView(selection: .constant(0),
+                        urls: URLExamples.imageSet,
+                        thumbnailUrls: URLExamples.imageSet
+            )
+            GalleryView(selection: .constant(0),
+                        urls: URLExamples.webmSet,
+                        thumbnailUrls: URLExamples.webmSet
+            )
+            GalleryView(selection: .constant(0),
+                        urls: URLExamples.gifSet,
+                        thumbnailUrls: URLExamples.gifSet
+            )
+        }
     }
 }

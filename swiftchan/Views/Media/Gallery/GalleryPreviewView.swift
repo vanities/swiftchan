@@ -14,7 +14,6 @@ struct GalleryPreviewView: View {
 
     var body: some View {
         return
-            GeometryReader { geo in
                 ScrollView(.horizontal,
                            showsIndicators: false) {
                     HStack(alignment: .center,
@@ -31,8 +30,7 @@ struct GalleryPreviewView: View {
                         }
                     }
                            }
-                .frame(width: geo.size.width, height: geo.size.height / 10)
-            }
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 10)
     }
 }
 
