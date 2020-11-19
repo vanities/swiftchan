@@ -41,6 +41,7 @@ class CommentParser {
     }
 
     private func parseComment() -> Document? {
+        print(comment)
         do {
             return try SwiftSoup.parse(comment.replacingOccurrences(of: "<br>", with: "/n"))
         } catch Exception.Error(let type, let message) {

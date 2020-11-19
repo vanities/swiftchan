@@ -76,12 +76,6 @@ struct OPView: View {
 
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
-        OPView(boardName: "fit",
-               post: Post.example(sticky: 1,
-                                    closed: 1,
-                                    subject: LoremLipsum.full,
-                                    comment: LoremLipsum.full
-               )
-        )
+        OPView(boardName: "fit", post: Post.example())
     }
 }

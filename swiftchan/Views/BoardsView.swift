@@ -29,7 +29,7 @@ struct BoardsView: View {
                                 if board.board.starts(with: self.searchText.lowercased()) {
                                     BoardView(name: board.board,
                                               title: board.title,
-                                              description: board.meta_description.clean)
+                                              description: board.meta_description)
                                         .padding(.horizontal, 5)
                                 }
                             }

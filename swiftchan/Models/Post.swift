@@ -28,7 +28,7 @@ extension Post {
         return datePosted
     }
     
-    static func example(sticky: Int, closed: Int, subject: String, comment: String) -> Post {
+    static func example() -> Post {
         let json: [String:Any] = [
             "no": 570368,
             "sticky": 1,

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct ContentView: View {
     var body: some View {

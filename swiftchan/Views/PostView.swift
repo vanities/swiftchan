@@ -67,11 +67,7 @@ struct PostView: View {
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostView(boardName: "fit",
-                 post: Post.example(sticky: 1,
-                                    closed: 1,
-                                    subject: LoremLipsum.full,
-                                    comment: LoremLipsum.full
-                 ),
+                 post: Post.example(),
                  index: 0,
                  isPresentingGallery: .constant(false),
                  galleryIndex: .constant(0)
