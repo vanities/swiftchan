@@ -12,8 +12,8 @@ class DateFormatterService {
     let dateFormatter = DateFormatter()
 
     init() {
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT") //Set timezone that you want
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm" //Specify your format that you want
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
     }
 }

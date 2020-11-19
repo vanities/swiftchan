@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct ThreadView: View {
     @ObservedObject var viewModel: ViewModel

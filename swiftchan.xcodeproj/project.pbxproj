@@ -44,7 +44,6 @@
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
-		95D06D2C2554D75200924EED /* Lipsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D06D2B2554D75200924EED /* Lipsum.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 /* End PBXBuildFile section */
@@ -108,7 +107,6 @@
 		959E6147255CCFAB0003638E /* SearchTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextView.swift; sourceTree = "<group>"; };
 		95A94EFB2554F8D1001D155E /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
-		95D06D2B2554D75200924EED /* Lipsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lipsum.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -284,7 +282,6 @@
 			isa = PBXGroup;
 			children = (
 				95105378256608E5002E4051 /* CommentParser.swift */,
-				95D06D2B2554D75200924EED /* Lipsum.swift */,
 				95851DD525567314002CB2A1 /* MediaDetector.swift */,
 				9587A51B255726D80028A143 /* CacheService.swift */,
 				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
@@ -494,7 +491,6 @@
 				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
 				958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
-				95D06D2C2554D75200924EED /* Lipsum.swift in Sources */,
 				95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
