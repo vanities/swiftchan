@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct OPView: View {
     let boardName: String
@@ -16,7 +17,7 @@ struct OPView: View {
             destination:
                 ThreadView(viewModel:
                             ThreadView.ViewModel(boardName: self.boardName,
-                                                 id: self.post.number)
+                                                 id: self.post.no)
                 ),
             label: {
                 ZStack(alignment: .topLeading) {
@@ -33,11 +34,11 @@ struct OPView: View {
                         }
                         // sticky, closed, image count, thread count
                         HStack(alignment: .center) {
-                            if let replyCount = post.replyCount {
+                            if let replyCount = post.replies {
                                 Text("R: \(replyCount)")
                                     .italic()
                             }
-                            if let imageCount = post.imageCount {
+                            if let imageCount = post.images {
                                 Text("F: \(imageCount)")
                                     .italic()
                             }
@@ -54,13 +55,13 @@ struct OPView: View {
                             }
                         }
                         // subject
-                        Text(post.subject ?? "")
+                        Text(post.sub ?? "")
                             .font(.system(size: 18))
                             .bold()
                             .lineLimit(1)
                             .padding(.bottom, 5)
                         //comment
-                        if let comment = self.post.comment {
+                        if let comment = self.post.com {
                             CommentView(message: comment)
                                 .lineLimit(5)
                                 .padding(.top, 10)

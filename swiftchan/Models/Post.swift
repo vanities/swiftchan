@@ -1,47 +1,14 @@
 //
-//  Thread.swift
+//  Post.swift
 //  swiftchan
 //
-//  Created by vanities on 10/31/20.
+//  Created by vanities on 11/18/20.
 //
 
 import Foundation
+import FourChan
 
-struct Post: Decodable {
-    let number: Int
-    let sticky: Int?
-    let closed: Int?
-    let name: String
-    let id: String?
-    let subject: String?
-    let comment: String?
-    let trip: String?
-    let capcode: String? // admin/mod status
-    let country: String? // Poster's ISO 3166-1 alpha-2 country code https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-    let time: Int // UNIX timestamp the post was created
-    let tim: Int?
-    let ext: String?
-    let replyCount: Int?
-    let imageCount: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case number = "no"
-        case sticky
-        case closed
-        case name
-        case id
-        case subject = "sub"
-        case comment = "com"
-        case trip
-        case capcode
-        case country
-        case time
-        case tim
-        case ext
-        case replyCount = "replies"
-        case imageCount = "images"
-    }
-
+extension Post {
     func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
         let thumb = thumbnail ? "s" : ""
         if let filename = tim,
@@ -51,28 +18,45 @@ struct Post: Decodable {
         }
         return nil
     }
-
+    
     func getDatePosted() -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(self.time))
-        return DateFormatterService.shared.dateFormatter.string(from: date)
+        var datePosted = ""
+        if let time = self.time {
+            let date = Date(timeIntervalSince1970: TimeInterval(time))
+            datePosted = DateFormatterService.shared.dateFormatter.string(from: date)
+        }
+        return datePosted
     }
-
+    
     static func example(sticky: Int, closed: Int, subject: String, comment: String) -> Post {
-        return self.init(number: Int.random(in: 0..<9999999),
-                       sticky: sticky,
-                       closed: closed,
-                       name: "Anonymous",
-                       id: "12345",
-                       subject: subject,
-                       comment: comment,
-                       trip: "",
-                       capcode: "",
-                       country: "",
-                       time: 1604547871,
-                       tim: 1358180697001,
-                       ext: ".jpg",
-                       replyCount: 5,
-                       imageCount: 10
-        )
+        let json: [String:Any] = [
+            "no": 570368,
+            "sticky": 1,
+            "closed": 1,
+            "now": "12/31/18(Mon)17:05:48",
+            "name": "Anonymous",
+            "sub": "Welcome to /po/!",
+            "com": "Welcome to /po/! We specialize in origami, papercraft, and everything that’s relevant to paper engineering. This board is also an great library of relevant PDF books and instructions, one of the best resource of its kind on the internet.<br><br>Questions and discussions of papercraft and origami are welcome. Threads for topics covered by paper engineering in general are also welcome, such as kirigami, bookbinding, printing technology, sticker making, gift boxes, greeting cards, and more.<br><br>Requesting is permitted, even encouraged if it’s a good request; fulfilled requests strengthens this board’s role as a repository of books and instructions. However do try to keep requests in relevant threads, if you can.<br><br>/po/ is a slow board! Do not needlessly bump threads.",
+            "filename": "yotsuba_folding",
+            "ext": ".png",
+            "w": 530,
+            "h": 449,
+            "tn_w": 250,
+            "tn_h": 211,
+            "tim": 1546293948883,
+            "time": 1546293948,
+            "md5": "uZUeZeB14FVR+Mc2ScHvVA==",
+            "fsize": 516657,
+            "resto": 0,
+            "capcode": "mod",
+            "semantic_url": "welcome-to-po",
+            "replies": 2,
+            "images": 2,
+            "unique_ips": 1
+        ]
+        
+        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        return try! JSONDecoder().decode(Post.self, from: jsonData)
     }
+    
 }

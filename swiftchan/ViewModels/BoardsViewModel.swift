@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FourChan
 
 extension BoardsView {
     final class ViewModel: ObservableObject {

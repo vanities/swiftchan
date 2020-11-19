@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct CatalogView: View {
     @ObservedObject var viewModel: ViewModel
@@ -19,8 +20,8 @@ struct CatalogView: View {
                           alignment: .center,
                           spacing: 0) {
                     ForEach(self.viewModel.pages,
-                            id: \.self.number) { page in
-                        ForEach(page.threads, id: \.self.number) { thread in
+                            id: \.self.id) { page in
+                        ForEach(page.threads, id: \.self.no) { thread in
                             OPView(boardName: self.viewModel.boardName,
                                    post: thread)
                         }

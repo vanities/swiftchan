@@ -20,7 +20,7 @@ struct CommentView: View {
 
     func setCommentViews() {
         let parser = CommentParser(comment: self.message)
-        comment = parser.getComment()
+        self.comment = parser.getComment()
     }
 
 }

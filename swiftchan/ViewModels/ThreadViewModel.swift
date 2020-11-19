@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FourChan
 
 extension ThreadView {
     final class ViewModel: ObservableObject {

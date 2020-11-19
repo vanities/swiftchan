@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct PostView: View {
     let boardName: String
@@ -46,13 +47,13 @@ struct PostView: View {
                         HStack {
                             Text(String(self.index))
                             Text("•")
-                            Text("#" + String(self.post.number))
+                            Text("#" + String(self.post.no))
                         }
                         Text(self.post.getDatePosted())
                     }
                 }
                 // comment
-                if let comment = self.post.comment {
+                if let comment = self.post.com {
                     CommentView(message: comment)
                         .padding(.top, 20)
                 }

@@ -2,38 +2,67 @@
 //  Board.swift
 //  swiftchan
 //
-//  Created by vanities on 10/30/20.
+//  Created by vanities on 11/18/20.
 //
 
 import Foundation
-
-struct Board: Decodable {
-    let name: String
-    let title: String
-    let description: String
-
-    enum CodingKeys: String, CodingKey {
-        case name = "board"
-        case title
-        case description = "meta_description"
-    }
-
-    static func examples() -> [Board] {
-        let boards = [
-            Board(name: "3", title: "3DCG", description: "/3/ - 3DCG is 4chan's board for 3D modeling and imagery."),
-            Board(name: "a", title: "Anime & Manga", description: "/a/ - Anime  Manga is 4chan's imageboard dedicated to the discussion of Japanese animation and manga.")
-        ]
-        return boards
-    }
-}
+import FourChan
 
 extension Board {
-  var descriptionText: String {
-    return description
-        .replacingOccurrences(of: "&amp;", with: "")
-        .replacingOccurrences(of: "&quot;", with: "")
-  }
-}
-
-extension Board: Hashable {
+    static func examples() -> [Board] {
+        let json: [String:Any] = [
+            "boards": [
+                [
+                    "board": "3",
+                    "title": "3DCG",
+                    "ws_board": 1,
+                    "per_page": 15,
+                    "pages": 10,
+                    "max_filesize": 4194304,
+                    "max_webm_filesize": 3145728,
+                    "max_comment_chars": 2000,
+                    "max_webm_duration": 120,
+                    "bump_limit": 310,
+                    "image_limit": 150,
+                    "cooldowns": [
+                        "threads": 600,
+                        "replies": 60,
+                        "images": 60
+                    ],
+                    "meta_description": "&quot;/3/ - 3DCG&quot; is 4chan's board for 3D modeling and imagery.",
+                    "is_archived": 1
+                ],
+                [
+                    "board": "a",
+                    "title": "Anime & Manga",
+                    "ws_board": 1,
+                    "per_page": 15,
+                    "pages": 10,
+                    "max_filesize": 4194304,
+                    "max_webm_filesize": 3145728,
+                    "max_comment_chars": 2000,
+                    "max_webm_duration": 120,
+                    "bump_limit": 500,
+                    "image_limit": 300,
+                    "cooldowns": [
+                        "threads": 600,
+                        "replies": 60,
+                        "images": 60
+                    ],
+                    "meta_description": "&quot;/a/ - Anime &amp; Manga&quot; is 4chan's imageboard dedicated to the discussion of Japanese animation and manga.",
+                    "spoilers": 1,
+                    "custom_spoilers": 1,
+                    "is_archived": 1
+                ],
+            ]
+        ]
+        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        return try! JSONDecoder().decode(Boards.self, from: jsonData).boards
+    }
+    
+    var descriptionText: String {
+        return self.meta_description
+            .replacingOccurrences(of: "&amp;", with: "")
+            .replacingOccurrences(of: "&quot;", with: "")
+    }
 }

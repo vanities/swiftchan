@@ -23,14 +23,13 @@ struct BoardsView: View {
                     LazyVGrid(columns: columns,
                               alignment: .leading,
                               spacing: 2) {
-                        ForEach(self.viewModel.boards, id: \.self.name) { board in
+                        ForEach(self.viewModel.boards, id: \.self.id) { board in
                             NavigationLink(
-                                destination: CatalogView(viewModel: CatalogView.ViewModel(boardName: board.name))
-                            ) {
-                                if board.name.starts(with: self.searchText.lowercased()) {
-                                    BoardView(name: board.name,
+                                destination: CatalogView(viewModel: CatalogView.ViewModel(boardName: board.board))) {
+                                if board.board.starts(with: self.searchText.lowercased()) {
+                                    BoardView(name: board.board,
                                               title: board.title,
-                                              description: board.descriptionText)
+                                              description: board.meta_description.clean)
                                         .padding(.horizontal, 5)
                                 }
                             }

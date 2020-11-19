@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FourChan
 
 extension CatalogView {
     final class ViewModel: ObservableObject {

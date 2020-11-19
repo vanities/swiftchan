@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "Alamofire",
-        "repositoryURL": "https://github.com/Alamofire/Alamofire",
+        "package": "FourChan",
+        "repositoryURL": "https://github.com/jackpal/FourChanAPI",
         "state": {
           "branch": null,
-          "revision": "9e0328127dfb801cefe8ac53a13c0c90a7770448",
-          "version": "5.4.0"
+          "revision": "5effc804c3d06bfb3344645f39e1fc4466d81706",
+          "version": "1.1.24"
         }
       },
       {

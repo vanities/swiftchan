@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FourChan
 
 struct BoardView: View {
     let name: String
@@ -43,10 +44,10 @@ struct BoardView: View {
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
         return VStack(alignment: .leading) {
-            ForEach(Board.examples(), id: \.self) { board in
-                BoardView(name: board.name,
+            ForEach(Board.examples(), id: \.self.id) { board in
+                BoardView(name: board.board,
                           title: board.title,
-                          description: board.description)
+                          description: board.descriptionText)
             }
         }
     }
