@@ -9,9 +9,9 @@ import SwiftUI
 
 struct GalleryPreviewView: View {
     let urls: [URL]
-    
+
     @Binding var selection: Int
-    
+
     var body: some View {
         return
             ScrollView(.horizontal,
@@ -29,7 +29,7 @@ struct GalleryPreviewView: View {
                                     }
                                 }
                                 .id(index)
-                                .border(self.selection == index ? Color.green : Color.clear, width: 3)
+                                .border(self.selection == index ? Color.green : Color.clear, width: 2)
                         }
                     }
                     .onChange(of: self.selection, perform: { i in

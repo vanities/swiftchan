@@ -8,12 +8,20 @@
 import SwiftUI
 import FourChan
 
+enum PresentingSheet {
+   case gallery, replies
+}
+
 struct ThreadView: View {
     @ObservedObject var viewModel: ViewModel
 
-    @State var isPresentingGallery: Bool = false
-    @State var postIndex: Int = 0
+    @State private var isPresenting = false
+    @State private var presentingSheet: PresentingSheet = .gallery
+
     @State var galleryIndex: Int = 0
+    @State var commentRepliesIndex: Int = 0
+
+    @State var postIndex: Int = 0
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -29,25 +37,42 @@ struct ThreadView: View {
                                     PostView(boardName: self.viewModel.boardName,
                                              post: self.viewModel.posts[index],
                                              index: index,
-                                             isPresentingGallery: self.$isPresentingGallery,
-                                             galleryIndex: self.$postIndex)
-                                        .onChange(of: self.isPresentingGallery, perform: { _ in
-                                            if self.postIndex == index {
-                                                self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                                             comment: self.viewModel.comments[index],
+                                             replies: self.viewModel.replies[index] ?? nil,
+                                             isPresenting: self.$isPresenting,
+                                             presentingSheet: self.$presentingSheet,
+                                             galleryIndex: self.$postIndex,
+                                             commentRepliesIndex: self.$commentRepliesIndex
+                                    )
+                                    .onChange(of: self.isPresenting, perform: { _ in
+                                        if self.postIndex == index && self.presentingSheet == .gallery {
+                                            self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
 
-                                            }
-                                        })
+                                        }
+                                    })
                                 }
                                 .frame(minWidth: UIScreen.main.bounds.width,
                                        minHeight: geo.size.height/3)
                               }
                     )
-                }.sheet(isPresented: self.$isPresentingGallery) {
-                    GalleryView(selection: self.$galleryIndex,
-                                urls: self.viewModel.mediaUrls,
-                                thumbnailUrls: self.viewModel.thumbnailMediaUrls
-                    )
                 }
+            }
+        }
+        .fullScreenCover(isPresented: self.$isPresenting) {
+            ZStack {
+            switch self.presentingSheet {
+            case .gallery:
+                GalleryView(selection: self.$galleryIndex,
+                            urls: self.viewModel.mediaUrls,
+                            thumbnailUrls: self.viewModel.thumbnailMediaUrls
+                )
+            case .replies:
+                if let replies = self.viewModel.replies[self.commentRepliesIndex] {
+                    RepliesView(replies: replies,
+                                viewModel: self.viewModel,
+                                commentRepliesIndex: self.commentRepliesIndex)
+                }
+            }
             }
         }
     }

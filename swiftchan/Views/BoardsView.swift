@@ -11,11 +11,11 @@ import Introspect
 struct BoardsView: View {
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
-    
+
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
-    
+
     var body: some View {
-        
+
         return NavigationView {
             VStack(spacing: 0) {
                 SearchTextView(textPlaceholder: "Search Boards",

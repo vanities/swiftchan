@@ -18,7 +18,7 @@ extension Post {
         }
         return nil
     }
-    
+
     func getDatePosted() -> String {
         var datePosted = ""
         if let time = self.time {
@@ -27,9 +27,9 @@ extension Post {
         }
         return datePosted
     }
-    
+
     static func example() -> Post {
-        let json: [String:Any] = [
+        let json: [String: Any] = [
             "no": 570368,
             "sticky": 1,
             "closed": 1,
@@ -54,9 +54,9 @@ extension Post {
             "images": 2,
             "unique_ips": 1
         ]
-        
+
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         return try! JSONDecoder().decode(Post.self, from: jsonData)
     }
-    
+
 }

@@ -19,6 +19,7 @@ extension ThreadView {
         @Published private(set) var thumbnailMediaUrls = [URL]()
         @Published private(set) var postMediaMapping = [Int: Int]()
         @Published private(set) var comments = [Text]()
+        @Published private(set) var replies = [Int: [Int]]()
 
         init(boardName: String, id: Int) {
             self.boardName = boardName
@@ -32,13 +33,14 @@ extension ThreadView {
                                                                  mediaUrls,
                                                                  thumbnailMediaUrls,
                                                                  postMediaMapping,
-                                                                 comments) in
+                                                                 comments,
+                                                                 replies) in
                 self?.posts = result
                 self?.mediaUrls = mediaUrls
                 self?.thumbnailMediaUrls = thumbnailMediaUrls
                 self?.postMediaMapping = postMediaMapping
                 self?.comments = comments
-
+                self?.replies = replies
             }
         }
     }

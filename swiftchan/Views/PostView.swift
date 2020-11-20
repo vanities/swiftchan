@@ -12,9 +12,14 @@ struct PostView: View {
     let boardName: String
     let post: Post
     let index: Int
+    let comment: Text
+    let replies: [Int]?
 
-    @Binding var isPresentingGallery: Bool
+    @Binding var isPresenting: Bool
+    @Binding var presentingSheet: PresentingSheet
+
     @Binding var galleryIndex: Int
+    @Binding var commentRepliesIndex: Int
 
     var body: some View {
         return ZStack(alignment: .topLeading) {
@@ -37,7 +42,8 @@ struct PostView: View {
                         .frame(width: UIScreen.main.bounds.width/2)
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                self.isPresentingGallery = true
+                                self.presentingSheet = .gallery
+                                self.isPresenting.toggle()
                                 self.galleryIndex = index
                             }
                         }
@@ -53,11 +59,20 @@ struct PostView: View {
                     }
                 }
                 // comment
-                if let comment = self.post.com {
-                    CommentView(message: comment)
-                        .padding(.top, 20)
-                }
+                comment
+                    .padding(.top, 20)
 
+                // replies
+                if let replies = self.replies {
+                    Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
+                        .bold()
+                        .onTapGesture {
+                            self.commentRepliesIndex = index
+                            self.presentingSheet = .replies
+                            self.isPresenting.toggle()
+                        }
+                        .padding(.top, 5)
+                }
             }
             .padding(.all, 5)
         }
@@ -69,8 +84,12 @@ struct PostView_Previews: PreviewProvider {
         PostView(boardName: "fit",
                  post: Post.example(),
                  index: 0,
-                 isPresentingGallery: .constant(false),
-                 galleryIndex: .constant(0)
+                 comment: Text("comment!"),
+                 replies: [0, 1],
+                 isPresenting: .constant(false),
+                 presentingSheet: .constant(.gallery),
+                 galleryIndex: .constant(0),
+                 commentRepliesIndex: .constant(0)
         )
     }
 }

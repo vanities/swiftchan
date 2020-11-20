@@ -45,6 +45,7 @@
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95D804BB2566448C005A3128 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95D804BA2566448C005A3128 /* Introspect */; };
+		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 /* End PBXBuildFile section */
@@ -108,6 +109,7 @@
 		959E6147255CCFAB0003638E /* SearchTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextView.swift; sourceTree = "<group>"; };
 		95A94EFB2554F8D1001D155E /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
+		95D804CD25677FF4005A3128 /* RepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesView.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -266,6 +268,7 @@
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
 				95806145254FB5330003FFF3 /* CommentView.swift */,
+				95D804CD25677FF4005A3128 /* RepliesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -507,6 +510,7 @@
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
+				95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */,
 				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
 				95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */,

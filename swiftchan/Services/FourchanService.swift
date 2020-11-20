@@ -21,13 +21,19 @@ class FourchanService {
         }
     }
 
-    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL], [URL], [Int: Int], [Text]) -> Void) {
+    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post],
+                                                                         [URL],
+                                                                         [URL],
+                                                                         [Int: Int],
+                                                                         [Text],
+                                                                         [Int: [Int]]
+    ) -> Void) {
         var mediaUrls: [URL] = []
         var thumbnailMediaUrls: [URL] = []
         var postMediaMapping: [Int: Int] = [:]
         var comments: [Text] = []
         var postReplies: [Int: [String]] = [:]
-        
+
         FourChanAPIService.shared.GET(endpoint: .thread(board: boardName, no: id)) { (result: Result<ChanThread, FourChanAPIService.APIError>) in
             switch result {
             case .success(let thread):
@@ -40,17 +46,18 @@ class FourchanService {
                         mediaIndex += 1
                         mediaUrls.append(mediaUrl)
                         thumbnailMediaUrls.append(thumbnailMediaUrl)
-                        
-                        if let comment = post.com {
-                            let parser = CommentParser(comment: comment)
-                            comments.append(parser.getComment())
-                            postReplies[postIndex] = parser.replies
-                        }
+
+                    }
+                    if let comment = post.com {
+                        let parser = CommentParser(comment: comment)
+                        comments.append(parser.getComment())
+                        postReplies[postIndex] = parser.replies
                     }
                     postIndex += 1
                 }
+                let replies = self.getReplies(postReplies: postReplies, posts: thread.posts)
 
-                complete(thread.posts, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments)
+                complete(thread.posts, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies)
             case .failure(let error):
                 print(error)
             }
@@ -75,6 +82,28 @@ class FourchanService {
                 print(error)
             }
         }
+    }
+
+    static func getReplies(postReplies: [Int: [String]], posts: [Post]) -> [Int: [Int]] {
+        var replies: [Int: [Int]] = [:]
+        var postIndex = 0
+
+        for (i, r) in postReplies {
+            for reply in r {
+                postIndex = 0
+                for post in posts {
+                    if Int(reply) == post.id {
+                        if replies[postIndex] == nil {
+                            replies[postIndex] = [i]
+                        } else {
+                            replies[postIndex]?.append(i)
+                        }
+                    }
+                    postIndex += 1
+                }
+            }
+        }
+        return replies
     }
 
 }

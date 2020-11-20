@@ -10,7 +10,7 @@ import FourChan
 
 extension Board {
     static func examples() -> [Board] {
-        let json: [String:Any] = [
+        let json: [String: Any] = [
             "boards": [
                 [
                     "board": "3",
@@ -53,13 +53,13 @@ extension Board {
                     "spoilers": 1,
                     "custom_spoilers": 1,
                     "is_archived": 1
-                ],
+                ]
             ]
         ]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         return try! JSONDecoder().decode(Boards.self, from: jsonData).boards
     }
-    
+
     var descriptionText: String {
         return self.meta_description
             .replacingOccurrences(of: "&amp;", with: "")
