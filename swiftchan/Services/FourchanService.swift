@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import FourChan
 
 class FourchanService {
@@ -20,12 +21,12 @@ class FourchanService {
         }
     }
 
-    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL], [URL], [Int: Int]) -> Void) {
+    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post], [URL], [URL], [Int: Int], [Text]) -> Void) {
         var mediaUrls: [URL] = []
         var thumbnailMediaUrls: [URL] = []
         var postMediaMapping: [Int: Int] = [:]
-        var comments: [String] = []
-        var postReplies: [Int: String] = [:]
+        var comments: [Text] = []
+        var postReplies: [Int: [String]] = [:]
         
         FourChanAPIService.shared.GET(endpoint: .thread(board: boardName, no: id)) { (result: Result<ChanThread, FourChanAPIService.APIError>) in
             switch result {
@@ -39,22 +40,37 @@ class FourchanService {
                         mediaIndex += 1
                         mediaUrls.append(mediaUrl)
                         thumbnailMediaUrls.append(thumbnailMediaUrl)
+                        
+                        if let comment = post.com {
+                            let parser = CommentParser(comment: comment)
+                            comments.append(parser.getComment())
+                            postReplies[postIndex] = parser.replies
+                        }
                     }
                     postIndex += 1
                 }
 
-                complete(thread.posts, mediaUrls, thumbnailMediaUrls, postMediaMapping)
+                complete(thread.posts, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments)
             case .failure(let error):
                 print(error)
             }
         }
     }
 
-    class func getCatalog(boardName: String, complete: @escaping ([Page]) -> Void) {
+    class func getCatalog(boardName: String, complete: @escaping ([Page], [Text]) -> Void) {
         FourChanAPIService.shared.GET(endpoint: .catalog(board: boardName)) { (result: Result<Catalog, FourChanAPIService.APIError>) in
             switch result {
-            case .success(let catalog):
-                complete(catalog)
+            case .success(let pages):
+                var comments: [Text] = []
+                for page in pages {
+                    for thread in page.threads {
+                        if let comment = thread.com {
+                            let parser = CommentParser(comment: comment)
+                            comments.append(parser.getComment())
+                        }
+                    }
+                }
+                complete(pages, comments)
             case .failure(let error):
                 print(error)
             }

@@ -11,6 +11,7 @@ import FourChan
 struct OPView: View {
     let boardName: String
     let post: Post
+    let comment: Text
 
     var body: some View {
         return NavigationLink(
@@ -61,11 +62,7 @@ struct OPView: View {
                             .lineLimit(1)
                             .padding(.bottom, 5)
                         //comment
-                        if let comment = self.post.com {
-                            CommentView(message: comment)
-                                .lineLimit(5)
-                                .padding(.top, 10)
-                        }
+                        comment
                     }
                     .padding(.all, 5)
                 }
@@ -76,6 +73,6 @@ struct OPView: View {
 
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
-        OPView(boardName: "fit", post: Post.example())
+        OPView(boardName: "fit", post: Post.example(), comment: Text(""))
     }
 }

@@ -44,6 +44,7 @@
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
+		95D804BB2566448C005A3128 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95D804BA2566448C005A3128 /* Introspect */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 /* End PBXBuildFile section */
@@ -117,6 +118,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9510535D2564DD2C002E4051 /* FourChan in Frameworks */,
+				95D804BB2566448C005A3128 /* Introspect in Frameworks */,
 				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
 				9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */,
 				52C3815F565F4FAD63E3BE20 /* libPods-swiftchan.a in Frameworks */,
@@ -257,9 +259,9 @@
 			children = (
 				950E3933255CD9BB00A00A74 /* Media */,
 				95181792254CFB600032616E /* BoardsView.swift */,
+				955814B7254D24B900A966BA /* BoardView.swift */,
 				959E6147255CCFAB0003638E /* SearchTextView.swift */,
 				958D0997254D346A00AD4849 /* CatalogView.swift */,
-				955814B7254D24B900A966BA /* BoardView.swift */,
 				958D099F254D444F00AD4849 /* OPView.swift */,
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
@@ -340,6 +342,7 @@
 				9580613D254F884B0003FFF3 /* SwiftSoup */,
 				95851DD0255670D2002CB2A1 /* SwiftyGif */,
 				9510535C2564DD2C002E4051 /* FourChan */,
+				95D804BA2566448C005A3128 /* Introspect */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -417,6 +420,7 @@
 				9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				95851DCF255670D2002CB2A1 /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
+				95D804B92566448C005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -870,6 +874,14 @@
 				minimumVersion = 5.3.0;
 			};
 		};
+		95D804B92566448C005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -892,6 +904,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 95851DCF255670D2002CB2A1 /* XCRemoteSwiftPackageReference "SwiftyGif" */;
 			productName = SwiftyGif;
+		};
+		95D804BA2566448C005A3128 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95D804B92566448C005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

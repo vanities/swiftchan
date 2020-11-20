@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 import FourChan
 
 extension CatalogView {
     final class ViewModel: ObservableObject {
         let boardName: String
         @Published private(set) var pages = [Page]()
+        @Published private(set) var comments = [Text]()
 
         init(boardName: String) {
             self.boardName = boardName
@@ -19,9 +21,9 @@ extension CatalogView {
         }
 
         func load() {
-            FourchanService.getCatalog(boardName: self.boardName) { [weak self] result in
-                self?.pages = result
-
+            FourchanService.getCatalog(boardName: self.boardName) { [weak self] (pages, comments) in
+                self?.pages = pages
+                self?.comments = comments
             }
         }
     }

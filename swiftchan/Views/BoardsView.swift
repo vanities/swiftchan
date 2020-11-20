@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct BoardsView: View {
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
-
+    
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
-
+    
     var body: some View {
-
+        
         return NavigationView {
             VStack(spacing: 0) {
                 SearchTextView(textPlaceholder: "Search Boards",
@@ -29,7 +30,7 @@ struct BoardsView: View {
                                 if board.board.starts(with: self.searchText.lowercased()) {
                                     BoardView(name: board.board,
                                               title: board.title,
-                                              description: board.meta_description)
+                                              description: board.meta_description.clean)
                                         .padding(.horizontal, 5)
                                 }
                             }
@@ -40,12 +41,5 @@ struct BoardsView: View {
                 }
             }
         }
-    }
-}
-
-struct BoardsView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewModel = BoardsView.ViewModel()
-        BoardsView(viewModel: viewModel)
     }
 }

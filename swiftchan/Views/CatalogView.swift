@@ -21,9 +21,10 @@ struct CatalogView: View {
                           spacing: 0) {
                     ForEach(self.viewModel.pages,
                             id: \.self.id) { page in
-                        ForEach(page.threads, id: \.self.no) { thread in
+                        ForEach(page.threads.indices, id: \.self) { index in
                             OPView(boardName: self.viewModel.boardName,
-                                   post: thread)
+                                   post: page.threads[index],
+                                   comment: self.viewModel.comments[index])
                         }
                     }
                 }
