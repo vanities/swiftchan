@@ -21,11 +21,11 @@
       },
       {
         "package": "Introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "repositoryURL": "https://github.com/vanities/SwiftUI-Introspect",
         "state": {
           "branch": null,
           "revision": "f1ec9da347a7fbe53c520d35434f6c2295650bd5",
-          "version": "0.1.1"
+          "version": "0.1.2"
         }
       },
       {

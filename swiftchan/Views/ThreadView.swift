@@ -59,21 +59,10 @@ struct ThreadView: View {
             }
         }
         .fullScreenCover(isPresented: self.$isPresenting) {
-            ZStack {
-            switch self.presentingSheet {
-            case .gallery:
-                GalleryView(selection: self.$galleryIndex,
-                            urls: self.viewModel.mediaUrls,
-                            thumbnailUrls: self.viewModel.thumbnailMediaUrls
-                )
-            case .replies:
-                if let replies = self.viewModel.replies[self.commentRepliesIndex] {
-                    RepliesView(replies: replies,
-                                viewModel: self.viewModel,
-                                commentRepliesIndex: self.commentRepliesIndex)
-                }
-            }
-            }
+            PresentedPost(presentingSheet: self.presentingSheet,
+                          viewModel: self.viewModel,
+                          commentRepliesIndex: self.commentRepliesIndex,
+                          galleryIndex: self.galleryIndex)
         }
     }
 }

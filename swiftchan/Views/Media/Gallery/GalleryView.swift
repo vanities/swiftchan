@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct GalleryView: View {
     @Binding var selection: Int
@@ -31,6 +32,10 @@ struct GalleryView: View {
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle())
+            .introspectTabBarScrollView { v in
+                v.isScrollEnabled = false
+            }
+
             // preview
             if self.showPreview {
                 VStack {
@@ -48,6 +53,7 @@ struct GalleryView: View {
             }
         }
     }
+    
 }
 
 struct GalleryView_Previews: PreviewProvider {

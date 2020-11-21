@@ -32,10 +32,9 @@ struct RepliesView: View {
     }
 }
 
-/*
 struct RepliesView_Previews: PreviewProvider {
     static var previews: some View {
-        //RepliesView()
+        let viewModel = ThreadView.ViewModel(boardName: "fit", id: 5551578)
+        RepliesView(replies: [0], viewModel: viewModel)
     }
 }
- */
