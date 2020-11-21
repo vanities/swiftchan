@@ -54,7 +54,7 @@
 <img src="assets/screenshot.png" alt="screenshot" width="300"> <img src="assets/board_screenshot.png" alt="screenshot" width="300"> <img src="assets/thread_screenshot.png" alt="screenshot" width="300">
 
 
-Why aren't there many open source apps? idk, pls help.
+Why aren't there many open source apps? idk. Heavily inspired by TheChan. Plays webms and gifs natively in app.
 
 Here's why:
 * ios is ok, why did you switch from android?
