@@ -63,6 +63,7 @@ struct OPView: View {
                             .padding(.bottom, 5)
                         //comment
                         comment
+                            .lineLimit(20)
                     }
                     .padding(.all, 5)
                 }

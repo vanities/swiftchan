@@ -11,22 +11,22 @@ struct PresentedPost: View {
     let presentingSheet: PresentingSheet
     let viewModel: ThreadView.ViewModel
     let commentRepliesIndex: Int
-    
+
+    @State var canDrag: Bool = true
     @State var galleryIndex: Int
     @Environment(\.presentationMode) var presentationMode
     @GestureState var dragAmount = CGSize.zero
     @State private var offset = CGSize.zero
 
-    
     var body: some View {
-        let dragGesture = DragGesture(minimumDistance: 10)
+        let dragGesture = DragGesture(minimumDistance: 5)
             .onChanged { gesture in
                 withAnimation(.linear(duration: 0.01)) {
                     self.offset = gesture.translation
                 }
             }
-            .onEnded { value in
-                if self.offset.height > UIScreen.main.bounds.height/3 {
+            .onEnded { _ in
+                if self.offset.height > UIScreen.main.bounds.height/4 {
                     self.presentationMode.wrappedValue.dismiss()
                 }
                 withAnimation(.spring()) {
@@ -40,6 +40,17 @@ struct PresentedPost: View {
                             urls: self.viewModel.mediaUrls,
                             thumbnailUrls: self.viewModel.thumbnailMediaUrls
                 )
+                .onMediaChanged { (changed) in
+                    self.canDrag = !changed
+                }
+
+                Button(action: {self.presentationMode.wrappedValue.dismiss()}) {
+                    Image(systemName: "xmark")
+                        .frame(width: 50, height: 50)
+                        .contentShape(Rectangle())
+                        .foregroundColor(.white)
+                }
+                .position(x: 20, y: 10)
             case .replies:
                 if let replies = self.viewModel.replies[self.commentRepliesIndex] {
                     RepliesView(replies: replies,
@@ -49,7 +60,7 @@ struct PresentedPost: View {
             }
         }
         .offset(y: self.offset.height)
-        .highPriorityGesture(dragGesture)
+        .gesture(self.canDrag ? dragGesture : nil)
     }
 }
 

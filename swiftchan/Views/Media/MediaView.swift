@@ -7,16 +7,25 @@
 
 import SwiftUI
 
-struct MediaView: View {
+struct MediaView: View, Buildable {
     let url: URL
     let selected: Bool
+
+    func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onMediaChanged, value: callback)
+    }
+    var onMediaChanged: ((Bool) -> Void)?
 
     @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
             ImageView(url: self.url,
-                      isSelected: self.selected)
+                      isSelected: self.selected,
+                      canResize: true)
+                .onZoomChanged { zoomed in
+                    self.onMediaChanged?(zoomed)
+                }
         case .webm:
             VLCContainerView(url: self.url,
                              autoPlay: true,

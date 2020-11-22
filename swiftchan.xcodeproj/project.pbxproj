@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		52C3815F565F4FAD63E3BE20 /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */; };
+		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
 		9510535D2564DD2C002E4051 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 9510535C2564DD2C002E4051 /* FourChan */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
@@ -21,6 +21,7 @@
 		951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817AD254CFB620032616E /* swiftchanUITests.swift */; };
 		955814A6254CFFC200A966BA /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 955814A5254CFFC200A966BA /* URLImage */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
+		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
 		9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */; };
@@ -70,9 +71,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
-		584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
+		5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
 		950E393F255CDA3B00A00A74 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
 		95105368256600C9002E4051 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		951053702566018D002E4051 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
@@ -90,6 +90,7 @@
 		951817AD254CFB620032616E /* swiftchanUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanUITests.swift; sourceTree = "<group>"; };
 		951817AF254CFB620032616E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		955814B7254D24B900A966BA /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
 		9574CDF5255E254F000C99B6 /* FourchanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourchanService.swift; sourceTree = "<group>"; };
 		9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadViewModel.swift; sourceTree = "<group>"; };
@@ -116,6 +117,7 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
+		B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,8 +129,8 @@
 				95D804DC2568E42A005A3128 /* Introspect in Frameworks */,
 				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
 				9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */,
-				52C3815F565F4FAD63E3BE20 /* libPods-swiftchan.a in Frameworks */,
 				95851DD1255670D2002CB2A1 /* SwiftyGif in Frameworks */,
+				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,10 +151,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		8F247CFCC7FD961876E62B1C /* Frameworks */ = {
+		89C8B29EB296DC535D464904 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3B3529B43B7EA571F1CE5FC7 /* libPods-swiftchan.a */,
+				5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -204,7 +206,7 @@
 				951817AC254CFB620032616E /* swiftchanUITests */,
 				9518178E254CFB600032616E /* Products */,
 				FF4A11C5390644ACDA29A498 /* Pods */,
-				8F247CFCC7FD961876E62B1C /* Frameworks */,
+				89C8B29EB296DC535D464904 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -297,6 +299,7 @@
 				9587A51B255726D80028A143 /* CacheService.swift */,
 				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
 				95F7CFCC25639BD70063149B /* DateFormatterService.swift */,
+				956D9051256B18270000D84C /* Buildable.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -331,8 +334,8 @@
 		FF4A11C5390644ACDA29A498 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */,
-				584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */,
+				7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */,
+				B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -344,7 +347,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 951817B2254CFB620032616E /* Build configuration list for PBXNativeTarget "swiftchan" */;
 			buildPhases = (
-				38A2631E4277D980EF13F99E /* [CP] Check Pods Manifest.lock */,
+				C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */,
 				95181789254CFB600032616E /* Sources */,
 				9518178A254CFB600032616E /* Frameworks */,
 				9518178B254CFB600032616E /* Resources */,
@@ -477,7 +480,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		38A2631E4277D980EF13F99E /* [CP] Check Pods Manifest.lock */ = {
+		C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -538,6 +541,7 @@
 				9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */,
 				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
 				95D804D32568A553005A3128 /* PresentedPost.swift in Sources */,
+				956D9052256B18270000D84C /* Buildable.swift in Sources */,
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -692,13 +696,14 @@
 		};
 		951817B3254CFB620032616E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F9F52260A56BC9A27C17AFF /* Pods-swiftchan.debug.xcconfig */;
+			baseConfigurationReference = 7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = swiftchan/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -715,13 +720,14 @@
 		};
 		951817B4254CFB620032616E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 584C8433E06108307C63E6DF /* Pods-swiftchan.release.xcconfig */;
+			baseConfigurationReference = B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = swiftchan/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;

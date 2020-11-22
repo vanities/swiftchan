@@ -26,7 +26,7 @@ struct ThreadView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
-        return GeometryReader { geo in
+        return GeometryReader { _ in
             ZStack {
                 ScrollView {
                     LazyVGrid(columns: self.columns,
@@ -34,15 +34,16 @@ struct ThreadView: View {
                               spacing: 0,
                               content: {
                                 ForEach(self.viewModel.posts.indices, id: \.self) { index in
-                                    PostView(boardName: self.viewModel.boardName,
-                                             post: self.viewModel.posts[index],
-                                             index: index,
-                                             comment: self.viewModel.comments[index],
-                                             replies: self.viewModel.replies[index] ?? nil,
-                                             isPresenting: self.$isPresenting,
-                                             presentingSheet: self.$presentingSheet,
-                                             galleryIndex: self.$postIndex,
-                                             commentRepliesIndex: self.$commentRepliesIndex
+                                    if index < self.viewModel.comments.count {
+                                        PostView(boardName: self.viewModel.boardName,
+                                                 post: self.viewModel.posts[index],
+                                                 index: index,
+                                                 comment: self.viewModel.comments[index],
+                                                 replies: self.viewModel.replies[index] ?? nil,
+                                                 isPresenting: self.$isPresenting,
+                                                 presentingSheet: self.$presentingSheet,
+                                                 galleryIndex: self.$postIndex,
+                                                 commentRepliesIndex: self.$commentRepliesIndex
                                     )
                                     .onChange(of: self.isPresenting, perform: { _ in
                                         if self.postIndex == index && self.presentingSheet == .gallery {
@@ -50,9 +51,9 @@ struct ThreadView: View {
 
                                         }
                                     })
+                                    }
                                 }
-                                .frame(minWidth: UIScreen.main.bounds.width,
-                                       minHeight: geo.size.height/3)
+                                .frame(minWidth: UIScreen.main.bounds.width)
                               }
                     )
                 }

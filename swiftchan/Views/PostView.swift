@@ -27,6 +27,11 @@ struct PostView: View {
                 .fill(Color(.systemBackground))
                 .border(Color(.gray))
             VStack(alignment: .leading, spacing: 0) {
+                if let subject = post.sub {
+                    Text(subject.clean)
+                        .bold()
+                        .padding(.bottom, 5)
+                }
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
