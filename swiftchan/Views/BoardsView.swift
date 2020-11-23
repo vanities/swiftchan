@@ -13,12 +13,12 @@ struct BoardsView: View {
     @State var searchText: String = ""
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
-    
+
     var filteredBoards: [Board] {
         get {
             return self.viewModel.boards.filter({ board in
                 board.board.starts(with: self.searchText.lowercased())
-                
+
             })
         }
     }

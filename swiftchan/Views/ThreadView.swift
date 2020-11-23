@@ -70,7 +70,7 @@ struct ThreadView: View {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "fit", id: 5551578)
+        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         ThreadView(viewModel: viewModel)
     }
 }

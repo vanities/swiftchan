@@ -59,7 +59,7 @@ struct OPView: View {
                         Text(post.sub?.clean ?? "")
                             .font(.system(size: 18))
                             .bold()
-                            .lineLimit(1)
+                            .lineLimit(nil)
                             .padding(.bottom, 5)
                         //comment
                         comment

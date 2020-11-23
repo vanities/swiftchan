@@ -38,7 +38,10 @@ struct GalleryView: View, Buildable {
                               selected: self.selection == index)
                         .onMediaChanged { change in
                             self.canShowPreview = !change
-                            self.showPreview = !change
+                            if change {
+                                // if zooming, remove the preview
+                                self.showPreview = !change
+                            }
                             self.onMediaChanged?(change)
                         }
                         .tag(index)
@@ -57,11 +60,12 @@ struct GalleryView: View, Buildable {
             if self.showPreview {
                 VStack {
                     Spacer()
-                    GalleryPreviewView(urls: self.thumbnailUrls,
+                    GalleryPreviewView(urls: self.urls,
+                                       thumbnailUrls: self.thumbnailUrls,
                                        selection: self.$selection)
                         .padding(.bottom, 50)
                 }
-                .transition(.opacity)
+                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
             }
         }
         .gesture(self.canShowPreview ? showPreviewTap : nil)

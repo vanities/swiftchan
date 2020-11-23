@@ -35,23 +35,19 @@ struct PostView: View {
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
-                        ZStack {
-                            Rectangle()
-                                .fill(Color.gray)
-                            ThumbnailMediaView(
-                                url: url,
-                                thumbnailUrl: thumbnailUrl)
 
-                        }
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: UIScreen.main.bounds.width/2)
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                self.presentingSheet = .gallery
-                                self.isPresenting.toggle()
-                                self.galleryIndex = index
+                        ThumbnailMediaView(
+                            url: url,
+                            thumbnailUrl: thumbnailUrl)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: UIScreen.main.bounds.width/2)
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    self.presentingSheet = .gallery
+                                    self.isPresenting.toggle()
+                                    self.galleryIndex = index
+                                }
                             }
-                        }
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {

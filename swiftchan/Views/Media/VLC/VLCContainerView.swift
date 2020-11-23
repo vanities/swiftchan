@@ -48,12 +48,19 @@ struct VLCContainerView: View {
                             currentTime: self.$currentTime,
                             remainingTime: self.$remainingTime,
                             totalTime: self.$totalTime)
-                            .transition(.opacity)
+                            .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                     }
                 }
             }
             .onChange(of: self.play, perform: { shouldPlay in
-                self.controlState = shouldPlay ? .play : .pause
+                if shouldPlay {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+                        self.showControls = false
+                        self.controlState = .play
+                    }
+                } else {
+                    self.controlState = .pause
+                }
             })
 
             .onTapGesture {

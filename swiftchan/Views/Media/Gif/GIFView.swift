@@ -6,35 +6,18 @@
 //
 
 import SwiftUI
-import SwiftyGif
 
 struct GIFView: UIViewRepresentable {
     let url: URL
 
-    @Binding var playGif: Bool
-
-    func makeUIView(context: Context) -> UIImageView {
-        let imageView = UIImageView()
-        let loader = UIActivityIndicatorView(style: .medium)
-        imageView.setGifFromURL(url, customLoader: loader)
-        imageView.frame = .zero
-        return imageView
+    func makeUIView(context: Context) -> UIView {
+        return GIFPlayerView(url: url)
     }
 
-    func updateUIView(_ gifImageView: UIImageView, context: Context) {
-        if playGif == true {
-            gifImageView.startAnimatingGif()
-        } else {
-            gifImageView.stopAnimatingGif()
-        }
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<GIFView>) {
     }
-}
 
-struct GIFView_Previews: PreviewProvider {
-    static var previews: some View {
-        GIFView(url: URLExamples.gif,
-                playGif: .constant(true))
-            .frame(width: 250, height: 250)
-            .aspectRatio(contentMode: .fit)
+    public static func dismantleUIView(_ uiView: GIFPlayerView, coordinator: Coordinator) {
+        uiView.imageView.image = nil
     }
 }

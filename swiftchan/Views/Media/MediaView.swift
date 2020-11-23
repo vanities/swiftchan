@@ -31,9 +31,7 @@ struct MediaView: View, Buildable {
                              autoPlay: true,
                              play: self.selected)
         case .gif:
-            GIFView(url: self.url,
-                    playGif: .constant(true))
-                .aspectRatio(contentMode: .fit)
+            GIFView(url: self.url)
         case .none:
             EmptyView()
         }

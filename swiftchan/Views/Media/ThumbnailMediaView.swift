@@ -10,12 +10,13 @@ import SwiftUI
 struct ThumbnailMediaView: View {
     let url: URL
     let thumbnailUrl: URL
+    var useThumbnailGif: Bool = true
 
     @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(url: self.url,
+            ImageView(url: self.thumbnailUrl,
                       isSelected: true,
                       canResize: false)
         case .webm:
@@ -24,11 +25,11 @@ struct ThumbnailMediaView: View {
                           isSelected: true,
                           canResize: false)
                 Image(systemName: "play.circle")
+                    .imageScale(.large)
+                    .foregroundColor(.white)
             }
         case .gif:
-            GIFView(url: self.url,
-                    playGif: .constant(true))
-                .aspectRatio(contentMode: .fit)
+            GIFView(url: self.useThumbnailGif ? self.thumbnailUrl : self.url)
         case .none:
             EmptyView()
         }
@@ -37,8 +38,12 @@ struct ThumbnailMediaView: View {
 
 struct ThumbnailMediaView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailMediaView(url: URLExamples.image,
-                           thumbnailUrl: URLExamples.image)
+        Group {
+            ThumbnailMediaView(url: URLExamples.image,
+                               thumbnailUrl: URLExamples.image)
+            ThumbnailMediaView(url: URLExamples.gif,
+                               thumbnailUrl: URLExamples.gif)
+        }
 
     }
 }

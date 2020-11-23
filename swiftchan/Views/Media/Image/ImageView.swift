@@ -50,9 +50,9 @@ struct ImageView: View, Buildable {
                     }
                 }
             }
-        
+
         let dragGesture = DragGesture()
-                           .updating($dragOffset, body: { (value, state, transaction) in
+                           .updating($dragOffset, body: { (value, state, _) in
 
                                state = value.translation
                            })
