@@ -56,7 +56,7 @@ struct OPView: View {
                             }
                         }
                         // subject
-                        Text(post.sub ?? "")
+                        Text(post.sub?.clean ?? "")
                             .font(.system(size: 18))
                             .bold()
                             .lineLimit(1)

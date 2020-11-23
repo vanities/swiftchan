@@ -12,7 +12,7 @@ import FourChan
 extension CatalogView {
     final class ViewModel: ObservableObject {
         let boardName: String
-        @Published private(set) var pages = [Page]()
+        @Published private(set) var posts = [Post]()
         @Published private(set) var comments = [Text]()
 
         init(boardName: String) {
@@ -21,8 +21,8 @@ extension CatalogView {
         }
 
         func load() {
-            FourchanService.getCatalog(boardName: self.boardName) { [weak self] (pages, comments) in
-                self?.pages = pages
+            FourchanService.getCatalog(boardName: self.boardName) { [weak self] (posts, comments) in
+                self?.posts = posts
                 self?.comments = comments
             }
         }

@@ -30,9 +30,6 @@ struct GalleryView: View, Buildable {
             }
 
         return ZStack {
-            // background
-            Color.black
-                .edgesIgnoringSafeArea(.all)
             // media
             TabView(selection: self.$selection) {
                 ForEach(self.urls.indices, id: \.self) { index in
@@ -41,13 +38,14 @@ struct GalleryView: View, Buildable {
                               selected: self.selection == index)
                         .onMediaChanged { change in
                             self.canShowPreview = !change
+                            self.showPreview = !change
                             self.onMediaChanged?(change)
                         }
                         .tag(index)
-                        .ignoresSafeArea()
-
                 }
             }
+            .background(Color.black)
+            .ignoresSafeArea()
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .tabViewStyle(PageTabViewStyle())

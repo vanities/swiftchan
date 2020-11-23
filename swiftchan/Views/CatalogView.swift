@@ -19,13 +19,11 @@ struct CatalogView: View {
                 LazyVGrid(columns: columns,
                           alignment: .center,
                           spacing: 0) {
-                    ForEach(self.viewModel.pages,
-                            id: \.self.id) { page in
-                        ForEach(page.threads.indices, id: \.self) { index in
+                    ForEach(self.viewModel.posts.indices,
+                            id: \.self) { index in
                             OPView(boardName: self.viewModel.boardName,
-                                   post: page.threads[index],
+                                   post: self.viewModel.posts[index],
                                    comment: self.viewModel.comments[index])
-                        }
                     }
                 }
             }

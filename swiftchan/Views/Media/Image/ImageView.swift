@@ -19,9 +19,10 @@ struct ImageView: View, Buildable {
                                        cachePolicy: .returnCacheElseLoad(cacheDelay: nil, downloadDelay: 0.25),
                                        maxPixelSize: CGSize(width: 5120, height: 2880))
 
-    @State var offset = CGSize.zero
     @State var scale: CGFloat = 1.0
     @State var zoomed: Bool = false
+    @GestureState private var dragOffset = CGSize.zero
+    @State private var position = CGSize.zero
 
     func onZoomChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onZoomChanged, value: callback)
@@ -43,16 +44,21 @@ struct ImageView: View, Buildable {
                 else {
                     withAnimation(.easeOut(duration: 0.2)) {
                         self.scale = 1
-                        self.offset = CGSize(width: 0, height: 0)
+                        self.position = .zero
                         self.zoomed = false
                         self.onZoomChanged?(self.zoomed)
                     }
                 }
             }
+        
+        let dragGesture = DragGesture()
+                           .updating($dragOffset, body: { (value, state, transaction) in
 
-        let dragGesture  = DragGesture()
-            .onChanged({ (value) in
-                self.offset = value.translation
+                               state = value.translation
+                           })
+            .onEnded({ (value) in
+                self.position.height += value.translation.height
+                self.position.width += value.translation.width
             })
 
         let pinchZoomGesture = MagnificationGesture()
@@ -73,7 +79,7 @@ struct ImageView: View, Buildable {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
-        .offset(self.offset)
+        .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
         .scaleEffect(max(self.scale, self.minimumScale))
         .gesture(self.canResize ? pinchZoomGesture : nil)
         // allow drag, only if zoomed in or out
@@ -86,7 +92,7 @@ struct ImageView: View, Buildable {
                 self.zoomed = false
                 self.onZoomChanged?(self.zoomed)
                 self.scale = 1
-                self.offset = CGSize(width: 0, height: 0)
+                self.position = .zero
             }
         }
     }

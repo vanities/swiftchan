@@ -27,7 +27,6 @@
 		9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */; };
 		9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */; };
 		9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9580613D254F884B0003FFF3 /* SwiftSoup */; };
-		95806146254FB5330003FFF3 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95806145254FB5330003FFF3 /* CommentView.swift */; };
 		9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582CB98255631B9008B235D /* VLCVideoView.swift */; };
 		95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DCA25566F66002CB2A1 /* GIFView.swift */; };
 		95851DD1255670D2002CB2A1 /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = 95851DD0255670D2002CB2A1 /* SwiftyGif */; };
@@ -95,7 +94,6 @@
 		9574CDF5255E254F000C99B6 /* FourchanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourchanService.swift; sourceTree = "<group>"; };
 		9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadViewModel.swift; sourceTree = "<group>"; };
 		9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
-		95806145254FB5330003FFF3 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		9582CB98255631B9008B235D /* VLCVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoView.swift; sourceTree = "<group>"; };
 		95851DCA25566F66002CB2A1 /* GIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFView.swift; sourceTree = "<group>"; };
 		95851DD525567314002CB2A1 /* MediaDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetector.swift; sourceTree = "<group>"; };
@@ -274,7 +272,6 @@
 				958D099F254D444F00AD4849 /* OPView.swift */,
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
-				95806145254FB5330003FFF3 /* CommentView.swift */,
 				95D804CD25677FF4005A3128 /* RepliesView.swift */,
 				95D804D22568A553005A3128 /* PresentedPost.swift */,
 			);
@@ -521,7 +518,6 @@
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
-				95806146254FB5330003FFF3 /* CommentView.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
 				9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
@@ -701,6 +697,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -725,6 +722,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;

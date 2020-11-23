@@ -53,6 +53,9 @@ class FourchanService {
                         comments.append(parser.getComment())
                         postReplies[postIndex] = parser.replies
                     }
+                    else {
+                        comments.append(Text(""))
+                    }
                     postIndex += 1
                 }
                 let replies = self.getReplies(postReplies: postReplies, posts: thread.posts)
@@ -64,20 +67,26 @@ class FourchanService {
         }
     }
 
-    class func getCatalog(boardName: String, complete: @escaping ([Page], [Text]) -> Void) {
+    class func getCatalog(boardName: String, complete: @escaping ([Post], [Text]) -> Void) {
         FourChanAPIService.shared.GET(endpoint: .catalog(board: boardName)) { (result: Result<Catalog, FourChanAPIService.APIError>) in
+            var flatPages: [Post] = []
+            
             switch result {
             case .success(let pages):
                 var comments: [Text] = []
                 for page in pages {
                     for thread in page.threads {
+                        flatPages.append(thread)
                         if let comment = thread.com {
                             let parser = CommentParser(comment: comment)
                             comments.append(parser.getComment())
                         }
+                        else {
+                            comments.append(Text(""))
+                        }
                     }
                 }
-                complete(pages, comments)
+                complete(flatPages, comments)
             case .failure(let error):
                 print(error)
             }
