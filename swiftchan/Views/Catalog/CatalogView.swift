@@ -9,10 +9,10 @@ import SwiftUI
 import FourChan
 
 struct CatalogView: View {
-    @EnvironmentObject var userSettings: UserSettings
     @ObservedObject var viewModel: ViewModel
 
     @State var searchText: String = ""
+    @State var pullToRefreshShowing: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center), GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -44,38 +44,30 @@ struct CatalogView: View {
 
     var body: some View {
         return
-            VStack {
-                SearchTextView(textPlaceholder: "Search Posts",
-                               searchText: self.$searchText)
             ScrollView {
-                LazyVGrid(columns: self.columns,
-                          alignment: .center,
-                          spacing: 0) {
-                    ForEach(self.filteredPosts.indices,
-                            id: \.self) { index in
+                VStack(spacing: nil) {
+                    SearchTextView(textPlaceholder: "Search Posts",
+                                   searchText: self.$searchText)
+                    LazyVGrid(columns: self.columns,
+                              alignment: .center,
+                              spacing: 0) {
+                        ForEach(self.filteredPosts.indices,
+                                id: \.self) { index in
                             OPView(boardName: self.viewModel.boardName,
                                    post: self.viewModel.posts[index],
                                    comment: self.viewModel.comments[index])
+                        }
+                    }
+                    .padding(.horizontal, 15)
+                }
+                .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                    self.viewModel.load {
+                        self.pullToRefreshShowing = false
                     }
                 }
             }
-            }
             .navigationBarTitle(Text(self.viewModel.boardName), displayMode: .inline)
-            // favorite
-            .navigationBarItems(trailing:
-                                    Image(systemName: self.userSettings.favoriteBoards.contains(self.viewModel.boardName) ? "star.fill" : "star").onTapGesture {
-                                        let favorited = self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
-
-                                        if favorited {
-                                            if let index = self.userSettings.favoriteBoards.firstIndex(of: self.viewModel.boardName) {
-                                                self.userSettings.favoriteBoards.remove(at: index)
-                                            }
-                                        } else {
-                                            self.userSettings.favoriteBoards.append(self.viewModel.boardName)
-                                        }
-                                    }
-                                    .foregroundColor(.yellow)
-            )
+            .navigationBarItems(trailing: FavoriteStar(viewModel: self.viewModel))
     }
 }
 

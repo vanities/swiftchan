@@ -27,7 +27,7 @@ extension ThreadView {
             self.load()
         }
 
-        func load() {
+        func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getPosts(boardName: self.boardName,
                                      id: self.id) { [weak self] (result,
                                                                  mediaUrls,
@@ -41,6 +41,7 @@ extension ThreadView {
                 self?.postMediaMapping = postMediaMapping
                 self?.comments = comments
                 self?.replies = replies
+                complete?()
             }
         }
     }

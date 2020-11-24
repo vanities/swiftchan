@@ -20,10 +20,11 @@ extension CatalogView {
             self.load()
         }
 
-        func load() {
+        func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getCatalog(boardName: self.boardName) { [weak self] (posts, comments) in
                 self?.posts = posts
                 self?.comments = comments
+                complete?()
             }
         }
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
+		950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950EB4DB256CBE08000703C0 /* PullToRefresh.swift */; };
 		9510535D2564DD2C002E4051 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 9510535C2564DD2C002E4051 /* FourChan */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
 		951053712566018D002E4051 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951053702566018D002E4051 /* Board.swift */; };
@@ -42,6 +43,7 @@
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
+		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
@@ -75,6 +77,7 @@
 		5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
 		950E393F255CDA3B00A00A74 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
+		950EB4DB256CBE08000703C0 /* PullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefresh.swift; sourceTree = "<group>"; };
 		95105368256600C9002E4051 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		951053702566018D002E4051 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		95105378256608E5002E4051 /* CommentParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentParser.swift; sourceTree = "<group>"; };
@@ -111,6 +114,7 @@
 		9599D62D2556661600BBC8B7 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		959E6147255CCFAB0003638E /* SearchTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextView.swift; sourceTree = "<group>"; };
 		95A94EFB2554F8D1001D155E /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
+		95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteStar.swift; sourceTree = "<group>"; };
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
 		95C73105256CA1F700F18257 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		95D804CD25677FF4005A3128 /* RepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesView.swift; sourceTree = "<group>"; };
@@ -271,16 +275,11 @@
 		955814B6254D249B00A966BA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				950E3933255CD9BB00A00A74 /* Media */,
-				95181792254CFB600032616E /* BoardsView.swift */,
-				955814B7254D24B900A966BA /* BoardView.swift */,
 				959E6147255CCFAB0003638E /* SearchTextView.swift */,
-				958D0997254D346A00AD4849 /* CatalogView.swift */,
-				958D099F254D444F00AD4849 /* OPView.swift */,
-				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
-				9599CA9F254DFDA1002EB026 /* PostView.swift */,
-				95D804CD25677FF4005A3128 /* RepliesView.swift */,
-				95D804D22568A553005A3128 /* PresentedPost.swift */,
+				95B7BE43256CBBCA00F75BC9 /* Boards */,
+				95B7BE42256CBBBD00F75BC9 /* Catalog */,
+				95B7BE44256CBBE200F75BC9 /* Thread */,
+				950E3933255CD9BB00A00A74 /* Media */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -304,6 +303,7 @@
 				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
 				95F7CFCC25639BD70063149B /* DateFormatterService.swift */,
 				956D9051256B18270000D84C /* Buildable.swift */,
+				950EB4DB256CBE08000703C0 /* PullToRefresh.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -325,6 +325,36 @@
 				9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */,
 			);
 			path = Gallery;
+			sourceTree = "<group>";
+		};
+		95B7BE42256CBBBD00F75BC9 /* Catalog */ = {
+			isa = PBXGroup;
+			children = (
+				958D0997254D346A00AD4849 /* CatalogView.swift */,
+				958D099F254D444F00AD4849 /* OPView.swift */,
+				95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */,
+			);
+			path = Catalog;
+			sourceTree = "<group>";
+		};
+		95B7BE43256CBBCA00F75BC9 /* Boards */ = {
+			isa = PBXGroup;
+			children = (
+				95181792254CFB600032616E /* BoardsView.swift */,
+				955814B7254D24B900A966BA /* BoardView.swift */,
+			);
+			path = Boards;
+			sourceTree = "<group>";
+		};
+		95B7BE44256CBBE200F75BC9 /* Thread */ = {
+			isa = PBXGroup;
+			children = (
+				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
+				9599CA9F254DFDA1002EB026 /* PostView.swift */,
+				95D804CD25677FF4005A3128 /* RepliesView.swift */,
+				95D804D22568A553005A3128 /* PresentedPost.swift */,
+			);
+			path = Thread;
 			sourceTree = "<group>";
 		};
 		95C73101256C9D8B00F18257 /* Environment */ = {
@@ -542,10 +572,12 @@
 				95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */,
 				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95D804E22568F9D8005A3128 /* View.swift in Sources */,
+				950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
 				95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */,
 				9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */,
 				958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */,
+				95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */,
 				9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */,
 				9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */,
 				955814B8254D24B900A966BA /* BoardView.swift in Sources */,
@@ -713,7 +745,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -738,7 +770,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
