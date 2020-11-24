@@ -57,6 +57,9 @@ struct ThreadView: View {
                               }
                     )
                 }
+                .introspectScrollView { scrollView in
+                    scrollView.refreshControl = UIRefreshControl()
+                }
             }
         }
         .fullScreenCover(isPresented: self.$isPresenting) {

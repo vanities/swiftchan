@@ -29,12 +29,12 @@ struct BoardView: View {
             .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
             HStack(alignment: .center) {
                 Spacer()
-            VStack(alignment: .trailing) {
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .padding(.trailing, 7)
-                Spacer()
-            }
+                VStack(alignment: .trailing) {
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .padding(.trailing, 7)
+                    Spacer()
+                }
             }
         }
         .border(Color.gray)

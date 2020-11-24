@@ -20,7 +20,6 @@ struct VLCContainerView: View {
     let play: Bool
 
     @State private var showControls: Bool = true
-    @State private var preview = UIImage()
     @State private var controlState: MediaState = .play
     @State private var state: VLCMediaPlayerState = .stopped
     @State private var currentTime: VLCTime = VLCTime.init(int: 0)
@@ -31,7 +30,6 @@ struct VLCContainerView: View {
     var body: some View {
         return
             ZStack {
-                Image(uiImage: preview)
                 VLCVideoView(url: url,
                              autoPlay: self.autoPlay,
                              mediaState: self.controlState,
@@ -56,8 +54,8 @@ struct VLCContainerView: View {
                 if shouldPlay {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                         self.showControls = false
-                        self.controlState = .play
                     }
+                    self.controlState = .play
                 } else {
                     self.controlState = .pause
                 }

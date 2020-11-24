@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 
 struct CatalogView: View {
+    @EnvironmentObject var userSettings: UserSettings
     @ObservedObject var viewModel: ViewModel
 
     @State var searchText: String = ""
@@ -60,6 +61,21 @@ struct CatalogView: View {
             }
             }
             .navigationBarTitle(Text(self.viewModel.boardName), displayMode: .inline)
+            // favorite
+            .navigationBarItems(trailing:
+                                    Image(systemName: self.userSettings.favoriteBoards.contains(self.viewModel.boardName) ? "star.fill" : "star").onTapGesture {
+                                        let favorited = self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
+
+                                        if favorited {
+                                            if let index = self.userSettings.favoriteBoards.firstIndex(of: self.viewModel.boardName) {
+                                                self.userSettings.favoriteBoards.remove(at: index)
+                                            }
+                                        } else {
+                                            self.userSettings.favoriteBoards.append(self.viewModel.boardName)
+                                        }
+                                    }
+                                    .foregroundColor(.yellow)
+            )
     }
 }
 
