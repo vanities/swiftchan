@@ -61,8 +61,12 @@ struct CatalogView: View {
                     .padding(.horizontal, 15)
                 }
                 .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                    let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                    softVibrate.impactOccurred()
                     self.viewModel.load {
                         self.pullToRefreshShowing = false
+                        let rigidVibrate = UIImpactFeedbackGenerator(style: .rigid)
+                        rigidVibrate.impactOccurred()
                     }
                 }
             }

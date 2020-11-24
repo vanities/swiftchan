@@ -11,19 +11,27 @@ struct FavoriteStar: View {
     @EnvironmentObject var userSettings: UserSettings
     let viewModel: CatalogView.ViewModel
 
-    var body: some View {
-        Image(systemName: self.userSettings.favoriteBoards.contains(self.viewModel.boardName) ? "star.fill" : "star").onTapGesture {
-            let favorited = self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
-
-            if favorited {
-                if let index = self.userSettings.favoriteBoards.firstIndex(of: self.viewModel.boardName) {
-                    self.userSettings.favoriteBoards.remove(at: index)
-                }
-            } else {
-                self.userSettings.favoriteBoards.append(self.viewModel.boardName)
-            }
+    var favorited: Bool {
+        get {
+            self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
         }
-        .foregroundColor(.yellow)
+    }
+
+    var body: some View {
+        Image(systemName: self.favorited ? "star.fill" : "star")
+            .onTapGesture {
+                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                softVibrate.impactOccurred()
+
+                if self.favorited {
+                    if let index = self.userSettings.favoriteBoards.firstIndex(of: self.viewModel.boardName) {
+                        self.userSettings.favoriteBoards.remove(at: index)
+                    }
+                } else {
+                    self.userSettings.favoriteBoards.append(self.viewModel.boardName)
+                }
+            }
+            .foregroundColor(.yellow)
     }
 }
 
