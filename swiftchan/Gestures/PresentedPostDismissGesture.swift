@@ -77,7 +77,7 @@ struct DismissGestureModifier: ViewModifier {
                 self.presenting = false
             }
         } else {
-            withAnimation(.linear(duration: 0.2)) {
+            withAnimation(.linear) {
                 self.draggingOffset = 0
                 self.draggingVelocity = 0
                 self.lastDraggingValue = nil

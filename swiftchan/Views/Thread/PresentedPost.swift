@@ -26,6 +26,9 @@ struct PresentedPost: View {
                             thumbnailUrls: self.viewModel.thumbnailMediaUrls,
                             canPage: !self.dragging
                 )
+                .onDragChanged { (dragging) in
+                    self.canDrag = !dragging
+                }
                 .onMediaChanged { (changed) in
                     self.canDrag = !changed
                     self.dragging.toggle()

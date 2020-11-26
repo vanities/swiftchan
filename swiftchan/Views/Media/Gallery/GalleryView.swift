@@ -19,6 +19,7 @@ struct GalleryView: View, Buildable {
     @State var showPreview: Bool = true
 
     var onMediaChanged: ((Bool) -> Void)?
+    var onDragChanged: ((Bool) -> Void)?
 
     var body: some View {
         return ZStack {
@@ -36,6 +37,14 @@ struct GalleryView: View, Buildable {
                         self.onMediaChanged?(change)
                     }
                     .tag(index)
+            }
+            .onOffsetChanged { value in
+                if value != 0 {
+                    self.onDragChanged?(true)
+                }
+            }
+            .onPageChanged { _ in
+                self.onDragChanged?(false)
             }
             .allowsDragging(self.canPage)
             .pagingPriority(.simultaneous)
@@ -72,6 +81,12 @@ struct GalleryView: View, Buildable {
 extension GalleryView {
     func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onMediaChanged, value: callback)
+    }
+}
+
+extension GalleryView {
+    func onDragChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onDragChanged, value: callback)
     }
 }
 
