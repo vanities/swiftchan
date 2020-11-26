@@ -10,10 +10,15 @@ import FourChan
 
 struct ContentView: View {
     @StateObject private var userSettings = UserSettings()
+    @StateObject private var appState = AppState()
 
     var body: some View {
-        BoardsView(viewModel: BoardsView.ViewModel())
-            .environmentObject(self.userSettings)
+        ZStack {
+            BoardsView(viewModel: BoardsView.ViewModel())
+                .environmentObject(self.userSettings)
+                .environmentObject(self.appState)
+
+        }
     }
 }
 

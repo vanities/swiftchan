@@ -22,7 +22,7 @@ struct MediaView: View, Buildable {
         case .image:
             ImageView(url: self.url,
                       isSelected: self.selected,
-                      canResize: true)
+                      canGesture: true)
                 .onZoomChanged { zoomed in
                     self.onMediaChanged?(zoomed)
                 }

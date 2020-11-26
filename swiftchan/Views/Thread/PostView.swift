@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 
 struct PostView: View {
+    @EnvironmentObject var appState: AppState
     let boardName: String
     let post: Post
     let index: Int

@@ -9,7 +9,7 @@ import SwiftUI
 import FourChan
 
 enum PresentingSheet {
-   case gallery, replies
+    case gallery, replies
 }
 
 struct ThreadView: View {
@@ -23,27 +23,28 @@ struct ThreadView: View {
 
     @State var postIndex: Int = 0
 
+    @State private var pullToRefreshShowing: Bool = false
+
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
-        return GeometryReader { _ in
-            ZStack {
-                ScrollView {
-                    LazyVGrid(columns: self.columns,
-                              alignment: .center,
-                              spacing: 0,
-                              content: {
-                                ForEach(self.viewModel.posts.indices, id: \.self) { index in
-                                    if index < self.viewModel.comments.count {
-                                        PostView(boardName: self.viewModel.boardName,
-                                                 post: self.viewModel.posts[index],
-                                                 index: index,
-                                                 comment: self.viewModel.comments[index],
-                                                 replies: self.viewModel.replies[index] ?? nil,
-                                                 isPresenting: self.$isPresenting,
-                                                 presentingSheet: self.$presentingSheet,
-                                                 galleryIndex: self.$postIndex,
-                                                 commentRepliesIndex: self.$commentRepliesIndex
+        return ZStack {
+            ScrollView {
+                LazyVGrid(columns: self.columns,
+                          alignment: .center,
+                          spacing: 0,
+                          content: {
+                            ForEach(self.viewModel.posts.indices, id: \.self) { index in
+                                if index < self.viewModel.comments.count {
+                                    PostView(boardName: self.viewModel.boardName,
+                                             post: self.viewModel.posts[index],
+                                             index: index,
+                                             comment: self.viewModel.comments[index],
+                                             replies: self.viewModel.replies[index] ?? nil,
+                                             isPresenting: self.$isPresenting,
+                                             presentingSheet: self.$presentingSheet,
+                                             galleryIndex: self.$postIndex,
+                                             commentRepliesIndex: self.$commentRepliesIndex
                                     )
                                     .onChange(of: self.isPresenting, perform: { _ in
                                         if self.postIndex == index && self.presentingSheet == .gallery {
@@ -51,23 +52,31 @@ struct ThreadView: View {
 
                                         }
                                     })
-                                    }
                                 }
-                                .frame(minWidth: UIScreen.main.bounds.width)
-                              }
-                    )
-                }
-                .introspectScrollView { scrollView in
-                    scrollView.refreshControl = UIRefreshControl()
+                            }
+                            .frame(minWidth: UIScreen.main.bounds.width)
+                          }
+                )
+            }
+            .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                softVibrate.impactOccurred()
+                self.viewModel.load {
+                    self.pullToRefreshShowing = false
                 }
             }
+
+            if self.isPresenting {
+                PresentedPost(presenting: self.$isPresenting,
+                              presentingSheet: self.presentingSheet,
+                              viewModel: self.viewModel,
+                              commentRepliesIndex: self.commentRepliesIndex,
+                              galleryIndex: self.galleryIndex)
+            }
         }
-        .fullScreenCover(isPresented: self.$isPresenting) {
-            PresentedPost(presentingSheet: self.presentingSheet,
-                          viewModel: self.viewModel,
-                          commentRepliesIndex: self.commentRepliesIndex,
-                          galleryIndex: self.galleryIndex)
-        }
+        .navigationBarHidden(self.isPresenting)
+        .statusBar(hidden: self.isPresenting)
+
     }
 }
 

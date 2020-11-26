@@ -7,54 +7,41 @@
 
 import SwiftUI
 import Introspect
+import SwiftUIPager
 
 struct GalleryView: View, Buildable {
     @Binding var selection: Int
     var urls: [URL]
     var thumbnailUrls: [URL]
+    var canPage: Bool = true
 
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = true
 
-    func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
-        mutating(keyPath: \.onMediaChanged, value: callback)
-    }
     var onMediaChanged: ((Bool) -> Void)?
 
     var body: some View {
-        let showPreviewTap = TapGesture(count: 1)
-            .onEnded {
-                withAnimation(.linear(duration: 0.2)) {
-                    self.showPreview.toggle()
-                }
-            }
-
         return ZStack {
             // media
-            TabView(selection: self.$selection) {
-                ForEach(self.urls.indices, id: \.self) { index in
-                    let url = self.urls[index]
-                    MediaView(url: url,
-                              selected: self.selection == index)
-                        .onMediaChanged { change in
-                            self.canShowPreview = !change
-                            if change {
-                                // if zooming, remove the preview
-                                self.showPreview = !change
-                            }
-                            self.onMediaChanged?(change)
+            Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
+                let url = self.urls[index]
+                MediaView(url: url,
+                          selected: self.selection == index)
+                    .onMediaChanged { change in
+                        self.canShowPreview = !change
+                        if change {
+                            // if zooming, remove the preview
+                            self.showPreview = !change
                         }
-                        .tag(index)
-                }
+                        self.onMediaChanged?(change)
+                    }
+                    .tag(index)
             }
+            .allowsDragging(self.canPage)
+            .pagingPriority(.simultaneous)
+            .swipeInteractionArea(.allAvailable)
             .background(Color.black)
             .ignoresSafeArea()
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .tabViewStyle(PageTabViewStyle())
-            .introspectTabBarScrollView { v in
-                v.isScrollEnabled = false
-            }
 
             // preview
             if self.showPreview {
@@ -68,9 +55,24 @@ struct GalleryView: View, Buildable {
                 .transition(.asymmetric(insertion: .opacity, removal: .opacity))
             }
         }
-        .gesture(self.canShowPreview ? showPreviewTap : nil)
+        .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
     }
 
+    func showPreviewTap() -> some Gesture {
+        return TapGesture(count: 1)
+            .onEnded {
+                withAnimation(.linear(duration: 0.2)) {
+                    self.showPreview.toggle()
+                }
+            }
+    }
+
+}
+
+extension GalleryView {
+    func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onMediaChanged, value: callback)
+    }
 }
 
 struct GalleryView_Previews: PreviewProvider {

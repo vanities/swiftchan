@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "SwiftUIPager",
+        "repositoryURL": "https://github.com/fermoya/SwiftUIPager",
+        "state": {
+          "branch": null,
+          "revision": "2c7816cb047408f1f6250339c2b04d3c9439beca",
+          "version": "1.13.0"
+        }
+      },
+      {
         "package": "URLImage",
         "repositoryURL": "https://github.com/dmytro-anokhin/url-image",
         "state": {

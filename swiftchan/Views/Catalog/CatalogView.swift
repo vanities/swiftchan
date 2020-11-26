@@ -65,8 +65,6 @@ struct CatalogView: View {
                     softVibrate.impactOccurred()
                     self.viewModel.load {
                         self.pullToRefreshShowing = false
-                        let rigidVibrate = UIImpactFeedbackGenerator(style: .rigid)
-                        rigidVibrate.impactOccurred()
                     }
                 }
             }

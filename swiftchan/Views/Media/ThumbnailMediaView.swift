@@ -16,14 +16,14 @@ struct ThumbnailMediaView: View {
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(url: self.thumbnailUrl,
+            ImageView(url: self.url,
                       isSelected: true,
-                      canResize: false)
+                      canGesture: false)
         case .webm:
             ZStack {
                 ImageView(url: self.thumbnailUrl,
                           isSelected: true,
-                          canResize: false)
+                          canGesture: false)
                 Image(systemName: "play.circle")
                     .imageScale(.large)
                     .foregroundColor(.white)
