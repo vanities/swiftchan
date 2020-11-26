@@ -32,7 +32,9 @@ struct PresentedPost: View {
                 }
 
                 Button(action: {
-                    self.presenting = false
+                    withAnimation(.linear) {
+                        self.presenting = false
+                    }
                 }) {
                     Image(systemName: "xmark")
                         .frame(width: 50, height: 50)
@@ -48,12 +50,14 @@ struct PresentedPost: View {
                 }
             }
         }
-        .transition(.move(edge: .bottom))
+        .transition(AnyTransition.asymmetric(
+                        insertion: .move(edge: .bottom),
+                        removal: .move(edge: .bottom)))
         // TODO: disable dismissing when dragging to next page in gallery
         .dismissGesture(presenting: self.$presenting,
                         canDrag: self.$canDrag,
                         dragging: self.$dragging
-        ) {Text("")}
+        )
     }
 }
 

@@ -72,11 +72,11 @@ struct ThreadView: View {
                               viewModel: self.viewModel,
                               commentRepliesIndex: self.commentRepliesIndex,
                               galleryIndex: self.galleryIndex)
+                    .zIndex(1)
             }
         }
         .navigationBarHidden(self.isPresenting)
         .statusBar(hidden: self.isPresenting)
-
     }
 }
 
