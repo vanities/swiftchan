@@ -13,7 +13,7 @@ struct GalleryView: View, Buildable {
     @Binding var selection: Int
     var urls: [URL]
     var thumbnailUrls: [URL]
-    var canPage: Bool = true
+    @State var canPage: Bool = true
     @Binding var isDismissing: Bool
 
     @State var canShowPreview: Bool = true
@@ -35,6 +35,7 @@ struct GalleryView: View, Buildable {
                           selected: self.selection == index)
                     .onMediaChanged { zoomed in
                         self.canShowPreview = !zoomed
+                        self.canPage = !zoomed
                         if zoomed {
                             // if zooming, remove the preview
                             self.showPreview = !zoomed

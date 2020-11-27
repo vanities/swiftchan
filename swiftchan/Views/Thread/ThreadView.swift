@@ -80,6 +80,9 @@ struct ThreadView: View {
                         }
 
                     }
+                    .onDisappear {
+                        self.opacity = 1
+                    }
                     .zIndex(1)
             }
         }

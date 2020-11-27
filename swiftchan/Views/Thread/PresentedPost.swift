@@ -42,6 +42,16 @@ struct PresentedPost: View {
                         self.dragging = false
                     }
                 }
+                .dismissGesture(
+                    direction: .down,
+                    dismiss: self.$dismiss,
+                    presenting: self.$presenting,
+                    canDrag: self.$canDrag,
+                    dragging: self.$dragging,
+                    onOffsetChanged: { offset in
+                        self.onOffsetChanged?(offset)
+                    }
+                )
             case .replies:
                 if let replies = self.viewModel.replies[self.commentRepliesIndex] {
                     RepliesView(replies: replies,
@@ -51,16 +61,6 @@ struct PresentedPost: View {
             }
         }
         .transition(.identity)
-        // TODO: disable dismissing when dragging to next page in gallery
-        .dismissGesture(dismiss: self.$dismiss,
-                        presenting: self.$presenting,
-                        canDrag: self.$canDrag,
-                        dragging: self.$dragging,
-                        onOffsetChanged: { offset in
-                            self.onOffsetChanged?(offset)
-                        }
-        )
-
     }
 }
 
