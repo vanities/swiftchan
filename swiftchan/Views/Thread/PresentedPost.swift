@@ -13,9 +13,12 @@ struct PresentedPost: View {
     let viewModel: ThreadView.ViewModel
     let commentRepliesIndex: Int
 
+    @State var dismiss: Bool = false
     @State var canDrag: Bool = true
     @State var dragging: Bool = false
     @State var galleryIndex: Int
+
+    var onOffsetChanged: ((CGFloat) -> Void)?
 
     var body: some View {
         ZStack {
@@ -24,27 +27,21 @@ struct PresentedPost: View {
                 GalleryView(selection: self.$galleryIndex,
                             urls: self.viewModel.mediaUrls,
                             thumbnailUrls: self.viewModel.thumbnailMediaUrls,
-                            canPage: !self.dragging
+                            canPage: !self.dragging,
+                            isDismissing: self.$dragging
                 )
-                .onDragChanged { (dragging) in
-                    self.canDrag = !dragging
+                .onDismiss {
+                    self.dismiss = true
                 }
-                .onMediaChanged { (changed) in
-                    self.canDrag = !changed
-                    self.dragging.toggle()
+                .onPageDragChanged { (value) in
+                    self.canDrag = value.isZero
                 }
-
-                Button(action: {
-                    withAnimation(.linear) {
-                        self.presenting = false
+                .onMediaChanged { (zoomed) in
+                    self.canDrag = !zoomed
+                    if zoomed {
+                        self.dragging = false
                     }
-                }) {
-                    Image(systemName: "xmark")
-                        .frame(width: 50, height: 50)
-                        .contentShape(Rectangle())
-                        .foregroundColor(.white)
                 }
-                .position(x: 20, y: 10)
             case .replies:
                 if let replies = self.viewModel.replies[self.commentRepliesIndex] {
                     RepliesView(replies: replies,
@@ -53,14 +50,23 @@ struct PresentedPost: View {
                 }
             }
         }
-        .transition(AnyTransition.asymmetric(
-                        insertion: .move(edge: .bottom),
-                        removal: .move(edge: .bottom)))
+        .transition(.identity)
         // TODO: disable dismissing when dragging to next page in gallery
-        .dismissGesture(presenting: self.$presenting,
+        .dismissGesture(dismiss: self.$dismiss,
+                        presenting: self.$presenting,
                         canDrag: self.$canDrag,
-                        dragging: self.$dragging
+                        dragging: self.$dragging,
+                        onOffsetChanged: { offset in
+                            self.onOffsetChanged?(offset)
+                        }
         )
+
+    }
+}
+
+extension PresentedPost: Buildable {
+    func onOffsetChanged(_ callback: ((CGFloat) -> Void)?) -> Self {
+        mutating(keyPath: \.onOffsetChanged, value: callback)
     }
 }
 

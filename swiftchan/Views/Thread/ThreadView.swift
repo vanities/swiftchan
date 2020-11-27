@@ -24,6 +24,7 @@ struct ThreadView: View {
     @State var postIndex: Int = 0
 
     @State private var pullToRefreshShowing: Bool = false
+    @State private var opacity: Double = 1
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -58,6 +59,7 @@ struct ThreadView: View {
                           }
                 )
             }
+            .opacity(self.opacity)
             .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
                 let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                 softVibrate.impactOccurred()
@@ -72,6 +74,12 @@ struct ThreadView: View {
                               viewModel: self.viewModel,
                               commentRepliesIndex: self.commentRepliesIndex,
                               galleryIndex: self.galleryIndex)
+                    .onOffsetChanged { value in
+                        withAnimation(.linear) {
+                            self.opacity = Double(value / UIScreen.main.bounds.height)
+                        }
+
+                    }
                     .zIndex(1)
             }
         }
