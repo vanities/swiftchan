@@ -253,7 +253,6 @@
 				95181794254CFB620032616E /* Assets.xcassets */,
 				95181799254CFB620032616E /* Info.plist */,
 				95181796254CFB620032616E /* Preview Content */,
-				9524E1A9256F87EA00D08075 /* CoreExtensions.swift */,
 			);
 			path = swiftchan;
 			sourceTree = "<group>";
@@ -390,6 +389,7 @@
 		95D804E02568F9BA005A3128 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				9524E1A9256F87EA00D08075 /* CoreExtensions.swift */,
 				95D804E12568F9D8005A3128 /* View.swift */,
 			);
 			path = Extensions;

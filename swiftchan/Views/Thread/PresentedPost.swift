@@ -57,6 +57,16 @@ struct PresentedPost: View {
                     RepliesView(replies: replies,
                                 viewModel: self.viewModel,
                                 commentRepliesIndex: self.commentRepliesIndex)
+                        .dismissGesture(
+                            direction: .right,
+                            dismiss: self.$dismiss,
+                            presenting: self.$presenting,
+                            canDrag: self.$canDrag,
+                            dragging: self.$dragging,
+                            onOffsetChanged: { offset in
+                                self.onOffsetChanged?(offset)
+                            }
+                        )
                 }
             }
         }

@@ -35,6 +35,11 @@ extension CGPoint {
 }
 
 extension Angle {
+    var isAlongXAxis: Bool {
+        let degrees = ((Int(self.degrees.rounded()) % 360) + 360) % 360
+        return degrees >= 330 || degrees <= 30 || (degrees >= 150 && degrees <= 210)
+    }
+
     var isAlongYAxis: Bool {
         let degrees = ((Int(self.degrees.rounded()) % 360) + 360) % 360
         return degrees < 330 || degrees > 30 || (degrees < 150 && degrees > 210)

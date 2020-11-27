@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum DismissDirection {
-    case right, left, down
+    case right, left, up, down
 }
 
 extension View {
@@ -52,17 +52,14 @@ struct DismissGestureModifier: ViewModifier {
             .onChanged {self.onDragChanged(with: $0)}
             .onEnded {_ in self.onDragGestureEnded()}
         content
-            .offset(y: self.draggingOffset)
+            .offset(
+                x: [.left, .right].contains(self.direction) ? self.draggingOffset : 0,
+                y: [.up, .down].contains(self.direction) ? self.draggingOffset : 0)
             .simultaneousGesture(self.canDrag ? drag : nil)
             .onChange(of: self.draggingOffset) { self.onOffsetChanged?($0) }
             .onChange(of: self.dismiss) { _ in
                 withAnimation(.linear(duration: self.animationDuration)) {
-                    switch self.direction {
-                    case .down:
-                        self.draggingOffset = UIScreen.main.bounds.height
-                    default:
-                        break
-                    }
+                    self.draggingOffset = self.getDismissOffset()
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.animationDuration) {
@@ -82,8 +79,8 @@ struct DismissGestureModifier: ViewModifier {
             let swipeAngle = (value.location - lastLocation).angle ?? .zero
 
             switch self.direction {
-            case .down:
-                // Ignore swipes that aren't on the X-Axis
+            case .down, .up:
+                // Ignore swipes that aren't on the Y-Axis
                 guard swipeAngle.isAlongYAxis else {
                     self.lastDraggingValue = value
                     return
@@ -91,7 +88,7 @@ struct DismissGestureModifier: ViewModifier {
 
                 let offsetIncrement = (value.location.y - lastLocation.y)
 
-                // If swipe hasn't started yet, ignore swipes if they didn't start on the X-Axis
+                // If swipe hasn't started yet, ignore swipes if they didn't start on the Y-Axis
                 let isTranslationInYAxis = abs(value.translation.height) > abs(value.translation.width)
                 guard self.draggingOffset != 0 || isTranslationInYAxis else {
                     return
@@ -100,7 +97,6 @@ struct DismissGestureModifier: ViewModifier {
                 let timeIncrement = value.time.timeIntervalSince(self.lastDraggingValue?.time ?? value.time)
                 if timeIncrement != 0 {
                     self.draggingVelocity = Double(offsetIncrement) / timeIncrement
-                    print(draggingVelocity)
                 }
                 if !self.dragging {
                     withAnimation(.linear) {
@@ -110,8 +106,33 @@ struct DismissGestureModifier: ViewModifier {
 
                 self.draggingOffset += offsetIncrement
                 self.lastDraggingValue = value
-            default:
-            break
+            case .left, .right:
+                // Ignore swipes that aren't on the X-Axis
+                guard swipeAngle.isAlongXAxis else {
+                    self.lastDraggingValue = value
+                    return
+                }
+
+                let offsetIncrement = (value.location.x - lastLocation.x)
+
+                // If swipe hasn't started yet, ignore swipes if they didn't start on the X-Axis
+                let isTranslationInXAxis = abs(value.translation.width) > abs(value.translation.height)
+                guard self.draggingOffset != 0 || isTranslationInXAxis else {
+                    return
+                }
+
+                let timeIncrement = value.time.timeIntervalSince(self.lastDraggingValue?.time ?? value.time)
+                if timeIncrement != 0 {
+                    self.draggingVelocity = Double(offsetIncrement) / timeIncrement
+                }
+                if !self.dragging {
+                    withAnimation(.linear) {
+                        self.dragging = true
+                    }
+                }
+
+                self.draggingOffset += offsetIncrement
+                self.lastDraggingValue = value
             }
 
         }
@@ -133,8 +154,21 @@ struct DismissGestureModifier: ViewModifier {
     }
 
     private func dismissedMet() -> Bool {
-        return self.draggingOffset > UIScreen.main.bounds.height * self.dismissOffsetThreshold ||
+        return self.draggingOffset > self.getDismissOffset() * self.dismissOffsetThreshold ||
             self.draggingVelocity > self.dismissVelocityThreshold
+    }
+
+    private func getDismissOffset() -> CGFloat {
+        switch self.direction {
+        case .down:
+            return UIScreen.main.bounds.height
+        case .up:
+            return -UIScreen.main.bounds.height
+        case .right:
+            return UIScreen.main.bounds.width
+        case .left:
+            return -UIScreen.main.bounds.width
+        }
     }
 }
 
