@@ -17,7 +17,7 @@ struct GalleryView: View, Buildable {
     @Binding var isDismissing: Bool
 
     @State var canShowPreview: Bool = true
-    @State var showPreview: Bool = true
+    @State var showPreview: Bool = false
     @State var dragging: Bool = false
 
     var onMediaChanged: ((Bool) -> Void)?

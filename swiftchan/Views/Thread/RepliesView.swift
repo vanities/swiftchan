@@ -26,12 +26,9 @@ struct RepliesView: View {
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
-                        ForEach(self.replies) { index in
-                            PostView(boardName: self.viewModel.boardName,
-                                     post: self.viewModel.posts[index],
+                        ForEach(self.replies, id: \.self) { index in
+                            PostView(
                                      index: index,
-                                     comment: self.viewModel.comments[index],
-                                     replies: self.viewModel.replies[index] ?? nil,
                                      isPresenting: self.$isPresenting,
                                      presentingSheet: self.$presentingSheet,
                                      galleryIndex: self.$postIndex,
@@ -41,10 +38,10 @@ struct RepliesView: View {
                             .id(UUID())
                         }
                     }
-                }.frame(width: UIScreen.main.bounds.width,
-                        height: UIScreen.main.bounds.height - SAFE_AREA_PADDING)
-                .offset(y: TOP_PADDING)
+                }
             }
+            .frame(width: UIScreen.main.bounds.width,
+                    height: UIScreen.main.bounds.height - SAFE_AREA_PADDING)
     }
 }
 

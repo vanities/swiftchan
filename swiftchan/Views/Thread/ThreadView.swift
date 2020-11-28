@@ -13,15 +13,13 @@ enum PresentingSheet {
 }
 
 struct ThreadView: View {
-    @ObservedObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ViewModel
 
     @State private var isPresenting = false
     @State private var presentingSheet: PresentingSheet = .gallery
 
     @State var galleryIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
-
-    @State var postIndex: Int = 0
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
@@ -36,22 +34,12 @@ struct ThreadView: View {
                           spacing: 0) {
                     ForEach(self.viewModel.posts.indices, id: \.self) { index in
                         if index < self.viewModel.comments.count {
-                            PostView(boardName: self.viewModel.boardName,
-                                     post: self.viewModel.posts[index],
-                                     index: index,
-                                     comment: self.viewModel.comments[index],
-                                     replies: self.viewModel.replies[index] ?? nil,
+                            PostView(index: index,
                                      isPresenting: self.$isPresenting,
                                      presentingSheet: self.$presentingSheet,
-                                     galleryIndex: self.$postIndex,
+                                     galleryIndex: self.$galleryIndex,
                                      commentRepliesIndex: self.$commentRepliesIndex
                             )
-                            .onChange(of: self.isPresenting) { _ in
-                                if self.postIndex == index && self.presentingSheet == .gallery {
-                                    self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-
-                                }
-                            }
                         }
                     }
                     .frame(minWidth: UIScreen.main.bounds.width)
@@ -69,9 +57,7 @@ struct ThreadView: View {
             if self.isPresenting {
                 PresentedPost(presenting: self.$isPresenting,
                               presentingSheet: self.presentingSheet,
-                              viewModel: self.viewModel,
-                              commentRepliesIndex: self.commentRepliesIndex,
-                              galleryIndex: self.galleryIndex)
+                              galleryIndex: self.$galleryIndex, commentRepliesIndex: self.commentRepliesIndex)
                     .onOffsetChanged { value in
                         withAnimation(.linear) {
                             self.opacity = Double(value / UIScreen.main.bounds.height)
@@ -92,6 +78,7 @@ struct ThreadView: View {
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        ThreadView(viewModel: viewModel)
+        ThreadView()
+            .environmentObject(viewModel)
     }
 }

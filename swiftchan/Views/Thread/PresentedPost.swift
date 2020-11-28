@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct PresentedPost: View {
+    @EnvironmentObject var viewModel: ThreadView.ViewModel
     @Binding var presenting: Bool
     let presentingSheet: PresentingSheet
-    let viewModel: ThreadView.ViewModel
+    @Binding var galleryIndex: Int
     let commentRepliesIndex: Int
 
     @State var dismiss: Bool = false
     @State var canDrag: Bool = true
     @State var dragging: Bool = false
-    @State var galleryIndex: Int
 
     var onOffsetChanged: ((CGFloat) -> Void)?
 
     var body: some View {
-        ZStack {
+        print(galleryIndex)
+        return ZStack {
             switch self.presentingSheet {
             case .gallery:
                 GalleryView(selection: self.$galleryIndex,
@@ -83,8 +84,8 @@ struct PresentedPost_Previews: PreviewProvider {
         PresentedPost(
             presenting: .constant(true),
             presentingSheet: .gallery,
-            viewModel: viewModel,
-            commentRepliesIndex: 0,
-            galleryIndex: 0)
+            galleryIndex: .constant(0),
+            commentRepliesIndex: 0)
+            .environmentObject(viewModel)
     }
 }

@@ -9,12 +9,9 @@ import SwiftUI
 import FourChan
 
 struct PostView: View {
+    @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
-    let boardName: String
-    let post: Post
     let index: Int
-    let comment: Text
-    let replies: [Int]?
 
     @Binding var isPresenting: Bool
     @Binding var presentingSheet: PresentingSheet
@@ -23,6 +20,11 @@ struct PostView: View {
     @Binding var commentRepliesIndex: Int
 
     var body: some View {
+        let boardName = self.viewModel.boardName
+        let post = self.viewModel.posts[index]
+        let comment = self.viewModel.comments[index]
+        let replies = self.viewModel.replies[index] ?? nil
+
         return ZStack(alignment: .topLeading) {
             Rectangle()
                 .fill(Color(.systemBackground))
@@ -44,9 +46,9 @@ struct PostView: View {
                             .frame(width: UIScreen.main.bounds.width/2)
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
+                                    self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
                                     self.presentingSheet = .gallery
                                     self.isPresenting.toggle()
-                                    self.galleryIndex = index
                                 }
                             }
                     }
@@ -55,9 +57,9 @@ struct PostView: View {
                         HStack {
                             Text(String(self.index))
                             Text("•")
-                            Text("#" + String(self.post.no))
+                            Text("#" + String(post.no))
                         }
-                        Text(self.post.getDatePosted())
+                        Text(post.getDatePosted())
                     }
                 }
                 // comment
@@ -65,7 +67,7 @@ struct PostView: View {
                     .padding(.top, 20)
 
                 // replies
-                if let replies = self.replies {
+                if let replies = replies {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
                         .bold()
                         .onTapGesture {
@@ -81,6 +83,7 @@ struct PostView: View {
     }
 }
 
+/*
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostView(boardName: "fit",
@@ -95,3 +98,4 @@ struct PostView_Previews: PreviewProvider {
         )
     }
 }
+ */
