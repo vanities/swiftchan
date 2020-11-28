@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+let window = UIApplication.shared.windows[0]
+let TOP_PADDING = window.safeAreaInsets.top
+let BOTTOM_PADDING = window.safeAreaInsets.bottom
+let SAFE_AREA_PADDING = TOP_PADDING + BOTTOM_PADDING
+
 extension CGPoint {
 
     var angle: Angle? {

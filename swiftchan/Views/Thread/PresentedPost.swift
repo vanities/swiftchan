@@ -27,7 +27,6 @@ struct PresentedPost: View {
                 GalleryView(selection: self.$galleryIndex,
                             urls: self.viewModel.mediaUrls,
                             thumbnailUrls: self.viewModel.thumbnailMediaUrls,
-                            canPage: !self.dragging,
                             isDismissing: self.$dragging
                 )
                 .onDismiss {
@@ -63,9 +62,7 @@ struct PresentedPost: View {
                             presenting: self.$presenting,
                             canDrag: self.$canDrag,
                             dragging: self.$dragging,
-                            onOffsetChanged: { offset in
-                                self.onOffsetChanged?(offset)
-                            }
+                            onOffsetChanged: {_ in}
                         )
                 }
             }

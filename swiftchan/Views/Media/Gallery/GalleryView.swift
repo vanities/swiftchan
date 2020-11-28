@@ -51,7 +51,7 @@ struct GalleryView: View, Buildable {
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
             }
-            .allowsDragging(self.canPage)
+            .allowsDragging(!self.isDismissing && self.canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.allAvailable)
             .background(Color.black)

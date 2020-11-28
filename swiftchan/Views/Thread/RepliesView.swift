@@ -16,26 +16,35 @@ struct RepliesView: View {
     @State var isPresenting = false
     @State var presentingSheet: PresentingSheet = .replies
 
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
+
     var body: some View {
         return
-            ZStack {
-                Blur(style: .regular)
+            ZStack(alignment: .center) {
+                Blur(style: .regular).ignoresSafeArea()
                 ScrollView {
-                    ForEach(self.replies, id: \.self) { index in
-                        PostView(boardName: self.viewModel.boardName,
-                                 post: self.viewModel.posts[index],
-                                 index: index,
-                                 comment: self.viewModel.comments[index],
-                                 replies: self.viewModel.replies[index] ?? nil,
-                                 isPresenting: self.$isPresenting,
-                                 presentingSheet: self.$presentingSheet,
-                                 galleryIndex: self.$postIndex,
-                                 commentRepliesIndex: self.$commentRepliesIndex
-                        )
+                    LazyVGrid(columns: self.columns,
+                              alignment: .center,
+                              spacing: 0) {
+                        ForEach(self.replies) { index in
+                            PostView(boardName: self.viewModel.boardName,
+                                     post: self.viewModel.posts[index],
+                                     index: index,
+                                     comment: self.viewModel.comments[index],
+                                     replies: self.viewModel.replies[index] ?? nil,
+                                     isPresenting: self.$isPresenting,
+                                     presentingSheet: self.$presentingSheet,
+                                     galleryIndex: self.$postIndex,
+                                     commentRepliesIndex: self.$commentRepliesIndex
+                            )
+                            // random id, different from the thread ones
+                            .id(UUID())
+                        }
                     }
-                }
-                //.background(Blur(style: .regular).)
-            }.ignoresSafeArea(edges: .bottom)
+                }.frame(width: UIScreen.main.bounds.width,
+                        height: UIScreen.main.bounds.height - SAFE_AREA_PADDING)
+                .offset(y: TOP_PADDING)
+            }
     }
 }
 

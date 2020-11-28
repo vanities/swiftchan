@@ -33,31 +33,29 @@ struct ThreadView: View {
             ScrollView {
                 LazyVGrid(columns: self.columns,
                           alignment: .center,
-                          spacing: 0,
-                          content: {
-                            ForEach(self.viewModel.posts.indices, id: \.self) { index in
-                                if index < self.viewModel.comments.count {
-                                    PostView(boardName: self.viewModel.boardName,
-                                             post: self.viewModel.posts[index],
-                                             index: index,
-                                             comment: self.viewModel.comments[index],
-                                             replies: self.viewModel.replies[index] ?? nil,
-                                             isPresenting: self.$isPresenting,
-                                             presentingSheet: self.$presentingSheet,
-                                             galleryIndex: self.$postIndex,
-                                             commentRepliesIndex: self.$commentRepliesIndex
-                                    )
-                                    .onChange(of: self.isPresenting, perform: { _ in
-                                        if self.postIndex == index && self.presentingSheet == .gallery {
-                                            self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                          spacing: 0) {
+                    ForEach(self.viewModel.posts.indices, id: \.self) { index in
+                        if index < self.viewModel.comments.count {
+                            PostView(boardName: self.viewModel.boardName,
+                                     post: self.viewModel.posts[index],
+                                     index: index,
+                                     comment: self.viewModel.comments[index],
+                                     replies: self.viewModel.replies[index] ?? nil,
+                                     isPresenting: self.$isPresenting,
+                                     presentingSheet: self.$presentingSheet,
+                                     galleryIndex: self.$postIndex,
+                                     commentRepliesIndex: self.$commentRepliesIndex
+                            )
+                            .onChange(of: self.isPresenting) { _ in
+                                if self.postIndex == index && self.presentingSheet == .gallery {
+                                    self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
 
-                                        }
-                                    })
                                 }
                             }
-                            .frame(minWidth: UIScreen.main.bounds.width)
-                          }
-                )
+                        }
+                    }
+                    .frame(minWidth: UIScreen.main.bounds.width)
+                }
             }
             .opacity(self.opacity)
             .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
