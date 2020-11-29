@@ -21,7 +21,6 @@ struct PresentedPost: View {
     var onOffsetChanged: ((CGFloat) -> Void)?
 
     var body: some View {
-        print(galleryIndex)
         return ZStack {
             switch self.presentingSheet {
             case .gallery:

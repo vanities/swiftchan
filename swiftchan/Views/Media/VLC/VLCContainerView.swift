@@ -8,7 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 
-enum MediaState {
+enum MediaState: Equatable {
     case play
     case pause
     case seek(VLCTime)
@@ -17,10 +17,9 @@ enum MediaState {
 struct VLCContainerView: View {
     let url: URL
     let autoPlay: Bool
-    let play: Bool
+    @Binding var mediaState: MediaState
 
     @State private var showControls: Bool = true
-    @State private var controlState: MediaState = .play
     @State private var state: VLCMediaPlayerState = .stopped
     @State private var currentTime: VLCTime = VLCTime.init(int: 0)
     @State private var remainingTime: VLCTime = VLCTime.init(int: 0)
@@ -32,7 +31,7 @@ struct VLCContainerView: View {
             ZStack {
                 VLCVideoView(url: url,
                              autoPlay: self.autoPlay,
-                             mediaState: self.controlState,
+                             mediaState: self.$mediaState,
                              state: self.$state,
                              currentTime: self.$currentTime,
                              remainingTime: self.$remainingTime,
@@ -41,7 +40,7 @@ struct VLCContainerView: View {
                     Spacer()
                     if self.showControls {
                         VLCPlayerControlsView(
-                            mediaState: self.$controlState,
+                            mediaState: self.$mediaState,
                             state: self.$state,
                             currentTime: self.$currentTime,
                             remainingTime: self.$remainingTime,
@@ -50,16 +49,13 @@ struct VLCContainerView: View {
                     }
                 }
             }
-            .onChange(of: self.play, perform: { shouldPlay in
-                if shouldPlay {
+            .onChange(of: self.mediaState) { state in
+                if state == .play {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                         self.showControls = false
                     }
-                    self.controlState = .play
-                } else {
-                    self.controlState = .pause
                 }
-            })
+            }
 
             .onTapGesture {
                 withAnimation(.linear(duration: 0.2)) {
@@ -72,8 +68,9 @@ struct VLCContainerView: View {
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
         return VLCContainerView(url: URLExamples.webm,
-                         autoPlay: true,
-                         play: true)
-            .background(Color.black)
+                                autoPlay: true,
+                                mediaState: .constant(.play)
+        )
+        .background(Color.black)
     }
 }

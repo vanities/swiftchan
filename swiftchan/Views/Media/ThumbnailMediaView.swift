@@ -29,7 +29,11 @@ struct ThumbnailMediaView: View {
                     .foregroundColor(.white)
             }
         case .gif:
-            GIFView(url: self.useThumbnailGif ? self.thumbnailUrl : self.url)
+            if self.useThumbnailGif {
+                ImageView(url: self.thumbnailUrl, isSelected: true, canGesture: false)
+            } else {
+                GIFView(url: self.url)
+            }
         case .none:
             EmptyView()
         }

@@ -80,6 +80,9 @@ struct BoardsView: View {
                 }
             }
         }
+        .onAppear {
+            self.searchText = ""
+        }
     }
 }
 

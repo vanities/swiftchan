@@ -12,7 +12,9 @@ struct VLCVideoView: UIViewRepresentable {
     let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
     let url: URL
     let autoPlay: Bool
-    let mediaState: MediaState
+    @Binding private(set) var mediaState: MediaState
+
+    @State var media: VLCMedia?
 
     @Binding private(set) var state: VLCMediaPlayerState
     @Binding private(set) var currentTime: VLCTime
@@ -40,7 +42,7 @@ struct VLCVideoView: UIViewRepresentable {
         case .play:
             if !context.coordinator.parent.playerList.mediaPlayer.isPlaying {
                 DispatchQueue.main.async {
-                    context.coordinator.parent.playerList.play()
+                    context.coordinator.parent.playerList.play(self.media)
                 }
             }
         case .pause:
@@ -62,22 +64,23 @@ struct VLCVideoView: UIViewRepresentable {
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()
         coordinator.parent.playerList.mediaPlayer.media = nil
+        coordinator.parent.media = nil
     }
 
     // MARK: Private
     private func setMediaPlayer(cacheUrl: URL) {
         DispatchQueue.main.async {
-            let media = VLCMedia(url: cacheUrl)
+            self.media = VLCMedia(url: cacheUrl)
             let mediaList = VLCMediaList()
-            mediaList.add(media)
+            mediaList.add(self.media)
             self.playerList.mediaList = mediaList
 
             if self.autoPlay {
-                self.playerList.play(media)
+                self.playerList.play(self.media)
             }
         }
         #if DEBUG
-        self.playerList.mediaPlayer.audio.isMuted = true
+        //self.playerList.mediaPlayer.audio.isMuted = true
         #endif
     }
 
@@ -123,7 +126,7 @@ struct VlcPlayerDemo_Previews: PreviewProvider {
         return ZStack {
             VLCVideoView(url: URLExamples.webm,
                          autoPlay: true,
-                         mediaState: .play,
+                         mediaState: .constant(.play),
                          state: .constant(.playing),
                          currentTime: .constant(.init(int: 0)),
                          remainingTime: .constant(.init(int: 0)),

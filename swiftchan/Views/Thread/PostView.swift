@@ -41,7 +41,8 @@ struct PostView: View {
 
                         ThumbnailMediaView(
                             url: url,
-                            thumbnailUrl: thumbnailUrl)
+                            thumbnailUrl: thumbnailUrl,
+                            useThumbnailGif: false)
                             .aspectRatio(contentMode: .fit)
                             .frame(width: UIScreen.main.bounds.width/2)
                             .onTapGesture {
@@ -60,6 +61,32 @@ struct PostView: View {
                             Text("#" + String(post.no))
                         }
                         Text(post.getDatePosted())
+                        HStack {
+                            if let capcode = post.capcode {
+                                Text(capcode)
+                                    .foregroundColor(.orange)
+                                    .bold()
+                            }
+                        }
+                        HStack {
+                            if let country = post.country {
+                                Text(getFlag(from: country))
+                            }
+                            if let countryName = post.country_name {
+                                Text(countryName)
+                                    .bold()
+                            }
+                        }
+                        HStack {
+                            if let name = post.name {
+                                Text(name)
+                            }
+                            if let trip = post.trip {
+                                Text(trip)
+                                    .italic()
+                                    .foregroundColor(.pink)
+                            }
+                        }
                     }
                 }
                 // comment
@@ -83,19 +110,16 @@ struct PostView: View {
     }
 }
 
-/*
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
-        PostView(boardName: "fit",
-                 post: Post.example(),
-                 index: 0,
-                 comment: Text("comment!"),
-                 replies: [0, 1],
+        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        PostView(index: 0,
                  isPresenting: .constant(false),
                  presentingSheet: .constant(.gallery),
                  galleryIndex: .constant(0),
                  commentRepliesIndex: .constant(0)
         )
+        .environmentObject(viewModel)
+        .environmentObject(AppState())
     }
 }
- */

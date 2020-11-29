@@ -10,10 +10,8 @@ import SwiftUI
 struct MediaView: View, Buildable {
     let url: URL
     let selected: Bool
+    @Binding var mediaState: MediaState
 
-    func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
-        mutating(keyPath: \.onMediaChanged, value: callback)
-    }
     var onMediaChanged: ((Bool) -> Void)?
 
     @ViewBuilder
@@ -28,8 +26,8 @@ struct MediaView: View, Buildable {
                 }
         case .webm:
             VLCContainerView(url: self.url,
-                             autoPlay: true,
-                             play: self.selected)
+                             autoPlay: self.selected,
+                             mediaState: self.$mediaState)
         case .gif:
             GIFView(url: self.url)
         case .none:
@@ -38,9 +36,16 @@ struct MediaView: View, Buildable {
     }
 }
 
+extension MediaView {
+    func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onMediaChanged, value: callback)
+    }
+}
+
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
         MediaView(url: URLExamples.image,
-                  selected: true)
+                  selected: true,
+                  mediaState: .constant(.play))
     }
 }

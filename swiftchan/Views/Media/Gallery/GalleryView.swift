@@ -16,6 +16,7 @@ struct GalleryView: View, Buildable {
     @State var canPage: Bool = true
     @Binding var isDismissing: Bool
 
+    @State var mediaStates: [MediaState] = Array(repeating: .pause, count: 100)
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = false
     @State var dragging: Bool = false
@@ -32,7 +33,8 @@ struct GalleryView: View, Buildable {
             Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
                 let url = self.urls[index]
                 MediaView(url: url,
-                          selected: self.selection == index)
+                          selected: self.selection == index,
+                          mediaState: self.$mediaStates[index])
                     .onMediaChanged { zoomed in
                         self.canShowPreview = !zoomed
                         self.canPage = !zoomed
@@ -42,14 +44,21 @@ struct GalleryView: View, Buildable {
                         }
                         self.onMediaChanged?(zoomed)
                     }
-                    .tag(index)
             }
             .onOffsetChanged { value in
                 self.onPageDragChanged?(value)
             }
-            .onPageChanged { _ in
+            .onPageChanged { pageIndex in
+                print("change page to", self.selection)
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
+
+                for i in mediaStates.indices {
+                    if i != pageIndex {
+                        self.mediaStates[i] = .pause
+                    }
+                }
+                self.mediaStates[pageIndex] = .play
             }
             .allowsDragging(!self.isDismissing && self.canPage)
             .pagingPriority(.simultaneous)

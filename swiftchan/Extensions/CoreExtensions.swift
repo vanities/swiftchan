@@ -12,6 +12,16 @@ let TOP_PADDING = window.safeAreaInsets.top
 let BOTTOM_PADDING = window.safeAreaInsets.bottom
 let SAFE_AREA_PADDING = TOP_PADDING + BOTTOM_PADDING
 
+internal func getFlag(from countryCode: String) -> String {
+
+    return countryCode
+        .unicodeScalars
+        .map({ 127397 + $0.value })
+        .compactMap(UnicodeScalar.init)
+        .map(String.init)
+        .joined()
+}
+
 extension CGPoint {
 
     var angle: Angle? {
