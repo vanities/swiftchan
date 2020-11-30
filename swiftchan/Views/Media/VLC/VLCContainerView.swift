@@ -36,7 +36,6 @@ struct VLCContainerView: View {
                              currentTime: self.$currentTime,
                              remainingTime: self.$remainingTime,
                              totalTime: self.$totalTime)
-                    .id(url)
                 VStack {
                     Spacer()
                     if self.showControls {

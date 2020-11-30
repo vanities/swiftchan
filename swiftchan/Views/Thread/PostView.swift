@@ -110,6 +110,11 @@ struct PostView: View {
     }
 }
 
+extension PostView: Identifiable {
+    var id: Int { return self.index }
+    
+}
+
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
