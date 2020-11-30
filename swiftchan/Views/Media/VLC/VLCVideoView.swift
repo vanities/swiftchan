@@ -14,8 +14,6 @@ struct VLCVideoView: UIViewRepresentable {
     let autoPlay: Bool
     @Binding private(set) var mediaState: MediaState
 
-    @State var media: VLCMedia?
-
     @Binding private(set) var state: VLCMediaPlayerState
     @Binding private(set) var currentTime: VLCTime
     @Binding private(set) var remainingTime: VLCTime
@@ -24,11 +22,11 @@ struct VLCVideoView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let uiView = UIView()
 
-        #if DEBUG
-            self.setMediaPlayer(cacheUrl: url)
-        #else
-            self.setCachedMediaPlayer(context: context)
-        #endif
+        //#if DEBUG
+        //    self.setMediaPlayer(cacheUrl: url)
+        //#else
+        self.setCachedMediaPlayer(context: context)
+        //#endif
 
         self.playerList.mediaPlayer.drawable = uiView
         self.playerList.mediaPlayer.delegate = context.coordinator
@@ -40,13 +38,15 @@ struct VLCVideoView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         switch mediaState {
         case .play:
-            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying {
+            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying,
+               let medialist = context.coordinator.parent.playerList.mediaList {
                 DispatchQueue.main.async {
-                    context.coordinator.parent.playerList.play(self.media)
+                    context.coordinator.parent.playerList.play(medialist.media(at: 0))
                 }
             }
         case .pause:
-            if context.coordinator.parent.playerList.mediaPlayer.canPause {
+            if context.coordinator.parent.playerList.mediaPlayer.canPause,
+               context.coordinator.parent.playerList.mediaList != nil {
                 DispatchQueue.main.async {
                     context.coordinator.parent.playerList.pause()
                 }
@@ -54,7 +54,7 @@ struct VLCVideoView: UIViewRepresentable {
         case .seek(let time):
             if context.coordinator.parent.playerList.mediaPlayer.isSeekable {
                 DispatchQueue.main.async {
-                    context.coordinator.parent.playerList.mediaPlayer.time = time
+                    context.coordinator.parent.playerList.mediaPlayer?.time = time
                 }
             }
         }
@@ -64,20 +64,19 @@ struct VLCVideoView: UIViewRepresentable {
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()
         coordinator.parent.playerList.mediaPlayer.media = nil
-        coordinator.parent.media = nil
     }
 
     // MARK: Private
     private func setMediaPlayer(cacheUrl: URL) {
         DispatchQueue.main.async {
-            self.media = VLCMedia(url: cacheUrl)
-            let mediaList = VLCMediaList()
-            mediaList.add(self.media)
-            self.playerList.mediaList = mediaList
+            self.playerList.mediaList = VLCMediaList()
+            self.playerList.mediaList.add(VLCMedia(url: cacheUrl))
 
-            if self.autoPlay {
-                self.playerList.play(self.media)
-            }
+            if self.autoPlay,
+               let medialist = self.playerList.mediaList {
+                self.playerList.play(medialist.media(at: 0))
+
+               }
         }
         #if DEBUG
         //self.playerList.mediaPlayer.audio.isMuted = true

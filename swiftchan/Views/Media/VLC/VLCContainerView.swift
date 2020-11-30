@@ -29,13 +29,14 @@ struct VLCContainerView: View {
     var body: some View {
         return
             ZStack {
-                VLCVideoView(url: url,
+                VLCVideoView(url: self.url,
                              autoPlay: self.autoPlay,
                              mediaState: self.$mediaState,
                              state: self.$state,
                              currentTime: self.$currentTime,
                              remainingTime: self.$remainingTime,
                              totalTime: self.$totalTime)
+                    .id(url)
                 VStack {
                     Spacer()
                     if self.showControls {
@@ -45,14 +46,17 @@ struct VLCContainerView: View {
                             currentTime: self.$currentTime,
                             remainingTime: self.$remainingTime,
                             totalTime: self.$totalTime)
-                            .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+                            .transition(.opacity)
+                            .padding(.bottom, 25)
                     }
                 }
             }
             .onChange(of: self.mediaState) { state in
                 if state == .play {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
-                        self.showControls = false
+                        withAnimation(.linear(duration: 0.2)) {
+                            self.showControls = false
+                        }
                     }
                 }
             }

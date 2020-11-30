@@ -44,13 +44,13 @@ struct ThreadView: View {
                     }
                     .frame(minWidth: UIScreen.main.bounds.width)
                 }
-            }
-            .opacity(self.opacity)
-            .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
-                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                softVibrate.impactOccurred()
-                self.viewModel.load {
-                    self.pullToRefreshShowing = false
+                .opacity(self.opacity)
+                .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                    let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                    softVibrate.impactOccurred()
+                    self.viewModel.load {
+                        self.pullToRefreshShowing = false
+                    }
                 }
             }
 

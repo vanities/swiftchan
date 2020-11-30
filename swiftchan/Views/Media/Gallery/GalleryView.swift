@@ -90,9 +90,9 @@ struct GalleryView: View, Buildable {
                     GalleryPreviewView(urls: self.urls,
                                        thumbnailUrls: self.thumbnailUrls,
                                        selection: self.$selection)
-                        .padding(.bottom, 50)
+                        .padding(.bottom, 60)
                 }
-                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+                .transition(.opacity)
             }
         }
         .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
