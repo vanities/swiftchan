@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MediaView: View, Buildable {
+struct MediaView: View {
     let url: URL
     let selected: Bool
     @Binding var mediaState: MediaState
@@ -36,7 +36,7 @@ struct MediaView: View, Buildable {
     }
 }
 
-extension MediaView {
+extension MediaView: Buildable {
     func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onMediaChanged, value: callback)
     }

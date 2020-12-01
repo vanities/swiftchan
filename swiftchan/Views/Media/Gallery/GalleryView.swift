@@ -9,7 +9,7 @@ import SwiftUI
 import Introspect
 import SwiftUIPager
 
-struct GalleryView: View, Buildable {
+struct GalleryView: View {
     @Binding var selection: Int
     var urls: [URL]
     var thumbnailUrls: [URL]
@@ -31,8 +31,7 @@ struct GalleryView: View, Buildable {
 
             // gallery
             Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
-                let url = self.urls[index]
-                MediaView(url: url,
+                MediaView(url: self.urls[index],
                           selected: self.selection == index,
                           mediaState: self.$mediaStates[index])
                     .onMediaChanged { zoomed in
@@ -49,7 +48,6 @@ struct GalleryView: View, Buildable {
                 self.onPageDragChanged?(value)
             }
             .onPageChanged { pageIndex in
-                print("change page to", self.selection)
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
 
@@ -109,7 +107,7 @@ struct GalleryView: View, Buildable {
 
 }
 
-extension GalleryView {
+extension GalleryView: Buildable {
     func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onMediaChanged, value: callback)
     }

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct RepliesView: View {
+    @EnvironmentObject var viewModel: ThreadView.ViewModel
     let replies: [Int]
-    let viewModel: ThreadView.ViewModel
 
     @State var postIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
@@ -50,6 +50,7 @@ struct RepliesView_Previews: PreviewProvider {
     // TODO: doesn't work
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        RepliesView(replies: [0, 1], viewModel: viewModel)
+        RepliesView(replies: [0, 1])
+            .environmentObject(viewModel)
     }
 }

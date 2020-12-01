@@ -80,9 +80,7 @@ struct BoardsView: View {
                 }
             }
         }
-        .onAppear {
-            self.searchText = ""
-        }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
