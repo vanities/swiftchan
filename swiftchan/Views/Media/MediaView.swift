@@ -28,6 +28,9 @@ struct MediaView: View {
             VLCContainerView(url: self.url,
                              autoPlay: self.selected,
                              mediaState: self.$mediaState)
+                .onSeekChanged { seeking in
+                    self.onMediaChanged?(seeking)
+                }
         case .gif:
             GIFView(url: self.url)
         case .none:

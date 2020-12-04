@@ -14,8 +14,8 @@ struct VLCPlayerControlsView: View {
     @Binding private(set) var currentTime: VLCTime
     @Binding private(set) var remainingTime: VLCTime
     @Binding private(set) var totalTime: VLCTime
-
-    @State private var seeking: Bool = false
+    @Binding private(set) var seeking: Bool
+    
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
 
@@ -104,7 +104,9 @@ struct VLCPlayerControlsView_Previews: PreviewProvider {
                               state: .constant(.playing),
                               currentTime: .constant(.init(int: 0)),
                               remainingTime: .constant(.init(int: 30000)),
-                              totalTime: .constant(.init(int: 500000)))
+                              totalTime: .constant(.init(int: 500000)),
+                              seeking: .constant(false)
+        )
             .background(Color.black)
     }
 }

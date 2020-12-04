@@ -24,7 +24,10 @@ struct VLCContainerView: View {
     @State private var currentTime: VLCTime = VLCTime.init(int: 0)
     @State private var remainingTime: VLCTime = VLCTime.init(int: 0)
     @State private var totalTime: VLCTime = VLCTime.init(int: 0)
+    @State private var seeking: Bool = false
     @State private var cachedUrl: URL?
+    
+    var onSeekChanged: ((Bool) -> Void)?
 
     var body: some View {
         return
@@ -44,9 +47,13 @@ struct VLCContainerView: View {
                             state: self.$state,
                             currentTime: self.$currentTime,
                             remainingTime: self.$remainingTime,
-                            totalTime: self.$totalTime)
+                            totalTime: self.$totalTime,
+                            seeking: self.$seeking)
                             .transition(.opacity)
                             .padding(.bottom, 25)
+                            .onChange(of: self.seeking, perform: { value in
+                                self.onSeekChanged?(value)
+                            })
                     }
                 }
             }
@@ -65,6 +72,12 @@ struct VLCContainerView: View {
                     self.showControls.toggle()
                 }
             }
+    }
+}
+
+extension VLCContainerView: Buildable {
+    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onSeekChanged, value: callback)
     }
 }
 

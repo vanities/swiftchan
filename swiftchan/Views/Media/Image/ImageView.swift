@@ -8,7 +8,7 @@
 import SwiftUI
 import URLImage
 
-struct ImageView: View, Buildable {
+struct ImageView: View {
     let url: URL
     let isSelected: Bool
     let canGesture: Bool
@@ -24,9 +24,6 @@ struct ImageView: View, Buildable {
     @GestureState private var dragOffset = CGSize.zero
     @State private var position = CGSize.zero
 
-    func onZoomChanged(_ callback: ((Bool) -> Void)?) -> Self {
-        mutating(keyPath: \.onZoomChanged, value: callback)
-    }
     var onZoomChanged: ((Bool) -> Void)?
 
     var body: some View {
@@ -103,6 +100,12 @@ struct ImageView: View, Buildable {
                     self.onZoomChanged?(self.zoomed)
                 }
             })
+    }
+}
+
+extension ImageView: Buildable {
+    func onZoomChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onZoomChanged, value: callback)
     }
 }
 
