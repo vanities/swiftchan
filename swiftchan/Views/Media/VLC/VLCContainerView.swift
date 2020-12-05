@@ -26,7 +26,7 @@ struct VLCContainerView: View {
     @State private var totalTime: VLCTime = VLCTime.init(int: 0)
     @State private var seeking: Bool = false
     @State private var cachedUrl: URL?
-    
+
     var onSeekChanged: ((Bool) -> Void)?
 
     var body: some View {

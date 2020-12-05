@@ -15,7 +15,7 @@ struct VLCPlayerControlsView: View {
     @Binding private(set) var remainingTime: VLCTime
     @Binding private(set) var totalTime: VLCTime
     @Binding private(set) var seeking: Bool
-    
+
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
 

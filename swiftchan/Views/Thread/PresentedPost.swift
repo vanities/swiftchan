@@ -13,13 +13,13 @@ struct PresentedPost: View {
     let presentingSheet: PresentingSheet
     @Binding var galleryIndex: Int
     let commentRepliesIndex: Int
-    
+
     @State var dismiss: Bool = false
     @State var canDrag: Bool = true
     @State var dragging: Bool = false
-    
+
     var onOffsetChanged: ((CGFloat) -> Void)?
-    
+
     @ViewBuilder
     var body: some View {
         switch self.presentingSheet {
@@ -52,7 +52,7 @@ struct PresentedPost: View {
                 }
             )
             .transition(.identity)
-            
+
         case .replies:
             if let replies = self.viewModel.replies[self.commentRepliesIndex] {
                 RepliesView(replies: replies,
@@ -66,7 +66,7 @@ struct PresentedPost: View {
                         onOffsetChanged: {_ in}
                     )
                     .transition(.identity)
-                
+
             }
         }
     }

@@ -16,7 +16,7 @@ struct GalleryView: View {
     @State var canPage: Bool = true
     @Binding var isDismissing: Bool
 
-    @State var mediaStates: [MediaState] = Array(repeating: .pause, count: 100)
+    @State var mediaStates: [MediaState] = Array(repeating: .pause, count: 200)
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = false
     @State var dragging: Bool = false

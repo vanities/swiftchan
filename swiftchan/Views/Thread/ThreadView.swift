@@ -29,27 +29,36 @@ struct ThreadView: View {
     var body: some View {
         return ZStack {
             ScrollView {
-                LazyVGrid(columns: self.columns,
-                          alignment: .center,
-                          spacing: 0) {
-                    ForEach(self.viewModel.posts.indices, id: \.self) { index in
-                        if index < self.viewModel.comments.count {
-                            PostView(index: index,
-                                     isPresenting: self.$isPresenting,
-                                     presentingSheet: self.$presentingSheet,
-                                     galleryIndex: self.$galleryIndex,
-                                     commentRepliesIndex: self.$commentRepliesIndex
-                            )
+                ScrollViewReader { value in
+                    LazyVGrid(columns: self.columns,
+                              alignment: .center,
+                              spacing: 0) {
+                        ForEach(self.viewModel.posts.indices, id: \.self) { index in
+                            if index < self.viewModel.comments.count {
+                                PostView(index: index,
+                                         isPresenting: self.$isPresenting,
+                                         presentingSheet: self.$presentingSheet,
+                                         galleryIndex: self.$galleryIndex,
+                                         commentRepliesIndex: self.$commentRepliesIndex
+                                )
+                                .id(index)
+                            }
                         }
+                        .frame(minWidth: UIScreen.main.bounds.width)
                     }
-                    .frame(minWidth: UIScreen.main.bounds.width)
-                }
-                .opacity(self.opacity)
-                .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
-                    let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                    softVibrate.impactOccurred()
-                    self.viewModel.load {
-                        self.pullToRefreshShowing = false
+                    .onChange(of: self.isPresenting, perform: { _ in
+                        if !self.isPresenting,
+                           let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
+                            value.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: .top)
+                        }
+                    })
+                    .opacity(self.opacity)
+                    .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                        softVibrate.impactOccurred()
+                        self.viewModel.load {
+                            self.pullToRefreshShowing = false
+                        }
                     }
                 }
             }
@@ -57,7 +66,8 @@ struct ThreadView: View {
             if self.isPresenting {
                 PresentedPost(presenting: self.$isPresenting,
                               presentingSheet: self.presentingSheet,
-                              galleryIndex: self.$galleryIndex, commentRepliesIndex: self.commentRepliesIndex)
+                              galleryIndex: self.$galleryIndex,
+                              commentRepliesIndex: self.commentRepliesIndex)
                     .onOffsetChanged { value in
                         withAnimation(.linear) {
                             self.opacity = Double(value / UIScreen.main.bounds.height)
