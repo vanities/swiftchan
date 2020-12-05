@@ -56,11 +56,16 @@ struct VLCPlayerControlsView: View {
                    in: 0...1,
                    onEditingChanged: self.sliderEditingChanged)
                 .onChange(of: self.currentTime, perform: { _ in
-                    self.sliderPos = self.calcSliderPos
+                    if !self.seeking {
+                        self.sliderPos = self.calcSliderPos
+                    }
                 })
                 .onChange(of: self.sliderPos, perform: { _ in
                     if self.seeking {
-                        self.seekingTime = VLCTime(int: Int32(CGFloat(self.totalTime.intValue) * self.sliderPos))
+                        let currentTime = Int32(CGFloat(self.totalTime.intValue) * self.sliderPos)
+                        self.currentTime = VLCTime(int: currentTime)
+                        self.remainingTime = VLCTime(int: currentTime - Int32(self.totalTime.intValue))
+                        self.seekingTime = VLCTime(int: currentTime)
                         self.mediaState = .seek(self.seekingTime)
                     }
                 })

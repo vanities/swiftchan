@@ -48,7 +48,7 @@ struct VLCVideoView: UIViewRepresentable {
                         context.coordinator.parent.playerList.mediaPlayer.delegate = context.coordinator
                     }
                     else {
-                    context.coordinator.parent.playerList.play()
+                        context.coordinator.parent.playerList.play()
                     }
                 }
             }
