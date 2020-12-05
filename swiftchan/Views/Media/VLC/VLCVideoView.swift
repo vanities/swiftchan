@@ -25,7 +25,8 @@ struct VLCVideoView: UIViewRepresentable {
         let uiView = UIView()
         
         #if DEBUG
-        self.setMediaPlayer(context: context, cacheUrl: url)
+        self.setCachedMediaPlayer(context: context)
+        //self.setMediaPlayer(context: context, cacheUrl: url)
         #else
         self.setCachedMediaPlayer(context: context)
         #endif
@@ -39,10 +40,11 @@ struct VLCVideoView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         switch mediaState {
         case .play:
-            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying {
+            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying,
+               let media = self.media {
                 DispatchQueue.main.async {
                     if context.coordinator.parent.playerList.mediaPlayer.media == nil {
-                        context.coordinator.parent.playerList.play(self.media)
+                        context.coordinator.parent.playerList.play(media)
                         context.coordinator.parent.playerList.mediaPlayer.delegate = context.coordinator
                     }
                     else {
