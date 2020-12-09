@@ -59,17 +59,17 @@ struct GalleryView: View {
                         switch MediaDetector.detect(url: self.urls[index]) {
                         case .image, .gif:
                             Button(action: {
-                                self.isExportingDocument.toggle()
-                            }) {
-                                Text("Save to Files")
-                                Image(systemName: "folder")
-                            }
-                        case .webm, .none:
-                            Button(action: {
                                 ImageSaver().saveImageToPhotos(url: self.urls[index])
                             }) {
                                 Text("Save to Photos")
                                 Image(systemName: "square.and.arrow.down")
+                            }
+                        case .webm, .none:
+                            Button(action: {
+                                self.isExportingDocument.toggle()
+                            }) {
+                                Text("Save to Files")
+                                Image(systemName: "folder")
                             }
                         }
                     }
