@@ -26,7 +26,10 @@ struct FileExport: FileDocument {
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
 
         let url = CacheManager().directoryFor(stringUrl: self.url)
-        let file = try! FileWrapper(url: url.absoluteURL, options: .immediate)
-        return file
+        do {
+            return try FileWrapper(url: url.absoluteURL, options: .immediate)
+        } catch {
+            return FileWrapper()
+        }
     }
 }
