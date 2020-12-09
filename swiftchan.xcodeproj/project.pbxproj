@@ -25,6 +25,8 @@
 		9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A9256F87EA00D08075 /* CoreExtensions.swift */; };
 		9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1AE256F8E4D00D08075 /* Blur.swift */; };
 		9524E1C4257054DB00D08075 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 9524E1C3257054DB00D08075 /* SwiftUIPager */; };
+		9524F4B62580545C0006395F /* FileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4B52580545C0006395F /* FileExport.swift */; };
+		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		955814A6254CFFC200A966BA /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 955814A5254CFFC200A966BA /* URLImage */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
@@ -102,6 +104,8 @@
 		9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedPostDismissGesture.swift; sourceTree = "<group>"; };
 		9524E1A9256F87EA00D08075 /* CoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreExtensions.swift; sourceTree = "<group>"; };
 		9524E1AE256F8E4D00D08075 /* Blur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blur.swift; sourceTree = "<group>"; };
+		9524F4B52580545C0006395F /* FileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExport.swift; sourceTree = "<group>"; };
+		9524F4BA258054A60006395F /* MediaSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSaver.swift; sourceTree = "<group>"; };
 		955814B7254D24B900A966BA /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
@@ -185,6 +189,8 @@
 				950E393F255CDA3B00A00A74 /* MediaView.swift */,
 				95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */,
 				95F6245F255CE64400E9147B /* URLExamples.swift */,
+				9524F4B52580545C0006395F /* FileExport.swift */,
+				9524F4BA258054A60006395F /* MediaSaver.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -573,6 +579,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9524F4B62580545C0006395F /* FileExport.swift in Sources */,
 				95FE21E6256B50EC0061B633 /* GIFPlayerUiView.swift in Sources */,
 				9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */,
 				959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */,
@@ -612,6 +619,7 @@
 				9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */,
 				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
 				95D804D32568A553005A3128 /* PresentedPost.swift in Sources */,
+				9524F4BB258054A60006395F /* MediaSaver.swift in Sources */,
 				9524E19F256F272200D08075 /* AppState.swift in Sources */,
 				956D9052256B18270000D84C /* Buildable.swift in Sources */,
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
@@ -777,7 +785,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -802,7 +810,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;

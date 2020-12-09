@@ -18,7 +18,6 @@ class CacheManager {
     }()
 
     func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
-
         guard self.checked.contains(stringUrl) == false else {
             print("\(stringUrl) caching already" )
             return
@@ -65,7 +64,7 @@ class CacheManager {
         }
     }
 
-    private func directoryFor(stringUrl: String) -> URL {
+    func directoryFor(stringUrl: String) -> URL {
         let fileURL = URL(string: stringUrl)!.lastPathComponent
         let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
         return file

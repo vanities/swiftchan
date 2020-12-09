@@ -78,9 +78,10 @@ struct VLCVideoView: UIViewRepresentable {
             self.media = VLCMedia(url: cacheUrl)
             self.playerList.rootMedia = self.media
 
-            if self.autoPlay {
+            if self.autoPlay,
+               let media = self.media {
                 self.playerList.mediaPlayer.delegate = context.coordinator
-                self.playerList.play(self.media)
+                self.playerList.play(media)
             }
         }
         #if DEBUG

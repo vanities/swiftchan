@@ -16,6 +16,8 @@ struct GalleryView: View {
     @State var canPage: Bool = true
     @Binding var isDismissing: Bool
 
+    @State private var isExportingDocument = false
+
     @State var mediaStates: [MediaState] = Array(repeating: .pause, count: 200)
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = false
@@ -42,6 +44,34 @@ struct GalleryView: View {
                             self.showPreview = !zoomed
                         }
                         self.onMediaChanged?(zoomed)
+                    }
+                    .fileExporter(isPresented: self.$isExportingDocument,
+                                  document: FileExport(url: self.urls[index].absoluteString),
+                                  contentType: .image,
+                                  onCompletion: { _ in })
+                    .contextMenu {
+                        Button(action: {
+                            UIPasteboard.general.string = self.urls[index].absoluteString
+                        }) {
+                            Text("Copy URL")
+                            Image(systemName: "doc.on.doc")
+                        }
+                        switch MediaDetector.detect(url: self.urls[index]) {
+                        case .image, .gif:
+                            Button(action: {
+                                self.isExportingDocument.toggle()
+                            }) {
+                                Text("Save to Files")
+                                Image(systemName: "folder")
+                            }
+                        case .webm, .none:
+                            Button(action: {
+                                ImageSaver().saveImageToPhotos(url: self.urls[index])
+                            }) {
+                                Text("Save to Photos")
+                                Image(systemName: "square.and.arrow.down")
+                            }
+                        }
                     }
             }
             .onOffsetChanged { value in
