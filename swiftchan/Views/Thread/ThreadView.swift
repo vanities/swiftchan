@@ -20,6 +20,7 @@ struct ThreadView: View {
 
     @State var galleryIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
+    @State var presentingIndex: Int = 0
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
@@ -48,6 +49,7 @@ struct ThreadView: View {
                     }
                     .onChange(of: self.isPresenting, perform: { _ in
                         if !self.isPresenting,
+                           self.presentingIndex != self.galleryIndex,
                            let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
                             value.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: .top)
                         }
