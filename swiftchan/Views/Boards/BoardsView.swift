@@ -30,35 +30,36 @@ struct BoardsView: View {
             })
         }
     }
-
+    
     var body: some View {
         return NavigationView {
-            VStack(spacing: 0) {
-                SearchTextView(textPlaceholder: "Search Boards",
-                               searchText: self.$searchText)
-                ScrollView {
+            ScrollView {
+                VStack(spacing: 0) {
+                    SearchTextView(textPlaceholder: "Search Boards",
+                                   searchText: self.$searchText)
+                    //ScrollView {
                     LazyVGrid(columns: columns,
                               alignment: .leading,
                               spacing: 2) {
                         if searchText == "" {
                             Group {
-                            Section(header: Text("favorites")
-                                        .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                        .padding(.leading, 5)
-                            ) {
-
-                                ForEach(self.favoriteBoards, id: \.self.id) { board in
-                                    NavigationLink(
-                                        destination: CatalogView(viewModel: CatalogView.ViewModel(boardName: board.board))) {
-                                        BoardView(name: board.board,
-                                                  title: board.title,
-                                                  description: board.meta_description.clean)
-                                            .padding(.horizontal, 5)
+                                Section(header: Text("favorites")
+                                            .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                                            .padding(.leading, 5)
+                                ) {
+                                    
+                                    ForEach(self.favoriteBoards, id: \.self.id) { board in
+                                        NavigationLink(
+                                            destination: CatalogView(viewModel: CatalogView.ViewModel(boardName: board.board))) {
+                                            BoardView(name: board.board,
+                                                      title: board.title,
+                                                      description: board.meta_description.clean)
+                                                .padding(.horizontal, 5)
+                                        }
                                     }
                                 }
+                                
                             }
-
-                        }
                         }
                         Section(header: Text("all")
                                     .font(Font.system(size: 24, weight: .bold, design: .rounded))
@@ -74,13 +75,19 @@ struct BoardsView: View {
                                 }
                             }
                         }
-                    }
+                              }
                     .buttonStyle(PlainButtonStyle())
                     .navigationBarTitle("4chan")
                 }
             }
+            .introspectNavigationController { navCon in
+                navCon.hidesBarsOnSwipe = true
+                navCon.hidesBarsOnTap = true
+            }
+            
         }
         .navigationViewStyle(StackNavigationViewStyle())
+
     }
 }
 

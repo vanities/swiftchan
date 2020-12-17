@@ -10,19 +10,19 @@ import FourChan
 
 struct CatalogView: View {
     @ObservedObject var viewModel: ViewModel
-
+    
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
-
+    
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center), GridItem(.flexible(), spacing: 0, alignment: .center)]
-
+    
     var filteredPosts: [Post] {
         get {
             guard searchText != "" else { return self.viewModel.posts }
             return self.viewModel.posts.filter({ post in
                 let splitComment = post.com?.split(separator: " ")
                 let splitSubject = post.sub?.split(separator: " ")
-
+                
                 if let comment = splitComment {
                     for word in comment {
                         if word.lowercased().contains(self.searchText.lowercased()) {
@@ -41,10 +41,10 @@ struct CatalogView: View {
             })
         }
     }
-
+    
     var body: some View {
-        return
-            ScrollView {
+        return ScrollView {
+            ScrollViewReader { reader in
                 VStack(spacing: nil) {
                     SearchTextView(textPlaceholder: "Search Posts",
                                    searchText: self.$searchText)
@@ -57,7 +57,7 @@ struct CatalogView: View {
                                    post: self.viewModel.posts[index],
                                    comment: self.viewModel.comments[index])
                         }
-                    }
+                              }
                     .padding(.horizontal, 15)
                 }
                 .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
@@ -67,9 +67,20 @@ struct CatalogView: View {
                         self.pullToRefreshShowing = false
                     }
                 }
+                //.navigationBarTitle(Text(self.viewModel.boardName), displayMode: .inline)
+                .navigationBarItems(leading:
+                                        Text(self.viewModel.boardName)
+                                        .padding(.leading, UIScreen.main.bounds.width/4)
+                                        .gesture(TapGesture(count: 2)
+                                                    .onEnded{
+                                                        withAnimation() {
+                                                            reader.scrollTo(0)
+                                                        }
+                                                    }),
+                                    trailing: FavoriteStar(viewModel: self.viewModel))
             }
-            .navigationBarTitle(Text(self.viewModel.boardName), displayMode: .inline)
-            .navigationBarItems(trailing: FavoriteStar(viewModel: self.viewModel))
+        }
+        
     }
 }
 
@@ -77,5 +88,7 @@ struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.ViewModel(boardName: "fit")
         CatalogView(viewModel: viewModel)
+            .environmentObject(AppState())
+            .environmentObject(UserSettings())
     }
 }
