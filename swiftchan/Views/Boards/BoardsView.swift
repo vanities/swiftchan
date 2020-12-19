@@ -12,9 +12,9 @@ struct BoardsView: View {
     @EnvironmentObject var userSettings: UserSettings
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
-    
+
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
-    
+
     var filteredBoards: [Board] {
         get {
             self.viewModel.boards.filter({ board in
@@ -22,7 +22,7 @@ struct BoardsView: View {
             })
         }
     }
-    
+
     var favoriteBoards: [Board] {
         get {
             self.viewModel.boards.filter({ board in

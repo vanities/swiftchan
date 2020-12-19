@@ -41,21 +41,20 @@ struct VLCContainerView: View {
                              totalTime: self.$totalTime)
                 VStack {
                     Spacer()
-                    if self.showControls {
-                        VLCPlayerControlsView(
-                            mediaState: self.$mediaState,
-                            state: self.$state,
-                            currentTime: self.$currentTime,
-                            remainingTime: self.$remainingTime,
-                            totalTime: self.$totalTime,
-                            seeking: self.$seeking)
-                            .transition(.opacity)
-                            .padding(.bottom, 25)
-                            .onChange(of: self.seeking, perform: { value in
-                                self.onSeekChanged?(value)
-                            })
-                    }
+                    VLCPlayerControlsView(
+                        mediaState: self.$mediaState,
+                        state: self.$state,
+                        currentTime: self.$currentTime,
+                        remainingTime: self.$remainingTime,
+                        totalTime: self.$totalTime,
+                        seeking: self.$seeking)
+                        .padding(.bottom, 25)
+                        .onChange(of: self.seeking, perform: { value in
+                            self.onSeekChanged?(value)
+                        })
                 }
+                .opacity(self.showControls ? 1 : 0)
+
             }
             .onChange(of: self.mediaState) { state in
                 if state == .play {

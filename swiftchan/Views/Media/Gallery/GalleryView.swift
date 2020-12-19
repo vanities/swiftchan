@@ -112,16 +112,14 @@ struct GalleryView: View {
             }
 
             // preview
-            if self.showPreview && !self.isDismissing {
-                VStack {
-                    Spacer()
-                    GalleryPreviewView(urls: self.urls,
-                                       thumbnailUrls: self.thumbnailUrls,
-                                       selection: self.$selection)
-                        .padding(.bottom, 60)
-                }
-                .transition(.opacity)
+            VStack {
+                Spacer()
+                GalleryPreviewView(urls: self.urls,
+                                   thumbnailUrls: self.thumbnailUrls,
+                                   selection: self.$selection)
+                    .padding(.bottom, 60)
             }
+            .opacity(self.showPreview && !self.isDismissing ? 1 : 0)
         }
         .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
     }

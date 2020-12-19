@@ -47,11 +47,10 @@ struct ThreadView: View {
                         }
                         .frame(minWidth: UIScreen.main.bounds.width)
                     }
-                    .onChange(of: self.isPresenting, perform: { _ in
-                        if !self.isPresenting,
-                           self.presentingIndex != self.galleryIndex,
+                    .onChange(of: self.galleryIndex, perform: { _ in
+                           if self.presentingIndex != self.galleryIndex,
                            let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
-                            value.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: .top)
+                            value.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
                         }
                     })
                     .opacity(self.opacity)
