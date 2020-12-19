@@ -16,6 +16,10 @@ struct CatalogView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center), GridItem(.flexible(), spacing: 0, alignment: .center)]
 
+    var navigationCentering: CGFloat {
+        return CGFloat(20 + (self.viewModel.boardName.count * 5))
+    }
+
     var filteredPosts: [Post] {
         get {
             guard searchText != "" else { return self.viewModel.posts }
@@ -45,31 +49,45 @@ struct CatalogView: View {
     var body: some View {
         return
             ScrollView {
-                VStack(spacing: nil) {
-                    SearchTextView(textPlaceholder: "Search Posts",
-                                   searchText: self.$searchText)
-                    LazyVGrid(columns: self.columns,
-                              alignment: .center,
-                              spacing: 0) {
-                        ForEach(self.filteredPosts.indices,
-                                id: \.self) { index in
-                            OPView(boardName: self.viewModel.boardName,
-                                   post: self.viewModel.posts[index],
-                                   comment: self.viewModel.comments[index])
+                ScrollViewReader { reader in
+                    VStack(spacing: 0) {
+                        SearchTextView(textPlaceholder: "Search Posts",
+                                       searchText: self.$searchText)
+                            .id("search")
+                        LazyVGrid(columns: self.columns,
+                                  alignment: .center,
+                                  spacing: 0) {
+                            ForEach(self.filteredPosts.indices,
+                                    id: \.self) { index in
+                                OPView(boardName: self.viewModel.boardName,
+                                       post: self.viewModel.posts[index],
+                                       comment: self.viewModel.comments[index])
+                            }
+                                  }
+                        .padding(.horizontal, 15)
+                    }
+                    .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                        softVibrate.impactOccurred()
+                        self.viewModel.load {
+                            self.pullToRefreshShowing = false
                         }
                     }
-                    .padding(.horizontal, 15)
-                }
-                .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
-                    let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                    softVibrate.impactOccurred()
-                    self.viewModel.load {
-                        self.pullToRefreshShowing = false
-                    }
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarTitle("")
+                    .navigationBarItems(
+                        leading:
+                            Text(self.viewModel.boardName)
+                            .onTapGesture {
+                                withAnimation(.linear) {
+                                    reader.scrollTo("search", anchor: .top)
+                                }
+                            }
+                            .padding(.leading, UIScreen.main.bounds.width/3 - self.navigationCentering),
+                        trailing: FavoriteStar(viewModel: self.viewModel)
+                    )
                 }
             }
-            .navigationBarTitle(Text(self.viewModel.boardName), displayMode: .inline)
-            .navigationBarItems(trailing: FavoriteStar(viewModel: self.viewModel))
     }
 }
 
@@ -77,5 +95,7 @@ struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.ViewModel(boardName: "fit")
         CatalogView(viewModel: viewModel)
+            .environmentObject(AppState())
+            .environmentObject(UserSettings())
     }
 }

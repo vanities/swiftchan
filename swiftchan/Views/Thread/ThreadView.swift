@@ -30,7 +30,7 @@ struct ThreadView: View {
     var body: some View {
         return ZStack {
             ScrollView {
-                ScrollViewReader { value in
+                ScrollViewReader { reader in
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
@@ -48,9 +48,9 @@ struct ThreadView: View {
                         .frame(minWidth: UIScreen.main.bounds.width)
                     }
                     .onChange(of: self.galleryIndex, perform: { _ in
-                           if self.presentingIndex != self.galleryIndex,
+                        if self.presentingIndex != self.galleryIndex,
                            let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
-                            value.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
+                            reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
                         }
                     })
                     .opacity(self.opacity)
@@ -81,6 +81,11 @@ struct ThreadView: View {
                     .zIndex(1)
             }
         }
+        .navigationBarItems(
+            trailing: Link(destination: self.viewModel.url) {
+                Image(systemName: "square.and.arrow.up")
+            }
+        )
         .navigationBarHidden(self.isPresenting)
         .statusBar(hidden: self.isPresenting)
     }

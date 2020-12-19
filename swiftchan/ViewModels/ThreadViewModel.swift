@@ -21,6 +21,10 @@ extension ThreadView {
         @Published private(set) var comments = [Text]()
         @Published private(set) var replies = [Int: [Int]]()
 
+        var url: URL {
+            return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
+        }
+
         init(boardName: String, id: Int) {
             self.boardName = boardName
             self.id = id
