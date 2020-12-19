@@ -61,6 +61,20 @@ struct ThreadView: View {
                             self.pullToRefreshShowing = false
                         }
                     }
+                    .navigationBarItems(
+                        leading: Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .frame(width: 300, height: 30)
+                            .onTapGesture {
+                                withAnimation(.linear) {
+                                    reader.scrollTo(0)
+                                }
+                            },
+                        trailing: Link(destination: self.viewModel.url) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    )
                 }
             }
 
@@ -81,11 +95,6 @@ struct ThreadView: View {
                     .zIndex(1)
             }
         }
-        .navigationBarItems(
-            trailing: Link(destination: self.viewModel.url) {
-                Image(systemName: "square.and.arrow.up")
-            }
-        )
         .navigationBarHidden(self.isPresenting)
         .statusBar(hidden: self.isPresenting)
     }
