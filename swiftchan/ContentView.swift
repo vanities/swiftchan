@@ -22,6 +22,11 @@ struct ContentView: View {
                 .environmentObject(self.userSettings)
                 .environmentObject(self.appState)
                 .blur(radius: self.backgrounding ? 10 : 0)
+                .opacity(self.opacity)
+            
+            if let v = self.appState.fullscreenView {
+                v
+            }
 
             // privacy splash
             Image("swallow")

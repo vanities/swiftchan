@@ -8,5 +8,5 @@
 import SwiftUI
 
 class AppState: ObservableObject {
-    @Published var fullscreenView: (PresentedPost)?
+    @Published var fullscreenView: (AnyView)?
 }

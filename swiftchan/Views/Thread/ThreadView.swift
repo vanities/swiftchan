@@ -13,20 +13,21 @@ enum PresentingSheet {
 }
 
 struct ThreadView: View {
+    @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
-
+    
     @State private var isPresenting = false
     @State private var presentingSheet: PresentingSheet = .gallery
-
+    
     @State var galleryIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
     @State var presentingIndex: Int = 0
-
+    
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
-
+    
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
-
+    
     var body: some View {
         return ZStack {
             ScrollView {
@@ -77,25 +78,30 @@ struct ThreadView: View {
                     )
                 }
             }
-
-            if self.isPresenting {
-                PresentedPost(presenting: self.$isPresenting,
-                              presentingSheet: self.presentingSheet,
-                              galleryIndex: self.$galleryIndex,
-                              commentRepliesIndex: self.commentRepliesIndex)
-                    .onOffsetChanged { value in
-                        withAnimation(.linear) {
-                            self.opacity = Double(value / UIScreen.main.bounds.height)
-                        }
-
-                    }
-                    .onDisappear {
-                        self.opacity = 1
-                    }
-                    .zIndex(1)
-            }
+            .onChange(of: self.isPresenting, perform: { value in
+                if value {
+                    self.appState.fullscreenView = AnyView(
+                        PresentedPost(presenting: self.$isPresenting,
+                                      presentingSheet: self.presentingSheet,
+                                      galleryIndex: self.$galleryIndex,
+                                      commentRepliesIndex: self.commentRepliesIndex)
+                            .onOffsetChanged { value in
+                                withAnimation(.linear) {
+                                    self.opacity = Double(value / UIScreen.main.bounds.height)
+                                }
+                                
+                            }
+                            .onDisappear {
+                                self.opacity = 1
+                            }
+                            .environmentObject(self.viewModel)
+                    )
+                }
+                else {
+                    self.appState.fullscreenView = nil
+                }
+            })
         }
-        .navigationBarHidden(self.isPresenting)
         .statusBar(hidden: self.isPresenting)
     }
 }
