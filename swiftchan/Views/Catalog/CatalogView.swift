@@ -10,7 +10,6 @@ import FourChan
 
 struct CatalogView: View {
     @StateObject var viewModel: ViewModel
-    //@ObservedObject var viewModel: ViewModel
 
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
@@ -99,7 +98,6 @@ struct CatalogView: View {
 
 struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
-       // let viewModel = CatalogView.ViewModel(boardName: "fit")
         CatalogView("fit")
             .environmentObject(AppState())
             .environmentObject(UserSettings())

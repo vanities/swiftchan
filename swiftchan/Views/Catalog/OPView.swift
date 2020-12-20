@@ -9,26 +9,35 @@ import SwiftUI
 import FourChan
 
 struct OPView: View {
+    @StateObject var threadViewModel: ThreadView.ViewModel
+
     let boardName: String
     let post: Post
     let comment: Text
+
+    init(boardName: String, post: Post, comment: Text) {
+        self.boardName = boardName
+        self.post = post
+        self.comment = comment
+        self._threadViewModel = StateObject(wrappedValue:
+                                                ThreadView.ViewModel(boardName: boardName,
+                                                    id: post.no))
+    }
 
     var body: some View {
         return NavigationLink(
             destination:
                 ThreadView()
-                .environmentObject(
-                    ThreadView.ViewModel(boardName: self.boardName,
-                                         id: self.post.no)
-                )) {
+                .environmentObject(self.threadViewModel)
+        ) {
             ZStack(alignment: .topLeading) {
                 Rectangle()
                     .fill(Color(.systemBackground))
                     .border(Color(.gray))
                 VStack(alignment: .leading, spacing: 0 ) {
                     // image
-                    if let url = post.getMediaUrl(boardId: boardName),
-                       let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
+                    if let url = self.post.getMediaUrl(boardId: self.boardName),
+                       let thumbnailUrl = self.post.getMediaUrl(boardId: self.boardName, thumbnail: true) {
                         ThumbnailMediaView(url: url,
                                            thumbnailUrl: thumbnailUrl,
                                            useThumbnailGif: false)
