@@ -8,7 +8,14 @@
 import Foundation
 import FourChan
 
-extension Post {
+extension Post: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+    public static func == (lhs: Post, rhs: Post) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
         let thumb = thumbnail ? "s" : ""
         if let filename = tim,

@@ -67,6 +67,7 @@ struct CatalogView: View {
                                 OPView(boardName: self.viewModel.boardName,
                                        post: self.viewModel.posts[index],
                                        comment: self.viewModel.comments[index])
+                                    .id(self.viewModel.posts[index].id)
                             }
                                   }
                         .padding(.horizontal, 15)
