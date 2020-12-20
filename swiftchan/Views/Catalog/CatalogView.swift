@@ -9,7 +9,8 @@ import SwiftUI
 import FourChan
 
 struct CatalogView: View {
-    @ObservedObject var viewModel: ViewModel
+    @StateObject var viewModel: ViewModel
+    //@ObservedObject var viewModel: ViewModel
 
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
@@ -18,6 +19,11 @@ struct CatalogView: View {
 
     var navigationCentering: CGFloat {
         return CGFloat(20 + (self.viewModel.boardName.count * 5))
+    }
+
+    init(_ boardName: String) {
+        self._viewModel = StateObject(wrappedValue:
+                                        CatalogView.ViewModel(boardName: boardName))
     }
 
     var filteredPosts: [Post] {
@@ -93,8 +99,8 @@ struct CatalogView: View {
 
 struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = CatalogView.ViewModel(boardName: "fit")
-        CatalogView(viewModel: viewModel)
+       // let viewModel = CatalogView.ViewModel(boardName: "fit")
+        CatalogView("fit")
             .environmentObject(AppState())
             .environmentObject(UserSettings())
     }

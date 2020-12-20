@@ -50,7 +50,7 @@ struct BoardsView: View {
                                     ForEach(self.favoriteBoards, id: \.self.id) { board in
                                         NavigationLink(
                                             destination:
-                                                CatalogView(viewModel: CatalogView.ViewModel(boardName: board.board))
+                                                CatalogView(board.board)
                                         ) {
                                             BoardView(name: board.board,
                                                       title: board.title,
@@ -68,7 +68,7 @@ struct BoardsView: View {
                         ) {
                             ForEach(self.filteredBoards, id: \.self.id) { board in
                                 NavigationLink(
-                                    destination: CatalogView(viewModel: CatalogView.ViewModel(boardName: board.board))) {
+                                    destination: CatalogView(board.board)) {
                                     BoardView(name: board.board,
                                               title: board.title,
                                               description: board.meta_description.clean)

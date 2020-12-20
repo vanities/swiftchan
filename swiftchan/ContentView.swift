@@ -12,27 +12,26 @@ struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
     @StateObject private var userSettings = UserSettings()
     @StateObject private var appState = AppState()
+    @StateObject private var boardViewModel = BoardsView.ViewModel()
 
     @State var backgrounding: Bool = false
 
     var body: some View {
         ZStack {
-            BoardsView(viewModel: BoardsView.ViewModel())
+            BoardsView(viewModel: self.boardViewModel)
                 .environmentObject(self.userSettings)
                 .environmentObject(self.appState)
-                .blur(radius: self.backgrounding ? 15 : 0)
+                .blur(radius: self.backgrounding ? 10 : 0)
 
             // privacy splash
-            if self.backgrounding {
-                Image("swallow")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.primary)
-                    .frame(width: 100)
-                    .zIndex(1)
-                    .transition(AnyTransition.opacity)
-            }
+            Image("swallow")
+                .renderingMode(.template)
+                .resizable()
+                .zIndex(1)
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.primary)
+                .frame(width: 100)
+                .opacity(self.backgrounding ? 1 :0)
 
         }
         .onChange(of: self.scenePhase) { value in
@@ -43,7 +42,6 @@ struct ContentView: View {
                 }
             case .active:
                 withAnimation(.linear(duration: 0.1)) {
-
                     self.backgrounding = false
                 }
             @unknown default:
