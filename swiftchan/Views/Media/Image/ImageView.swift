@@ -77,11 +77,14 @@ struct ImageView: View {
     func panDragGesture() -> some Gesture {
         return DragGesture()
             .updating($dragOffset, body: { (value, state, _) in
-                state = value.translation
+                //state = value.translation
+                state.height = value.translation.height/2
+                state.width = value.translation.width/2
+
             })
             .onEnded({ (value) in
-                self.position.height += value.translation.height
-                self.position.width += value.translation.width
+                self.position.height += value.translation.height/2
+                self.position.width += value.translation.width/2
             })
     }
 
