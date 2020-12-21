@@ -38,29 +38,31 @@ struct VLCVideoView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
+        let playerList = context.coordinator.parent.playerList
         switch mediaState {
         case .play:
-            if !context.coordinator.parent.playerList.mediaPlayer.isPlaying,
+            if let player = playerList.mediaPlayer,
+               !player.isPlaying,
                let media = self.media {
                 DispatchQueue.main.async {
-                    if context.coordinator.parent.playerList.mediaPlayer.media == nil {
-                        context.coordinator.parent.playerList.play(media)
-                        context.coordinator.parent.playerList.mediaPlayer.delegate = context.coordinator
+                    if player.media == nil {
+                        playerList.play(media)
+                        player.delegate = context.coordinator
                     } else {
-                        context.coordinator.parent.playerList.play()
+                        playerList.play()
                     }
                 }
             }
         case .pause:
-            if context.coordinator.parent.playerList.mediaPlayer.canPause {
+            if playerList.mediaPlayer.canPause {
                 DispatchQueue.main.async {
-                    context.coordinator.parent.playerList.pause()
+                    playerList.pause()
                 }
             }
         case .seek(let time):
-            if context.coordinator.parent.playerList.mediaPlayer.isSeekable {
+            if playerList.mediaPlayer.isSeekable {
                 DispatchQueue.main.async {
-                    context.coordinator.parent.playerList.mediaPlayer?.time = time
+                   playerList.mediaPlayer?.time = time
                 }
             }
         }
@@ -69,7 +71,7 @@ struct VLCVideoView: UIViewRepresentable {
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()
-        coordinator.parent.playerList.rootMedia = nil
+        //coordinator.parent.playerList.rootMedia = nil
     }
 
     // MARK: Private
@@ -114,14 +116,18 @@ struct VLCVideoView: UIViewRepresentable {
 
         // MARK: Player Delegate
         func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-            self.parent.currentTime = self.parent.playerList.mediaPlayer.time
-            self.parent.remainingTime = self.parent.playerList.mediaPlayer.remainingTime
-            self.parent.totalTime = VLCTime(int: self.parent.currentTime.intValue + abs(self.parent.remainingTime.intValue))
-            //print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
+            if let player = self.parent.playerList.mediaPlayer {
+                self.parent.currentTime = player.time
+                self.parent.remainingTime = player.remainingTime
+                self.parent.totalTime = VLCTime(int: self.parent.currentTime.intValue + abs(self.parent.remainingTime.intValue))
+                //print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
+            }
         }
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
-            self.parent.state = self.parent.playerList.mediaPlayer.state
+            if let player = self.parent.playerList.mediaPlayer {
+                self.parent.state = player.state
+            }
         }
     }
 }

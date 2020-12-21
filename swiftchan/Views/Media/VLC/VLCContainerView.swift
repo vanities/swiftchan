@@ -65,12 +65,12 @@ struct VLCContainerView: View {
                     }
                 }
             }
-
             .onTapGesture {
                 withAnimation(.linear(duration: 0.2)) {
                     self.showControls.toggle()
                 }
             }
+            .id(url)
     }
 }
 

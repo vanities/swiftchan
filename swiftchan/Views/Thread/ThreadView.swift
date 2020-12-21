@@ -15,19 +15,19 @@ enum PresentingSheet {
 struct ThreadView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
-    
+
     @State private var isPresenting = false
     @State private var presentingSheet: PresentingSheet = .gallery
-    
+
     @State var galleryIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
     @State var presentingIndex: Int = 0
-    
+
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
-    
+
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
-    
+
     var body: some View {
         return ZStack {
             ScrollView {
@@ -89,15 +89,14 @@ struct ThreadView: View {
                                 withAnimation(.linear) {
                                     self.opacity = Double(value / UIScreen.main.bounds.height)
                                 }
-                                
+
                             }
                             .onDisappear {
                                 self.opacity = 1
                             }
                             .environmentObject(self.viewModel)
                     )
-                }
-                else {
+                } else {
                     self.appState.fullscreenView = nil
                 }
             })

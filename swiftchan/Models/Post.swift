@@ -15,7 +15,7 @@ extension Post: Hashable {
     public static func == (lhs: Post, rhs: Post) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
         let thumb = thumbnail ? "s" : ""
         if let filename = tim,
