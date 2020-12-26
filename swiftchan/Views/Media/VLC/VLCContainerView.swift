@@ -49,9 +49,7 @@ struct VLCContainerView: View {
                         totalTime: self.$totalTime,
                         seeking: self.$seeking)
                         .padding(.bottom, 25)
-                        .onChange(of: self.seeking, perform: { value in
-                            self.onSeekChanged?(value)
-                        })
+                        .onChange(of: self.seeking) { self.onSeekChanged?($0) }
                 }
                 .opacity(self.showControls ? 1 : 0)
 
@@ -70,7 +68,6 @@ struct VLCContainerView: View {
                     self.showControls.toggle()
                 }
             }
-            .id(url)
     }
 }
 

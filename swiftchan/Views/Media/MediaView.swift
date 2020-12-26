@@ -47,8 +47,16 @@ extension MediaView: Buildable {
 
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaView(url: URLExamples.image,
-                  selected: true,
+        Group {
+            MediaView(url: URLExamples.image,
+                      selected: true,
                   mediaState: .constant(.play))
+            MediaView(url: URLExamples.gif,
+                      selected: true,
+                      mediaState: .constant(.play))
+            MediaView(url: URLExamples.webm,
+                      selected: true,
+                      mediaState: .constant(.play))
+        }
     }
 }

@@ -156,13 +156,13 @@ struct GalleryView_Previews: PreviewProvider {
                         isDismissing: .constant(false)
             )
             GalleryView(selection: .constant(0),
-                        urls: URLExamples.webmSet,
-                        thumbnailUrls: URLExamples.webmSet,
+                        urls: URLExamples.gifSet,
+                        thumbnailUrls: URLExamples.gifSet,
                         isDismissing: .constant(false)
             )
             GalleryView(selection: .constant(0),
-                        urls: URLExamples.gifSet,
-                        thumbnailUrls: URLExamples.gifSet,
+                        urls: URLExamples.webmSet,
+                        thumbnailUrls: URLExamples.webmSet,
                         isDismissing: .constant(false)
             )
         }
