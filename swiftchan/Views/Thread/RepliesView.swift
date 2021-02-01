@@ -41,13 +41,12 @@ struct RepliesView: View {
                 }
             }
             .frame(width: UIScreen.main.bounds.width,
-                    height: UIScreen.main.bounds.height - SAFE_AREA_PADDING)
+                    height: UIScreen.main.bounds.height - safeAreaPadding)
     }
 }
 
 struct RepliesView_Previews: PreviewProvider {
 
-    // TODO: doesn't work
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         RepliesView(replies: [0, 1])

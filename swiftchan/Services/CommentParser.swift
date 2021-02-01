@@ -19,12 +19,17 @@ class CommentParser {
     func getComment() -> Text {
         let document = self.parseComment()
         var comment = Text("")
+        var documentText: String = ""
 
         if let document = document {
-            let documentText = try! document.text()
+            do {
+                documentText = try document.text()
+            } catch {
+                print("could not get text")
+            }
             let text = documentText.replacingOccurrences(of: "/n", with: "\n")
 
-            //let re = https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
+            // let re = https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
             let lines = text.components(separatedBy: "\n")
             for line in lines {
                 if line.starts(with: ">>") {

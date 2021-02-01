@@ -8,29 +8,42 @@
 import SwiftUI
 
 struct MediaView: View {
+    @State var isSelected: Bool
+    @Binding var selected: Int
     let url: URL
-    let selected: Bool
-    @Binding var mediaState: MediaState
+    let id: Int
 
     var onMediaChanged: ((Bool) -> Void)?
+
+    init(selected: Binding<Int>, url: URL, id: Int) {
+        self._selected = selected
+        self.url = url
+        self.id = id
+
+        self._isSelected = State(initialValue: selected.wrappedValue == id)
+    }
 
     @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(url: self.url,
-                      isSelected: self.selected,
-                      canGesture: true)
+            ImageView(url: self.url, canGesture: true, isSelected: self.$isSelected)
                 .onZoomChanged { zoomed in
                     self.onMediaChanged?(zoomed)
                 }
+                .onChange(of: self.selected) { value in
+                    self.isSelected = value == self.id
+                }
         case .webm:
             VLCContainerView(url: self.url,
-                             autoPlay: self.selected,
-                             mediaState: self.$mediaState)
-                .onSeekChanged { seeking in
-                    self.onMediaChanged?(seeking)
-                }
+                             play: self.$isSelected
+            )
+            .onSeekChanged { seeking in
+                self.onMediaChanged?(seeking)
+            }
+            .onChange(of: self.selected) { value in
+                self.isSelected = value == self.id
+            }
         case .gif:
             GIFView(url: self.url)
         case .none:
@@ -48,15 +61,21 @@ extension MediaView: Buildable {
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MediaView(url: URLExamples.image,
-                      selected: true,
-                  mediaState: .constant(.play))
-            MediaView(url: URLExamples.gif,
-                      selected: true,
-                      mediaState: .constant(.play))
-            MediaView(url: URLExamples.webm,
-                      selected: true,
-                      mediaState: .constant(.play))
+            MediaView(
+                selected: .constant(0),
+                url: URLExamples.image,
+                id: 0
+            )
+            MediaView(
+                selected: .constant(0),
+                url: URLExamples.gif,
+                id: 0
+            )
+            MediaView(
+                selected: .constant(0),
+                url: URLExamples.webm,
+                id: 0
+            )
         }
     }
 }

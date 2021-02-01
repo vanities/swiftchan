@@ -10,15 +10,14 @@ import Introspect
 import SwiftUIPager
 
 struct GalleryView: View {
+    @EnvironmentObject var dismissGesture: DismissGesture
     @Binding var selection: Int
     var urls: [URL]
     var thumbnailUrls: [URL]
     @State var canPage: Bool = true
-    @Binding var isDismissing: Bool
 
     @State private var isExportingDocument = false
 
-    @State var mediaStates: [MediaState] = Array(repeating: .pause, count: 200)
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = false
     @State var dragging: Bool = false
@@ -33,9 +32,11 @@ struct GalleryView: View {
 
             // gallery
             Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
-                MediaView(url: self.urls[index],
-                          selected: self.selection == index,
-                          mediaState: self.$mediaStates[index])
+                MediaView(
+                    selected: self.$selection,
+                    url: self.urls[index],
+                    id: index
+                )
                     .onMediaChanged { zoomed in
                         self.canShowPreview = !zoomed
                         self.canPage = !zoomed
@@ -45,71 +46,63 @@ struct GalleryView: View {
                         }
                         self.onMediaChanged?(zoomed)
                     }
+
                     .fileExporter(isPresented: self.$isExportingDocument,
                                   document: FileExport(url: self.urls[index].absoluteString),
                                   contentType: .image,
                                   onCompletion: { _ in })
+
                     .contextMenu {
                         Button(action: {
                             UIPasteboard.general.string = self.urls[index].absoluteString
-                        }) {
+                        }, label: {
                             Text("Copy URL")
                             Image(systemName: "doc.on.doc")
-                        }
+                        })
                         switch MediaDetector.detect(url: self.urls[index]) {
                         case .image, .gif:
                             Button(action: {
                                 ImageSaver().saveImageToPhotos(url: self.urls[index])
-                            }) {
+                            }, label: {
                                 Text("Save to Photos")
                                 Image(systemName: "square.and.arrow.down")
-                            }
+                            })
                         case .webm, .none:
                             Button(action: {
                                 self.isExportingDocument.toggle()
-                            }) {
+                            }, label: {
                                 Text("Save to Files")
                                 Image(systemName: "folder")
-                            }
+                            })
                         }
                     }
             }
             .onOffsetChanged { value in
                 self.onPageDragChanged?(value)
             }
-            .onPageChanged { pageIndex in
+            .onPageChanged { _ in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
-
-                for i in mediaStates.indices {
-                    if i != pageIndex {
-                        self.mediaStates[i] = .pause
-                    }
-                }
-                self.mediaStates[pageIndex] = .play
             }
-            .allowsDragging(!self.isDismissing && self.canPage)
+            .allowsDragging(!self.dismissGesture.dragging && self.canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.allAvailable)
             .background(Color.black)
             .ignoresSafeArea()
 
             // dismiss button
-            if !self.isDismissing {
-                Button(action: {
-                    withAnimation(.linear) {
-                        self.onDismiss?()
-                    }
-                }) {
-                    Image(systemName: "xmark")
-                        .frame(width: 50, height: 50)
-                        .contentShape(Rectangle())
-                        .foregroundColor(.white)
+            Button(action: {
+                withAnimation(.linear) {
+                    self.onDismiss?()
                 }
-                .transition(.opacity)
-                .position(x: 30, y: 10)
-
-            }
+            }, label: {
+                Image(systemName: "xmark")
+                    .frame(width: 50, height: 50)
+                    .contentShape(Rectangle())
+                    .foregroundColor(.white)
+            })
+            .position(x: 30, y: 10)
+            .opacity(self.dismissGesture.dragging ? 0 : 1)
 
             // preview
             VStack {
@@ -119,7 +112,7 @@ struct GalleryView: View {
                                    selection: self.$selection)
                     .padding(.bottom, 60)
             }
-            .opacity(self.showPreview && !self.isDismissing ? 1 : 0)
+            .opacity(self.showPreview && !self.dismissGesture.dragging ? 1 : 0)
         }
         .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
     }
@@ -152,19 +145,19 @@ struct GalleryView_Previews: PreviewProvider {
         Group {
             GalleryView(selection: .constant(0),
                         urls: URLExamples.imageSet,
-                        thumbnailUrls: URLExamples.imageSet,
-                        isDismissing: .constant(false)
+                        thumbnailUrls: URLExamples.imageSet
             )
+            .environmentObject(DismissGesture())
             GalleryView(selection: .constant(0),
                         urls: URLExamples.gifSet,
-                        thumbnailUrls: URLExamples.gifSet,
-                        isDismissing: .constant(false)
+                        thumbnailUrls: URLExamples.gifSet
             )
+            .environmentObject(DismissGesture())
             GalleryView(selection: .constant(0),
                         urls: URLExamples.webmSet,
-                        thumbnailUrls: URLExamples.webmSet,
-                        isDismissing: .constant(false)
+                        thumbnailUrls: URLExamples.webmSet
             )
+            .environmentObject(DismissGesture())
         }
     }
 }

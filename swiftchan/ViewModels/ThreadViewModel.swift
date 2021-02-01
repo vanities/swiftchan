@@ -33,12 +33,7 @@ extension ThreadView {
 
         func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getPosts(boardName: self.boardName,
-                                     id: self.id) { [weak self] (result,
-                                                                 mediaUrls,
-                                                                 thumbnailMediaUrls,
-                                                                 postMediaMapping,
-                                                                 comments,
-                                                                 replies) in
+                                     id: self.id) { [weak self] ( result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) in
                 self?.posts = result
                 self?.mediaUrls = mediaUrls
                 self?.thumbnailMediaUrls = thumbnailMediaUrls

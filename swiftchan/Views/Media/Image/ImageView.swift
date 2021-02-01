@@ -10,7 +10,7 @@ import URLImage
 
 struct ImageView: View {
     let url: URL
-    let isSelected: Bool
+    @Binding var isSelected: Bool
     let canGesture: Bool
     let minimumScale: CGFloat = 1
 
@@ -25,6 +25,12 @@ struct ImageView: View {
     @State private var position = CGSize.zero
 
     var onZoomChanged: ((Bool) -> Void)?
+
+    init(url: URL, canGesture: Bool = false, isSelected: Binding<Bool> = .constant(true)) {
+        self.url = url
+        self.canGesture = canGesture
+        self._isSelected = isSelected
+    }
 
     var body: some View {
         return URLImage(url: url,
@@ -77,7 +83,7 @@ struct ImageView: View {
     func panDragGesture() -> some Gesture {
         return DragGesture()
             .updating($dragOffset, body: { (value, state, _) in
-                //state = value.translation
+                // state = value.translation
                 state.height = value.translation.height/2
                 state.width = value.translation.width/2
 
@@ -114,6 +120,6 @@ extension ImageView: Buildable {
 
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageView(url: URLExamples.image, isSelected: true, canGesture: true)
+        ImageView(url: URLExamples.image, canGesture: true, isSelected: .constant(true))
     }
 }

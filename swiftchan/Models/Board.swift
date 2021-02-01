@@ -12,7 +12,6 @@ extension Board: Equatable {
     public static func == (lhs: Board, rhs: Board) -> Bool {
         return lhs.board == rhs.board
     }
-
     static func examples() -> [Board] {
         let json: [String: Any] = [
             "boards": [
@@ -53,15 +52,20 @@ extension Board: Equatable {
                         "replies": 60,
                         "images": 60
                     ],
-                    "meta_description": "&quot;/a/ - Anime &amp; Manga&quot; is 4chan's imageboard dedicated to the discussion of Japanese animation and manga.",
+                    "meta_description": "&quot;/a/ - Anime &amp; Manga&quot;" +
+                    "is 4chan's imageboard dedicated to the discussion of Japanese animation and manga.",
                     "spoilers": 1,
                     "custom_spoilers": 1,
                     "is_archived": 1
                 ]
             ]
         ]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        return try! JSONDecoder().decode(Boards.self, from: jsonData).boards
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
+            return try JSONDecoder().decode(Boards.self, from: jsonData).boards
+        } catch {
+            return []
+        }
     }
 
     var descriptionText: String {

@@ -26,7 +26,7 @@ class CacheManager {
 
         let file = directoryFor(stringUrl: stringUrl)
 
-        //return file path if already exists in cache directory
+        // return file path if already exists in cache directory
         guard !fileManager.fileExists(atPath: file.path)  else {
             print("file exists in cache \(file.path)" )
             completionHandler(.success(file))
@@ -34,8 +34,7 @@ class CacheManager {
             return
         }
 
-        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) {
-            urlOrNil, _, errorOrNil in
+        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { urlOrNil, _, errorOrNil in
             guard let fileURL = urlOrNil else { return }
             do {
                 try self.fileManager.moveItem(at: fileURL, to: file)
@@ -55,9 +54,13 @@ class CacheManager {
         let enumerator = self.fileManager.enumerator(atPath: self.mainDirectoryUrl.absoluteString)
         if let enumerator = enumerator {
             for url in enumerator.allObjects {
-                print("removing \(url) from cache")
-                try! fileManager.removeItem(at: self.mainDirectoryUrl)
-                print("removed \(url) from cache")
+                do {
+                    print("removing \(url) from cache")
+                    try fileManager.removeItem(at: self.mainDirectoryUrl)
+                    print("removed \(url) from cache")
+                } catch {
+                    print("could not remove \(url) from cache")
+                }
             }
         } else {
             print("not enumerator for deleteAll cache")

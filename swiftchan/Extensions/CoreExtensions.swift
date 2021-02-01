@@ -8,9 +8,9 @@
 import SwiftUI
 
 let window = UIApplication.shared.windows[0]
-let TOP_PADDING = window.safeAreaInsets.top
-let BOTTOM_PADDING = window.safeAreaInsets.bottom
-let SAFE_AREA_PADDING = TOP_PADDING + BOTTOM_PADDING
+let topPadding = window.safeAreaInsets.top
+let bottomPadding = window.safeAreaInsets.bottom
+let safeAreaPadding = topPadding + bottomPadding
 
 internal func getFlag(from countryCode: String) -> String {
 
@@ -43,7 +43,7 @@ extension CGPoint {
         return .init(degrees: Double(angle))
     }
 
-    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
         return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
 

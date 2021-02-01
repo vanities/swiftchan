@@ -9,14 +9,10 @@ import SwiftUI
 
 struct PresentedPost: View {
     @EnvironmentObject var viewModel: ThreadView.ViewModel
-    @Binding var presenting: Bool
+    @EnvironmentObject var dismissGesture: DismissGesture
     let presentingSheet: PresentingSheet
     @Binding var galleryIndex: Int
     let commentRepliesIndex: Int
-
-    @State var dismiss: Bool = false
-    @State var canDrag: Bool = true
-    @State var dragging: Bool = false
 
     var onOffsetChanged: ((CGFloat) -> Void)?
 
@@ -26,31 +22,27 @@ struct PresentedPost: View {
         case .gallery:
             GalleryView(selection: self.$galleryIndex,
                         urls: self.viewModel.mediaUrls,
-                        thumbnailUrls: self.viewModel.thumbnailMediaUrls,
-                        isDismissing: self.$dragging
+                        thumbnailUrls: self.viewModel.thumbnailMediaUrls
             )
             .onDismiss {
-                self.dismiss = true
+                self.dismissGesture.dismiss = true
             }
             .onPageDragChanged { (value) in
-                self.canDrag = value.isZero
+                self.dismissGesture.canDrag = value.isZero
             }
             .onMediaChanged { (zoomed) in
-                self.canDrag = !zoomed
+                self.dismissGesture.canDrag = !zoomed
                 if zoomed {
-                    self.dragging = false
+                    self.dismissGesture.dragging = false
                 }
             }
             .dismissGesture(
                 direction: .down,
-                dismiss: self.$dismiss,
-                presenting: self.$presenting,
-                canDrag: self.$canDrag,
-                dragging: self.$dragging,
                 onOffsetChanged: { offset in
                     self.onOffsetChanged?(offset)
                 }
             )
+            .environmentObject(self.dismissGesture)
             .transition(.identity)
 
         case .replies:
@@ -59,12 +51,9 @@ struct PresentedPost: View {
                             commentRepliesIndex: self.commentRepliesIndex)
                     .dismissGesture(
                         direction: .right,
-                        dismiss: self.$dismiss,
-                        presenting: self.$presenting,
-                        canDrag: self.$canDrag,
-                        dragging: self.$dragging,
                         onOffsetChanged: {_ in}
                     )
+                    .environmentObject(self.dismissGesture)
                     .transition(.identity)
 
             }
@@ -82,7 +71,6 @@ struct PresentedPost_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         PresentedPost(
-            presenting: .constant(true),
             presentingSheet: .gallery,
             galleryIndex: .constant(1),
             commentRepliesIndex: 0)

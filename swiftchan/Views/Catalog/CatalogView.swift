@@ -26,29 +26,27 @@ struct CatalogView: View {
     }
 
     var filteredPosts: [Post] {
-        get {
-            guard searchText != "" else { return self.viewModel.posts }
-            return self.viewModel.posts.filter({ post in
-                let splitComment = post.com?.split(separator: " ")
-                let splitSubject = post.sub?.split(separator: " ")
+        guard searchText != "" else { return self.viewModel.posts }
+        return self.viewModel.posts.filter({ post in
+            let splitComment = post.com?.split(separator: " ")
+            let splitSubject = post.sub?.split(separator: " ")
 
-                if let comment = splitComment {
-                    for word in comment {
-                        if word.lowercased().contains(self.searchText.lowercased()) {
-                            return true
-                        }
+            if let comment = splitComment {
+                for word in comment {
+                    if word.lowercased().contains(self.searchText.lowercased()) {
+                        return true
                     }
                 }
-                if let subject = splitSubject {
-                    for word in subject {
-                        if word.lowercased().contains(self.searchText.lowercased()) {
-                            return true
-                        }
+            }
+            if let subject = splitSubject {
+                for word in subject {
+                    if word.lowercased().contains(self.searchText.lowercased()) {
+                        return true
                     }
                 }
-                return false
-            })
-        }
+            }
+            return false
+        })
     }
 
     var body: some View {

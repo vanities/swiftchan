@@ -11,20 +11,19 @@ enum DismissDirection {
     case right, left, up, down
 }
 
+class DismissGesture: ObservableObject {
+    @Published var dismiss: Bool = false
+    @Published var presenting: Bool = true
+    @Published var canDrag: Bool = true
+    @Published var dragging: Bool = false
+}
+
 extension View {
     func dismissGesture(
         direction: DismissDirection,
-        dismiss: Binding<Bool>,
-        presenting: Binding<Bool>,
-        canDrag: Binding<Bool>,
-        dragging: Binding<Bool>,
         onOffsetChanged: ((CGFloat) -> Void)?) -> some View {
         self.modifier(DismissGestureModifier(
             direction: direction,
-            dismiss: dismiss,
-            presenting: presenting,
-            canDrag: canDrag,
-            dragging: dragging,
             onOffsetChanged: onOffsetChanged
         ))
     }
@@ -32,10 +31,7 @@ extension View {
 
 struct DismissGestureModifier: ViewModifier {
     let direction: DismissDirection
-    @Binding var dismiss: Bool
-    @Binding var presenting: Bool
-    @Binding var canDrag: Bool
-    @Binding var dragging: Bool
+    @EnvironmentObject var dismissGesture: DismissGesture
 
     @State var draggingOffset: CGFloat = UIScreen.main.bounds.height
     @State var lastDraggingValue: DragGesture.Value?
@@ -55,15 +51,15 @@ struct DismissGestureModifier: ViewModifier {
             .offset(
                 x: [.left, .right].contains(self.direction) ? self.draggingOffset : 0,
                 y: [.up, .down].contains(self.direction) ? self.draggingOffset : 0)
-            .simultaneousGesture(self.canDrag ? drag : nil)
+            .simultaneousGesture(self.dismissGesture.canDrag ? drag : nil)
             .onChange(of: self.draggingOffset) { self.onOffsetChanged?($0) }
-            .onChange(of: self.dismiss) { _ in
+            .onChange(of: self.dismissGesture.dismiss) { _ in
                 withAnimation(.linear(duration: self.animationDuration)) {
                     self.draggingOffset = self.getDismissOffset()
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.animationDuration) {
-                    self.presenting = false
+                    self.dismissGesture.presenting = false
                 }
             }
             .onAppear {
@@ -98,8 +94,8 @@ struct DismissGestureModifier: ViewModifier {
                 if timeIncrement != 0 {
                     self.draggingVelocity = Double(offsetIncrement) / timeIncrement
                 }
-                if !self.dragging {
-                    self.dragging = true
+                if !self.dismissGesture.dragging {
+                    self.dismissGesture.dragging = true
                 }
 
                 self.draggingOffset += offsetIncrement
@@ -123,8 +119,8 @@ struct DismissGestureModifier: ViewModifier {
                 if timeIncrement != 0 {
                     self.draggingVelocity = Double(offsetIncrement) / timeIncrement
                 }
-                if !self.dragging {
-                    self.dragging = true
+                if !self.dismissGesture.dragging {
+                    self.dismissGesture.dragging = true
                 }
 
                 self.draggingOffset += offsetIncrement
@@ -136,10 +132,10 @@ struct DismissGestureModifier: ViewModifier {
 
     func onDragGestureEnded() {
         withAnimation(.linear(duration: self.animationDuration)) {
-            self.dragging = false
+            self.dismissGesture.dragging = false
         }
         if self.dismissedMet() {
-            self.dismiss = true
+            self.dismissGesture.dismiss = true
         } else {
             withAnimation(.linear(duration: self.animationDuration)) {
                 self.draggingOffset = 0

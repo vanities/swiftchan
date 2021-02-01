@@ -12,9 +12,7 @@ struct FavoriteStar: View {
     let viewModel: CatalogView.ViewModel
 
     var favorited: Bool {
-        get {
-            self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
-        }
+        self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
     }
 
     var body: some View {

@@ -13,10 +13,10 @@ enum PresentingSheet {
 }
 
 struct ThreadView: View {
+    @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
 
-    @State private var isPresenting = false
     @State private var presentingSheet: PresentingSheet = .gallery
 
     @State var galleryIndex: Int = 0
@@ -38,7 +38,7 @@ struct ThreadView: View {
                         ForEach(self.viewModel.posts.indices, id: \.self) { index in
                             if index < self.viewModel.comments.count {
                                 PostView(index: index,
-                                         isPresenting: self.$isPresenting,
+                                         isPresenting: self.$presentedDismissGesture.presenting,
                                          presentingSheet: self.$presentingSheet,
                                          galleryIndex: self.$galleryIndex,
                                          commentRepliesIndex: self.$commentRepliesIndex
@@ -78,11 +78,10 @@ struct ThreadView: View {
                     )
                 }
             }
-            .onChange(of: self.isPresenting, perform: { value in
-                if value {
+            .onChange(of: self.presentedDismissGesture.presenting, perform: { value in
+                if value && self.appState.fullscreenView == nil {
                     self.appState.fullscreenView = AnyView(
-                        PresentedPost(presenting: self.$isPresenting,
-                                      presentingSheet: self.presentingSheet,
+                        PresentedPost(presentingSheet: self.presentingSheet,
                                       galleryIndex: self.$galleryIndex,
                                       commentRepliesIndex: self.commentRepliesIndex)
                             .onOffsetChanged { value in
@@ -93,15 +92,19 @@ struct ThreadView: View {
                             }
                             .onDisappear {
                                 self.opacity = 1
+                                self.presentedDismissGesture.dismiss = false
+                                self.presentedDismissGesture.canDrag = true
+                                self.presentedDismissGesture.dragging = false
                             }
                             .environmentObject(self.viewModel)
+                            .environmentObject(self.presentedDismissGesture)
                     )
                 } else {
                     self.appState.fullscreenView = nil
                 }
             })
         }
-        .statusBar(hidden: self.isPresenting)
+        .statusBar(hidden: self.presentedDismissGesture.presenting)
     }
 }
 

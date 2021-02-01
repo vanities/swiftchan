@@ -44,6 +44,7 @@
 		958D0998254D346A00AD4849 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D0997254D346A00AD4849 /* CatalogView.swift */; };
 		958D09A0254D444F00AD4849 /* OPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D099F254D444F00AD4849 /* OPView.swift */; };
 		958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958D2C98254D2DF200E54C41 /* ContentView.swift */; };
+		9598848825C2685300E38239 /* VLCVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9598848725C2685300E38239 /* VLCVideo.swift */; };
 		9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA95254DF8C0002EB026 /* ThreadView.swift */; };
 		9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599CA9F254DFDA1002EB026 /* PostView.swift */; };
 		9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */; };
@@ -121,6 +122,7 @@
 		958D0997254D346A00AD4849 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		958D099F254D444F00AD4849 /* OPView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPView.swift; sourceTree = "<group>"; };
 		958D2C98254D2DF200E54C41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9598848725C2685300E38239 /* VLCVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideo.swift; sourceTree = "<group>"; };
 		9599CA95254DF8C0002EB026 /* ThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadView.swift; sourceTree = "<group>"; };
 		9599CA9F254DFDA1002EB026 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryPreviewView.swift; sourceTree = "<group>"; };
@@ -340,6 +342,7 @@
 				9589342A2558ED11000DEEDC /* VLCContainerView.swift */,
 				9582CB98255631B9008B235D /* VLCVideoView.swift */,
 				958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */,
+				9598848725C2685300E38239 /* VLCVideo.swift */,
 			);
 			path = VLC;
 			sourceTree = "<group>";
@@ -418,6 +421,7 @@
 			buildConfigurationList = 951817B2254CFB620032616E /* Build configuration list for PBXNativeTarget "swiftchan" */;
 			buildPhases = (
 				C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */,
+				9544236025C776A50019010B /* Run Swiftlint */,
 				95181789254CFB600032616E /* Sources */,
 				9518178A254CFB600032616E /* Frameworks */,
 				9518178B254CFB600032616E /* Resources */,
@@ -550,6 +554,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		9544236025C776A50019010B /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint autocorrect && ${PODS_ROOT}/SwiftLint/swiftlint \nelse\n  echo \"warning: SwiftLint not installed, run pod install\"\nfi\n";
+		};
 		C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -603,6 +625,7 @@
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
+				9598848825C2685300E38239 /* VLCVideo.swift in Sources */,
 				95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */,
 				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95D804E22568F9D8005A3128 /* View.swift in Sources */,

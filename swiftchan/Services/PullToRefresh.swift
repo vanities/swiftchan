@@ -8,9 +8,6 @@
 import SwiftUI
 import Introspect
 
-import SwiftUI
-import Introspect
-
 private struct PullToRefresh: UIViewRepresentable {
 
     @Binding var isRefreshing: Bool

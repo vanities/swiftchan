@@ -71,7 +71,7 @@ struct OPView: View {
                         .bold()
                         .lineLimit(nil)
                         .padding(.bottom, 5)
-                    //comment
+                    // comment
                     comment
                         .lineLimit(20)
                 }
@@ -84,6 +84,8 @@ struct OPView: View {
 
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
-        OPView(boardName: "fit", post: Post.example(), comment: Text(""))
+        if let example = Post.example() {
+            OPView(boardName: "fit", post: example, comment: Text(""))
+        }
     }
 }

@@ -16,19 +16,15 @@ struct BoardsView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
     var filteredBoards: [Board] {
-        get {
             self.viewModel.boards.filter({ board in
                 board.board.starts(with: self.searchText.lowercased()) && !self.favoriteBoards.contains(board)
             })
-        }
     }
 
     var favoriteBoards: [Board] {
-        get {
             self.viewModel.boards.filter({ board in
                 self.userSettings.favoriteBoards.contains(board.board)
             })
-        }
     }
 
     var body: some View {

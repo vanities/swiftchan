@@ -34,8 +34,7 @@ extension Post: Hashable {
         }
         return datePosted
     }
-
-    static func example() -> Post {
+    static func example() -> Post? {
         let json: [String: Any] = [
             "no": 570368,
             "sticky": 1,
@@ -61,9 +60,11 @@ extension Post: Hashable {
             "images": 2,
             "unique_ips": 1
         ]
-
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        return try! JSONDecoder().decode(Post.self, from: jsonData)
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
+            return try JSONDecoder().decode(Post.self, from: jsonData)
+        } catch {
+            return nil
+        }
     }
-
 }
