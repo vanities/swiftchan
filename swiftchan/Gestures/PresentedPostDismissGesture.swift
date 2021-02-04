@@ -13,7 +13,7 @@ enum DismissDirection {
 
 class DismissGesture: ObservableObject {
     @Published var dismiss: Bool = false
-    @Published var presenting: Bool = true
+    @Published var presenting: Bool = false
     @Published var canDrag: Bool = true
     @Published var dragging: Bool = false
 }

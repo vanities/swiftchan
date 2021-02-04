@@ -9,7 +9,7 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCPlayerControlsView: View {
-    @EnvironmentObject var video: VLCVideo
+    @EnvironmentObject var video: VLCVideoViewModel
 
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
@@ -97,7 +97,7 @@ struct VLCPlayerControlsView: View {
 struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
         VLCPlayerControlsView()
-            .environmentObject(VLCVideo())
+            .environmentObject(VLCVideoViewModel())
             .background(Color.black)
     }
 }

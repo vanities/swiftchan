@@ -11,7 +11,7 @@ import MobileVLCKit
 struct VLCContainerView: View {
     let url: URL
     @Binding var play: Bool
-    @StateObject var video: VLCVideo = VLCVideo()
+    @StateObject var video: VLCVideoViewModel = VLCVideoViewModel()
     @State var showControls: Bool = false
 
     var onSeekChanged: ((Bool) -> Void)?
@@ -50,6 +50,7 @@ struct VLCContainerView: View {
             }
             .onAppear {
                 self.video.url = self.url
+                self.video.setCachedMediaPlayer(url: url)
                 if self.play {
                     self.video.mediaState = .play
                 }

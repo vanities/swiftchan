@@ -10,18 +10,13 @@ import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
     let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
-    @EnvironmentObject var video: VLCVideo
+    @EnvironmentObject var video: VLCVideoViewModel
     @State var media: VLCMedia?
 
     func makeUIView(context: Context) -> UIView {
         let uiView = UIView()
 
-        #if DEBUG
         self.setMediaPlayer(context: context)
-        // self.setMediaPlayer(context: context, cacheUrl: url)
-        #else
-        self.setMediaPlayer(context: context)
-        #endif
 
         self.playerList.mediaPlayer.drawable = uiView
         self.playerList.repeatMode = .repeatCurrentItem
@@ -31,6 +26,10 @@ struct VLCVideoView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         let playerList = context.coordinator.parent.playerList
+        if self.media == nil {
+            self.setMediaPlayer(context: context)
+        }
+
         switch self.video.mediaState {
         case .play:
             if let player = playerList.mediaPlayer,
@@ -71,10 +70,9 @@ struct VLCVideoView: UIViewRepresentable {
         DispatchQueue.main.async {
             if let cacheUrl = self.video.cachedUrl {
                 self.media = VLCMedia(url: cacheUrl)
-            } else if let url = self.video.url {
-                self.media = VLCMedia(url: url)
+                self.playerList.rootMedia = self.media
+                context.coordinator.parent.playerList.rootMedia = self.media
             }
-            self.playerList.rootMedia = self.media
         }
         #if DEBUG
         // self.playerList.mediaPlayer.audio.isMuted = true
@@ -115,7 +113,7 @@ struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
             VLCVideoView()
-                .environmentObject(VLCVideo())
+                .environmentObject(VLCVideoViewModel())
         }
     }
 }
