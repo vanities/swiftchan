@@ -15,7 +15,6 @@ struct GalleryView: View {
     var urls: [URL]
     var thumbnailUrls: [URL]
     @State var canPage: Bool = true
-    @State var selected: [Bool] = Array.init(repeating: false, count: 200)
 
     @State private var isExportingDocument = false
 
@@ -34,56 +33,56 @@ struct GalleryView: View {
             // gallery
             Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
                 MediaView(
-                    selected: self.$selected[index],
-                    url: self.urls[index]
+                    selected: self.$selection,
+                    url: self.urls[index],
+                    id: index
                 )
-                .onMediaChanged { zoomed in
-                    self.canShowPreview = !zoomed
-                    self.canPage = !zoomed
-                    if zoomed {
-                        // if zooming, remove the preview
-                        self.showPreview = !zoomed
+                    .onMediaChanged { zoomed in
+                        self.canShowPreview = !zoomed
+                        self.canPage = !zoomed
+                        if zoomed {
+                            // if zooming, remove the preview
+                            self.showPreview = !zoomed
+                        }
+                        self.onMediaChanged?(zoomed)
                     }
-                    self.onMediaChanged?(zoomed)
-                }
-                .fileExporter(isPresented: self.$isExportingDocument,
-                              document: FileExport(url: self.urls[index].absoluteString),
-                              contentType: .image,
-                              onCompletion: { _ in }
-                )
-                .contextMenu {
-                    Button(action: {
-                        UIPasteboard.general.string = self.urls[index].absoluteString
-                    }, label: {
-                        Text("Copy URL")
-                        Image(systemName: "doc.on.doc")
-                    })
-                    switch MediaDetector.detect(url: self.urls[index]) {
-                    case .image, .gif:
+
+                    .fileExporter(isPresented: self.$isExportingDocument,
+                                  document: FileExport(url: self.urls[index].absoluteString),
+                                  contentType: .image,
+                                  onCompletion: { _ in })
+
+                    .contextMenu {
                         Button(action: {
-                            ImageSaver().saveImageToPhotos(url: self.urls[index])
+                            UIPasteboard.general.string = self.urls[index].absoluteString
                         }, label: {
-                            Text("Save to Photos")
-                            Image(systemName: "square.and.arrow.down")
+                            Text("Copy URL")
+                            Image(systemName: "doc.on.doc")
                         })
-                    case .webm, .none:
-                        Button(action: {
-                            self.isExportingDocument.toggle()
-                        }, label: {
-                            Text("Save to Files")
-                            Image(systemName: "folder")
-                        })
+                        switch MediaDetector.detect(url: self.urls[index]) {
+                        case .image, .gif:
+                            Button(action: {
+                                ImageSaver().saveImageToPhotos(url: self.urls[index])
+                            }, label: {
+                                Text("Save to Photos")
+                                Image(systemName: "square.and.arrow.down")
+                            })
+                        case .webm, .none:
+                            Button(action: {
+                                self.isExportingDocument.toggle()
+                            }, label: {
+                                Text("Save to Files")
+                                Image(systemName: "folder")
+                            })
+                        }
                     }
-                }
             }
             .onOffsetChanged { value in
                 self.onPageDragChanged?(value)
             }
-            .onPageChanged { index in
+            .onPageChanged { _ in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
-                self.selected = Array.init(repeating: false, count: 200)
-                self.selected[index] = true
             }
             .allowsDragging(!self.dismissGesture.dragging && self.canPage)
             .pagingPriority(.simultaneous)
@@ -115,7 +114,7 @@ struct GalleryView: View {
             }
             .opacity(self.showPreview && !self.dismissGesture.dragging ? 1 : 0)
         }
-       .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
+        .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
     }
 
     func showPreviewTap() -> some Gesture {
