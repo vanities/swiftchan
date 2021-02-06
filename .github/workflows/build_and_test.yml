@@ -1,0 +1,37 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: macos-latest
+    env:
+      scheme: "swiftchan"
+      device: "iPhone 12"
+      workspace: "swiftchan.xcworkspace"
+      platform: "iOS Simulator"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Build
+        run: |
+          xcodebuild build-for-testing -scheme "$scheme" -workspace "$workspace" -destination "platform=$platform,name=$device" -scmProvider system
+
+      - name: Test
+        timeout-minutes: 30
+        run: |
+          xcodebuild test-without-building -scheme "$scheme" -workspace "$workspace" -destination "platform=$platform,name=$device"

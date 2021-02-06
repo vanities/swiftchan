@@ -1,0 +1,6 @@
+disabled_rules: shorthand_operator
+type_name:
+  min_length: 1
+line_length: 1000
+identifier_name:
+  min_length: 1

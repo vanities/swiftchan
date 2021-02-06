@@ -8,41 +8,25 @@
 import SwiftUI
 
 struct MediaView: View {
-    @State var isSelected: Bool
-    @Binding var selected: Int
+    @Binding var selected: Bool
     let url: URL
-    let id: Int
 
     var onMediaChanged: ((Bool) -> Void)?
-
-    init(selected: Binding<Int>, url: URL, id: Int) {
-        self._selected = selected
-        self.url = url
-        self.id = id
-
-        self._isSelected = State(initialValue: selected.wrappedValue == id)
-    }
 
     @ViewBuilder
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(url: self.url, canGesture: true, isSelected: self.$isSelected)
+            ImageView(url: self.url, canGesture: true, isSelected: self.$selected)
                 .onZoomChanged { zoomed in
                     self.onMediaChanged?(zoomed)
                 }
-                .onChange(of: self.selected) { value in
-                    self.isSelected = value == self.id
-                }
         case .webm:
             VLCContainerView(url: self.url,
-                             play: self.$isSelected
+                             play: self.$selected
             )
             .onSeekChanged { seeking in
                 self.onMediaChanged?(seeking)
-            }
-            .onChange(of: self.selected) { value in
-                self.isSelected = value == self.id
             }
         case .gif:
             GIFView(url: self.url)
@@ -62,19 +46,16 @@ struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MediaView(
-                selected: .constant(0),
-                url: URLExamples.image,
-                id: 0
+                selected: .constant(true),
+                url: URLExamples.image
             )
             MediaView(
-                selected: .constant(0),
-                url: URLExamples.gif,
-                id: 0
+                selected: .constant(true),
+                url: URLExamples.gif
             )
             MediaView(
-                selected: .constant(0),
-                url: URLExamples.webm,
-                id: 0
+                selected: .constant(true),
+                url: URLExamples.webm
             )
         }
     }
