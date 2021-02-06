@@ -1,0 +1,28 @@
+name: Bump version
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  workflow_dispatch:
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+          ssh-key: "${{ secrets.SSH_KEY }}"
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.33.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          TAG_CONTEXT: repo
+          RELEASE_BRANCHES: master
+          DEFAULT_BUMP: none
+          WITH_V: false
+          PRERELEASE_SUFFIX: beta
+          VERBOSE: false
