@@ -27,6 +27,10 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
+      - name: Install Dependencies
+        run: |
+          pod install --repo-update
+
       - name: Build
         run: |
           xcodebuild build-for-testing -scheme "$scheme" -workspace "$workspace" -destination "platform=$platform,name=$device" -scmProvider system
