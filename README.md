@@ -11,6 +11,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![GPL3 License][license-shield]][license-url]
+![Build and Test](https://github.com/vanities/swiftchan/workflows/Build%20and%20Test/badge.svg?branch=master)
 
 
 
