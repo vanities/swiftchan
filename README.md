@@ -12,7 +12,7 @@
 [![Issues][issues-shield]][issues-url]
 [![GPL3 License][license-shield]][license-url]
 ![Build and Test](https://github.com/vanities/swiftchan/workflows/Build%20and%20Test/badge.svg?branch=master)
-
+[![GitHub tag](https://img.shields.io/github/tag/vanities/swiftchan.svg)](https://github.com/vaniteis/swiftchan/tags/)
 
 
 <!-- PROJECT LOGO -->
