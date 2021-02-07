@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/jackpal/FourChanAPI",
         "state": {
           "branch": null,
-          "revision": "5effc804c3d06bfb3344645f39e1fc4466d81706",
-          "version": "1.1.24"
+          "revision": "03613f49ef0f0a70ae2f345ac79fbc65a16ea0f6",
+          "version": "1.1.25"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/vanities/SwiftUIPager",
         "state": {
           "branch": null,
-          "revision": "adc7c8bd748267677877b7a0b80554a40d5f68f7",
-          "version": "1.14.1"
+          "revision": "f98549a5c6d5382d909a213f6cf4c1517e6845de",
+          "version": "1.14.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/dmytro-anokhin/url-image",
         "state": {
           "branch": null,
-          "revision": "7ff0e0e22fa9d0e293db312cb740718c377336dd",
-          "version": "2.1.13"
+          "revision": "c1a906515b0a440927b96204b778058871b22f23",
+          "version": "2.2.3"
         }
       }
     ]

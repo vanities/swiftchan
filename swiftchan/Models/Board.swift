@@ -8,10 +8,7 @@
 import Foundation
 import FourChan
 
-extension Board: Equatable {
-    public static func == (lhs: Board, rhs: Board) -> Bool {
-        return lhs.board == rhs.board
-    }
+extension Board {
     static func examples() -> [Board] {
         let json: [String: Any] = [
             "boards": [

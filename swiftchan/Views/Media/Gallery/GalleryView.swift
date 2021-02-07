@@ -37,49 +37,47 @@ struct GalleryView: View {
                     url: self.urls[index],
                     id: index
                 )
-                    .onMediaChanged { zoomed in
-                        self.canShowPreview = !zoomed
-                        self.canPage = !zoomed
-                        if zoomed {
-                            // if zooming, remove the preview
-                            self.showPreview = !zoomed
-                        }
-                        self.onMediaChanged?(zoomed)
+                .onMediaChanged { zoomed in
+                    self.canShowPreview = !zoomed
+                    self.canPage = !zoomed
+                    if zoomed {
+                        // if zooming, remove the preview
+                        self.showPreview = !zoomed
                     }
+                    self.onMediaChanged?(zoomed)
+                }
+                .fileExporter(isPresented: self.$isExportingDocument,
+                              document: FileExport(url: self.urls[index].absoluteString),
+                              contentType: .image,
+                              onCompletion: { _ in })
 
-                    .fileExporter(isPresented: self.$isExportingDocument,
-                                  document: FileExport(url: self.urls[index].absoluteString),
-                                  contentType: .image,
-                                  onCompletion: { _ in })
-
-                    .contextMenu {
+                .contextMenu {
+                    Button(action: {
+                        UIPasteboard.general.string = self.urls[index].absoluteString
+                    }, label: {
+                        Text("Copy URL")
+                        Image(systemName: "doc.on.doc")
+                    })
+                    switch MediaDetector.detect(url: self.urls[index]) {
+                    case .image, .gif:
                         Button(action: {
-                            UIPasteboard.general.string = self.urls[index].absoluteString
+                            ImageSaver().saveImageToPhotos(url: self.urls[index])
                         }, label: {
-                            Text("Copy URL")
-                            Image(systemName: "doc.on.doc")
+                            Text("Save to Photos")
+                            Image(systemName: "square.and.arrow.down")
                         })
-                        switch MediaDetector.detect(url: self.urls[index]) {
-                        case .image, .gif:
-                            Button(action: {
-                                ImageSaver().saveImageToPhotos(url: self.urls[index])
-                            }, label: {
-                                Text("Save to Photos")
-                                Image(systemName: "square.and.arrow.down")
-                            })
-                        case .webm, .none:
-                            Button(action: {
-                                self.isExportingDocument.toggle()
-                            }, label: {
-                                Text("Save to Files")
-                                Image(systemName: "folder")
-                            })
-                        }
+                    case .webm, .none:
+                        Button(action: {
+                            self.isExportingDocument.toggle()
+                        }, label: {
+                            Text("Save to Files")
+                            Image(systemName: "folder")
+                        })
                     }
+                }
             }
-            .onOffsetChanged { value in
-                self.onPageDragChanged?(value)
-            }
+            // .contentLoadingPolicy(.eager)
+            .onOffsetChanged { self.onPageDragChanged?($0) }
             .onPageChanged { _ in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
