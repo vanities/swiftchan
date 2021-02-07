@@ -12,6 +12,7 @@ import SwiftUIPager
 struct GalleryView: View {
     @EnvironmentObject var dismissGesture: DismissGesture
     @Binding var selection: Int
+    @StateObject var page: Page
     var urls: [URL]
     var thumbnailUrls: [URL]
     @State var canPage: Bool = true
@@ -26,12 +27,22 @@ struct GalleryView: View {
     var onPageDragChanged: ((CGFloat) -> Void)?
     var onDismiss: (() -> Void)?
 
+    init(selection: Binding<Int>, urls: [URL], thumbnailUrls: [URL]) {
+        self._selection
+         = selection
+        self.urls = urls
+        self.thumbnailUrls = thumbnailUrls
+        self._page =  StateObject(wrappedValue: Page.withIndex(selection.wrappedValue))
+    }
+
     var body: some View {
         return ZStack {
             Color.black.ignoresSafeArea()
 
             // gallery
-            Pager(page: self.$selection, data: self.urls.indices, id: \.self) { index in
+            Pager(page: self.page,
+                  data: self.urls.indices,
+                  id: \.self) { index in
                 MediaView(
                     selected: self.$selection,
                     url: self.urls[index],
@@ -46,6 +57,7 @@ struct GalleryView: View {
                     }
                     self.onMediaChanged?(zoomed)
                 }
+                .id(index)
                 .fileExporter(isPresented: self.$isExportingDocument,
                               document: FileExport(url: self.urls[index].absoluteString),
                               contentType: .image,
@@ -77,10 +89,11 @@ struct GalleryView: View {
                 }
             }
             // .contentLoadingPolicy(.eager)
-            .onOffsetChanged { self.onPageDragChanged?($0) }
-            .onPageChanged { _ in
+            .onDraggingChanged { self.onPageDragChanged?(CGFloat($0)) }
+            .onPageChanged { index in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
+                self.selection = index
             }
             .allowsDragging(!self.dismissGesture.dragging && self.canPage)
             .pagingPriority(.simultaneous)

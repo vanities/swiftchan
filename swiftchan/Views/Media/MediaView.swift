@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MediaView: View, Identifiable {
+struct MediaView: View {
     @State var isSelected: Bool
     @Binding var selected: Int
     let url: URL

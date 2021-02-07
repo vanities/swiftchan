@@ -24,9 +24,9 @@
 		9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */; };
 		9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A9256F87EA00D08075 /* CoreExtensions.swift */; };
 		9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1AE256F8E4D00D08075 /* Blur.swift */; };
-		9524E1C4257054DB00D08075 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 9524E1C3257054DB00D08075 /* SwiftUIPager */; };
 		9524F4B62580545C0006395F /* FileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4B52580545C0006395F /* FileExport.swift */; };
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
+		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		955814A6254CFFC200A966BA /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 955814A5254CFFC200A966BA /* URLImage */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
@@ -149,7 +149,7 @@
 			files = (
 				9510535D2564DD2C002E4051 /* FourChan in Frameworks */,
 				95D804DC2568E42A005A3128 /* Introspect in Frameworks */,
-				9524E1C4257054DB00D08075 /* SwiftUIPager in Frameworks */,
+				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
 				9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
@@ -436,7 +436,7 @@
 				9580613D254F884B0003FFF3 /* SwiftSoup */,
 				9510535C2564DD2C002E4051 /* FourChan */,
 				95D804DB2568E42A005A3128 /* Introspect */,
-				9524E1C3257054DB00D08075 /* SwiftUIPager */,
+				952F72EB25D0608200762154 /* SwiftUIPager */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -514,7 +514,7 @@
 				9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 				95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
-				9524E1C2257054DB00D08075 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
+				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -985,12 +985,12 @@
 				minimumVersion = 1.1.24;
 			};
 		};
-		9524E1C2257054DB00D08075 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
+		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/vanities/SwiftUIPager";
+			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.14.0;
+				minimumVersion = 2.0.0;
 			};
 		};
 		955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */ = {
@@ -1025,9 +1025,9 @@
 			package = 9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
 		};
-		9524E1C3257054DB00D08075 /* SwiftUIPager */ = {
+		952F72EB25D0608200762154 /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9524E1C2257054DB00D08075 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
+			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
 		};
 		955814A5254CFFC200A966BA /* URLImage */ = {

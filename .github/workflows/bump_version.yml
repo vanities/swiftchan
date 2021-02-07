@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - develop
 
   workflow_dispatch:
 
@@ -20,9 +19,6 @@ jobs:
         uses: anothrNick/github-tag-action@1.33.0
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          TAG_CONTEXT: repo
           RELEASE_BRANCHES: master
-          DEFAULT_BUMP: none
-          WITH_V: false
-          PRERELEASE_SUFFIX: beta
-          VERBOSE: false
+          DEFAULT_BUMP: minor
+          WITH_V: true
