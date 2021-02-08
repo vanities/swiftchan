@@ -57,7 +57,6 @@ struct GalleryView: View {
                     }
                     self.onMediaChanged?(zoomed)
                 }
-                .id(index)
                 .fileExporter(isPresented: self.$isExportingDocument,
                               document: FileExport(url: self.urls[index].absoluteString),
                               contentType: .image,
@@ -88,7 +87,11 @@ struct GalleryView: View {
                     }
                 }
             }
-            // .contentLoadingPolicy(.eager)
+            .onDraggingEnded {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.onPageDragChanged?(.zero)
+                }
+            }
             .onDraggingChanged { self.onPageDragChanged?(CGFloat($0)) }
             .onPageChanged { index in
                 self.dragging = false
