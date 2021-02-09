@@ -8,16 +8,12 @@
 import SwiftUI
 import FourChan
 
-enum PresentingSheet {
-    case gallery, replies
-}
-
 struct ThreadView: View {
     @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
 
-    @State private var presentingSheet: PresentingSheet = .gallery
+    @State private var presentingSheet: PresentedPost.PresentType = .gallery
 
     @State var galleryIndex: Int = 0
     @State var commentRepliesIndex: Int = 0

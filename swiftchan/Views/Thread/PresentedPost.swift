@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct PresentedPost: View {
+    enum PresentType {
+        case gallery, replies
+    }
+
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var dismissGesture: DismissGesture
-    let presentingSheet: PresentingSheet
+    let presentingSheet: PresentType
     @Binding var galleryIndex: Int
     let commentRepliesIndex: Int
 

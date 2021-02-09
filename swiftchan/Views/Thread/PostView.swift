@@ -14,7 +14,7 @@ struct PostView: View {
     let index: Int
 
     @Binding var isPresenting: Bool
-    @Binding var presentingSheet: PresentingSheet
+    @Binding var presentingSheet: PresentedPost.PresentType
 
     @Binding var galleryIndex: Int
     @Binding var commentRepliesIndex: Int
@@ -90,7 +90,7 @@ struct PostView: View {
                     }
                 }
                 // comment
-                comment
+                AttributedText(comment)
                     .padding(.top, 20)
 
                 // replies

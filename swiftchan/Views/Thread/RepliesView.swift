@@ -14,7 +14,7 @@ struct RepliesView: View {
     @State var postIndex: Int = 0
     @State var commentRepliesIndex: Int = 0
     @State var isPresenting = false
-    @State var presentingSheet: PresentingSheet = .replies
+    @State var presentingSheet: PresentedPost.PresentType = .replies
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -34,8 +34,6 @@ struct RepliesView: View {
                                      galleryIndex: self.$postIndex,
                                      commentRepliesIndex: self.$commentRepliesIndex
                             )
-                            // random id, different from the thread ones
-                            .id(UUID())
                         }
                     }
                 }
