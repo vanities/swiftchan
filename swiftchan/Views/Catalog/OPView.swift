@@ -72,10 +72,17 @@ struct OPView: View {
                         .lineLimit(nil)
                         .padding(.bottom, 5)
                     // comment
-                    AttributedText(self.comment)
-                        // .frame(width: UIScreen.main.bounds.width/2)
+                    // AttributedText(self.comment, height: .constant(200), linkPressed: {_ in})
+                    // swiftlint:disable force_cast
+                    AttributedText(comment.attributedSubstring(from: NSRange(location: 0, length: min(comment.length, 200))).mutableCopy() as! NSMutableAttributedString)
                         .lineLimit(20)
                         .lineBreakMode(.byTruncatingTail)
+                        .frameTextView(
+                            self.comment,
+                            maxWidth: UIScreen.main.bounds.width/2 - 10,
+                            maxHeight: UIScreen.main.bounds.height/2
+                    )
+                    // swiftlint:enable force_cast
 
                 }
                 .padding(.all, 5)
@@ -91,62 +98,4 @@ struct OPView_Previews: PreviewProvider {
             OPView(boardName: "fit", post: example, comment: NSMutableAttributedString())
         }
     }
-}
-
-struct AttributedText: UIViewRepresentable, Buildable {
-
-    let attributedString: NSMutableAttributedString
-    @State var size: CGSize = .zero
-    @State var lineLimit: Int = 0
-    @State var lineBreakMode: NSLineBreakMode = .byWordWrapping
-    @State var calculatedHeight: CGFloat = 100
-
-    init(_ attributedString: NSMutableAttributedString) {
-        self.attributedString = attributedString
-    }
-
-    func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
-
-        view.adjustsFontForContentSizeCategory = true
-        view.attributedText = self.attributedString
-        // view.textContainer.lineBreakMode = .byWordWrapping
-        view.textContainer.lineBreakMode = .byTruncatingTail
-        view.isScrollEnabled = false
-        view.frame = .zero
-        view.setContentCompressionResistancePriority(.fittingSizeLevel, for: .horizontal)
-        // view.setContentCompressionResistancePriority(.fittingSizeLevel, for: .vertical)
-        // textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        // view.textContainer.heightTracksTextView = true
-        // view.textContainer.widthTracksTextView = true
-        // view.autoresizesSubviews = true
-        // view.isUserInteractionEnabled = true
-        // view.autoresizingMask = [.flexibleHeight, .flexibleHeight]
-        // label
-
-        view.isEditable = false
-
-        return view
-    }
-
-    func updateUIView(_ uiView: UITextView, context: Context) {
-        // uiView.attributedText = self.attributedString
-        uiView.textContainer.maximumNumberOfLines = self.lineLimit
-        uiView.textContainer.lineBreakMode = self.lineBreakMode
-
-        let fixedWidth = uiView.frame.size.width
-        DispatchQueue.main.async {
-            uiView.frame.size = uiView.sizeThatFits(CGSize(width: fixedWidth/2, height: CGFloat.greatestFiniteMagnitude))
-
-        }
-    }
-
-    func lineLimit(_ value: Int) -> Self {
-        mutating(keyPath: \.lineLimit, value: value)
-    }
-
-    func lineBreakMode(_ value: NSLineBreakMode) -> Self {
-        mutating(keyPath: \.lineBreakMode, value: value)
-    }
-
 }
