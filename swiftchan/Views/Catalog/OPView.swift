@@ -25,6 +25,18 @@ struct OPView: View {
     }
 
     var body: some View {
+        // swiftlint:disable force_cast
+        let trailingComment = self.comment.attributedSubstring(
+            from: NSRange(location: 0,
+                          length: min(self.comment.length, 200)
+            )
+        ).mutableCopy() as! NSMutableAttributedString
+        if trailingComment.length ==  200 {
+            trailingComment.append(NSMutableAttributedString(string: "..."))
+
+        }
+        // swiftlint:enable force_cast
+
         return NavigationLink(
             destination:
                 ThreadView()
@@ -72,18 +84,13 @@ struct OPView: View {
                         .lineLimit(nil)
                         .padding(.bottom, 5)
                     // comment
-                    // AttributedText(self.comment, height: .constant(200), linkPressed: {_ in})
-                    // swiftlint:disable force_cast
-                    AttributedText(comment.attributedSubstring(from: NSRange(location: 0, length: min(comment.length, 200))).mutableCopy() as! NSMutableAttributedString)
-                        .lineLimit(20)
+                    AttributedText(trailingComment)
                         .lineBreakMode(.byTruncatingTail)
                         .frameTextView(
-                            self.comment,
+                            trailingComment,
                             maxWidth: UIScreen.main.bounds.width/2 - 10,
                             maxHeight: UIScreen.main.bounds.height/2
                     )
-                    // swiftlint:enable force_cast
-
                 }
                 .padding(.all, 5)
             }
