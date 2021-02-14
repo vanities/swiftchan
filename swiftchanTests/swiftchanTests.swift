@@ -31,17 +31,16 @@ class SwiftchanTests: XCTestCase {
                             http://www.sidefx.com/index.php?opt​ion=com_download&Itemid=208&task=ap​prentice
 """)
         print(result)
-        XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org")!)
-        XCTAssertEqual(result[1].0, URL(string: "http://www.wings3d.com")!)
-        // XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112")!)
+        XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org/")!)
+        XCTAssertEqual(result[1].0, URL(string: "http://www.wings3d.com/")!)
+        XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle%E2%80%8Bt/pc/item?id=13571257&siteID=123112")!)
+        XCTAssertEqual(result[3].0, URL(string: "http://www.sidefx.com/index.php?opt%E2%80%8Bion=com_download&Itemid=208&task=ap%E2%80%8Bprentice")!)
     }
 
     func testHyperLinkFinderQueryParam() throws {
-        let urlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        let url = URL(string: urlString!)!
-        let result = parser.checkForUrls(urlString!)
-        print(result)
-        XCTAssertEqual(result[0].0, url)
-        // XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112")!)
+        let urlString = "https://store.steampowered.com/app/​773840/DRAG/"
+        let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let result = parser.checkForUrls(urlString)
+        XCTAssertEqual(result[0].0, URL(string: percentUrlString))
     }
 }

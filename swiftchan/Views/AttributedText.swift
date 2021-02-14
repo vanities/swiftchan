@@ -22,9 +22,7 @@ struct AttributedText: UIViewRepresentable, Buildable {
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
 
-        // view.adjustsFontForContentSizeCategory = true
         view.attributedText = self.attributedString
-        // view.textContainer.lineBreakMode = .byWordWrapping
         view.textContainer.lineBreakMode = .byTruncatingTail
         // view.textContainerInset = .zero
         // view.textContainer.lineFragmentPadding = 0
@@ -38,8 +36,8 @@ struct AttributedText: UIViewRepresentable, Buildable {
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        // uiView.attributedText = self.attributedString
         DispatchQueue.main.async {
+            uiView.attributedText = self.attributedString
             uiView.textContainer.maximumNumberOfLines = self.lineLimit
             uiView.textContainer.lineBreakMode = self.lineBreakMode
         }

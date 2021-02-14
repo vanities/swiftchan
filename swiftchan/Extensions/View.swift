@@ -29,6 +29,6 @@ extension View {
         let height = min(maxHeight, CGFloat.greatestFiniteMagnitude)
         let constraintBox = CGSize(width: width, height: height)
         let size = text.boundingRect(with: constraintBox, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
-        return frame(width: size.width, height: size.height+20)
+        return frame(width: size.width, height: size.height+40)
     }
 }

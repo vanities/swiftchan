@@ -100,8 +100,8 @@ class CommentParser {
     }
 
     func checkForUrls(_ text: String) -> [(URL, NSRange)] {
-        let regexString = "@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS" // i like
-        //let regexString = "https?://[^\\s]*(\\r|\\n|\\s|)" // basic
+        // let regexString = "@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS" // i like
+        let regexString = "(https?://[^\\s]*)(\\r|\\n|\\s|)" // basic
 
         do {
             let regex = try NSRegularExpression(pattern: regexString, options: [])
@@ -117,9 +117,10 @@ class CommentParser {
             }
             */
             return matches.compactMap { match in
-                if let range = Range(match.range, in: text) {
+                if let range = Range(match.range(at: 1), in: text) {
                     let stringUrl = String(text[range])
-                    if let url = URL(string: stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) {
+                    if let escapedStringUrl = stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                      let url = URL(string: escapedStringUrl) {
                         return (url, match.range)
                     }
                 }
