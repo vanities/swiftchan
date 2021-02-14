@@ -94,7 +94,7 @@ struct PostView: View {
                 }
                 // comment
                 AttributedText(comment)
-                    .frameTextView(comment, maxWidth: UIScreen.main.bounds.width - 10, maxHeight: UIScreen.main.bounds.height)
+                    .frameTextView(comment, maxWidth: UIScreen.main.bounds.width - 10, maxHeight: .greatestFiniteMagnitude)
                     .padding(.top, 20)
 
                 // replies
@@ -106,6 +106,7 @@ struct PostView: View {
                             self.presentingSheet = .replies
                             self.isPresenting.toggle()
                         }
+                        .zIndex(1)
                         .padding(.top, 5)
                 }
             }

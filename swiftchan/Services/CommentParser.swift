@@ -23,15 +23,19 @@ class CommentParser {
     }
 
     func parseComment(_ comment: String) -> NSMutableAttributedString {
-        print(comment)
+        // print(comment)
         let result = NSMutableAttributedString()
         let parser = PostTextParser()
         parser.parse(text: comment) { element in
             var part = NSMutableAttributedString()
-            print(element)
+            // print(element)
             switch element {
             case .anchor(text: let text, href: let href):
                 // >>307241251 (OP)
+                self.replies.append(text
+                                        .replacingOccurrences(of: ">>", with: "")
+                                        .replacingOccurrences(of: "(OP)", with: "")
+                )
                 // and links to self hosted files
                 let font = UIFont.preferredFont(forTextStyle: .body)
                 part = NSMutableAttributedString(string: text)
@@ -46,6 +50,17 @@ class CommentParser {
                 part.addAttributes([.font: font,
                                     .foregroundColor: UIColor.label],
                                    range: NSRange(location: 0, length: part.length))
+                // http://......
+                self.checkForUrls(text).forEach { (url, range) in
+                    print("match!", text, url)
+
+                    part.addAttributes(
+                        [.font: font,
+                         .foregroundColor: UIColor.link,
+                         .link: url
+                        ],
+                        range: range)
+                }
             case .bold(text: let text):
                 // 𝐛𝐨𝐥𝐝
                 part = NSMutableAttributedString(string: text)
@@ -71,43 +86,50 @@ class CommentParser {
                      .foregroundColor: UIColor.green],
                     range: NSRange(location: 0, length: part.length))
             case .deakLink(text: let text):
-                // >>307241251 (OP)
-                self.replies.append(text)
+                // what is this
                 part = NSMutableAttributedString(string: text)
                 let font = UIFont.preferredFont(forTextStyle: .body)
                 part.addAttributes(
                     [.font: font,
                      .foregroundColor: UIColor.systemPink],
                     range: NSRange(location: 0, length: part.length))
-            case .hyperLink(url: let url, before: let before, after: let after):
-                var font = UIFont.preferredFont(forTextStyle: .body)
-                part = NSMutableAttributedString(string: before)
-                part.addAttributes([.font: font,
-                                    .foregroundColor: UIColor.label],
-                                   range: NSRange(location: 0, length: part.length))
-                result.append(part)
-
-                // http://......
-                part = NSMutableAttributedString(string: url.absoluteString)
-                font = UIFont.preferredFont(forTextStyle: .body)
-                part.addAttributes(
-                    [.font: font,
-                     .foregroundColor: UIColor.link,
-                     .link: url
-                    ],
-                    range: NSRange(location: 0, length: part.length))
-                result.append(part)
-
-                font = UIFont.preferredFont(forTextStyle: .body)
-                part = NSMutableAttributedString(string: after)
-                part.addAttributes([.font: font,
-                                    .foregroundColor: UIColor.label],
-                                   range: NSRange(location: 0, length: part.length))
-
             }
             result.append(part)
         }
         return result
+    }
+
+    func checkForUrls(_ text: String) -> [(URL, NSRange)] {
+        let regexString = "@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS" // i like
+        //let regexString = "https?://[^\\s]*(\\r|\\n|\\s|)" // basic
+
+        do {
+            let regex = try NSRegularExpression(pattern: regexString, options: [])
+            let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+
+            /*
+            // doesn't capture urls correctly
+            let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+            let matches = detector.matches(in: text, options: [.reportCompletion], range: NSRange(text.startIndex..., in: text))
+
+            return matches.compactMap { match in
+                return (match.url!, match.range)
+            }
+            */
+            return matches.compactMap { match in
+                if let range = Range(match.range, in: text) {
+                    let stringUrl = String(text[range])
+                    if let url = URL(string: stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) {
+                        return (url, match.range)
+                    }
+                }
+                return nil
+            }
+
+        } catch let error {
+            debugPrint(error.localizedDescription)
+        }
+        return []
     }
 }
 
@@ -119,7 +141,6 @@ public class PostTextParser {
         case quote(text: String)
         case deakLink(text: String)
         case anchor(text: String, href: String)
-        case hyperLink(url: URL, before: String, after: String)
     }
 
     public func parse(text: String, consumer: (Element) -> Void) {
@@ -153,12 +174,6 @@ public class PostTextParser {
                 } else {
                     consumer(.plain(text: text))
                 }
-            case .hyperlink(text: let text, before: let before, after: let after):
-                print("url?")
-                if let url = URL(string: text) {
-                    print("URL", url)
-                    consumer(.hyperLink(url: url, before: before, after: after))
-                }
             case .start(let text):
                 tagStack.append(text)
             case .end:
@@ -175,7 +190,6 @@ public class PostTextParser {
 
     private enum Token {
         case text(text: String)
-        case hyperlink(text: String, before: String, after: String)
         case start(tag: String)
         case end(tag: String)
     }
@@ -229,14 +243,6 @@ public class PostTextParser {
                         break
                     }
                 }
-            } else if let splitRange = chunk.range(of: #"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"#, options: .regularExpression) {
-                let previous = String(chunk[..<splitRange.lowerBound])
-                let remainder = String(chunk[splitRange.upperBound...])
-
-                let stringUrl = String(chunk[splitRange])
-                consumer(.hyperlink(text: stringUrl, before: previous, after: remainder))
-                break
-
             } else {
                 consumer(.text(text: String(chunk)))
                 break
@@ -251,13 +257,11 @@ public class PostTextParser {
             switch $0 {
             case .text(let text):
                 textBuffer += text
-                // consumer(.text(text: text))
-            case .hyperlink(text: let text, before: let before, after: let after):
-                consumer(.hyperlink(text: text, before: before, after: after))
             case .start(let text):
                 switch text {
                 case "<br>":
-                    textBuffer += "\n"
+                    break
+                    // textBuffer += "\n"
                 case "<wbr>":
                     textBuffer += "\u{200b}"
                 default:

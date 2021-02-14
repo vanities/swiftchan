@@ -29,18 +29,6 @@ extension View {
         let height = min(maxHeight, CGFloat.greatestFiniteMagnitude)
         let constraintBox = CGSize(width: width, height: height)
         let size = text.boundingRect(with: constraintBox, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
-        return frame(width: size.width, height: size.height)
+        return frame(width: size.width, height: size.height+20)
     }
-}
-
-func frameSize(
-    for text: NSMutableAttributedString,
-    maxWidth: CGFloat = UIScreen.main.bounds.width,
-    maxHeight: CGFloat = .greatestFiniteMagnitude
-) -> CGSize {
-    let width = min(maxWidth, UIScreen.main.bounds.width)
-    let height = min(maxHeight, CGFloat.greatestFiniteMagnitude)
-    let constraintBox = CGSize(width: width, height: height)
-    let rect = text.boundingRect(with: constraintBox, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral
-    return rect.size
 }

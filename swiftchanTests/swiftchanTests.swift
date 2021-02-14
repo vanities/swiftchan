@@ -12,24 +12,36 @@ class SwiftchanTests: XCTestCase {
     let postParser = PostTextParser()
     let parser = CommentParser(comment: "https://www.youtube.com/watch?v=kg4<wbr>YFS6b0ek")
 
-    let allText = "<a href=\"/fit/thread/59717832#p59725765\" class=\"quotelink\">&gt;&gt;59725765</a><br>Would https://www.soundcloud.com<br><span class=\"quote\">&gt;24 hour fast during family superbowl party</span><br>"
-    let hyperlinkText = "<a href=\"/fit/thread/59717832#p59725765\" class=\"quotelink\">&gt;&gt;59725765</a> aa https://mpv.io/installation/ b"
+    func testHyperLinkFinder() throws {
+        let result = parser.checkForUrls("""
+                            Blender 3D:
 
-    func testHyperLinkParse() throws {
-        self.postParser.parse(text: self.hyperlinkText) { element in
-            print(element)
-            switch element {
-            case .hyperLink(let url):
-                break
-                // XCTAssert(url == URL(string: hyperlinkText)!)
-            default:
-                break
-                // XCTAssert(false)
-            }
-        }
+                            http://www.blender.org/
+
+                            Wings3D:
+
+                            http://www.wings3d.com/
+
+                            Softimage Mod Tool:
+
+                            http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112
+
+                            Houdini Apprentice:
+
+                            http://www.sidefx.com/index.php?opt​ion=com_download&Itemid=208&task=ap​prentice
+""")
+        print(result)
+        XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org")!)
+        XCTAssertEqual(result[1].0, URL(string: "http://www.wings3d.com")!)
+        // XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112")!)
     }
 
-    func testParserAttributesString() throws {
-        let string = parser.parseComment(self.allText)
+    func testHyperLinkFinderQueryParam() throws {
+        let urlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        let url = URL(string: urlString!)!
+        let result = parser.checkForUrls(urlString!)
+        print(result)
+        XCTAssertEqual(result[0].0, url)
+        // XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112")!)
     }
 }
