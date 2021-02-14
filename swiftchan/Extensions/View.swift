@@ -21,4 +21,14 @@ extension View {
             customize: customize
         ))
     }
+
+    public func frameTextView(_ text: NSMutableAttributedString,
+                              maxWidth: CGFloat,
+                              maxHeight: CGFloat) -> some View {
+        let width = min(maxWidth, UIScreen.main.bounds.width)
+        let height = min(maxHeight, CGFloat.greatestFiniteMagnitude)
+        let constraintBox = CGSize(width: width, height: height)
+        let size = text.boundingRect(with: constraintBox, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+        return frame(width: size.width, height: size.height+40)
+    }
 }

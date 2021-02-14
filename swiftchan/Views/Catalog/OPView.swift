@@ -13,9 +13,9 @@ struct OPView: View {
 
     let boardName: String
     let post: Post
-    let comment: Text
+    let comment: NSMutableAttributedString
 
-    init(boardName: String, post: Post, comment: Text) {
+    init(boardName: String, post: Post, comment: NSMutableAttributedString) {
         self.boardName = boardName
         self.post = post
         self.comment = comment
@@ -72,8 +72,18 @@ struct OPView: View {
                         .lineLimit(nil)
                         .padding(.bottom, 5)
                     // comment
-                    comment
+                    // AttributedText(self.comment, height: .constant(200), linkPressed: {_ in})
+                    // swiftlint:disable force_cast
+                    AttributedText(comment.attributedSubstring(from: NSRange(location: 0, length: min(comment.length, 200))).mutableCopy() as! NSMutableAttributedString)
                         .lineLimit(20)
+                        .lineBreakMode(.byTruncatingTail)
+                        .frameTextView(
+                            self.comment,
+                            maxWidth: UIScreen.main.bounds.width/2 - 10,
+                            maxHeight: UIScreen.main.bounds.height/2
+                    )
+                    // swiftlint:enable force_cast
+
                 }
                 .padding(.all, 5)
             }
@@ -85,7 +95,7 @@ struct OPView: View {
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
         if let example = Post.example() {
-            OPView(boardName: "fit", post: example, comment: Text(""))
+            OPView(boardName: "fit", post: example, comment: NSMutableAttributedString())
         }
     }
 }

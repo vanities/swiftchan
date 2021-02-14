@@ -13,7 +13,7 @@ extension CatalogView {
     final class ViewModel: ObservableObject {
         let boardName: String
         @Published private(set) var posts = [Post]()
-        @Published private(set) var comments = [Text]()
+        @Published private(set) var comments = [NSMutableAttributedString]()
 
         init(boardName: String) {
             self.boardName = boardName

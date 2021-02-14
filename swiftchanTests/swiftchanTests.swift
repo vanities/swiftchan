@@ -9,25 +9,38 @@ import XCTest
 @testable import swiftchan
 
 class SwiftchanTests: XCTestCase {
+    let postParser = PostTextParser()
+    let parser = CommentParser(comment: "https://www.youtube.com/watch?v=kg4<wbr>YFS6b0ek")
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testHyperLinkFinder() throws {
+        let result = parser.checkForUrls("""
+                            Blender 3D:
+
+                            http://www.blender.org/
+
+                            Wings3D:
+
+                            http://www.wings3d.com/
+
+                            Softimage Mod Tool:
+
+                            http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112
+
+                            Houdini Apprentice:
+
+                            http://www.sidefx.com/index.php?opt​ion=com_download&Itemid=208&task=ap​prentice
+""")
+        print(result)
+        XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org/")!)
+        XCTAssertEqual(result[1].0, URL(string: "http://www.wings3d.com/")!)
+        XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle%E2%80%8Bt/pc/item?id=13571257&siteID=123112")!)
+        XCTAssertEqual(result[3].0, URL(string: "http://www.sidefx.com/index.php?opt%E2%80%8Bion=com_download&Itemid=208&task=ap%E2%80%8Bprentice")!)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testHyperLinkFinderQueryParam() throws {
+        let urlString = "https://store.steampowered.com/app/​773840/DRAG/"
+        let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let result = parser.checkForUrls(urlString)
+        XCTAssertEqual(result[0].0, URL(string: percentUrlString))
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

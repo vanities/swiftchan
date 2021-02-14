@@ -14,15 +14,17 @@ struct PostView: View {
     let index: Int
 
     @Binding var isPresenting: Bool
-    @Binding var presentingSheet: PresentingSheet
+    @Binding var presentingSheet: PresentedPost.PresentType
 
     @Binding var galleryIndex: Int
     @Binding var commentRepliesIndex: Int
 
     var body: some View {
         let boardName = self.viewModel.boardName
-        let post = self.viewModel.posts[index]
-        let comment = self.viewModel.comments[index]
+        let post = index < self.viewModel.posts.count ?
+            self.viewModel.posts[index] : Post.example()!
+        let comment = index < self.viewModel.comments.count ?
+            self.viewModel.comments[index] : NSMutableAttributedString(string: "")
         let replies = self.viewModel.replies[index] ?? nil
 
         return ZStack(alignment: .topLeading) {
@@ -35,6 +37,7 @@ struct PostView: View {
                         .bold()
                         .padding(.bottom, 5)
                 }
+
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
@@ -90,7 +93,8 @@ struct PostView: View {
                     }
                 }
                 // comment
-                comment
+                AttributedText(comment)
+                    .frameTextView(comment, maxWidth: UIScreen.main.bounds.width - 10, maxHeight: .greatestFiniteMagnitude)
                     .padding(.top, 20)
 
                 // replies
@@ -102,6 +106,7 @@ struct PostView: View {
                             self.presentingSheet = .replies
                             self.isPresenting.toggle()
                         }
+                        .zIndex(1)
                         .padding(.top, 5)
                 }
             }
@@ -112,13 +117,13 @@ struct PostView: View {
 
 extension PostView: Identifiable {
     var id: Int { return self.index }
-
 }
 
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        PostView(index: 0,
+
+        return PostView(index: 0,
                  isPresenting: .constant(false),
                  presentingSheet: .constant(.gallery),
                  galleryIndex: .constant(0),
