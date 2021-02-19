@@ -14,10 +14,11 @@ struct ImageView: View {
     let canGesture: Bool
     let minimumScale: CGFloat = 1
 
-    let imageOptions = URLImageOptions(identifier: nil,
-                                       expireAfter: 24 * 60 * 60,
-                                       cachePolicy: .returnCacheElseLoad(cacheDelay: nil, downloadDelay: 0.25),
-                                       maxPixelSize: CGSize(width: 5120, height: 2880))
+    let imageOptions = URLImageOptions(
+        expireAfter: 24 * 60 * 60,
+        cachePolicy: .returnCacheElseLoad(cacheDelay: 0, downloadDelay: 0),
+        maxPixelSize: CGSize(width: 5120, height: 2880)
+    )
 
     @State var scale: CGFloat = 1.0
     @State var zoomed: Bool = false
@@ -33,8 +34,8 @@ struct ImageView: View {
     }
 
     var body: some View {
-        return URLImage(url: url,
-                        options: imageOptions) { image in
+        return URLImage(url: self.url,
+                        options: self.imageOptions) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fit)

@@ -19,7 +19,7 @@ class CacheManager {
 
     func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
         guard self.checked.contains(stringUrl) == false else {
-            print("\(stringUrl) caching already" )
+            // print("\(stringUrl) caching already" )
             return
         }
         self.checked.insert(stringUrl)
@@ -28,7 +28,7 @@ class CacheManager {
 
         // return file path if already exists in cache directory
         guard !fileManager.fileExists(atPath: file.path)  else {
-            print("file exists in cache \(file.path)" )
+            // print("file exists in cache \(file.path)" )
             completionHandler(.success(file))
             self.checked.remove(stringUrl)
             return
@@ -38,12 +38,12 @@ class CacheManager {
             guard let fileURL = urlOrNil else { return }
             do {
                 try self.fileManager.moveItem(at: fileURL, to: file)
-                print("completed writing file to cache \(file.path)" )
+                // print("completed writing file to cache \(file.path)" )
                 completionHandler(.success(file))
                 self.checked.remove(stringUrl)
             } catch {
                 guard let error = errorOrNil else { return }
-                print("failed writing file to cache \(file.path)" )
+                // print("failed writing file to cache \(file.path)" )
                 completionHandler(.failure(error))
                 self.checked.remove(stringUrl)
             }

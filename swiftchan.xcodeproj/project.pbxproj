@@ -34,7 +34,6 @@
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
 		9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */; };
 		9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */; };
-		9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9580613D254F884B0003FFF3 /* SwiftSoup */; };
 		9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582CB98255631B9008B235D /* VLCVideoView.swift */; };
 		95851DCB25566F66002CB2A1 /* GIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DCA25566F66002CB2A1 /* GIFView.swift */; };
 		95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DD525567314002CB2A1 /* MediaDetector.swift */; };
@@ -153,7 +152,6 @@
 				95D804DC2568E42A005A3128 /* Introspect in Frameworks */,
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
-				9580613E254F884B0003FFF3 /* SwiftSoup in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,7 +434,6 @@
 			name = swiftchan;
 			packageProductDependencies = (
 				955814A5254CFFC200A966BA /* URLImage */,
-				9580613D254F884B0003FFF3 /* SwiftSoup */,
 				9510535C2564DD2C002E4051 /* FourChan */,
 				95D804DB2568E42A005A3128 /* Introspect */,
 				952F72EB25D0608200762154 /* SwiftUIPager */,
@@ -514,7 +511,6 @@
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
 				955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */,
-				9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 				95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
@@ -812,7 +808,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 36i;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -837,7 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 36i;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -1005,14 +1001,6 @@
 				minimumVersion = 2.1.1;
 			};
 		};
-		9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.2;
-			};
-		};
 		95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vanities/SwiftUI-Introspect";
@@ -1038,11 +1026,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */;
 			productName = URLImage;
-		};
-		9580613D254F884B0003FFF3 /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9580613C254F884B0003FFF3 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
 		};
 		95D804DB2568E42A005A3128 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;

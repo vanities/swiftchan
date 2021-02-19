@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FourChan
+import URLImage
 
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
@@ -51,6 +52,9 @@ struct ContentView: View {
             @unknown default:
                 self.backgrounding = true
             }
+        }
+        .onAppear {
+            URLImageService.shared.cleanup()
         }
     }
 }

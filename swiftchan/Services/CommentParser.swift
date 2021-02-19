@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftSoup
 import FourChan
 
 class CommentParser {

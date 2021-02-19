@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import FourChan
+import URLImage
+import Combine
 
 class FourchanService {
     class func getBoards(complete: @escaping ([Board]) -> Void) {
@@ -58,7 +60,6 @@ class FourchanService {
                     postIndex += 1
                 }
                 let replies = self.getReplies(postReplies: postReplies, posts: thread.posts)
-
                 complete(thread.posts, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies)
             case .failure(let error):
                 print(error)
@@ -112,5 +113,4 @@ class FourchanService {
         }
         return replies
     }
-
 }
