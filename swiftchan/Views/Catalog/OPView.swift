@@ -19,9 +19,12 @@ struct OPView: View {
         self.boardName = boardName
         self.post = post
         self.comment = comment
-        self._threadViewModel = StateObject(wrappedValue:
-                                                ThreadView.ViewModel(boardName: boardName,
-                                                    id: post.no))
+        self._threadViewModel = StateObject(
+            wrappedValue: ThreadView.ViewModel(
+                boardName: boardName,
+                id: post.no
+            )
+        )
     }
 
     var body: some View {
@@ -31,6 +34,7 @@ struct OPView: View {
                           length: min(self.comment.length, 200)
             )
         ).mutableCopy() as! NSMutableAttributedString
+
         if trailingComment.length ==  200 {
             trailingComment.append(NSMutableAttributedString(string: "..."))
 
