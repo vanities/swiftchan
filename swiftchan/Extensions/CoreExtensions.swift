@@ -171,3 +171,48 @@ extension String {
     return (self.count > length) ? self.prefix(length) + trailing : self
   }
 }
+
+extension Color {
+
+    static func randomColor(seed: String) -> Color {
+
+        var total: Int = 0
+        for u in seed.unicodeScalars {
+            total += Int(UInt32(u))
+        }
+
+        srand48(total * 200)
+        let red = drand48()
+
+        srand48(total)
+        let green = drand48()
+
+        srand48(total / 200)
+        let blue = drand48()
+
+        return Color(red: red, green: green, blue: blue)
+    }
+}
+
+extension Color {
+
+    // Check if the color is light or dark, as defined by the injected lightness threshold.
+    // Some people report that 0.7 is best. I suggest to find out for yourself.
+    // A nil value is returned if the lightness couldn't be determined.
+    func isLight(threshold: Float = 0.5) -> Bool {
+        let originalCGColor = self.cgColor
+
+        // Now we need to convert it to the RGB colorspace. UIColor.white / UIColor.black are greyscale and not RGB.
+        // If you don't do this then you will crash when accessing components index 2 below when evaluating greyscale colors.
+        let RGBCGColor = originalCGColor?.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
+        guard let components = RGBCGColor?.components else {
+            return true
+        }
+        guard components.count >= 3 else {
+            return false
+        }
+
+        let brightness = Float(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
+        return (brightness > threshold)
+    }
+}

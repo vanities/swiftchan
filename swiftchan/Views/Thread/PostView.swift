@@ -31,13 +31,16 @@ struct PostView: View {
             Rectangle()
                 .fill(Color(.systemBackground))
                 .border(Color(.gray))
+
+            // subject
             VStack(alignment: .leading, spacing: 0) {
                 if let subject = post.sub {
                     Text(subject.clean)
                         .bold()
-                        .padding(.bottom, 5)
+                        .padding(.bottom, 15)
                 }
 
+                // media
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
@@ -45,18 +48,19 @@ struct PostView: View {
                         ThumbnailMediaView(
                             url: url,
                             thumbnailUrl: thumbnailUrl,
-                            useThumbnailGif: false)
-                            .frame(width: UIScreen.main.bounds.width/2)
-                            // .aspectRatio(contentMode: .fit)
-                            .scaledToFill()
+                            useThumbnailGif: false
+                        )
+                        .frame(width: UIScreen.main.bounds.width/2)
+                        // .aspectRatio(contentMode: .fit)
+                        .scaledToFill()
 
-                            .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-                                    self.presentingSheet = .gallery
-                                    self.isPresenting.toggle()
-                                }
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                                self.presentingSheet = .gallery
+                                self.isPresenting.toggle()
                             }
+                        }
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {
@@ -82,9 +86,19 @@ struct PostView: View {
                                     .bold()
                             }
                         }
+                        if let id = post.pid {
+                            let color = Color.randomColor(seed: id)
+                            Text(id.description)
+                                .foregroundColor(color.isLight() ? .black : .white)
+                                .background(color)
+                                .padding(.all, -1)
+                        }
                         HStack {
+                            // Anonymous
                             if let name = post.name {
                                 Text(name)
+                                    .bold()
+                                    .foregroundColor(.gray)
                             }
                             if let trip = post.trip {
                                 Text(trip)
@@ -93,6 +107,7 @@ struct PostView: View {
                             }
                         }
                     }
+                    .padding(.leading, 5)
                 }
                 // comment
                 TextView(comment)

@@ -42,11 +42,11 @@ struct ThreadView: View {
                                          galleryIndex: self.$galleryIndex,
                                          commentRepliesIndex: self.$commentRepliesIndex
                                 )
-                                .padding(.horizontal, 3)
                             }
                         }
                         .frame(minWidth: UIScreen.main.bounds.width)
                     }
+                    .padding(.all, 3)
                     .onChange(of: self.galleryIndex, perform: { _ in
                         if self.presentingIndex != self.galleryIndex,
                            let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {

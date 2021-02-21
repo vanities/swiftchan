@@ -10,7 +10,6 @@
 		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
 		950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950EB4DB256CBE08000703C0 /* PullToRefresh.swift */; };
-		9510535D2564DD2C002E4051 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 9510535C2564DD2C002E4051 /* FourChan */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
 		951053712566018D002E4051 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951053702566018D002E4051 /* Board.swift */; };
 		95105379256608E5002E4051 /* CommentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105378256608E5002E4051 /* CommentParser.swift */; };
@@ -28,7 +27,6 @@
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		9530CCB325E1D69100F0EB0F /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530CCB225E1D69100F0EB0F /* TextView.swift */; };
-		955814A6254CFFC200A966BA /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 955814A5254CFFC200A966BA /* URLImage */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
@@ -50,12 +48,14 @@
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
+		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
+		95B31D4C25E2E3D400C309D4 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4B25E2E3D400C309D4 /* URLImage */; };
+		95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D5125E2E3FC00C309D4 /* FourChan */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95D804D32568A553005A3128 /* PresentedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804D22568A553005A3128 /* PresentedPost.swift */; };
-		95D804DC2568E42A005A3128 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95D804DB2568E42A005A3128 /* Introspect */; };
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
@@ -148,10 +148,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9510535D2564DD2C002E4051 /* FourChan in Frameworks */,
-				95D804DC2568E42A005A3128 /* Introspect in Frameworks */,
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
-				955814A6254CFFC200A966BA /* URLImage in Frameworks */,
+				95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */,
+				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
+				95B31D4C25E2E3D400C309D4 /* URLImage in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,10 +433,10 @@
 			);
 			name = swiftchan;
 			packageProductDependencies = (
-				955814A5254CFFC200A966BA /* URLImage */,
-				9510535C2564DD2C002E4051 /* FourChan */,
-				95D804DB2568E42A005A3128 /* Introspect */,
 				952F72EB25D0608200762154 /* SwiftUIPager */,
+				95B31D4525E2E3B400C309D4 /* Introspect */,
+				95B31D4B25E2E3D400C309D4 /* URLImage */,
+				95B31D5125E2E3FC00C309D4 /* FourChan */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -510,10 +510,10 @@
 			);
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
-				955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */,
-				9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
-				95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
+				95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */,
+				95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -808,7 +808,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36i;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -833,7 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36i;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -977,14 +977,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jackpal/FourChanAPI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.24;
-			};
-		};
 		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
@@ -993,44 +985,52 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */ = {
+		95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dmytro-anokhin/url-image";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.1;
-			};
-		};
-		95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/vanities/SwiftUI-Introspect";
+			repositoryURL = "git@github.com:siteline/SwiftUI-Introspect.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.1.2;
 			};
 		};
+		95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:dmytro-anokhin/url-image.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.3;
+			};
+		};
+		95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:vanities/FourChanAPI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.25;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9510535C2564DD2C002E4051 /* FourChan */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9510535B2564DD2C002E4051 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
-			productName = FourChan;
-		};
 		952F72EB25D0608200762154 /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
 		};
-		955814A5254CFFC200A966BA /* URLImage */ = {
+		95B31D4525E2E3B400C309D4 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 955814A4254CFFC200A966BA /* XCRemoteSwiftPackageReference "url-image" */;
+			package = 95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+		95B31D4B25E2E3D400C309D4 /* URLImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */;
 			productName = URLImage;
 		};
-		95D804DB2568E42A005A3128 /* Introspect */ = {
+		95B31D5125E2E3FC00C309D4 /* FourChan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95D804DA2568E42A005A3128 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
+			package = 95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
+			productName = FourChan;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

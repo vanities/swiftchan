@@ -41,15 +41,17 @@ struct TextView: View {
             ).mutableCopy() as! NSMutableAttributedString
 
             if trailingComment.length ==  trailingLength {
-                trailingComment.append(NSMutableAttributedString(string: "..."))
+                let trail = NSMutableAttributedString(string: "...")
+                trail.addAttributes([.font: UIFont.preferredFont(forTextStyle: .body),
+                                     .foregroundColor: UIColor.label],
+                                    range: NSRange(location: 0, length: trail.length))
+                trailingComment.append(trail)
             }
             self.attributedText = trailingComment
-
-        }
-        // swiftlint:enable force_cast
-        else {
+        } else {
             self.attributedText = attributedText
         }
+        // swiftlint:enable force_cast
     }
 
     var body: some View {
