@@ -46,8 +46,10 @@ struct PostView: View {
                             url: url,
                             thumbnailUrl: thumbnailUrl,
                             useThumbnailGif: false)
-                            .aspectRatio(contentMode: .fit)
                             .frame(width: UIScreen.main.bounds.width/2)
+                            // .aspectRatio(contentMode: .fit)
+                            .scaledToFill()
+
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
@@ -93,10 +95,13 @@ struct PostView: View {
                     }
                 }
                 // comment
-                AttributedText(comment)
-                    .frameTextView(comment, maxWidth: UIScreen.main.bounds.width - 10, maxHeight: .greatestFiniteMagnitude)
+                TextView(comment)
+                    .autoDetectDataTypes(.link)
+                    .enableScrolling(false)
+                    .isEditable(false)
+                    .isSelectable(true)
                     .padding(.top, 20)
-
+                    .layoutPriority(-1)
                 // replies
                 if let replies = replies {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
@@ -106,11 +111,11 @@ struct PostView: View {
                             self.presentingSheet = .replies
                             self.isPresenting.toggle()
                         }
-                        .zIndex(1)
-                        .padding(.top, 5)
+                        .zIndex(-1)
+                        .padding(.top, 10)
                 }
             }
-            .padding(.all, 5)
+            .padding(.all, 10)
         }
     }
 }

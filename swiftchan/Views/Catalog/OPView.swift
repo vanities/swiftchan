@@ -14,6 +14,7 @@ struct OPView: View {
     let boardName: String
     let post: Post
     let comment: NSMutableAttributedString
+    let opCommentTrailingLength: Int = 200
 
     init(boardName: String, post: Post, comment: NSMutableAttributedString) {
         self.boardName = boardName
@@ -28,19 +29,6 @@ struct OPView: View {
     }
 
     var body: some View {
-        // swiftlint:disable force_cast
-        let trailingComment = self.comment.attributedSubstring(
-            from: NSRange(location: 0,
-                          length: min(self.comment.length, 200)
-            )
-        ).mutableCopy() as! NSMutableAttributedString
-
-        if trailingComment.length ==  200 {
-            trailingComment.append(NSMutableAttributedString(string: "..."))
-
-        }
-        // swiftlint:enable force_cast
-
         return NavigationLink(
             destination:
                 ThreadView()
@@ -88,15 +76,14 @@ struct OPView: View {
                         .lineLimit(nil)
                         .padding(.bottom, 5)
                     // comment
-                    AttributedText(trailingComment)
-                        .lineBreakMode(.byTruncatingTail)
-                        .frameTextView(
-                            trailingComment,
-                            maxWidth: UIScreen.main.bounds.width/2 - 10,
-                            maxHeight: UIScreen.main.bounds.height/2
-                    )
+                    TextView(self.comment, trailingLength: self.opCommentTrailingLength)
+                        .enableScrolling(false)
+                        .autoDetectDataTypes(.link)
+                        .isEditable(false)
+                        .isSelectable(false)
+                        .truncationMode(.tail)
                 }
-                .padding(.all, 5)
+                .padding(.all, 10)
             }
         }
         .buttonStyle(PlainButtonStyle())
