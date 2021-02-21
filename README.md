@@ -40,6 +40,8 @@
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
+  * [TestFlight](#testflight)
+  * [Known Bugs](#bugs)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -66,10 +68,9 @@ Here's why:
 ### Built With
 Dev requirements used in the app with CocoaPods and Swift Package Manager.
 
+* [FourChanApi](https://github.com/jackpal/FourChanAPI)
+* [SwiftUIPager](https://github.com/fermoya/SwiftUIPager)
 * [URLImage](https://github.com/dmytro-anokhin/url-image)
-* [Alamofire](https://github.com/Alamofire/Alamofire)
-* [SwiftSoup](https://github.com/scinfu/SwiftSoup)
-* [SwiftyGif](https://github.com/kirualex/SwiftyGif)
 * [MobileVLCKit](https://code.videolan.org/videolan/VLCKit)
 
 
@@ -97,6 +98,15 @@ git clone https://github.com/vanities/swiftchan
 pod install
 ```
 3. That's it! Open the workspacefile in Xcode.
+
+
+### Testflight
+
+If you want to test it with me on testflight or think we can get it on the app store, just [email me](mischke@protonmail.com)
+
+### Bugs
+
+- When first loading the app, going to a thread with a webm in the first slot will cause gestures not to work. Workaround: tap and hold the webm, then tap anywhere
 
 
 <!-- USAGE EXAMPLES -->

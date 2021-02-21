@@ -3,19 +3,19 @@
     "pins": [
       {
         "package": "FourChan",
-        "repositoryURL": "https://github.com/jackpal/FourChanAPI",
+        "repositoryURL": "git@github.com:vanities/FourChanAPI.git",
         "state": {
           "branch": null,
-          "revision": "03613f49ef0f0a70ae2f345ac79fbc65a16ea0f6",
+          "revision": "2977c32f4a4b5da459d4be7c04976efa6bbaf1fb",
           "version": "1.1.25"
         }
       },
       {
         "package": "Introspect",
-        "repositoryURL": "https://github.com/vanities/SwiftUI-Introspect",
+        "repositoryURL": "git@github.com:siteline/SwiftUI-Introspect.git",
         "state": {
           "branch": null,
-          "revision": "f1ec9da347a7fbe53c520d35434f6c2295650bd5",
+          "revision": "36ecf80429d00a4cd1e81fbfe4655b1d99ebd651",
           "version": "0.1.2"
         }
       },
@@ -30,7 +30,7 @@
       },
       {
         "package": "URLImage",
-        "repositoryURL": "https://github.com/dmytro-anokhin/url-image",
+        "repositoryURL": "git@github.com:dmytro-anokhin/url-image.git",
         "state": {
           "branch": null,
           "revision": "c1a906515b0a440927b96204b778058871b22f23",

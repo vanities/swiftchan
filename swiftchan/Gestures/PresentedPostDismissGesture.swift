@@ -71,6 +71,7 @@ struct DismissGestureModifier: ViewModifier {
 
     func onDragChanged(with value: DragGesture.Value) {
         withAnimation(Animation.linear(duration: 0.05)) {
+
             let lastLocation = self.lastDraggingValue?.location ?? value.location
             let swipeAngle = (value.location - lastLocation).angle ?? .zero
 
@@ -124,8 +125,7 @@ struct DismissGestureModifier: ViewModifier {
                 }
 
                 self.draggingOffset += offsetIncrement
-                self.lastDraggingValue = value
-            }
+                self.lastDraggingValue = value            }
 
         }
     }

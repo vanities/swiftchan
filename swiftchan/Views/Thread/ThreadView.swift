@@ -28,9 +28,12 @@ struct ThreadView: View {
         return ZStack {
             ScrollView {
                 ScrollViewReader { reader in
-                    LazyVGrid(columns: self.columns,
+                    // performance?!
+                    /*LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
+ */
+                    VStack(alignment: .center, spacing: 0) {
                         ForEach(self.viewModel.posts.indices, id: \.self) { index in
                             if index < self.viewModel.comments.count {
                                 PostView(index: index,
@@ -39,11 +42,11 @@ struct ThreadView: View {
                                          galleryIndex: self.$galleryIndex,
                                          commentRepliesIndex: self.$commentRepliesIndex
                                 )
-                                .id(index)
                             }
                         }
                         .frame(minWidth: UIScreen.main.bounds.width)
                     }
+                    .padding(.all, 3)
                     .onChange(of: self.galleryIndex, perform: { _ in
                         if self.presentingIndex != self.galleryIndex,
                            let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
@@ -59,15 +62,26 @@ struct ThreadView: View {
                         }
                     }
                     .navigationBarItems(
-                        leading: Rectangle()
+                        leading: HStack {
+                            Text(self.viewModel.boardName)
+                                .offset(x: -7)
+                            ZStack {
+                            Rectangle()
                             .fill(Color.clear)
                             .contentShape(Rectangle())
-                            .frame(width: 300, height: 30)
+                            .frame(width: UIScreen.main.bounds.width/2 - 100, height: 30)
                             .onTapGesture {
                                 withAnimation(.linear) {
                                     reader.scrollTo(0)
                                 }
-                            },
+                            }
+                            if let title = self.viewModel.posts[0].sub?.clean {
+                                Text(title.trunc(length: 25))
+                                    .frame(width: UIScreen.main.bounds.width - 100)
+                                    .offset(x: -7)
+                            }
+                        }
+                        },
                         trailing: Link(destination: self.viewModel.url) {
                             Image(systemName: "square.and.arrow.up")
                         }
@@ -100,7 +114,6 @@ struct ThreadView: View {
                 }
             })
         }
-        .statusBar(hidden: self.presentedDismissGesture.presenting)
     }
 }
 

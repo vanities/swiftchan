@@ -31,13 +31,16 @@ struct PostView: View {
             Rectangle()
                 .fill(Color(.systemBackground))
                 .border(Color(.gray))
+
+            // subject
             VStack(alignment: .leading, spacing: 0) {
                 if let subject = post.sub {
                     Text(subject.clean)
                         .bold()
-                        .padding(.bottom, 5)
+                        .padding(.bottom, 15)
                 }
 
+                // media
                 HStack(alignment: .top) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
@@ -45,16 +48,19 @@ struct PostView: View {
                         ThumbnailMediaView(
                             url: url,
                             thumbnailUrl: thumbnailUrl,
-                            useThumbnailGif: false)
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: UIScreen.main.bounds.width/2)
-                            .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-                                    self.presentingSheet = .gallery
-                                    self.isPresenting.toggle()
-                                }
+                            useThumbnailGif: false
+                        )
+                        .frame(width: UIScreen.main.bounds.width/2)
+                        // .aspectRatio(contentMode: .fit)
+                        .scaledToFill()
+
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                                self.presentingSheet = .gallery
+                                self.isPresenting.toggle()
                             }
+                        }
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {
@@ -80,9 +86,19 @@ struct PostView: View {
                                     .bold()
                             }
                         }
+                        if let id = post.pid {
+                            let color = Color.randomColor(seed: id)
+                            Text(id.description)
+                                .foregroundColor(color.isLight() ? .black : .white)
+                                .background(color)
+                                .padding(.all, -1)
+                        }
                         HStack {
+                            // Anonymous
                             if let name = post.name {
                                 Text(name)
+                                    .bold()
+                                    .foregroundColor(.gray)
                             }
                             if let trip = post.trip {
                                 Text(trip)
@@ -91,12 +107,16 @@ struct PostView: View {
                             }
                         }
                     }
+                    .padding(.leading, 5)
                 }
                 // comment
-                AttributedText(comment)
-                    .frameTextView(comment, maxWidth: UIScreen.main.bounds.width - 10, maxHeight: .greatestFiniteMagnitude)
+                TextView(comment)
+                    .autoDetectDataTypes(.link)
+                    .enableScrolling(false)
+                    .isEditable(false)
+                    .isSelectable(true)
                     .padding(.top, 20)
-
+                    .layoutPriority(-1)
                 // replies
                 if let replies = replies {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
@@ -106,11 +126,11 @@ struct PostView: View {
                             self.presentingSheet = .replies
                             self.isPresenting.toggle()
                         }
-                        .zIndex(1)
-                        .padding(.top, 5)
+                        .zIndex(-1)
+                        .padding(.top, 10)
                 }
             }
-            .padding(.all, 5)
+            .padding(.all, 10)
         }
     }
 }
