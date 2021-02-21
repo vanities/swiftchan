@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import FourChan
 @testable import swiftchan
 
 class SwiftchanTests: XCTestCase {
