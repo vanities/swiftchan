@@ -43,6 +43,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
 
+      - name: Install Dependencies
+        if: steps.pods-cache.outputs.cache-hit != 'true'
+        run: |
+          pod install --repo-update
+
       - name: Build
         run: |
           xcrun simctl list
