@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
     env:
       scheme: "swiftchan"
-      device: "iPhone 12"
+      device: "iPhone 11"
       workspace: "swiftchan.xcworkspace"
       platform: "iOS Simulator"
 
@@ -26,6 +26,13 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+      
+      - name: Xcode Cache
+        id: xcode-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-xcode-cache
 
       - name: Cache pods
         uses: actions/cache@v1
