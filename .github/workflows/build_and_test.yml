@@ -50,7 +50,6 @@ jobs:
 
       - name: Build
         run: |
-          xcrun simctl list
           xcodebuild build-for-testing -scheme "$scheme" -workspace "$workspace" -destination "platform=$platform,name=$device" -scmProvider system
 
       - name: Test
