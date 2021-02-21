@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
     env:
       scheme: "swiftchan"
-      device: "iPhone 11"
+      device: "iPhone 12"
       workspace: "swiftchan.xcworkspace"
       platform: "iOS Simulator"
 
@@ -26,7 +26,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-      
+
       - name: Xcode Cache
         id: xcode-cache
         uses: actions/cache@v2
@@ -45,6 +45,7 @@ jobs:
 
       - name: Build
         run: |
+          xcrun simctl list
           xcodebuild build-for-testing -scheme "$scheme" -workspace "$workspace" -destination "platform=$platform,name=$device" -scmProvider system
 
       - name: Test
