@@ -102,7 +102,7 @@ pod install
 
 ### Testflight
 
-If you want to test it with me on testflight or think we can get it on the app store, just [email me](mischke@protonmail.com)
+If you want to test it with me on testflight or think we can get it on the app store, just [email me](mailto:mischke@protonmail.com)
 
 ### Bugs
 
