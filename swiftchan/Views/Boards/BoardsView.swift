@@ -32,7 +32,7 @@ struct BoardsView: View {
             VStack(spacing: 0) {
                 SearchTextView(textPlaceholder: "Search Boards",
                                searchText: self.$searchText)
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: self.columns,
                               alignment: .leading,
                               spacing: 2) {

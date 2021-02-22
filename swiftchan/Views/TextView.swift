@@ -256,7 +256,6 @@ private struct SwiftUITextView: UIViewRepresentable {
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
-        DispatchQueue.main.async {
             view.attributedText = attributedText
             view.textAlignment = multilineTextAlignment
             view.autocapitalizationType = autocapitalization
@@ -267,7 +266,6 @@ private struct SwiftUITextView: UIViewRepresentable {
             view.dataDetectorTypes = autoDetectionTypes
 
             SwiftUITextView.recalculateHeight(view: view, result: $calculatedHeight)
-        }
     }
 
     fileprivate static func recalculateHeight(view: UIView, result: Binding<CGFloat>) {

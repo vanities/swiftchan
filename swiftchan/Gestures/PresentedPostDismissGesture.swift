@@ -52,7 +52,11 @@ struct DismissGestureModifier: ViewModifier {
                 x: [.left, .right].contains(self.direction) ? self.draggingOffset : 0,
                 y: [.up, .down].contains(self.direction) ? self.draggingOffset : 0)
             .simultaneousGesture(self.dismissGesture.canDrag ? drag : nil)
-            .onChange(of: self.draggingOffset) { self.onOffsetChanged?($0) }
+            .onChange(of: self.draggingOffset) { offset in
+                DispatchQueue.main.async {
+                    self.onOffsetChanged?(offset)
+                }
+            }
             .onChange(of: self.dismissGesture.dismiss) { _ in
                 withAnimation(.linear(duration: self.animationDuration)) {
                     self.draggingOffset = self.getDismissOffset()
@@ -70,7 +74,7 @@ struct DismissGestureModifier: ViewModifier {
     }
 
     func onDragChanged(with value: DragGesture.Value) {
-        withAnimation(Animation.linear(duration: 0.05)) {
+        withAnimation(.linear) {
 
             let lastLocation = self.lastDraggingValue?.location ?? value.location
             let swipeAngle = (value.location - lastLocation).angle ?? .zero

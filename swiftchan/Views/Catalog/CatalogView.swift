@@ -51,8 +51,8 @@ struct CatalogView: View {
 
     var body: some View {
         return
-            ScrollView {
-                ScrollViewReader { reader in
+            ScrollViewReader { reader in
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         SearchTextView(textPlaceholder: "Search Posts",
                                        searchText: self.$searchText)

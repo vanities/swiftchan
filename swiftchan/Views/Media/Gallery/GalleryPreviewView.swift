@@ -15,9 +15,8 @@ struct GalleryPreviewView: View {
 
     var body: some View {
         return
-            ScrollView(.horizontal,
-                       showsIndicators: false) {
-                ScrollViewReader { value in
+            ScrollViewReader { value in
+                ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center,
                            spacing: nil) {
                         ForEach(self.urls.indices, id: \.self) { index in

@@ -32,9 +32,7 @@ struct PresentedPost: View {
                 self.dismissGesture.dismiss = true
             }
             .onPageDragChanged { (value) in
-                DispatchQueue.main.async {
-                    self.dismissGesture.canDrag = value.isZero
-                }
+                self.dismissGesture.canDrag = value.isZero
             }
             .onMediaChanged { (zoomed) in
                 self.dismissGesture.canDrag = !zoomed

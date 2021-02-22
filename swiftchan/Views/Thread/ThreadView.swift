@@ -26,12 +26,15 @@ struct ThreadView: View {
 
     var body: some View {
         return ZStack {
-            ScrollView {
-                ScrollViewReader { reader in
-                    // VStack(spacing: 0) {
+            ScrollViewReader { reader in
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                    /*
+                    // performance..
                     LazyVGrid(columns: self.columns,
-                     alignment: .center,
-                     spacing: 0) {
+                              alignment: .center,
+                              spacing: 0) {
+ */
                         ForEach(self.viewModel.posts.indices, id: \.self) { index in
                             if index < self.viewModel.comments.count {
                                 PostView(index: index,
@@ -40,6 +43,7 @@ struct ThreadView: View {
                                          galleryIndex: self.$galleryIndex,
                                          commentRepliesIndex: self.$commentRepliesIndex
                                 )
+                                .id(index)
                             }
                         }
                         .frame(minWidth: UIScreen.main.bounds.width)
