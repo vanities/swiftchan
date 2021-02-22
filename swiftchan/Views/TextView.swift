@@ -74,7 +74,7 @@ struct TextView: View {
             .frame(
                 minHeight: isScrollingEnabled ? 0 : calculatedHeight,
                 maxHeight: isScrollingEnabled ? .infinity : calculatedHeight
-        )
+            )
     }
 }
 
@@ -224,6 +224,7 @@ private struct SwiftUITextView: UIViewRepresentable {
          enablesReturnKeyAutomatically: Bool?,
          autoDetectionTypes: UIDataDetectorTypes,
          calculatedHeight: Binding<CGFloat>) {
+
         _calculatedHeight = calculatedHeight
 
         self.attributedText = attributedText
@@ -241,13 +242,11 @@ private struct SwiftUITextView: UIViewRepresentable {
         self.isScrollingEnabled = isScrollingEnabled
         self.enablesReturnKeyAutomatically = enablesReturnKeyAutomatically
         self.autoDetectionTypes = autoDetectionTypes
-
-        makeCoordinator()
     }
 
-    func makeUIView(context: Context) -> UIKitTextView {
-        let view = UIKitTextView()
-        view.delegate = context.coordinator
+    func makeUIView(context: Context) -> UITextView {
+        let view = UITextView()
+        view.text = ""
         view.textContainer.lineFragmentPadding = 0
         view.textContainerInset = .zero
         view.backgroundColor = UIColor.clear
@@ -256,7 +255,7 @@ private struct SwiftUITextView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ view: UIKitTextView, context: Context) {
+    func updateUIView(_ view: UITextView, context: Context) {
         DispatchQueue.main.async {
             view.attributedText = attributedText
             view.textAlignment = multilineTextAlignment
@@ -271,51 +270,13 @@ private struct SwiftUITextView: UIViewRepresentable {
         }
     }
 
-    @discardableResult func makeCoordinator() -> Coordinator {
-        return Coordinator(
-            calculatedHeight: $calculatedHeight
-        )
-    }
-
     fileprivate static func recalculateHeight(view: UIView, result: Binding<CGFloat>) {
+        let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
+        guard result.wrappedValue != newSize.height else { return }
         DispatchQueue.main.async { // call in next render cycle.
-
-            let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
-
-            guard result.wrappedValue != newSize.height else { return }
             result.wrappedValue = newSize.height
         }
     }
-}
-
-private extension SwiftUITextView {
-
-    final class Coordinator: NSObject, UITextViewDelegate {
-
-        private var calculatedHeight: Binding<CGFloat>
-
-        init(calculatedHeight: Binding<CGFloat>) {
-            self.calculatedHeight = calculatedHeight
-        }
-
-        func textViewDidChange(_ textView: UITextView) {
-            // SwiftUITextView.recalculateHeight(view: textView, result: calculatedHeight)
-        }
-    }
-}
-
-private final class UIKitTextView: UITextView {
-
-    override var keyCommands: [UIKeyCommand]? {
-        return (super.keyCommands ?? []) + [
-            UIKeyCommand(input: UIKeyCommand.inputEscape, modifierFlags: [], action: #selector(escape(_:)))
-        ]
-    }
-
-    @objc private func escape(_ sender: Any) {
-        resignFirstResponder()
-    }
-
 }
 
 struct TextView_Previews: PreviewProvider {

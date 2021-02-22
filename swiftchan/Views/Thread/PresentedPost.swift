@@ -32,7 +32,9 @@ struct PresentedPost: View {
                 self.dismissGesture.dismiss = true
             }
             .onPageDragChanged { (value) in
-                self.dismissGesture.canDrag = value.isZero
+                DispatchQueue.main.async {
+                    self.dismissGesture.canDrag = value.isZero
+                }
             }
             .onMediaChanged { (zoomed) in
                 self.dismissGesture.canDrag = !zoomed
@@ -79,5 +81,6 @@ struct PresentedPost_Previews: PreviewProvider {
             galleryIndex: .constant(1),
             commentRepliesIndex: 0)
             .environmentObject(viewModel)
+            .environmentObject(DismissGesture())
     }
 }

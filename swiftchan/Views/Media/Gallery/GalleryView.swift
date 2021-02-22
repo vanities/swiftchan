@@ -92,7 +92,11 @@ struct GalleryView: View {
                     self.onPageDragChanged?(.zero)
                 }
             }
-            .onDraggingChanged { self.onPageDragChanged?(CGFloat($0)) }
+            .onDraggingChanged { offset in
+                DispatchQueue.main.async {
+                    self.onPageDragChanged?(CGFloat(offset))
+                }
+            }
             .onPageChanged { index in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
@@ -106,9 +110,7 @@ struct GalleryView: View {
 
             // dismiss button
             Button(action: {
-                withAnimation(.linear) {
-                    self.onDismiss?()
-                }
+                self.onDismiss?()
             }, label: {
                 Image(systemName: "xmark")
                     .frame(width: 50, height: 50)

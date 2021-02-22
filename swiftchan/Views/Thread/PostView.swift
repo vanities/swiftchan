@@ -37,6 +37,7 @@ struct PostView: View {
                 if let subject = post.sub {
                     Text(subject.clean)
                         .bold()
+                        .font(Font.system(.title3))
                         .padding(.bottom, 15)
                 }
 
@@ -51,9 +52,7 @@ struct PostView: View {
                             useThumbnailGif: false
                         )
                         .frame(width: UIScreen.main.bounds.width/2)
-                        // .aspectRatio(contentMode: .fit)
-                        .scaledToFill()
-
+                        .scaledToFit()
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
@@ -61,6 +60,7 @@ struct PostView: View {
                                 self.isPresenting.toggle()
                             }
                         }
+                        .padding(.leading, -5)
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {
@@ -90,8 +90,7 @@ struct PostView: View {
                             let color = Color.randomColor(seed: id)
                             Text(id.description)
                                 .foregroundColor(color.isLight() ? .black : .white)
-                                .background(color)
-                                .padding(.all, -1)
+                                .background(color.padding(.all, -1))
                         }
                         HStack {
                             // Anonymous
@@ -107,7 +106,7 @@ struct PostView: View {
                             }
                         }
                     }
-                    .padding(.leading, 5)
+                    .padding(.leading, 1)
                 }
                 // comment
                 TextView(comment)
@@ -116,7 +115,7 @@ struct PostView: View {
                     .isEditable(false)
                     .isSelectable(true)
                     .padding(.top, 20)
-                    .layoutPriority(-1)
+
                 // replies
                 if let replies = replies {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
@@ -141,7 +140,8 @@ extension PostView: Identifiable {
 
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
         return PostView(index: 0,
                  isPresenting: .constant(false),

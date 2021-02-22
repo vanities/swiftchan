@@ -28,12 +28,10 @@ struct ThreadView: View {
         return ZStack {
             ScrollView {
                 ScrollViewReader { reader in
-                    // performance?!
-                    /*LazyVGrid(columns: self.columns,
-                              alignment: .center,
-                              spacing: 0) {
- */
-                    VStack(alignment: .center, spacing: 0) {
+                    // VStack(spacing: 0) {
+                    LazyVGrid(columns: self.columns,
+                     alignment: .center,
+                     spacing: 0) {
                         ForEach(self.viewModel.posts.indices, id: \.self) { index in
                             if index < self.viewModel.comments.count {
                                 PostView(index: index,
@@ -47,12 +45,14 @@ struct ThreadView: View {
                         .frame(minWidth: UIScreen.main.bounds.width)
                     }
                     .padding(.all, 3)
-                    .onChange(of: self.galleryIndex, perform: { _ in
-                        if self.presentingIndex != self.galleryIndex,
-                           let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
-                            reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
+                    .onChange(of: self.galleryIndex) { index in
+                        DispatchQueue.main.async {
+                            if self.presentingIndex != index,
+                               let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
+                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - index < 3 ? .bottom : .top)
+                            }
                         }
-                    })
+                    }
                     .opacity(self.opacity)
                     .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
                         let softVibrate = UIImpactFeedbackGenerator(style: .soft)
@@ -66,21 +66,21 @@ struct ThreadView: View {
                             Text(self.viewModel.boardName)
                                 .offset(x: -7)
                             ZStack {
-                            Rectangle()
-                            .fill(Color.clear)
-                            .contentShape(Rectangle())
-                            .frame(width: UIScreen.main.bounds.width/2 - 100, height: 30)
-                            .onTapGesture {
-                                withAnimation(.linear) {
-                                    reader.scrollTo(0)
+                                Rectangle()
+                                    .fill(Color.clear)
+                                    .contentShape(Rectangle())
+                                    .frame(width: UIScreen.main.bounds.width/2 - 100, height: 30)
+                                    .onTapGesture {
+                                        withAnimation(.linear) {
+                                            reader.scrollTo(0)
+                                        }
+                                    }
+                                if let title = self.viewModel.posts[0].sub?.clean {
+                                    Text(title.trunc(length: 25))
+                                        .frame(width: UIScreen.main.bounds.width - 100)
+                                        .offset(x: -7)
                                 }
                             }
-                            if let title = self.viewModel.posts[0].sub?.clean {
-                                Text(title.trunc(length: 25))
-                                    .frame(width: UIScreen.main.bounds.width - 100)
-                                    .offset(x: -7)
-                            }
-                        }
                         },
                         trailing: Link(destination: self.viewModel.url) {
                             Image(systemName: "square.and.arrow.up")
@@ -119,8 +119,11 @@ struct ThreadView: View {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+
         ThreadView()
             .environmentObject(viewModel)
+            .environmentObject(AppState())
     }
 }
