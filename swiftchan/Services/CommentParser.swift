@@ -140,7 +140,12 @@ class CommentParser {
             return matches.compactMap { match in
                 if let range = Range(match.range(at: 1), in: text) {
                     let stringUrl = String(text[range])
-                    if let escapedStringUrl = stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                    // url might be good
+                    if let url = URL(string: stringUrl) {
+                        return (url, match.range)
+                    }
+                    // % encode it
+                    else if let escapedStringUrl = stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                       let url = URL(string: escapedStringUrl) {
                         return (url, match.range)
                     }

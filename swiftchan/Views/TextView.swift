@@ -25,11 +25,11 @@ struct TextView: View {
     private var autocorrection: UITextAutocorrectionType = .default
     private var truncationMode: NSLineBreakMode = .byTruncatingTail
     private var isSecure: Bool = false
-    private var isEditable: Bool = true
+    private var isEditable: Bool = false
     private var isSelectable: Bool = true
     private var isScrollingEnabled: Bool = false
     private var enablesReturnKeyAutomatically: Bool?
-    private var autoDetectionTypes: UIDataDetectorTypes = []
+    private var autoDetectionTypes: UIDataDetectorTypes = [.link]
 
     init (_ attributedText: NSMutableAttributedString, trailingLength: Int? = nil) {
         // swiftlint:disable force_cast
@@ -71,10 +71,7 @@ struct TextView: View {
                         enablesReturnKeyAutomatically: enablesReturnKeyAutomatically,
                         autoDetectionTypes: autoDetectionTypes,
                         calculatedHeight: $calculatedHeight)
-            .frame(
-                minHeight: isScrollingEnabled ? 0 : calculatedHeight,
-                maxHeight: isScrollingEnabled ? .infinity : calculatedHeight
-            )
+            .frame(height: calculatedHeight)
     }
 }
 
@@ -191,6 +188,7 @@ extension TextView {
 private struct SwiftUITextView: UIViewRepresentable {
 
     @Binding private var calculatedHeight: CGFloat
+    @State private var setHeightCount: Int = 0
 
     private let attributedText: NSMutableAttributedString
     private let foregroundColor: UIColor
@@ -246,33 +244,32 @@ private struct SwiftUITextView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
-        view.text = ""
+        view.attributedText = attributedText
         view.textContainer.lineFragmentPadding = 0
         view.textContainerInset = .zero
         view.backgroundColor = UIColor.clear
         view.adjustsFontForContentSizeCategory = true
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.isEditable = isEditable
+        view.isSelectable = isSelectable
+        view.isScrollEnabled =
+            isScrollingEnabled
+        view.dataDetectorTypes = autoDetectionTypes
+        view.frame = .zero
         return view
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
-            view.attributedText = attributedText
-            view.textAlignment = multilineTextAlignment
-            view.autocapitalizationType = autocapitalization
-            view.autocorrectionType = autocorrection
-            view.isEditable = isEditable
-            view.isSelectable = isSelectable
-            view.isScrollEnabled = isScrollingEnabled
-            view.dataDetectorTypes = autoDetectionTypes
-
-            SwiftUITextView.recalculateHeight(view: view, result: $calculatedHeight)
+        self.recalculateHeight(view: view, result: $calculatedHeight)
     }
 
-    fileprivate static func recalculateHeight(view: UIView, result: Binding<CGFloat>) {
+    func recalculateHeight(view: UIView, result: Binding<CGFloat>) {
+        guard setHeightCount < 3 else { return }
         let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
         guard result.wrappedValue != newSize.height else { return }
         DispatchQueue.main.async { // call in next render cycle.
             result.wrappedValue = newSize.height
+            self.setHeightCount += 1
         }
     }
 }
@@ -280,12 +277,20 @@ private struct SwiftUITextView: UIViewRepresentable {
 struct TextView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 5) {
-            TextView(NSMutableAttributedString(string: ""))
+            TextView(NSMutableAttributedString(string: """
+No.21374000 Sticky Closed
+
+                        This board is for the discussion of topics related to business, economics, financial markets, securities, currencies (including cryptocurrencies), commodities, etc -- as well as topics relating to starting and running a business.
+
+                        Discussions of government policy must be strictly limited to economic policies (fiscal and monetary). Discussions of a political nature should be posted on >>>/pol/. Global Rule 3 is also obviously in effect.
+
+                        Note: /biz/ is NOT a place for ADVERTISING or SOLICITING. Do NOT use it to promote your business, ventures, or anything you may have an interest in. Anything that looks remotely like advertising or soliciting will be removed. Begging/asking (including tipping) for cryptocurrencies or asking for money/capital is also strictly forbidden.
+"""))
                 .font(.system(.body, design: .serif))
                 .placeholderFont(Font.system(.body, design: .serif))
                 .border(Color.black, width: 1)
                 .padding()
         }
-        .previewLayout(.sizeThatFits)
+        // .previewLayout(.sizeThatFits)
     }
 }

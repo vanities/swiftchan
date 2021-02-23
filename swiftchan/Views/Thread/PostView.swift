@@ -91,7 +91,14 @@ struct PostView: View {
                             let color = Color.randomColor(seed: id)
                             Text(id.description)
                                 .foregroundColor(color.isLight() ? .black : .white)
-                                .background(color.padding(.all, -1))
+                                .background(
+                                        Rectangle()
+                                            .fill(color)
+                                            .cornerRadius(5)
+                                            .padding(.horizontal, -5)
+                                )
+                                .offset(x: 5)
+
                         }
                         HStack {
                             // Anonymous
@@ -111,10 +118,6 @@ struct PostView: View {
                 }
                 // comment
                 TextView(comment)
-                    .autoDetectDataTypes(.link)
-                    .enableScrolling(false)
-                    .isEditable(false)
-                    .isSelectable(true)
                     .padding(.top, 20)
 
                 // replies

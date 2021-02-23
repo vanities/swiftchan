@@ -40,34 +40,17 @@ struct PresentedPost: View {
                     self.dismissGesture.dragging = false
                 }
             }
-            .dismissGesture(
-                direction: .down,
-                onOffsetChanged: { offset in
-                    self.onOffsetChanged?(offset)
-                }
-            )
-            .environmentObject(self.dismissGesture)
+            .dismissGesture(direction: .down)
             .transition(.identity)
 
         case .replies:
             if let replies = self.viewModel.replies[self.commentRepliesIndex] {
                 RepliesView(replies: replies,
                             commentRepliesIndex: self.commentRepliesIndex)
-                    .dismissGesture(
-                        direction: .right,
-                        onOffsetChanged: {_ in}
-                    )
-                    .environmentObject(self.dismissGesture)
+                    .dismissGesture(direction: .right)
                     .transition(.identity)
-
             }
         }
-    }
-}
-
-extension PresentedPost: Buildable {
-    func onOffsetChanged(_ callback: ((CGFloat) -> Void)?) -> Self {
-        mutating(keyPath: \.onOffsetChanged, value: callback)
     }
 }
 

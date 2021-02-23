@@ -92,18 +92,19 @@ struct ThreadView: View {
                     )
                 }
             }
+            .onChange(of: self.presentedDismissGesture.draggingOffset) { value in
+                DispatchQueue.main.async {
+                    withAnimation(.linear) {
+                        self.opacity = Double(value / UIScreen.main.bounds.height)
+                    }
+                }
+            }
             .onChange(of: self.presentedDismissGesture.presenting, perform: { value in
                 if value && self.appState.fullscreenView == nil {
                     self.appState.fullscreenView = AnyView(
                         PresentedPost(presentingSheet: self.presentingSheet,
                                       galleryIndex: self.$galleryIndex,
                                       commentRepliesIndex: self.commentRepliesIndex)
-                            .onOffsetChanged { value in
-                                withAnimation(.linear) {
-                                    self.opacity = Double(value / UIScreen.main.bounds.height)
-                                }
-
-                            }
                             .onDisappear {
                                 self.opacity = 1
                                 self.presentedDismissGesture.dismiss = false
