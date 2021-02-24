@@ -14,6 +14,7 @@ struct VLCVideoView: UIViewRepresentable {
     @State var media: VLCMedia?
 
     func makeUIView(context: Context) -> UIView {
+        print("make video")
         let uiView = UIView()
 
         self.setMediaPlayer(context: context)

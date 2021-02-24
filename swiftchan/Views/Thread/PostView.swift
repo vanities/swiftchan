@@ -118,6 +118,11 @@ struct PostView: View {
                 }
                 // comment
                 TextView(comment)
+                    .enableScrolling(false)
+                    .autoDetectDataTypes(.link)
+                    .isEditable(false)
+                    .isSelectable(true)
+                    .truncationMode(.tail)
                     .padding(.top, 20)
 
                 // replies

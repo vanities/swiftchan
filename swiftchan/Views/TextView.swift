@@ -12,6 +12,7 @@ struct TextView: View {
 
     @Environment(\.layoutDirection) private var layoutDirection
     @State private var calculatedHeight: CGFloat = 44
+    var dynamicHeight: Bool = true
 
     private var attributedText: NSMutableAttributedString = .init()
     private var placeholderFont: Font = .body
@@ -31,7 +32,8 @@ struct TextView: View {
     private var enablesReturnKeyAutomatically: Bool?
     private var autoDetectionTypes: UIDataDetectorTypes = [.link]
 
-    init (_ attributedText: NSMutableAttributedString, trailingLength: Int? = nil) {
+    init (_ attributedText: NSMutableAttributedString, trailingLength: Int? = nil,
+          dynamicHeight: Bool = true) {
         // swiftlint:disable force_cast
         if let trailingLength = trailingLength {
             let trailingComment = attributedText.attributedSubstring(
@@ -51,6 +53,7 @@ struct TextView: View {
         } else {
             self.attributedText = attributedText
         }
+        self.dynamicHeight = dynamicHeight
         // swiftlint:enable force_cast
     }
 
@@ -70,8 +73,132 @@ struct TextView: View {
                         isScrollingEnabled: isScrollingEnabled,
                         enablesReturnKeyAutomatically: enablesReturnKeyAutomatically,
                         autoDetectionTypes: autoDetectionTypes,
-                        calculatedHeight: $calculatedHeight)
-            .frame(height: calculatedHeight)
+                        calculatedHeight: $calculatedHeight,
+                        dynamicHeight: dynamicHeight)
+            .frame(height: self.dynamicHeight ? calculatedHeight : 200)
+    }
+}
+
+struct SwiftUITextView: UIViewRepresentable {
+
+    @Binding var calculatedHeight: CGFloat
+    @State var setHeightCount: Int = 0
+    var dynamicHeight: Bool
+
+    private let attributedText: NSMutableAttributedString
+    private let foregroundColor: UIColor
+    private let autocapitalization: UITextAutocapitalizationType
+    private let multilineTextAlignment: NSTextAlignment
+    private let font: UIFont
+    private let returnKeyType: UIReturnKeyType?
+    private let clearsOnInsertion: Bool
+    private let autocorrection: UITextAutocorrectionType
+    private let truncationMode: NSLineBreakMode
+    private let isSecure: Bool
+    private let isEditable: Bool
+    private let isSelectable: Bool
+    private let isScrollingEnabled: Bool
+    private let enablesReturnKeyAutomatically: Bool?
+    private var autoDetectionTypes: UIDataDetectorTypes = []
+
+    let view = UITextView()
+
+    init(attributedText: NSMutableAttributedString,
+         foregroundColor: UIColor,
+         font: UIFont,
+         multilineTextAlignment: NSTextAlignment,
+         autocapitalization: UITextAutocapitalizationType,
+         returnKeyType: UIReturnKeyType?,
+         clearsOnInsertion: Bool,
+         autocorrection: UITextAutocorrectionType,
+         truncationMode: NSLineBreakMode,
+         isSecure: Bool,
+         isEditable: Bool,
+         isSelectable: Bool,
+         isScrollingEnabled: Bool,
+         enablesReturnKeyAutomatically: Bool?,
+         autoDetectionTypes: UIDataDetectorTypes,
+         calculatedHeight: Binding<CGFloat>,
+         dynamicHeight: Bool) {
+
+        _calculatedHeight = calculatedHeight
+
+        self.attributedText = attributedText
+        self.foregroundColor = foregroundColor
+        self.font = font
+        self.multilineTextAlignment = multilineTextAlignment
+        self.autocapitalization = autocapitalization
+        self.returnKeyType = returnKeyType
+        self.clearsOnInsertion = clearsOnInsertion
+        self.autocorrection = autocorrection
+        self.truncationMode = truncationMode
+        self.isSecure = isSecure
+        self.isEditable = isEditable
+        self.isSelectable = isSelectable
+        self.isScrollingEnabled = isScrollingEnabled
+        self.enablesReturnKeyAutomatically = enablesReturnKeyAutomatically
+        self.autoDetectionTypes = autoDetectionTypes
+        self.dynamicHeight = dynamicHeight
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        // WHY IS THIS GETTING SPAMMED?!
+        DispatchQueue.main.async {
+             view.attributedText = attributedText
+             view.textContainer.lineFragmentPadding = 0
+             view.textContainerInset = .zero
+             view.backgroundColor = UIColor.clear
+             view.adjustsFontForContentSizeCategory = true
+             view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        }
+
+        return view
+    }
+
+    func updateUIView(_ view: UITextView, context: Context) {
+        DispatchQueue.main.async {
+            view.attributedText = attributedText
+            view.textAlignment = multilineTextAlignment
+            view.autocapitalizationType = autocapitalization
+            view.autocorrectionType = autocorrection
+            view.isEditable = isEditable
+            view.isSelectable = isSelectable
+            view.isScrollEnabled = isScrollingEnabled
+            view.dataDetectorTypes = autoDetectionTypes
+            self.recalculateHeight(view: view)
+        }
+    }
+
+    func recalculateHeight(view: UITextView) {
+        guard setHeightCount < 3 else { return }
+        let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
+        guard self.calculatedHeight != newSize.height else { return }
+        DispatchQueue.main.async { // call in next render cycle.
+            // print(self.calculatedHeight)
+            self.calculatedHeight = newSize.height
+            self.setHeightCount += 1
+        }
+    }
+}
+
+struct TextView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 5) {
+            TextView(NSMutableAttributedString(string: """
+No.21374000 Sticky Closed
+
+                        This board is for the discussion of topics related to business, economics, financial markets, securities, currencies (including cryptocurrencies), commodities, etc -- as well as topics relating to starting and running a business.
+
+                        Discussions of government policy must be strictly limited to economic policies (fiscal and monetary). Discussions of a political nature should be posted on >>>/pol/. Global Rule 3 is also obviously in effect.
+
+                        Note: /biz/ is NOT a place for ADVERTISING or SOLICITING. Do NOT use it to promote your business, ventures, or anything you may have an interest in. Anything that looks remotely like advertising or soliciting will be removed. Begging/asking (including tipping) for cryptocurrencies or asking for money/capital is also strictly forbidden.
+"""))
+                .font(.system(.body, design: .serif))
+                .placeholderFont(Font.system(.body, design: .serif))
+                .border(Color.black, width: 1)
+                .padding()
+        }
+        // .previewLayout(.sizeThatFits)
     }
 }
 
@@ -183,114 +310,4 @@ extension TextView {
         return view
     }
 
-}
-
-private struct SwiftUITextView: UIViewRepresentable {
-
-    @Binding private var calculatedHeight: CGFloat
-    @State private var setHeightCount: Int = 0
-
-    private let attributedText: NSMutableAttributedString
-    private let foregroundColor: UIColor
-    private let autocapitalization: UITextAutocapitalizationType
-    private let multilineTextAlignment: NSTextAlignment
-    private let font: UIFont
-    private let returnKeyType: UIReturnKeyType?
-    private let clearsOnInsertion: Bool
-    private let autocorrection: UITextAutocorrectionType
-    private let truncationMode: NSLineBreakMode
-    private let isSecure: Bool
-    private let isEditable: Bool
-    private let isSelectable: Bool
-    private let isScrollingEnabled: Bool
-    private let enablesReturnKeyAutomatically: Bool?
-    private var autoDetectionTypes: UIDataDetectorTypes = []
-
-    init(attributedText: NSMutableAttributedString,
-         foregroundColor: UIColor,
-         font: UIFont,
-         multilineTextAlignment: NSTextAlignment,
-         autocapitalization: UITextAutocapitalizationType,
-         returnKeyType: UIReturnKeyType?,
-         clearsOnInsertion: Bool,
-         autocorrection: UITextAutocorrectionType,
-         truncationMode: NSLineBreakMode,
-         isSecure: Bool,
-         isEditable: Bool,
-         isSelectable: Bool,
-         isScrollingEnabled: Bool,
-         enablesReturnKeyAutomatically: Bool?,
-         autoDetectionTypes: UIDataDetectorTypes,
-         calculatedHeight: Binding<CGFloat>) {
-
-        _calculatedHeight = calculatedHeight
-
-        self.attributedText = attributedText
-        self.foregroundColor = foregroundColor
-        self.font = font
-        self.multilineTextAlignment = multilineTextAlignment
-        self.autocapitalization = autocapitalization
-        self.returnKeyType = returnKeyType
-        self.clearsOnInsertion = clearsOnInsertion
-        self.autocorrection = autocorrection
-        self.truncationMode = truncationMode
-        self.isSecure = isSecure
-        self.isEditable = isEditable
-        self.isSelectable = isSelectable
-        self.isScrollingEnabled = isScrollingEnabled
-        self.enablesReturnKeyAutomatically = enablesReturnKeyAutomatically
-        self.autoDetectionTypes = autoDetectionTypes
-    }
-
-    func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
-        view.attributedText = attributedText
-        view.textContainer.lineFragmentPadding = 0
-        view.textContainerInset = .zero
-        view.backgroundColor = UIColor.clear
-        view.adjustsFontForContentSizeCategory = true
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.isEditable = isEditable
-        view.isSelectable = isSelectable
-        view.isScrollEnabled =
-            isScrollingEnabled
-        view.dataDetectorTypes = autoDetectionTypes
-        view.frame = .zero
-        return view
-    }
-
-    func updateUIView(_ view: UITextView, context: Context) {
-        self.recalculateHeight(view: view, result: $calculatedHeight)
-    }
-
-    func recalculateHeight(view: UIView, result: Binding<CGFloat>) {
-        guard setHeightCount < 3 else { return }
-        let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
-        guard result.wrappedValue != newSize.height else { return }
-        DispatchQueue.main.async { // call in next render cycle.
-            result.wrappedValue = newSize.height
-            self.setHeightCount += 1
-        }
-    }
-}
-
-struct TextView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack(spacing: 5) {
-            TextView(NSMutableAttributedString(string: """
-No.21374000 Sticky Closed
-
-                        This board is for the discussion of topics related to business, economics, financial markets, securities, currencies (including cryptocurrencies), commodities, etc -- as well as topics relating to starting and running a business.
-
-                        Discussions of government policy must be strictly limited to economic policies (fiscal and monetary). Discussions of a political nature should be posted on >>>/pol/. Global Rule 3 is also obviously in effect.
-
-                        Note: /biz/ is NOT a place for ADVERTISING or SOLICITING. Do NOT use it to promote your business, ventures, or anything you may have an interest in. Anything that looks remotely like advertising or soliciting will be removed. Begging/asking (including tipping) for cryptocurrencies or asking for money/capital is also strictly forbidden.
-"""))
-                .font(.system(.body, design: .serif))
-                .placeholderFont(Font.system(.body, design: .serif))
-                .border(Color.black, width: 1)
-                .padding()
-        }
-        // .previewLayout(.sizeThatFits)
-    }
 }

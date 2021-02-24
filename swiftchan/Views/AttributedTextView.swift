@@ -37,16 +37,13 @@ struct AttributedTextView: View {
     }
 
     var body: some View {
-        SwiftUITextView(attributedText: attributedText,
+        SwiftUILabelView(attributedText: attributedText,
                         calculatedHeight: $calculatedHeight)
-            .frame(
-                minHeight: calculatedHeight,
-                maxHeight: calculatedHeight
-            )
+            .frame(height: calculatedHeight)
     }
 }
 
-private struct SwiftUITextView: UIViewRepresentable {
+private struct SwiftUILabelView: UIViewRepresentable {
 
     @Binding private var calculatedHeight: CGFloat
     private let attributedText: NSMutableAttributedString
@@ -63,7 +60,7 @@ private struct SwiftUITextView: UIViewRepresentable {
         view.adjustsFontForContentSizeCategory = true
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.attributedText = attributedText
-        SwiftUITextView.recalculateHeight(view: view, result: $calculatedHeight)
+        self.recalculateHeight(view: view)
         return view
     }
 
@@ -72,11 +69,11 @@ private struct SwiftUITextView: UIViewRepresentable {
         // SwiftUITextView.recalculateHeight(view: view, result: $calculatedHeight)
     }
 
-    fileprivate static func recalculateHeight(view: UILabel, result: Binding<CGFloat>) {
+    func recalculateHeight(view: UILabel) {
         let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
-        guard result.wrappedValue != newSize.height else { return }
+        guard self.calculatedHeight != newSize.height else { return }
         DispatchQueue.main.async { // call in next render cycle.
-            result.wrappedValue = newSize.height
+            self.calculatedHeight = newSize.height
         }
     }
 }

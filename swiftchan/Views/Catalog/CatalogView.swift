@@ -60,12 +60,13 @@ struct CatalogView: View {
                         LazyVGrid(columns: self.columns,
                                   alignment: .center,
                                   spacing: 0) {
+                        // VStack {
                             ForEach(self.filteredPosts.indices,
                                     id: \.self) { index in
                                 OPView(boardName: self.viewModel.boardName,
                                        post: self.viewModel.posts[index],
                                        comment: self.viewModel.comments[index])
-                                    .id(self.viewModel.posts[index].id)
+                                     .id(self.viewModel.posts[index].id)
                             }
                                   }
                         .padding(.horizontal, 15)
