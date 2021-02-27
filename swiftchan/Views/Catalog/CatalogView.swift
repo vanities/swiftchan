@@ -7,8 +7,6 @@
 
 import SwiftUI
 import FourChan
-import WaterfallGrid
-import ASCollectionView
 
 struct CatalogView: View {
     @StateObject var viewModel: ViewModel
