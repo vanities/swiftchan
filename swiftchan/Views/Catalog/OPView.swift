@@ -76,12 +76,9 @@ struct OPView: View {
                         .lineLimit(nil)
                         .padding(.bottom, 5)
                     // comment
-                    TextView(self.comment, trailingLength: self.opCommentTrailingLength, dynamicHeight: false)
-                        .enableScrolling(false)
-                        .autoDetectDataTypes(.link)
-                        .isEditable(false)
-                        .isSelectable(false)
-                        .truncationMode(.tail)
+                    LabelView(self.comment,
+                              trailingLength: self.opCommentTrailingLength,
+                              dynamicHeight: false)
                 }
                 .padding(.all, 10)
             }

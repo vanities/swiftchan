@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 
 struct ThreadView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
@@ -46,14 +47,14 @@ struct ThreadView: View {
                                 .id(index)
                             }
                         }
-                        .frame(minWidth: UIScreen.main.bounds.width)
                     }
                     .padding(.all, 3)
-                    .onChange(of: self.galleryIndex) { index in
+                    .onChange(of: self.presentedDismissGesture.dismiss) { dismissing in
                         DispatchQueue.main.async {
-                            if self.presentingIndex != index,
+                            if dismissing,
+                               self.presentingIndex != self.galleryIndex,
                                let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
-                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - index < 3 ? .bottom : .top)
+                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
                             }
                         }
                     }
@@ -67,8 +68,12 @@ struct ThreadView: View {
                     }
                     .navigationBarItems(
                         leading: HStack {
-                            Text(self.viewModel.boardName)
-                                .offset(x: -7)
+                            Button(self.viewModel.boardName) { presentationMode.wrappedValue.dismiss()
+                            }
+                            .offset(x: -18)
+                            .foregroundColor(.blue)
+                            .font(.body)
+
                             ZStack {
                                 Rectangle()
                                     .fill(Color.clear)
@@ -82,7 +87,7 @@ struct ThreadView: View {
                                 if let title = self.viewModel.posts[0].sub?.clean {
                                     Text(title.trunc(length: 25))
                                         .frame(width: UIScreen.main.bounds.width - 100)
-                                        .offset(x: -7)
+                                        .offset(x: -18)
                                 }
                             }
                         },

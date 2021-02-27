@@ -7,6 +7,8 @@
 
 import SwiftUI
 import FourChan
+import WaterfallGrid
+import ASCollectionView
 
 struct CatalogView: View {
     @StateObject var viewModel: ViewModel
@@ -57,40 +59,39 @@ struct CatalogView: View {
                         SearchTextView(textPlaceholder: "Search Posts",
                                        searchText: self.$searchText)
                             .id("search")
+
                         LazyVGrid(columns: self.columns,
                                   alignment: .center,
                                   spacing: 0) {
-                        // VStack {
-                            ForEach(self.filteredPosts.indices,
-                                    id: \.self) { index in
-                                OPView(boardName: self.viewModel.boardName,
-                                       post: self.viewModel.posts[index],
-                                       comment: self.viewModel.comments[index])
-                                     .id(self.viewModel.posts[index].id)
-                            }
-                                  }
-                        .padding(.horizontal, 15)
-                    }
-                    .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
-                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                        softVibrate.impactOccurred()
-                        self.viewModel.load {
-                            self.pullToRefreshShowing = false
-                        }
-                    }
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarTitle("")
-                    .navigationBarItems(
-                        leading:
-                            Text(self.viewModel.boardName)
-                            .onTapGesture {
-                                withAnimation(.linear) {
-                                    reader.scrollTo("search", anchor: .top)
+                                ForEach(self.filteredPosts.indices, id: \.self) { index in
+                                    OPView(boardName: self.viewModel.boardName,
+                                           post: self.viewModel.posts[index],
+                                           comment: self.viewModel.comments[index])
+                                        .id(self.viewModel.posts[index].id)
                                 }
+                        }
+                        .padding(.horizontal, 15)
+                        .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                            let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                            softVibrate.impactOccurred()
+                            self.viewModel.load {
+                                self.pullToRefreshShowing = false
                             }
-                            .padding(.leading, UIScreen.main.bounds.width/3 - self.navigationCentering),
-                        trailing: FavoriteStar(viewModel: self.viewModel)
-                    )
+                        }
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarTitle("")
+                        .navigationBarItems(
+                            leading:
+                                Text(self.viewModel.boardName)
+                                .onTapGesture {
+                                    withAnimation(.linear) {
+                                        reader.scrollTo("search", anchor: .top)
+                                    }
+                                }
+                                .padding(.leading, UIScreen.main.bounds.width/3 - self.navigationCentering),
+                            trailing: FavoriteStar(viewModel: self.viewModel)
+                        )
+                    }
                 }
             }
     }
