@@ -107,7 +107,7 @@ class CommentParser {
                      .foregroundColor: UIColor.green],
                     range: NSRange(location: 0, length: part.length))
             case .deadLink(text: let text):
-                // >>791225
+                // >>791225 (link no longer is active)
                 part = NSMutableAttributedString(string: text)
                 let font = UIFont.preferredFont(forTextStyle: .body)
                 part.addAttributes(
