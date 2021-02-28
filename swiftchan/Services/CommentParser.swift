@@ -16,12 +16,12 @@ class CommentParser {
         self.comment = comment
     }
 
-    func getComment() -> NSMutableAttributedString {
+    func getComment() -> NSAttributedString {
         let nsText = self.parseComment(self.comment)
         return nsText
     }
 
-    func parseComment(_ comment: String) -> NSMutableAttributedString {
+    func parseComment(_ comment: String) -> NSAttributedString {
         // print(comment)
         let result = NSMutableAttributedString()
         let parser = PostTextParser()
@@ -41,7 +41,8 @@ class CommentParser {
                     )
                     part.addAttributes(
                         [.font: font,
-                         .foregroundColor: UIColor.blue],
+                         .foregroundColor: UIColor.blue
+                        ],
                         range: NSRange(location: 0, length: part.length))
                 }
                 // self-served url
@@ -51,8 +52,7 @@ class CommentParser {
                        let url = URL(string: urlString) {
                         part.addAttributes(
                             [.font: font,
-                             .foregroundColor: UIColor.link,
-                             .link: url
+                             .foregroundColor: UIColor.link
                             ],
                             range: NSRange(location: 0, length: part.length))
                     }
@@ -117,7 +117,7 @@ class CommentParser {
             }
             result.append(part)
         }
-        return result
+        return result.attributedSubstring(from: NSRange(location: 0, length: result.length))
     }
 
     func checkForUrls(_ text: String) -> [(URL, NSRange)] {

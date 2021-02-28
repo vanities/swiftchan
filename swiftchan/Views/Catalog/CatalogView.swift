@@ -21,8 +21,7 @@ struct CatalogView: View {
     }
 
     init(_ boardName: String) {
-        self._viewModel = StateObject(wrappedValue:
-                                        CatalogView.ViewModel(boardName: boardName))
+        self._viewModel = StateObject(wrappedValue: CatalogView.ViewModel(boardName: boardName))
     }
 
     var filteredPosts: [Post] {

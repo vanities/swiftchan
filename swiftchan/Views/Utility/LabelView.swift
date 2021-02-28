@@ -2,13 +2,14 @@ import SwiftUI
 
 struct LabelView: View {
 
-    @State private var size: CGSize = .zero
-    let attributedString: NSAttributedString
-    var dynamicHeight: Bool = true
+    @State private var height: CGFloat = .zero
+    let attributedText: NSAttributedString
+    var dynamicHeight: Bool
 
     init(_ attributedString: NSAttributedString,
          trailingLength: Int? = nil,
          dynamicHeight: Bool = false) {
+        self.dynamicHeight = dynamicHeight
         // swiftlint:disable force_cast
         if let trailingLength = trailingLength {
             let trailingComment = attributedString.attributedSubstring(
@@ -24,40 +25,46 @@ struct LabelView: View {
                                     range: NSRange(location: 0, length: trail.length))
                 trailingComment.append(trail)
             }
-            self.attributedString = trailingComment
+            self.attributedText = trailingComment
         } else {
-            self.attributedString = attributedString
+            self.attributedText = attributedString
         }
         // swiftlint:enable force_cast
     }
 
     var body: some View {
-        AttributedTextRepresentable(attributedString: attributedString, size: $size, dynamicHeight: dynamicHeight)
-            .frame(height: self.dynamicHeight ? self.size.height : 300)
+        AttributedTextRepresentable(attributedText: attributedText,
+                                    height: self.$height,
+                                    dynamicHeight: self.dynamicHeight)
+            .frame(maxHeight: 300)
     }
 
     struct AttributedTextRepresentable: UIViewRepresentable {
 
-        let attributedString: NSAttributedString
-        @Binding var size: CGSize
+        let attributedText: NSAttributedString
+        @Binding var height: CGFloat
         var dynamicHeight: Bool
 
         func makeUIView(context: Context) -> UILabel {
-            let label = UILabel()
+            let view = UILabel()
 
-            label.lineBreakMode = .byClipping
-            label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            label.numberOfLines = 0
+            view.numberOfLines = 0
+            view.lineBreakMode = .byWordWrapping
+            view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-            return label
+            return view
         }
 
-        func updateUIView(_ uiView: UILabel, context: Context) {
-            uiView.attributedText = attributedString
-            guard dynamicHeight == true else { return }
+        func updateUIView(_ view: UILabel, context: Context) {
+            view.attributedText = self.attributedText
 
+            // way1
+            self.fitHeight(view)
+        }
+
+        func fitHeight(_ view: UILabel) {
             DispatchQueue.main.async {
-                size = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: .greatestFiniteMagnitude))
+                self.height = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
             }
         }
     }

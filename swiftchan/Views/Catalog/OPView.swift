@@ -13,10 +13,10 @@ struct OPView: View {
 
     let boardName: String
     let post: Post
-    let comment: NSMutableAttributedString
+    let comment: NSAttributedString
     let opCommentTrailingLength: Int = 200
 
-    init(boardName: String, post: Post, comment: NSMutableAttributedString) {
+    init(boardName: String, post: Post, comment: NSAttributedString) {
         self.boardName = boardName
         self.post = post
         self.comment = comment
@@ -78,7 +78,7 @@ struct OPView: View {
                     // comment
                     LabelView(self.comment,
                               trailingLength: self.opCommentTrailingLength,
-                              dynamicHeight: false)
+                              dynamicHeight: true)
                 }
                 .padding(.all, 10)
             }

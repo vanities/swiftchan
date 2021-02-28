@@ -16,7 +16,8 @@ struct ImageView: View {
 
     let imageOptions = URLImageOptions(
         expireAfter: 24 * 60 * 60,
-        cachePolicy: .returnCacheElseLoad(cacheDelay: 0, downloadDelay: 0),
+        cachePolicy: .returnCacheElseLoad(cacheDelay: nil, downloadDelay: 0.25),
+        load: [.loadOnAppear, .cancelOnDisappear, .loadImmediately],
         maxPixelSize: CGSize(width: 5120, height: 2880)
     )
 

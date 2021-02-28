@@ -9,13 +9,11 @@
 import SwiftUI
 
 struct TextView: View {
-
-    @Environment(\.layoutDirection) private var layoutDirection
     @State private var height: CGFloat = 44
-    var attributedText: NSMutableAttributedString
+    var attributedText: NSAttributedString
     var dynamicHeight: Bool = true
 
-    init (_ attributedText: NSMutableAttributedString, trailingLength: Int? = nil,
+    init (_ attributedText: NSAttributedString, trailingLength: Int? = nil,
           dynamicHeight: Bool = true) {
         // swiftlint:disable force_cast
         if let trailingLength = trailingLength {
@@ -32,7 +30,9 @@ struct TextView: View {
                                     range: NSRange(location: 0, length: trail.length))
                 trailingComment.append(trail)
             }
-            self.attributedText = trailingComment
+            self.attributedText = trailingComment.attributedSubstring(
+                from: NSRange(location: 0, length: trailingComment.length)
+            )
         } else {
             self.attributedText = attributedText
         }
@@ -52,12 +52,11 @@ struct SwiftUITextView: UIViewRepresentable {
 
     @Binding var height: CGFloat
     var dynamicHeight: Bool
-    private let attributedText: NSMutableAttributedString
+    private let attributedText: NSAttributedString
 
-    init(attributedText: NSMutableAttributedString,
+    init(attributedText: NSAttributedString,
          height: Binding<CGFloat>,
          dynamicHeight: Bool) {
-
         self._height = height
         self.attributedText = attributedText
         self.dynamicHeight = dynamicHeight
@@ -65,32 +64,30 @@ struct SwiftUITextView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UITextView {
         // WHY IS THIS GETTING SPAMMED?!
-        // print("make")
         let view = UITextView(frame: .zero)
-        DispatchQueue.main.async {
-            view.textContainer.lineFragmentPadding = 0
-            view.textContainerInset = .zero
-            view.backgroundColor = UIColor.clear
-            view.adjustsFontForContentSizeCategory = true
-            view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-            view.isEditable = false
-            view.isSelectable = true
-            view.isScrollEnabled = false
-            view.dataDetectorTypes = .link
-        }
+        view.textContainer.lineFragmentPadding = 0
+        view.textContainerInset = .zero
+        view.backgroundColor = UIColor.clear
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        view.isEditable = false
+        view.isSelectable = true
+        view.isScrollEnabled = false
+        view.dataDetectorTypes = .link
 
         return view
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
-        guard dynamicHeight == true else { return  }
         view.attributedText = attributedText
+        self.fitHeight(view)
+    }
 
-        let newSize = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude))
-        guard self.height != newSize.height else { return }
-        DispatchQueue.main.async { // << fixed
-            self.height = view.sizeThatFits(newSize).height
+    func fitHeight(_ view: UITextView) {
+        guard dynamicHeight == true else { return }
+        DispatchQueue.main.async {
+            self.height = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
         }
     }
 }
@@ -98,7 +95,7 @@ struct SwiftUITextView: UIViewRepresentable {
 struct TextView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 5) {
-            TextView(NSMutableAttributedString(string: """
+            TextView(NSAttributedString(string: """
 No.21374000 Sticky Closed
 
                         This board is for the discussion of topics related to business, economics, financial markets, securities, currencies (including cryptocurrencies), commodities, etc -- as well as topics relating to starting and running a business.

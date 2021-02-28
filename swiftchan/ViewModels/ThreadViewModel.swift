@@ -18,7 +18,7 @@ extension ThreadView {
         @Published private(set) var mediaUrls = [URL]()
         @Published private(set) var thumbnailMediaUrls = [URL]()
         @Published private(set) var postMediaMapping = [Int: Int]()
-        @Published private(set) var comments = [NSMutableAttributedString]()
+        @Published private(set) var comments = [NSAttributedString]()
         @Published private(set) var replies = [Int: [Int]]()
 
         var url: URL {

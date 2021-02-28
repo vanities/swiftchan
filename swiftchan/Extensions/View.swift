@@ -22,7 +22,7 @@ extension View {
         ))
     }
 
-    public func frameTextView(_ text: NSMutableAttributedString,
+    public func frameTextView(_ text: NSAttributedString,
                               maxWidth: CGFloat,
                               maxHeight: CGFloat) -> some View {
 
