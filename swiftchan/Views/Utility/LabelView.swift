@@ -36,7 +36,7 @@ struct LabelView: View {
         AttributedTextRepresentable(attributedText: attributedText,
                                     height: self.$height,
                                     dynamicHeight: self.dynamicHeight)
-            .frame(maxHeight: 300)
+            .frame(minHeight: self.dynamicHeight ? self.height : 300)
     }
 
     struct AttributedTextRepresentable: UIViewRepresentable {
@@ -49,8 +49,9 @@ struct LabelView: View {
             let view = UILabel()
 
             view.numberOfLines = 0
-            view.lineBreakMode = .byWordWrapping
+            view.lineBreakMode = .byTruncatingTail
             view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            view.sizeToFit()
 
             return view
         }
@@ -58,13 +59,13 @@ struct LabelView: View {
         func updateUIView(_ view: UILabel, context: Context) {
             view.attributedText = self.attributedText
 
-            // way1
             self.fitHeight(view)
         }
 
         func fitHeight(_ view: UILabel) {
             DispatchQueue.main.async {
                 self.height = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
+                view.sizeToFit()
             }
         }
     }

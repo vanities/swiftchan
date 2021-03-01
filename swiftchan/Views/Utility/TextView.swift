@@ -44,7 +44,7 @@ struct TextView: View {
         SwiftUITextView(attributedText: attributedText,
                         height: self.$height,
                         dynamicHeight: dynamicHeight)
-            .frame(height: self.dynamicHeight ? self.height : 200)
+            .frame(height: self.dynamicHeight ? self.height : 150)
     }
 }
 

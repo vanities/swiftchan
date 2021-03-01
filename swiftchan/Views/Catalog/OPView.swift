@@ -38,7 +38,7 @@ struct OPView: View {
                 Rectangle()
                     .fill(Color(.systemBackground))
                     .border(Color(.gray))
-                VStack(alignment: .leading, spacing: 0 ) {
+                VStack(alignment: .leading, spacing: 0) {
                     // image
                     if let url = self.post.getMediaUrl(boardId: self.boardName),
                        let thumbnailUrl = self.post.getMediaUrl(boardId: self.boardName, thumbnail: true) {
@@ -75,10 +75,11 @@ struct OPView: View {
                         .bold()
                         .lineLimit(nil)
                         .padding(.bottom, 5)
+
                     // comment
-                    LabelView(self.comment,
+                    TextView(self.comment,
                               trailingLength: self.opCommentTrailingLength,
-                              dynamicHeight: true)
+                              dynamicHeight: false) // bad performance
                 }
                 .padding(.all, 10)
             }

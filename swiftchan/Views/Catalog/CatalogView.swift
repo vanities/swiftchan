@@ -65,6 +65,7 @@ struct CatalogView: View {
                                            post: self.viewModel.posts[index],
                                            comment: self.viewModel.comments[index])
                                         .id(self.viewModel.posts[index].id)
+                                        // .frame(width: UIScreen.main.bounds.width/2) //?
                                 }
                         }
                         .padding(.horizontal, 15)

@@ -95,6 +95,7 @@ struct DismissGestureModifier: ViewModifier {
 
                 self.dismissGesture.draggingOffset += offsetIncrement
                 self.dismissGesture.lastDraggingValue = value
+                self.dismissGesture.objectWillChange.send()
             case .left, .right:
                 // Ignore swipes that aren't on the X-Axis
                 guard swipeAngle.isAlongXAxis else {
@@ -120,6 +121,7 @@ struct DismissGestureModifier: ViewModifier {
 
                 self.dismissGesture.draggingOffset += offsetIncrement
                 self.dismissGesture.lastDraggingValue = value
+                self.dismissGesture.objectWillChange.send()
             }
 
         }
