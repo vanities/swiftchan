@@ -216,3 +216,19 @@ extension Color {
         return (brightness > threshold)
     }
 }
+
+extension String {
+    func replacePattern(pattern: String, replaceWith: String = "") -> String {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
+            let range = NSRange(location: 0, length: self.count)
+            return regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: replaceWith)
+        } catch {
+            return self
+        }
+    }
+
+    var fixZeroWidthSpace: String {
+        addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.replacePattern(pattern: "%E2%80%8B", replaceWith: "") ?? ""
+    }
+}

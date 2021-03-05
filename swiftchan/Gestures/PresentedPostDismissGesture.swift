@@ -11,16 +11,6 @@ enum DismissDirection {
     case right, left, up, down
 }
 
-class DismissGesture: ObservableObject {
-    @Published var dismiss: Bool = false
-    @Published var presenting: Bool = false
-    @Published var canDrag: Bool = true
-    @Published var dragging: Bool = false
-    @Published var draggingOffset: CGFloat = UIScreen.main.bounds.height
-    @Published var lastDraggingValue: DragGesture.Value?
-    @Published var draggingVelocity: Double = 0
-}
-
 extension View {
     func dismissGesture(direction: DismissDirection) -> some View {
         self.modifier(DismissGestureModifier(
@@ -54,6 +44,8 @@ struct DismissGestureModifier: ViewModifier {
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + self.animationDuration) {
                     self.dismissGesture.presenting = false
+                    self.dismissGesture.draggingVelocity = 0
+                    self.dismissGesture.lastDraggingValue = nil
                 }
             }
             .onAppear {

@@ -13,20 +13,19 @@ struct PresentedPost: View {
     }
 
     @EnvironmentObject var viewModel: ThreadView.ViewModel
+    @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
-    let presentingSheet: PresentType
-    @Binding var galleryIndex: Int
-    let commentRepliesIndex: Int
 
     var onOffsetChanged: ((CGFloat) -> Void)?
 
     @ViewBuilder
     var body: some View {
-        switch self.presentingSheet {
+        switch self.state.presentingSheet {
         case .gallery:
-            GalleryView(selection: self.$galleryIndex,
-                        urls: self.viewModel.mediaUrls,
-                        thumbnailUrls: self.viewModel.thumbnailMediaUrls
+            GalleryView(
+                self.state.galleryIndex,
+                urls: self.viewModel.mediaUrls,
+                thumbnailUrls: self.viewModel.thumbnailMediaUrls
             )
             .onDismiss {
                 self.dismissGesture.dismiss = true
@@ -44,9 +43,9 @@ struct PresentedPost: View {
             .transition(.identity)
 
         case .replies:
-            if let replies = self.viewModel.replies[self.commentRepliesIndex] {
+            if let replies = self.viewModel.replies[self.state.commentRepliesIndex] {
                 RepliesView(replies: replies,
-                            commentRepliesIndex: self.commentRepliesIndex)
+                            commentRepliesIndex: self.state.commentRepliesIndex)
                     .dismissGesture(direction: .right)
                     .transition(.identity)
             }
@@ -57,11 +56,9 @@ struct PresentedPost: View {
 struct PresentedPost_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        PresentedPost(
-            presentingSheet: .gallery,
-            galleryIndex: .constant(1),
-            commentRepliesIndex: 0)
+        PresentedPost()
             .environmentObject(viewModel)
             .environmentObject(DismissGesture())
+            .environmentObject(PresentationState())
     }
 }

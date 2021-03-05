@@ -10,8 +10,8 @@ import Introspect
 import SwiftUIPager
 
 struct GalleryView: View {
+    @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
-    @Binding var selection: Int
     @StateObject var page: Page
     var urls: [URL]
     var thumbnailUrls: [URL]
@@ -27,12 +27,10 @@ struct GalleryView: View {
     var onPageDragChanged: ((CGFloat) -> Void)?
     var onDismiss: (() -> Void)?
 
-    init(selection: Binding<Int>, urls: [URL], thumbnailUrls: [URL]) {
-        self._selection
-         = selection
+    init(_ index: Int, urls: [URL], thumbnailUrls: [URL]) {
         self.urls = urls
         self.thumbnailUrls = thumbnailUrls
-        self._page =  StateObject(wrappedValue: Page.withIndex(selection.wrappedValue))
+        self._page =  StateObject(wrappedValue: Page.withIndex(index))
     }
 
     var body: some View {
@@ -44,7 +42,7 @@ struct GalleryView: View {
                   data: self.urls.indices,
                   id: \.self) { index in
                 MediaView(
-                    selected: self.$selection,
+                    selected: self.$state.galleryIndex,
                     url: self.urls[index],
                     id: index
                 )
@@ -100,7 +98,7 @@ struct GalleryView: View {
             .onPageChanged { index in
                 self.dragging = false
                 self.onPageDragChanged?(.zero)
-                self.selection = index
+                self.state.galleryIndex = index
             }
             .allowsDragging(!self.dismissGesture.dragging && self.canPage)
             .pagingPriority(.simultaneous)
@@ -125,7 +123,7 @@ struct GalleryView: View {
                 Spacer()
                 GalleryPreviewView(urls: self.urls,
                                    thumbnailUrls: self.thumbnailUrls,
-                                   selection: self.$selection)
+                                   selection: self.$state.galleryIndex)
                     .padding(.bottom, 60)
             }
             .opacity(self.showPreview && !self.dismissGesture.dragging ? 1 : 0)
@@ -159,17 +157,17 @@ extension GalleryView: Buildable {
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GalleryView(selection: .constant(0),
+            GalleryView(0,
                         urls: URLExamples.imageSet,
                         thumbnailUrls: URLExamples.imageSet
             )
             .environmentObject(DismissGesture())
-            GalleryView(selection: .constant(0),
+            GalleryView(0,
                         urls: URLExamples.gifSet,
                         thumbnailUrls: URLExamples.gifSet
             )
             .environmentObject(DismissGesture())
-            GalleryView(selection: .constant(0),
+            GalleryView(0,
                         urls: URLExamples.webmSet,
                         thumbnailUrls: URLExamples.webmSet
             )

@@ -11,13 +11,10 @@ import FourChan
 struct PostView: View {
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var presentationState: PresentationState
+    @EnvironmentObject var presentedDismissGesture: DismissGesture
+
     let index: Int
-
-    @Binding var isPresenting: Bool
-    @Binding var presentingSheet: PresentedPost.PresentType
-
-    @Binding var galleryIndex: Int
-    @Binding var commentRepliesIndex: Int
 
     var body: some View {
         let boardName = self.viewModel.boardName
@@ -52,13 +49,11 @@ struct PostView: View {
                             useThumbnailGif: false
                         )
                         .frame(width: UIScreen.main.bounds.width/2)
-                        // .scaledToFit()
-                        .scaledToFill() // VStack
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                self.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-                                self.presentingSheet = .gallery
-                                self.isPresenting.toggle()
+                                self.presentationState.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                                self.presentationState.presentingSheet = .gallery
+                                self.presentedDismissGesture.presenting.toggle()
                             }
                         }
                         .padding(.leading, -5)
@@ -100,24 +95,24 @@ struct PostView: View {
                                 .offset(x: 5)
 
                         }
-                        HStack {
-                            // Anonymous
-                            if let name = post.name {
-                                Text(name)
-                                    .bold()
-                                    .foregroundColor(.gray)
-                            }
-                            if let trip = post.trip {
-                                Text(trip)
-                                    .italic()
-                                    .foregroundColor(.pink)
-                            }
+                        // Anonymous
+                        if let name = post.name {
+                            Text(name)
+                                .bold()
+                                .foregroundColor(.gray)
+                        }
+                        // trip
+                        if let trip = post.trip {
+                            Text(trip)
+                                .italic()
+                                .foregroundColor(.pink)
                         }
                     }
                     .padding(.leading, 1)
                 }
                 // comment
                 TextView(comment)
+                    .id(index)
                     .padding(.top, 20)
 
                 // replies
@@ -125,9 +120,9 @@ struct PostView: View {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
                         .bold()
                         .onTapGesture {
-                            self.commentRepliesIndex = index
-                            self.presentingSheet = .replies
-                            self.isPresenting.toggle()
+                            self.presentationState.commentRepliesIndex = index
+                            self.presentationState.presentingSheet = .replies
+                            self.presentedDismissGesture.presenting.toggle()
                         }
                         .zIndex(-1)
                         .padding(.top, 10)
@@ -138,22 +133,15 @@ struct PostView: View {
     }
 }
 
-extension PostView: Identifiable {
-    var id: Int { return self.index }
-}
-
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
-        return PostView(index: 0,
-                 isPresenting: .constant(false),
-                 presentingSheet: .constant(.gallery),
-                 galleryIndex: .constant(0),
-                 commentRepliesIndex: .constant(0)
-        )
+        return PostView(index: 0)
         .environmentObject(viewModel)
         .environmentObject(AppState())
+        .environmentObject(DismissGesture())
+        .environmentObject(PresentationState())
     }
 }

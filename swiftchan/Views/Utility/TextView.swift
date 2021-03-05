@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct TextView: View {
-    @State private var height: CGFloat = 44
-    var attributedText: NSAttributedString
+    @State var height: CGFloat = 200
+    let attributedText: NSAttributedString
     var dynamicHeight: Bool = true
 
     init (_ attributedText: NSAttributedString, trailingLength: Int? = nil,
@@ -44,15 +44,16 @@ struct TextView: View {
         SwiftUITextView(attributedText: attributedText,
                         height: self.$height,
                         dynamicHeight: dynamicHeight)
-            .frame(height: self.dynamicHeight ? self.height : 150)
+            // .frameTextView(self.attributedText, maxWidth: geo.size.width, maxHeight: .greatestFiniteMagnitude)
+            .frame(height: self.dynamicHeight ? height : 150)
     }
 }
 
 struct SwiftUITextView: UIViewRepresentable {
 
     @Binding var height: CGFloat
-    var dynamicHeight: Bool
-    private let attributedText: NSAttributedString
+    let dynamicHeight: Bool
+    let attributedText: NSAttributedString
 
     init(attributedText: NSAttributedString,
          height: Binding<CGFloat>,
@@ -64,14 +65,16 @@ struct SwiftUITextView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UITextView {
         // WHY IS THIS GETTING SPAMMED?!
-        let view = UITextView(frame: .zero)
+        let view = UITextView()
 
+        view.attributedText = attributedText
         view.textContainer.lineFragmentPadding = 0
         view.textContainerInset = .zero
         view.backgroundColor = UIColor.clear
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         view.isEditable = false
+        view.alwaysBounceVertical = false
         view.isSelectable = true
         view.isScrollEnabled = false
         view.dataDetectorTypes = .link
@@ -80,14 +83,15 @@ struct SwiftUITextView: UIViewRepresentable {
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
-        view.attributedText = attributedText
         self.fitHeight(view)
     }
 
     func fitHeight(_ view: UITextView) {
         guard dynamicHeight == true else { return }
+        let newHeight = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
+        guard self.height != newHeight else { return }
         DispatchQueue.main.async {
-            self.height = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
+            self.height = newHeight
         }
     }
 }
@@ -108,5 +112,23 @@ No.21374000 Sticky Closed
                 .padding()
         }
         // .previewLayout(.sizeThatFits)
+    }
+}
+
+struct GeometryGetter: View {
+    @Binding var rect: CGRect
+
+    var body: some View {
+        return GeometryReader { geometry in
+            self.makeView(geometry: geometry)
+        }
+    }
+
+    func makeView(geometry: GeometryProxy) -> some View {
+        DispatchQueue.main.async {
+            self.rect = geometry.frame(in: .global)
+        }
+
+        return Rectangle().fill(Color.clear)
     }
 }

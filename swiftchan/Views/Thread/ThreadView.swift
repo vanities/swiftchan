@@ -11,14 +11,9 @@ import FourChan
 struct ThreadView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
+    @StateObject var presentationState: PresentationState = PresentationState()
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
-
-    @State private var presentingSheet: PresentedPost.PresentType = .gallery
-
-    @State var galleryIndex: Int = 0
-    @State var commentRepliesIndex: Int = 0
-    @State var presentingIndex: Int = 0
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
@@ -29,21 +24,17 @@ struct ThreadView: View {
         return ZStack {
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: false) {
-                    // VStack(spacing: 0) {
+                    LazyVStack(spacing: 0) {
                     // performance..
+                    /*
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
-
+ */
                         ForEach(self.viewModel.posts.indices, id: \.self) { index in
                             if index < self.viewModel.comments.count {
-                                PostView(index: index,
-                                         isPresenting: self.$presentedDismissGesture.presenting,
-                                         presentingSheet: self.$presentingSheet,
-                                         galleryIndex: self.$galleryIndex,
-                                         commentRepliesIndex: self.$commentRepliesIndex
-                                )
-                                .id(index)
+                                PostView(index: index)
+                                    .id(index)
                             }
                         }
                     }
@@ -51,9 +42,9 @@ struct ThreadView: View {
                     .onChange(of: self.presentedDismissGesture.dismiss) { dismissing in
                         DispatchQueue.main.async {
                             if dismissing,
-                               self.presentingIndex != self.galleryIndex,
-                               let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.galleryIndex }) {
-                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.galleryIndex < 3 ? .bottom : .top)
+                               self.presentationState.presentingIndex != self.presentationState.galleryIndex,
+                               let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.presentationState.galleryIndex }) {
+                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.presentationState.galleryIndex < 3 ? .bottom : .top)
                             }
                         }
                     }
@@ -106,9 +97,7 @@ struct ThreadView: View {
             .onChange(of: self.presentedDismissGesture.presenting, perform: { value in
                 if value && self.appState.fullscreenView == nil {
                     self.appState.fullscreenView = AnyView(
-                        PresentedPost(presentingSheet: self.presentingSheet,
-                                      galleryIndex: self.$galleryIndex,
-                                      commentRepliesIndex: self.commentRepliesIndex)
+                        PresentedPost()
                             .onDisappear {
                                 self.opacity = 1
                                 self.presentedDismissGesture.dismiss = false
@@ -116,6 +105,7 @@ struct ThreadView: View {
                                 self.presentedDismissGesture.dragging = false
                             }
                             .environmentObject(self.viewModel)
+                            .environmentObject(self.presentationState)
                             .environmentObject(self.presentedDismissGesture)
                     )
                 } else {
@@ -123,6 +113,8 @@ struct ThreadView: View {
                 }
             })
         }
+        .environmentObject(self.presentationState)
+        .environmentObject(self.presentedDismissGesture)
     }
 }
 

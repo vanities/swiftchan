@@ -52,7 +52,8 @@ class CommentParser {
                        let url = URL(string: urlString) {
                         part.addAttributes(
                             [.font: font,
-                             .foregroundColor: UIColor.link
+                             .foregroundColor: UIColor.link,
+                             .link: url
                             ],
                             range: NSRange(location: 0, length: part.length))
                     }
@@ -139,7 +140,7 @@ class CommentParser {
             */
             return matches.compactMap { match in
                 if let range = Range(match.range(at: 1), in: text) {
-                    let stringUrl = String(text[range])
+                    let stringUrl = String(text[range]).fixZeroWidthSpace
                     // url might be good
                     if let url = URL(string: stringUrl) {
                         return (url, match.range)
