@@ -50,7 +50,7 @@ struct CatalogView: View {
 
     var body: some View {
         return
-            ScrollViewReader { reader in
+            ScrollViewReader { _ in
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         SearchTextView(textPlaceholder: "Search Posts",
@@ -77,16 +77,8 @@ struct CatalogView: View {
                             }
                         }
                         .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle("")
+                        .navigationBarTitle(self.viewModel.boardName)
                         .navigationBarItems(
-                            leading:
-                                Text(self.viewModel.boardName)
-                                .onTapGesture {
-                                    withAnimation(.linear) {
-                                        reader.scrollTo("search", anchor: .top)
-                                    }
-                                }
-                                .padding(.leading, UIScreen.main.bounds.width/3 - self.navigationCentering),
                             trailing: FavoriteStar(viewModel: self.viewModel)
                         )
                     }

@@ -14,7 +14,7 @@ struct OPView: View {
     let boardName: String
     let post: Post
     let comment: NSAttributedString
-    let opCommentTrailingLength: Int = 200
+    let opCommentTrailingLength: Int = 150
 
     init(boardName: String, post: Post, comment: NSAttributedString) {
         self.boardName = boardName

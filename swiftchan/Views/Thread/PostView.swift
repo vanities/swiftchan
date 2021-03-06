@@ -49,6 +49,8 @@ struct PostView: View {
                             useThumbnailGif: false
                         )
                         .frame(width: UIScreen.main.bounds.width/2)
+                        // .scaledToFit()
+                        .scaledToFill() // VStack
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 self.presentationState.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0

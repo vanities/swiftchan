@@ -89,7 +89,7 @@ struct SwiftUITextView: UIViewRepresentable {
     func fitHeight(_ view: UITextView) {
         guard dynamicHeight == true else { return }
         let newHeight = view.sizeThatFits(CGSize(width: view.frame.width, height: .greatestFiniteMagnitude)).height
-        guard self.height != newHeight else { return }
+        // guard self.height != newHeight else { return }
         DispatchQueue.main.async {
             self.height = newHeight
         }

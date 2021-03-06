@@ -24,7 +24,7 @@ struct ThreadView: View {
         return ZStack {
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 0) {
+                    VStack(spacing: 0) {
                     // performance..
                     /*
                     LazyVGrid(columns: self.columns,
@@ -56,34 +56,12 @@ struct ThreadView: View {
                             self.pullToRefreshShowing = false
                         }
                     }
-                    .navigationBarItems(
-                        leading: HStack {
-                            Button(self.viewModel.boardName) { presentationMode.wrappedValue.dismiss()
-                            }
-                            .offset(x: -18)
-                            .foregroundColor(.blue)
-                            .font(.body)
 
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .contentShape(Rectangle())
-                                    .frame(width: UIScreen.main.bounds.width/2 - 100, height: 30)
-                                    .onTapGesture {
-                                        withAnimation(.linear) {
-                                            reader.scrollTo(0)
-                                        }
-                                    }
-                                if let title = self.viewModel.posts[0].sub?.clean {
-                                    Text(title.trunc(length: 25))
-                                        .frame(width: UIScreen.main.bounds.width - 100)
-                                        .offset(x: -18)
-                                }
-                            }
-                        },
-                        trailing: Link(destination: self.viewModel.url) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
+                    .navigationTitle((self.viewModel.posts[0].sub != nil) ? self.viewModel.posts[0].sub!.clean : "")
+                    .navigationBarItems(trailing:
+                                            Link(destination: self.viewModel.url) {
+                                                Image(systemName: "square.and.arrow.up")
+                                            }
                     )
                 }
             }
