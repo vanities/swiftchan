@@ -11,7 +11,7 @@ import MobileVLCKit
 struct VLCContainerView: View {
     let url: URL
     @Binding var play: Bool
-    @StateObject var video: VLCVideoViewModel = VLCVideoViewModel()
+    @StateObject var video = VLCVideoViewModel()
     @State var showControls: Bool = false
 
     var onSeekChanged: ((Bool) -> Void)?
@@ -30,6 +30,9 @@ struct VLCContainerView: View {
                 }
                 .opacity(self.showControls ? 1 : 0)
 
+                if video.state == VLCMediaPlayerState.buffering {
+                    ActivityIndicator()
+                }
             }
             .onChange(of: self.video.mediaState) { state in
                 if state == .play {

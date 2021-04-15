@@ -53,34 +53,39 @@ struct CatalogView: View {
             ScrollViewReader { _ in
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
-                        SearchTextView(textPlaceholder: "Search Posts",
-                                       searchText: self.$searchText)
-                            .id("search")
+                        if viewModel.posts.count == 0 {
+                            ActivityIndicator()
+                        } else {
 
-                        LazyVGrid(columns: self.columns,
-                                  alignment: .center,
-                                  spacing: 0) {
+                            SearchTextView(textPlaceholder: "Search Posts",
+                                           searchText: self.$searchText)
+                                .id("search")
+
+                            LazyVGrid(columns: self.columns,
+                                      alignment: .center,
+                                      spacing: 0) {
                                 ForEach(self.filteredPosts.indices, id: \.self) { index in
                                     OPView(boardName: self.viewModel.boardName,
                                            post: self.viewModel.posts[index],
                                            comment: self.viewModel.comments[index])
                                         .id(self.viewModel.posts[index].id)
-                                        // .frame(width: UIScreen.main.bounds.width/2) //?
+                                    // .frame(width: UIScreen.main.bounds.width/2) //?
                                 }
-                        }
-                        .padding(.horizontal, 15)
-                        .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
-                            let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                            softVibrate.impactOccurred()
-                            self.viewModel.load {
-                                self.pullToRefreshShowing = false
                             }
+                            .padding(.horizontal, 15)
+                            .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                                softVibrate.impactOccurred()
+                                self.viewModel.load {
+                                    self.pullToRefreshShowing = false
+                                }
+                            }
+                            .navigationBarTitleDisplayMode(.inline)
+                            .navigationBarTitle(self.viewModel.boardName)
+                            .navigationBarItems(
+                                trailing: FavoriteStar(viewModel: self.viewModel)
+                            )
                         }
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle(self.viewModel.boardName)
-                        .navigationBarItems(
-                            trailing: FavoriteStar(viewModel: self.viewModel)
-                        )
                     }
                 }
             }

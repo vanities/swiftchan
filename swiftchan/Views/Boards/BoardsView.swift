@@ -16,65 +16,73 @@ struct BoardsView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
     var filteredBoards: [Board] {
-            self.viewModel.boards.filter({ board in
-                board.board.starts(with: self.searchText.lowercased()) && !self.favoriteBoards.contains(board)
-            })
+        self.viewModel.boards.filter({ board in
+            board.board.starts(with: self.searchText.lowercased()) && !self.favoriteBoards.contains(board)
+        })
     }
 
     var favoriteBoards: [Board] {
-            self.viewModel.boards.filter({ board in
-                self.userSettings.favoriteBoards.contains(board.board)
-            })
+        self.viewModel.boards.filter({ board in
+            self.userSettings.favoriteBoards.contains(board.board)
+        })
     }
 
     var body: some View {
         return NavigationView {
-            VStack(spacing: 0) {
-                SearchTextView(textPlaceholder: "Search Boards",
-                               searchText: self.$searchText)
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVGrid(columns: self.columns,
-                              alignment: .leading,
-                              spacing: 2) {
-                        if self.searchText == "" {
-                            Group {
-                                Section(header: Text("favorites")
-                                            .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                            .padding(.leading, 5)
-                                ) {
+            if viewModel.boards.count == 0 {
+                ActivityIndicator()
+            } else {
+                VStack(spacing: 0) {
+                    SearchTextView(
+                        textPlaceholder: "Search Boards",
+                        searchText: self.$searchText
+                    )
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVGrid(
+                            columns: self.columns,
+                            alignment: .leading,
+                            spacing: 2
+                        ) {
+                            if self.searchText == "" {
+                                Group {
+                                    Section(header: Text("favorites")
+                                                .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                                                .padding(.leading, 5)
+                                    ) {
 
-                                    ForEach(self.favoriteBoards, id: \.self.id) { board in
-                                        NavigationLink(
-                                            destination:
-                                                CatalogView(board.board)
-                                        ) {
-                                            BoardView(name: board.board,
-                                                      title: board.title,
-                                                      description: board.meta_description.clean)
-                                                .padding(.horizontal, 5)
+                                        ForEach(self.favoriteBoards, id: \.self.id) { board in
+                                            NavigationLink(
+                                                destination:
+                                                    CatalogView(board.board)
+                                            ) {
+                                                BoardView(name: board.board,
+                                                          title: board.title,
+                                                          description: board.meta_description.clean)
+                                                    .padding(.horizontal, 5)
+                                            }
                                         }
                                     }
-                                }
 
-                            }
-                        }
-                        Section(header: Text("all")
-                                    .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                    .padding(.leading, 5)
-                        ) {
-                            ForEach(self.filteredBoards, id: \.self.id) { board in
-                                NavigationLink(
-                                    destination: CatalogView(board.board)) {
-                                    BoardView(name: board.board,
-                                              title: board.title,
-                                              description: board.meta_description.clean)
-                                        .padding(.horizontal, 5)
                                 }
                             }
-                        }
-                              }
-                    .buttonStyle(PlainButtonStyle())
-                    .navigationBarTitle("4chan")
+                            Section(header: Text("all")
+                                        .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                                        .padding(.leading, 5)
+                            ) {
+                                ForEach(self.filteredBoards, id: \.self.id) { board in
+                                    NavigationLink(
+                                        destination: CatalogView(board.board)) {
+                                        BoardView(name: board.board,
+                                                  title: board.title,
+                                                  description: board.meta_description.clean)
+                                            .padding(.horizontal, 5)
+                                    }
+                                }
+                            }
+                                  }
+                        .buttonStyle(PlainButtonStyle())
+                        .navigationBarTitle("4chan")
+                    }
                 }
             }
         }
