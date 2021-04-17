@@ -30,7 +30,7 @@ struct VLCContainerView: View {
                 }
                 .opacity(self.showControls ? 1 : 0)
 
-                if video.state == VLCMediaPlayerState.buffering {
+                if video.cachedUrl == nil {
                     ActivityIndicator()
                 }
             }

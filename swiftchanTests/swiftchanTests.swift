@@ -34,14 +34,14 @@ class SwiftchanTests: XCTestCase {
         print(result)
         XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org/")!)
         XCTAssertEqual(result[1].0, URL(string: "http://www.wings3d.com/")!)
-        XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servle%E2%80%8Bt/pc/item?id=13571257&siteID=123112")!)
-        XCTAssertEqual(result[3].0, URL(string: "http://www.sidefx.com/index.php?opt%E2%80%8Bion=com_download&Itemid=208&task=ap%E2%80%8Bprentice")!)
+        XCTAssertEqual(result[2].0, URL(string: "http://usa.autodesk.com/adsk/servlet/pc/item?id=13571257&siteID=123112")!)
+        XCTAssertEqual(result[3].0, URL(string: "http://www.sidefx.com/index.php?option=com_download&Itemid=208&task=apprentice")!)
     }
 
     func testHyperLinkFinderQueryParam() throws {
         let urlString = "https://store.steampowered.com/app/​773840/DRAG/"
         let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let result = parser.checkForUrls(urlString)
-        XCTAssertEqual(result[0].0, URL(string: percentUrlString))
+        XCTAssertEqual(result[0].0, URL(string: "https://store.steampowered.com/app/773840/DRAG/"))
     }
 }

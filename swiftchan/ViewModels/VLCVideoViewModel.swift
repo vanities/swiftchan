@@ -17,7 +17,7 @@ class VLCVideoViewModel: ObservableObject {
 
     @Published var url: URL?
     @Published var cachedUrl: URL?
-    @Published var mediaState: MediaState = .play
+    @Published var mediaState: MediaState = .pause
     @Published var state: VLCMediaPlayerState = .buffering
     @Published var currentTime: VLCTime = VLCTime(int: 0)
     @Published var remainingTime: VLCTime = VLCTime(int: 0)
