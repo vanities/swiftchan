@@ -104,10 +104,6 @@ pod install
 
 If you want to test it with me on testflight or think we can get it on the app store, just [email me](mailto:mischke@protonmail.com)
 
-### Bugs
-
-- When first loading the app, going to a thread with a webm in the first slot will cause gestures not to work. Workaround: tap and hold the webm, then tap anywhere
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
