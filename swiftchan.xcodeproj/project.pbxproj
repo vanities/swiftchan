@@ -209,9 +209,6 @@
 				95893437255B7FBF000DEEDC /* VLC */,
 				950E393F255CDA3B00A00A74 /* MediaView.swift */,
 				95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */,
-				95F6245F255CE64400E9147B /* URLExamples.swift */,
-				9524F4B52580545C0006395F /* FileExport.swift */,
-				9524F4BA258054A60006395F /* MediaSaver.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -346,6 +343,9 @@
 		9580614A255263DB0003FFF3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				95F6245F255CE64400E9147B /* URLExamples.swift */,
+				9524F4BA258054A60006395F /* MediaSaver.swift */,
+				9524F4B52580545C0006395F /* FileExport.swift */,
 				95105378256608E5002E4051 /* CommentParser.swift */,
 				95851DD525567314002CB2A1 /* MediaDetector.swift */,
 				9587A51B255726D80028A143 /* CacheService.swift */,

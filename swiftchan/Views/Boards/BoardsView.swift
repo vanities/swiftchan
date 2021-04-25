@@ -37,7 +37,7 @@ struct BoardsView: View {
                         textPlaceholder: "Search Boards",
                         searchText: self.$searchText
                     )
-                    ScrollView(.vertical, showsIndicators: false) {
+                    ScrollView(.vertical, showsIndicators: true) {
                         LazyVGrid(
                             columns: self.columns,
                             alignment: .leading,

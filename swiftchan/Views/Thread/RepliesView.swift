@@ -25,7 +25,7 @@ struct RepliesView: View {
         return
             ZStack(alignment: .center) {
                 Blur(style: .regular).ignoresSafeArea()
-                ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {

@@ -51,7 +51,7 @@ struct CatalogView: View {
     var body: some View {
         return
             ScrollViewReader { _ in
-                ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: true) {
                     VStack(spacing: 0) {
                         if viewModel.posts.count == 0 {
                             ActivityIndicator()

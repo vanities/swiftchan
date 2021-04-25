@@ -48,7 +48,6 @@ class FourchanService {
                         mediaIndex += 1
                         mediaUrls.append(mediaUrl)
                         thumbnailMediaUrls.append(thumbnailMediaUrl)
-
                     }
                     if let comment = post.com {
                         let parser = CommentParser(comment: comment)

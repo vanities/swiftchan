@@ -23,7 +23,7 @@ struct ThreadView: View {
     var body: some View {
         return ZStack {
             ScrollViewReader { reader in
-                ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: true) {
                     VStack(spacing: 0) {
                     // performance..
                     /*
