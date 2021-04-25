@@ -19,8 +19,8 @@ platform :ios do
   desc "Build the App"
   lane :beta do
     ensure_git_status_clean
-    increment_build_number(xworkspace: "swiftchan.xworkspace")
-    commit_version_bump(xcodeproj: "swiftchan.xworkspace")
+    increment_build_number
+    commit_version_bump
     add_git_tag
     push_to_git_remote
     sync_code_signing
