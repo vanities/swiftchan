@@ -23,7 +23,7 @@ platform :ios do
     commit_version_bump
     add_git_tag
     push_to_git_remote
-    sync_code_signing
+    sync_code_signing(team_id="8Q3RG3ULSU")
     build_app(scheme: "swiftchan")
     changelog_from_git_commits
     upload_to_testflight
