@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-xcode-cache
 
       - name: Cache pods
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         id: pods-cache
         with:
           path: Pods

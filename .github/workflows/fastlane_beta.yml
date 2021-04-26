@@ -21,7 +21,7 @@ jobs:
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Cache pods
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         id: pods-cache
         with:
           path: Pods
@@ -33,7 +33,7 @@ jobs:
         if: steps.pods-cache.outputs.cache-hit != 'true'
         run: |
           echo ${{ steps.pods-cache.outputs.cache-hit }}
-          pod install --repo-update
+          pod install
 
       - name: Build and Send to Testflight
         run: fastlane beta
