@@ -20,8 +20,21 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
+      - name: Cache pods
+        uses: actions/cache@v1
+        id: pods-cache
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install Dependencies
+        if: steps.pods-cache.outputs.cache-hit != 'true'
+        run: |
+          pod install --repo-update
+
       - name: Build and Send to Testflight
         run: fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
