@@ -32,7 +32,6 @@ jobs:
       - name: Install Dependencies
         if: steps.pods-cache.outputs.cache-hit != 'true'
         run: |
-          echo ${{ steps.pods-cache.outputs.cache-hit }}
           pod install
 
       - name: Build and Send to Testflight
