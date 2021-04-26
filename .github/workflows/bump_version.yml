@@ -1,24 +1,20 @@
 name: Bump version
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+    branches: [master]
 
   workflow_dispatch:
 
 jobs:
-  bump_version:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  release:
+    name: Fastlane Beta Release To Testflight
+    runs-on: macos-latest
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          fetch-depth: "0"
-          ssh-key: "${{ secrets.SSH_KEY }}"
+          key: ${{ secrets.FUNFUNFUN_BOT_SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.33.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          RELEASE_BRANCHES: master
-          DEFAULT_BUMP: minor
-          WITH_V: true
+      - name: Build and Send to Testflight
+        run: fastlane beta
