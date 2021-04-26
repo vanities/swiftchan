@@ -9,10 +9,14 @@ jobs:
   release:
     name: Fastlane Beta Release To Testflight
     runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.FUNFUNFUN_BOT_SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
