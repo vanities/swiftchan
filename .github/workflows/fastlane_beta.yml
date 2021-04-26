@@ -22,3 +22,5 @@ jobs:
 
       - name: Build and Send to Testflight
         run: fastlane beta
+        env:
+          MATCH_KEY: ${{ secrets.MATCH_KEY }}
