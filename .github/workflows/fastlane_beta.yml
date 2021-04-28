@@ -20,22 +20,6 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
-      - name: Cache pods
-        uses: actions/cache@v2
-        id: pods-cache
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
-      - name: Install Dependencies
-        if: steps.pods-cache.outputs.cache-hit != 'true'
-        run: |
-          pod install
-
-      - name: Build and Send to Testflight
-        run: bundle exec fastlane beta
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
