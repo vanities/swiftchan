@@ -1,9 +1,7 @@
-name: Bump version
+name: Build and Release to Testflight
 on:
-  pull_request:
+  push:
     branches: [master]
-
-  workflow_dispatch:
 
 jobs:
   release:
@@ -38,5 +36,4 @@ jobs:
         run: fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}

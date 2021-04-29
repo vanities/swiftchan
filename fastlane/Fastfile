@@ -41,7 +41,7 @@ platform :ios do
       is_key_content_base64: true
     )
     upload_to_testflight
-    push_to_git_remote
     delete_keychain(name: "temp")
+    push_to_git_remote
   end
 end
