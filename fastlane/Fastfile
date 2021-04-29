@@ -47,6 +47,7 @@ platform :ios do
     build_number = get_build_number()
     set_github_release(
       repository_name: "vanities/swiftchan",
+      api_token: ENV["GITHUB_ACCESS_TOKEN"],
       name: "v" + version + build_number,
       tag_name: "v" + version + build_number,
       description: (File.read("changelog") rescue "No changelog provided"),
