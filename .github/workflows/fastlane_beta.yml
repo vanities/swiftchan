@@ -1,6 +1,6 @@
 name: Build and Release to Testflight
 on:
-  pull_request:
+  push:
     branches: [master]
 
 jobs:
