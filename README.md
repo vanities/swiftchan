@@ -11,8 +11,8 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![GPL3 License][license-shield]][license-url]
-![Build and Test](https://github.com/vanities/swiftchan/workflows/Build%20and%20Test/badge.svg?branch=master)
-[![GitHub tag](https://img.shields.io/github/tag/vanities/swiftchan.svg)](https://github.com/vaniteis/swiftchan/tags/)
+[![Build and Release to Testflight](https://github.com/vanities/swiftchan/actions/workflows/fastlane_beta.yml/badge.svg)](https://github.com/vanities/swiftchan/actions/workflows/fastlane_beta.yml)
+[![GitHub tag](https://img.shields.io/github/release/vanities/swiftchan.svg)](https://github.com/vanities/swiftchan/releases)
 
 
 <!-- PROJECT LOGO -->
