@@ -53,9 +53,9 @@ platform :ios do
       upload_assets: ["swiftchan.ipa"]
     )
 
+    sh("git checkout master")
     commit_version_bump
     add_git_tag
-    sh("git checkout master")
     push_to_git_remote
   end
 end
