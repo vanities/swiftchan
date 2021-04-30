@@ -16,7 +16,17 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Build the App"
+  desc "Run Tests"
+  lane :tests do
+    run_tests(
+      use_system_scm: true,
+      build_for_testing: true,
+      workspace: "swiftchan.xcworkspace",
+      scheme: "swiftchan"
+    )
+  end
+
+  desc "Build the App, Send to Testflight, and push a build bump"
   lane :beta do
     ensure_git_status_clean
 
@@ -29,7 +39,11 @@ platform :ios do
       keychain_password: "temppassword"
     )
 
-    build_app(use_system_scm: true, workspace: "swiftchan.xcworkspace", scheme: "swiftchan")
+    build_app(
+      use_system_scm: true,
+      workspace: "swiftchan.xcworkspace",
+      scheme: "swiftchan"
+    )
 
     changelog_from_git_commits
 
