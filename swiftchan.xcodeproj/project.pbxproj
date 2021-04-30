@@ -28,7 +28,7 @@
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D8C25EF2804003E0A59 /* PresentationState.swift */; };
 		95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D9025EF37F3003E0A59 /* DismissGesture.swift */; };
-		952F72EC25D0608200762154 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftPackageProductDependency */; };
+		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		9530CCB325E1D69100F0EB0F /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530CCB225E1D69100F0EB0F /* TextView.swift */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
@@ -51,9 +51,9 @@
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
-		95B31D4625E2E3B400C309D4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */; };
-		95B31D4C25E2E3D400C309D4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4B25E2E3D400C309D4 /* SwiftPackageProductDependency */; };
-		95B31D5225E2E3FC00C309D4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */; };
+		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
+		95B31D4C25E2E3D400C309D4 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4B25E2E3D400C309D4 /* URLImage */; };
+		95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D5125E2E3FC00C309D4 /* FourChan */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
@@ -167,10 +167,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				952F72EC25D0608200762154 /* BuildFile in Frameworks */,
-				95B31D5225E2E3FC00C309D4 /* BuildFile in Frameworks */,
-				95B31D4625E2E3B400C309D4 /* BuildFile in Frameworks */,
-				95B31D4C25E2E3D400C309D4 /* BuildFile in Frameworks */,
+				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
+				95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */,
+				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
+				95B31D4C25E2E3D400C309D4 /* URLImage in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,10 +465,10 @@
 			);
 			name = swiftchan;
 			packageProductDependencies = (
-				952F72EB25D0608200762154 /* SwiftPackageProductDependency */,
-				95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */,
-				95B31D4B25E2E3D400C309D4 /* SwiftPackageProductDependency */,
-				95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */,
+				952F72EB25D0608200762154 /* SwiftUIPager */,
+				95B31D4525E2E3B400C309D4 /* Introspect */,
+				95B31D4B25E2E3D400C309D4 /* URLImage */,
+				95B31D5125E2E3FC00C309D4 /* FourChan */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -542,10 +542,10 @@
 			);
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
-				952F72EA25D0608200762154 /* RemoteSwiftPackageReference */,
-				95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */,
-				95B31D4A25E2E3D400C309D4 /* RemoteSwiftPackageReference */,
-				95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */,
+				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
+				95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */,
+				95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -861,7 +861,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 71;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -888,7 +888,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 71;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
@@ -915,7 +915,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				INFOPLIST_FILE = swiftchanTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -937,7 +937,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				INFOPLIST_FILE = swiftchanTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1033,7 +1033,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		952F72EA25D0608200762154 /* RemoteSwiftPackageReference */ = {
+		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
 			requirement = {
@@ -1041,7 +1041,7 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */ = {
+		95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:siteline/SwiftUI-Introspect.git";
 			requirement = {
@@ -1049,7 +1049,7 @@
 				minimumVersion = 0.1.2;
 			};
 		};
-		95B31D4A25E2E3D400C309D4 /* RemoteSwiftPackageReference */ = {
+		95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:dmytro-anokhin/url-image.git";
 			requirement = {
@@ -1057,7 +1057,7 @@
 				minimumVersion = 2.2.3;
 			};
 		};
-		95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */ = {
+		95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:vanities/FourChanAPI.git";
 			requirement = {
@@ -1068,24 +1068,24 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		952F72EB25D0608200762154 /* SwiftPackageProductDependency */ = {
+		952F72EB25D0608200762154 /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 952F72EA25D0608200762154 /* RemoteSwiftPackageReference */;
+			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
 		};
-		95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */ = {
+		95B31D4525E2E3B400C309D4 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */;
+			package = 95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		95B31D4B25E2E3D400C309D4 /* SwiftPackageProductDependency */ = {
+		95B31D4B25E2E3D400C309D4 /* URLImage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95B31D4A25E2E3D400C309D4 /* RemoteSwiftPackageReference */;
+			package = 95B31D4A25E2E3D400C309D4 /* XCRemoteSwiftPackageReference "url-image" */;
 			productName = URLImage;
 		};
-		95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */ = {
+		95B31D5125E2E3FC00C309D4 /* FourChan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */;
+			package = 95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
 		};
 /* End XCSwiftPackageProductDependency section */
