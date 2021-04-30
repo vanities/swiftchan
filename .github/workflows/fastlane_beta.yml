@@ -18,10 +18,6 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 60
-
       - name: Cache Swift Package Manager
         uses: actions/cache@v2
         with:
