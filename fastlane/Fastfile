@@ -20,7 +20,6 @@ platform :ios do
   lane :tests do
     run_tests(
       use_system_scm: true,
-      build_for_testing: true,
       workspace: "swiftchan.xcworkspace",
       scheme: "swiftchan"
     )
