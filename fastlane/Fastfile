@@ -19,7 +19,7 @@ platform :ios do
   desc "Build the App"
   lane :beta do
     ensure_git_status_clean
-    increment_build_number
+
     create_keychain(name: "temp", password: "temppassword")
     sync_code_signing(
       team_id: "8Q3RG3ULSU",
@@ -28,8 +28,11 @@ platform :ios do
       keychain_name: "temp",
       keychain_password: "temppassword"
     )
+
     build_app(use_system_scm: true, workspace: "swiftchan.xcworkspace", scheme: "swiftchan")
+
     changelog_from_git_commits
+
     app_store_connect_api_key(
       key_id: "48RUB3TQ9V",
       issuer_id: "69a6de73-ce5c-47e3-e053-5b8c7c11a4d1",
@@ -38,22 +41,27 @@ platform :ios do
       key_content: ENV["APP_STORE_CONNECT_API_KEY_BASE64"],
       is_key_content_base64: true
     )
+
     upload_to_testflight(skip_waiting_for_build_processing: true)
+
     delete_keychain(name: "temp")
 
     version = get_version_number()
     build_number = get_build_number()
+    tag = "v" + version + "." + build_number
+
     set_github_release(
       repository_name: "vanities/swiftchan",
       api_token: ENV["GITHUB_ACCESS_TOKEN"],
-      name: "v" + version + "." + build_number,
-      tag_name: "v" + version + "." + build_number,
+      name: tag,
+      tag_name: tag,
       description: (File.read("changelog") rescue "No changelog provided"),
       commitish: "master",
       upload_assets: ["swiftchan.ipa"]
     )
 
     sh("git fetch && git checkout master")
+    increment_build_number
     commit_version_bump
     add_git_tag
     push_to_git_remote
