@@ -38,9 +38,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.pods-cache.outputs.cache-hit != 'true'
-        run: |
-          pod install --repo-update
+        run: pod install --repo-update
 
       - name: Test
-        run: |
-          fastlane tests
+        run: fastlane tests
