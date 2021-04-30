@@ -20,8 +20,6 @@ platform :ios do
   lane :beta do
     ensure_git_status_clean
     increment_build_number
-    commit_version_bump
-    add_git_tag
     create_keychain(name: "temp", password: "temppassword")
     sync_code_signing(
       team_id: "8Q3RG3ULSU",
@@ -48,12 +46,16 @@ platform :ios do
     set_github_release(
       repository_name: "vanities/swiftchan",
       api_token: ENV["GITHUB_ACCESS_TOKEN"],
-      name: "v" + version + build_number,
-      tag_name: "v" + version + build_number,
+      name: "v" + version + "." + build_number,
+      tag_name: "v" + version + "." + build_number,
       description: (File.read("changelog") rescue "No changelog provided"),
       commitish: "master",
       upload_assets: ["swiftchan.ipa"]
     )
+
+    commit_version_bump
+    add_git_tag
+    sh("git checkout master")
     push_to_git_remote
   end
 end
