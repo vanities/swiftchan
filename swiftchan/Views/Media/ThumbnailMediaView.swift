@@ -28,7 +28,7 @@ struct ThumbnailMediaView: View {
             if self.useThumbnailGif {
                 ImageView(url: self.thumbnailUrl)
             } else {
-                GIFView(url: self.url)
+                ImageView(url: self.url)
                     .scaledToFit()
             }
         case .none:

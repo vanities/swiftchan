@@ -25,11 +25,15 @@ extension CatalogView {
                 self?.posts = posts
                 self?.comments = comments
                 complete?()
-                let urls = posts.compactMap { [weak self] post in
-                    return post.getMediaUrl(boardId: self?.boardName ?? "")
-                }
-                Prefetcher.shared.prefetch(urls: urls)
+                self?.prefetch()
             }
+        }
+
+        func prefetch() {
+            let urls = posts.compactMap { [weak self] post in
+                return post.getMediaUrl(boardId: self?.boardName ?? "")
+            }
+            Prefetcher.shared.prefetch(urls: urls)
         }
     }
 }
