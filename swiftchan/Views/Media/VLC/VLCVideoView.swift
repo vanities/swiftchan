@@ -10,7 +10,7 @@ import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
     let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
-    @EnvironmentObject var video: VLCVideoViewModel
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
     @State var media: VLCMedia?
 
     func makeUIView(context: Context) -> UIView {
@@ -30,7 +30,7 @@ struct VLCVideoView: UIViewRepresentable {
             self.setMediaPlayer(context: context)
         }
 
-        switch self.video.mediaState {
+        switch vlcVideoViewModel.vlcVideo.mediaState {
         case .play:
             if let player = playerList.mediaPlayer,
                !player.isPlaying,
@@ -68,11 +68,11 @@ struct VLCVideoView: UIViewRepresentable {
     // MARK: Private
     private func setMediaPlayer(context: VLCVideoView.Context) {
         DispatchQueue.main.async {
-            if let cacheUrl = self.video.cachedUrl {
+            if let cacheUrl = vlcVideoViewModel.vlcVideo.cachedUrl {
                 self.media = VLCMedia(url: cacheUrl)
                 self.playerList.rootMedia = self.media
                 context.coordinator.parent.playerList.rootMedia = self.media
-            } else if let url = self.video.url {
+            } else if let url = vlcVideoViewModel.vlcVideo.url {
                 self.media = VLCMedia(url: url)
                 self.playerList.rootMedia = self.media
                 context.coordinator.parent.playerList.rootMedia = self.media
@@ -97,17 +97,17 @@ struct VLCVideoView: UIViewRepresentable {
 
         // MARK: Player Delegate
         func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-            if let player = self.parent.playerList.mediaPlayer {
-                self.parent.video.currentTime = player.time
-                self.parent.video.remainingTime = player.remainingTime
-                self.parent.video.totalTime = VLCTime(int: self.parent.video.currentTime.intValue + abs(self.parent.video.remainingTime.intValue))
+            if let player = parent.playerList.mediaPlayer {
+                parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
+                parent.vlcVideoViewModel.vlcVideo.remainingTime = player.remainingTime
+                parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(int: parent.vlcVideoViewModel.vlcVideo.currentTime.intValue + abs(parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue))
                 // print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
             }
         }
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
-            if let player = self.parent.playerList.mediaPlayer {
-                self.parent.video.state = player.state
+            if let player = parent.playerList.mediaPlayer {
+                parent.vlcVideoViewModel.vlcVideo.state = player.state
             }
         }
     }

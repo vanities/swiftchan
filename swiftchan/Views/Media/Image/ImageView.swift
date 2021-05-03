@@ -7,6 +7,7 @@
 
 import SwiftUI
 import URLImage
+import Kingfisher
 
 struct ImageView: View {
     let url: URL
@@ -35,28 +36,48 @@ struct ImageView: View {
     }
 
     var body: some View {
-        return URLImage(url: self.url,
-                        options: self.imageOptions) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-        }
-        .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
-        .scaleEffect(self.scale)
-        .gesture(self.canGesture ? self.zoomMagnificationGesture() : nil)
-        // allow drag, only if zoomed in or out
-        .highPriorityGesture(
-            self.zoomed && self.canGesture ? self.panDragGesture() : nil
-        )
-        .simultaneousGesture(self.canGesture ? self.zoomTapGesture() : nil)
-        .onChange(of: self.isSelected) { selected in
-            if !selected {
-                self.zoomed = false
-                self.onZoomChanged?(self.zoomed)
-                self.scale = 1
-                self.position = .zero
+        /*
+        KFImage(url)
+            .placeholder {
+                // Placeholder while downloading.
+                Image(systemName: "arrow.2.circlepath.circle")
+                    .font(.largeTitle)
+                    .opacity(0.3)
             }
-        }
+            .retry(maxCount: 3, interval: .seconds(5))
+            .onSuccess { r in
+                // r: RetrieveImageResult
+                print("success: \(r)")
+            }
+            .onFailure { e in
+                // e: KingfisherError
+                print("failure: \(e)")
+            }
+ */
+        return KFImage(url)
+            .placeholder {
+                ActivityIndicator()
+            }
+            // .onlyFromCache()
+            .resizable()
+            .cancelOnDisappear(true)
+            .aspectRatio(contentMode: .fit)
+            .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
+            .scaleEffect(self.scale)
+            .gesture(self.canGesture ? self.zoomMagnificationGesture() : nil)
+            // allow drag, only if zoomed in or out
+            .highPriorityGesture(
+                self.zoomed && self.canGesture ? self.panDragGesture() : nil
+            )
+            .simultaneousGesture(self.canGesture ? self.zoomTapGesture() : nil)
+            .onChange(of: self.isSelected) { selected in
+                if !selected {
+                    self.zoomed = false
+                    self.onZoomChanged?(self.zoomed)
+                    self.scale = 1
+                    self.position = .zero
+                }
+            }
     }
 
     func zoomTapGesture() -> some Gesture {

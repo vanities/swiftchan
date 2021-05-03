@@ -31,68 +31,72 @@ struct ThreadView: View {
                               alignment: .center,
                               spacing: 0) {
  */
-                        ForEach(self.viewModel.posts.indices, id: \.self) { index in
-                            if index < self.viewModel.comments.count {
+                        ForEach(viewModel.posts.indices, id: \.self) { index in
+                            if index < viewModel.comments.count {
                                 PostView(index: index)
                                     .id(index)
                             }
                         }
                     }
                     .padding(.all, 3)
-                    .onChange(of: self.presentedDismissGesture.dismiss) { dismissing in
+                    .onChange(of: presentedDismissGesture.dismiss) { dismissing in
                         DispatchQueue.main.async {
                             if dismissing,
-                               self.presentationState.presentingIndex != self.presentationState.galleryIndex,
-                               let mediaI = self.viewModel.postMediaMapping.firstIndex(where: { $0.value == self.presentationState.galleryIndex }) {
-                                reader.scrollTo(self.viewModel.postMediaMapping[mediaI].key, anchor: self.viewModel.mediaUrls.count - self.presentationState.galleryIndex < 3 ? .bottom : .top)
+                               presentationState.presentingIndex != presentationState.galleryIndex,
+                               let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
+                                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.mediaUrls.count - presentationState.galleryIndex < 3 ? .bottom : .top)
                             }
                         }
                     }
-                    .opacity(self.opacity)
-                    .pullToRefresh(isRefreshing: self.$pullToRefreshShowing) {
+                    .opacity(opacity)
+                    .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
                         let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                         softVibrate.impactOccurred()
-                        self.viewModel.load {
-                            self.pullToRefreshShowing = false
+                        viewModel.load {
+                            pullToRefreshShowing = false
+                            viewModel.prefetch()
                         }
                     }
 
-                    .navigationTitle((self.viewModel.posts[0].sub != nil) ? self.viewModel.posts[0].sub!.clean : "")
+                    .navigationTitle(viewModel.posts.first?.sub?.clean ?? "")
                     .navigationBarItems(trailing:
-                                            Link(destination: self.viewModel.url) {
+                                            Link(destination: viewModel.url) {
                                                 Image(systemName: "square.and.arrow.up")
                                             }
                     )
                 }
             }
-            .onChange(of: self.presentedDismissGesture.draggingOffset) { value in
+            .onChange(of: presentedDismissGesture.draggingOffset) { value in
                 DispatchQueue.main.async {
                     withAnimation(.linear) {
-                        self.opacity = Double(value / UIScreen.main.bounds.height)
+                        opacity = Double(value / UIScreen.main.bounds.height)
                     }
                 }
             }
-            .onChange(of: self.presentedDismissGesture.presenting, perform: { value in
-                if value && self.appState.fullscreenView == nil {
-                    self.appState.fullscreenView = AnyView(
+            .onChange(of: presentedDismissGesture.presenting, perform: { value in
+                if value && appState.fullscreenView == nil {
+                    appState.fullscreenView = AnyView(
                         PresentedPost()
                             .onDisappear {
-                                self.opacity = 1
-                                self.presentedDismissGesture.dismiss = false
-                                self.presentedDismissGesture.canDrag = true
-                                self.presentedDismissGesture.dragging = false
+                                opacity = 1
+                                presentedDismissGesture.dismiss = false
+                                presentedDismissGesture.canDrag = true
+                                presentedDismissGesture.dragging = false
                             }
-                            .environmentObject(self.viewModel)
-                            .environmentObject(self.presentationState)
-                            .environmentObject(self.presentedDismissGesture)
+                            .environmentObject(viewModel)
+                            .environmentObject(presentationState)
+                            .environmentObject(presentedDismissGesture)
                     )
                 } else {
-                    self.appState.fullscreenView = nil
+                    appState.fullscreenView = nil
                 }
             })
         }
-        .environmentObject(self.presentationState)
-        .environmentObject(self.presentedDismissGesture)
+        .onAppear {
+            viewModel.prefetch()
+        }
+        .environmentObject(presentationState)
+        .environmentObject(presentedDismissGesture)
     }
 }
 

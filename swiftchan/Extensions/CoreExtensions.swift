@@ -232,3 +232,15 @@ extension String {
         addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.replacePattern(pattern: "%E2%80%8B", replaceWith: "") ?? ""
     }
 }
+
+extension URL {
+    func isWebm() -> Bool {
+        return MediaDetector.detect(url: self) == .webm
+    }
+    func isImage() -> Bool {
+        return MediaDetector.detect(url: self) == .image
+    }
+    func isGif() -> Bool {
+        return MediaDetector.detect(url: self) == .gif
+    }
+}

@@ -43,5 +43,15 @@ extension ThreadView {
                 complete?()
             }
         }
+
+        func prefetch() {
+            let urls = self.posts.compactMap { [weak self] post in
+                return post.getMediaUrl(boardId: self?.boardName ?? "")
+            }
+            let thumbnailUrls = self.posts.compactMap { [weak self] post in
+                return post.getMediaUrl(boardId: self?.boardName ?? "", thumbnail: true)
+            }
+            Prefetcher.shared.prefetch(urls: urls + thumbnailUrls)
+        }
     }
 }

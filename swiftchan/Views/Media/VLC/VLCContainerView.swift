@@ -11,7 +11,7 @@ import MobileVLCKit
 struct VLCContainerView: View {
     let url: URL
     @Binding var play: Bool
-    @StateObject var video = VLCVideoViewModel()
+    @StateObject var vlcVideoViewModel = VLCVideoViewModel()
     @State var showControls: Bool = false
 
     var onSeekChanged: ((Bool) -> Void)?
@@ -20,42 +20,42 @@ struct VLCContainerView: View {
         return
             ZStack {
                 VLCVideoView()
-                    .environmentObject(video)
+                    .environmentObject(vlcVideoViewModel)
                 VStack {
                     Spacer()
                     VLCPlayerControlsView()
-                        .environmentObject(video)
+                        .environmentObject(vlcVideoViewModel)
                         .padding(.bottom, 25)
-                        .onChange(of: self.video.seeking) { self.onSeekChanged?($0) }
+                        .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
                 }
-                .opacity(self.showControls ? 1 : 0)
+                .opacity(showControls ? 1 : 0)
 
-                if video.state == .playing {
+                if vlcVideoViewModel.vlcVideo.state == .playing {
                     ActivityIndicator()
                 }
             }
-            .onChange(of: self.video.mediaState) { state in
+            .onChange(of: vlcVideoViewModel.vlcVideo.mediaState) { state in
                 if state == .play {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                         withAnimation(.linear(duration: 0.2)) {
-                            self.showControls = false
+                            showControls = false
                         }
                     }
                 }
             }
             .onTapGesture {
                 withAnimation(.linear(duration: 0.2)) {
-                    self.showControls.toggle()
+                    showControls.toggle()
                 }
             }
             .onChange(of: self.play) {
-                self.video.mediaState = $0 ? .play : .pause
+                vlcVideoViewModel.vlcVideo.mediaState = $0 ? .play : .pause
             }
             .onAppear {
-                self.video.url = self.url
-                self.video.setCachedMediaPlayer(url: url)
-                if self.play {
-                    self.video.mediaState = .play
+                vlcVideoViewModel.vlcVideo.url = url
+                vlcVideoViewModel.setCachedMediaPlayer(url: url)
+                if play {
+                    vlcVideoViewModel.vlcVideo.mediaState = .play
                 }
             }
     }

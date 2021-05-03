@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
+        "state": {
+          "branch": null,
+          "revision": "44450a8f564d7c0165f736ba2250649ff8d3e556",
+          "version": "6.3.0"
+        }
+      },
+      {
         "package": "Introspect",
         "repositoryURL": "git@github.com:siteline/SwiftUI-Introspect.git",
         "state": {
@@ -24,8 +33,8 @@
         "repositoryURL": "git@github.com:fermoya/SwiftUIPager.git",
         "state": {
           "branch": null,
-          "revision": "fd375686c890aff55429b4da12a22dbacca08ae4",
-          "version": "2.1.0"
+          "revision": "80a31d0e6d95f7216eb7bfe16f66d8b533fe857b",
+          "version": "2.2.0"
         }
       },
       {
@@ -33,8 +42,8 @@
         "repositoryURL": "git@github.com:dmytro-anokhin/url-image.git",
         "state": {
           "branch": null,
-          "revision": "c1a906515b0a440927b96204b778058871b22f23",
-          "version": "2.2.3"
+          "revision": "ccab89ad1cedb04f25dd4df1776dd8c8583b914a",
+          "version": "2.2.5"
         }
       }
     ]
