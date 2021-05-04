@@ -23,8 +23,8 @@ struct ContentView: View {
                 .environmentObject(self.appState)
                 .blur(radius: self.backgrounding ? 10 : 0)
 
-            if let v = self.appState.fullscreenView {
-                v
+            if let fullscreenView = self.appState.fullscreenView {
+                fullscreenView
             }
 
             // privacy splash

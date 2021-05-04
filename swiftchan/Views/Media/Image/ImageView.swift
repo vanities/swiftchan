@@ -50,9 +50,10 @@ struct ImageView: View {
             .placeholder {
                 ActivityIndicator()
             }
-            // .onlyFromCache()
+            .loadImmediately()
+            .onlyFromCache()
+            .waitForCache()
             .resizable()
-            .cancelOnDisappear(true)
             .aspectRatio(contentMode: .fit)
             .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
             .scaleEffect(self.scale)

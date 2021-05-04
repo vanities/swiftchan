@@ -22,10 +22,8 @@ class Prefetcher {
         let prefetcher = ImagePrefetcher(
             urls: urls,
             options: [
-                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1))),
-                .backgroundDecode,
-                .processingQueue(.mainAsync)
-
+                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1)))
+                // .processingQueue(.mainAsync)
             ]
         ) { _, _, _ in
             /*
@@ -39,6 +37,19 @@ class Prefetcher {
         prefetcher.start()
     }
     func prefetchVideos(urls: [URL]) {
+        for url in urls {
+            let cacheURL = CacheManager.shared.cacheURL(stringURL: url.absoluteString)
+            guard !CacheManager.shared.cacheHit(file: cacheURL) else { continue }
+            let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { (tempURL, _, _) in
+                if let tempURL = tempURL {
+                    CacheManager.shared.cache(tempURL: tempURL, cacheURL: cacheURL) { _ in
+                        print("finished downloading \(url.absoluteString)")
+                    }
+                }
+            })
+
+            DownloadQueue.shared.queue.addOperation(operation)
+        }
 
     }
 }

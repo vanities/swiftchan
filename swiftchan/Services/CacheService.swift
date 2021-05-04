@@ -6,48 +6,52 @@
 //
 
 import Foundation
+import Kingfisher
 
 class CacheManager {
 
     static let shared = CacheManager()
     private let fileManager = FileManager.default
-    private var checked = Set<String>()
     private lazy var mainDirectoryUrl: URL = {
         let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
     }()
 
     func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
-        guard self.checked.contains(stringUrl) == false else {
-            // print("\(stringUrl) caching already" )
-            return
-        }
-        self.checked.insert(stringUrl)
-
-        let file = directoryFor(stringUrl: stringUrl)
+        let cacheURL = self.cacheURL(stringURL: stringUrl)
 
         // return file path if already exists in cache directory
-        guard !fileManager.fileExists(atPath: file.path)  else {
+        guard !self.cacheHit(file: cacheURL)  else {
             // print("file exists in cache \(file.path)" )
-            completionHandler(.success(file))
-            self.checked.remove(stringUrl)
+            completionHandler(.success(cacheURL))
             return
         }
 
-        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { urlOrNil, _, errorOrNil in
-            guard let fileURL = urlOrNil else { return }
-            do {
-                try self.fileManager.moveItem(at: fileURL, to: file)
-                // print("completed writing file to cache \(file.path)" )
-                completionHandler(.success(file))
-                self.checked.remove(stringUrl)
-            } catch {
-                guard let error = errorOrNil else { return }
-                // print("failed writing file to cache \(file.path)" )
-                completionHandler(.failure(error))
-                self.checked.remove(stringUrl)
+        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { urlOrNil, _, _ in
+            guard let tempURL = urlOrNil else { return }
+            self.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
+                completionHandler(result)
             }
         }.resume()
+    }
+
+    func cacheURL(stringURL: String) -> URL {
+        return directoryFor(stringUrl: stringURL)
+    }
+
+    func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)) {
+        do {
+            try self.fileManager.moveItem(at: tempURL, to: cacheURL)
+            // print("completed writing file to cache \(file.path)" )
+            complete(.success(cacheURL))
+        } catch {
+            // print("failed writing file to cache \(file.path)" )
+            complete(.failure(error))
+        }
+    }
+
+    func cacheHit(file: URL) -> Bool {
+        return fileManager.fileExists(atPath: file.path)
     }
 
     private func deleteAll() {
@@ -65,12 +69,25 @@ class CacheManager {
         } else {
             print("not enumerator for deleteAll cache")
         }
+
+        ImageCache.default.clearDiskCache { print("Removed Kingfisher Cache") }
     }
 
     func directoryFor(stringUrl: String) -> URL {
         let fileURL = URL(string: stringUrl)!.lastPathComponent
         let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
         return file
+    }
+
+    func calculateTotalCache() {
+        ImageCache.default.calculateDiskStorageSize { result in
+            switch result {
+            case .success(let size):
+                print("King Fisher Disk cache size: \(Double(size) / 1024 / 1024) MB")
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 
 }
