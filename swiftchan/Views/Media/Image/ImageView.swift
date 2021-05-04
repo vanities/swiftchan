@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import URLImage
 import Kingfisher
 
 struct ImageView: View {
@@ -14,13 +13,6 @@ struct ImageView: View {
     @Binding var isSelected: Bool
     let canGesture: Bool
     let minimumScale: CGFloat = 1
-
-    let imageOptions = URLImageOptions(
-        expireAfter: 24 * 60 * 60,
-        cachePolicy: .returnCacheElseLoad(cacheDelay: nil, downloadDelay: 0.25),
-        load: [.loadOnAppear, .cancelOnDisappear, .loadImmediately],
-        maxPixelSize: CGSize(width: 5120, height: 2880)
-    )
 
     @State var scale: CGFloat = 1.0
     @State var zoomed: Bool = false

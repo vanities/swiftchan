@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 import FourChan
-import URLImage
 import Combine
 
 class FourchanService {
