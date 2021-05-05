@@ -16,10 +16,7 @@ struct ThumbnailMediaView: View {
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            // ZStack {
-                ImageView(url: self.url)
-                // ImageView(url: self.thumbnailUrl)
-            // }
+            ImageView(url: self.url)
         case .webm:
             ZStack {
                 ImageView(url: self.thumbnailUrl)

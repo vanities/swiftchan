@@ -48,8 +48,12 @@ class Prefetcher {
                 }
             })
 
-            DownloadQueue.shared.queue.addOperation(operation)
+            DownloadQueue.queue.addOperation(operation)
         }
 
+    }
+
+    func stopPrefetching() {
+        DownloadQueue.queue.cancelAllOperations()
     }
 }

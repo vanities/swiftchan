@@ -17,6 +17,7 @@ struct VLCContainerView: View {
     var onSeekChanged: ((Bool) -> Void)?
 
     var body: some View {
+        print(vlcVideoViewModel.vlcVideo.mediaState.rawValue)
         return
             ZStack {
                 VLCVideoView()
@@ -30,11 +31,11 @@ struct VLCContainerView: View {
                 }
                 .opacity(showControls ? 1 : 0)
 
-                if vlcVideoViewModel.vlcVideo.state == .playing {
+                if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
                     ActivityIndicator()
                 }
             }
-            .onChange(of: vlcVideoViewModel.vlcVideo.mediaState) { state in
+            .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
                 if state == .play {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                         withAnimation(.linear(duration: 0.2)) {
@@ -49,13 +50,13 @@ struct VLCContainerView: View {
                 }
             }
             .onChange(of: self.play) {
-                vlcVideoViewModel.vlcVideo.mediaState = $0 ? .play : .pause
+                vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
             }
             .onAppear {
                 vlcVideoViewModel.vlcVideo.url = url
                 vlcVideoViewModel.setCachedMediaPlayer(url: url)
                 if play {
-                    vlcVideoViewModel.vlcVideo.mediaState = .play
+                    vlcVideoViewModel.vlcVideo.mediaControlState = .play
                 }
             }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideo {
-    enum MediaState: Equatable {
+    enum MediaControlState: Equatable {
         case play
         case pause
         case seek(VLCTime)
@@ -17,8 +17,9 @@ struct VLCVideo {
 
     var url: URL?
     var cachedUrl: URL?
-    var mediaState: MediaState = .pause
-    var state: VLCMediaPlayerState = .buffering
+    var mediaControlState: MediaControlState = .pause
+    var mediaPlayerState: VLCMediaPlayerState = .buffering
+    var mediaState: VLCMediaState = .buffering
     var currentTime: VLCTime = VLCTime(int: 0)
     var remainingTime: VLCTime = VLCTime(int: 0)
     var totalTime: VLCTime = VLCTime(int: 0)

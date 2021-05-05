@@ -93,6 +93,7 @@ struct ThreadView: View {
             })
         }
         .onAppear {
+            viewModel.stopPrefetching()
             viewModel.prefetch()
         }
         .environmentObject(presentationState)

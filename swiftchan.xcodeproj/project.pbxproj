@@ -323,8 +323,8 @@
 			isa = PBXGroup;
 			children = (
 				9574CDED255E2350000C99B6 /* BoardsViewModel.swift */,
-				9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */,
 				9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */,
+				9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */,
 				95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */,
 			);
 			path = ViewModels;
@@ -339,9 +339,9 @@
 				95105378256608E5002E4051 /* CommentParser.swift */,
 				95851DD525567314002CB2A1 /* MediaDetector.swift */,
 				9587A51B255726D80028A143 /* CacheService.swift */,
-				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
 				95F7CFCC25639BD70063149B /* DateFormatterService.swift */,
 				956D9051256B18270000D84C /* Buildable.swift */,
+				9574CDF5255E254F000C99B6 /* FourchanService.swift */,
 				950EB4DB256CBE08000703C0 /* PullToRefresh.swift */,
 				953508F1263F557D00C7FE83 /* Prefetcher.swift */,
 				9520FDC42640FB4700F98FE9 /* DownloadQueue.swift */,

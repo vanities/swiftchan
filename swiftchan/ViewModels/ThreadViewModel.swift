@@ -47,5 +47,8 @@ extension ThreadView {
         func prefetch() {
             Prefetcher.shared.prefetch(urls: mediaUrls + thumbnailMediaUrls)
         }
+        func stopPrefetching() {
+            Prefetcher.shared.stopPrefetching()
+        }
     }
 }

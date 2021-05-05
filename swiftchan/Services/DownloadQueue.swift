@@ -10,10 +10,10 @@ import Foundation
 
 class DownloadQueue {
     static let shared = DownloadQueue()
-    let queue = OperationQueue()
+    static let queue = OperationQueue()
 
     init() {
-        queue.maxConcurrentOperationCount = 5
+        DownloadQueue.queue.maxConcurrentOperationCount = 5
     }
 }
 

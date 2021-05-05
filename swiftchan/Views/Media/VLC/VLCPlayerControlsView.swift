@@ -20,7 +20,7 @@ struct VLCPlayerControlsView: View {
     }
 
     private var playbackImage: String {
-        switch vlcVideoModel.vlcVideo.state {
+        switch vlcVideoModel.vlcVideo.mediaPlayerState {
         case .ended, .stopped:
             return "stop"
         case .paused:
@@ -57,7 +57,7 @@ struct VLCPlayerControlsView: View {
                         vlcVideoModel.vlcVideo.currentTime = VLCTime(int: currentTime)
                         vlcVideoModel.vlcVideo.remainingTime = VLCTime(int: currentTime - Int32(vlcVideoModel.vlcVideo.totalTime.intValue))
                         seekingTime = VLCTime(int: currentTime)
-                        vlcVideoModel.vlcVideo.mediaState = .seek(seekingTime)
+                        vlcVideoModel.vlcVideo.mediaControlState = .seek(seekingTime)
                     }
                 })
 
@@ -69,13 +69,13 @@ struct VLCPlayerControlsView: View {
     }
 
     private func togglePlayer() {
-        switch vlcVideoModel.vlcVideo.state {
+        switch vlcVideoModel.vlcVideo.mediaPlayerState {
         case .ended, .stopped:
             break
         case .paused:
-            vlcVideoModel.vlcVideo.mediaState = .play
+            vlcVideoModel.vlcVideo.mediaControlState = .play
         case .playing, .buffering:
-            vlcVideoModel.vlcVideo.mediaState = .pause
+            vlcVideoModel.vlcVideo.mediaControlState = .pause
         default:
             break
         }
@@ -84,12 +84,12 @@ struct VLCPlayerControlsView: View {
     private func sliderEditingChanged(editingStarted: Bool) {
         if editingStarted {
             vlcVideoModel.vlcVideo.seeking = true
-            vlcVideoModel.vlcVideo.mediaState = .pause
+            vlcVideoModel.vlcVideo.mediaControlState = .pause
         }
 
         if !editingStarted {
             vlcVideoModel.vlcVideo.seeking = false
-            vlcVideoModel.vlcVideo.mediaState = .play
+            vlcVideoModel.vlcVideo.mediaControlState = .play
         }
     }
 }

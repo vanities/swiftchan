@@ -36,7 +36,12 @@ extension CatalogView {
             let thumbnailUrls = self.posts.compactMap { [weak self] post in
                 return post.getMediaUrl(boardId: self?.boardName ?? "", thumbnail: true)
             }
-            Prefetcher.shared.prefetch(urls: urls + thumbnailUrls)
+            // don't prefetch webms here.. for now
+            Prefetcher.shared.prefetchImages(urls: urls + thumbnailUrls)
+        }
+
+        func stopPrefetching() {
+            Prefetcher.shared.stopPrefetching()
         }
     }
 }
