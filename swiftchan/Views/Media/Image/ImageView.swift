@@ -28,24 +28,6 @@ struct ImageView: View {
     }
 
     var body: some View {
-        /*
-        KFImage(url)
-            .placeholder {
-                // Placeholder while downloading.
-                Image(systemName: "arrow.2.circlepath.circle")
-                    .font(.largeTitle)
-                    .opacity(0.3)
-            }
-            .retry(maxCount: 3, interval: .seconds(5))
-            .onSuccess { r in
-                // r: RetrieveImageResult
-                print("success: \(r)")
-            }
-            .onFailure { e in
-                // e: KingfisherError
-                print("failure: \(e)")
-            }
- */
         return KFImage(url)
             .placeholder {
                 ActivityIndicator()
