@@ -10,31 +10,31 @@ import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
     let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
-    @EnvironmentObject var video: VLCVideoViewModel
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
     @State var media: VLCMedia?
 
     func makeUIView(context: Context) -> UIView {
         let uiView = UIView()
 
-        self.setMediaPlayer(context: context)
+        setMediaPlayer(context: context)
 
-        self.playerList.mediaPlayer.drawable = uiView
-        self.playerList.repeatMode = .repeatCurrentItem
+        playerList.mediaPlayer.drawable = uiView
+        playerList.repeatMode = .repeatCurrentItem
 
         return uiView
     }
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         let playerList = context.coordinator.parent.playerList
-        if self.media == nil {
-            self.setMediaPlayer(context: context)
+        if media == nil {
+            setMediaPlayer(context: context)
         }
 
-        switch self.video.mediaState {
+        switch vlcVideoViewModel.vlcVideo.mediaControlState {
         case .play:
             if let player = playerList.mediaPlayer,
                !player.isPlaying,
-               let media = self.media {
+               let media = media {
                 DispatchQueue.main.async {
                     if player.media == nil {
                         playerList.play(media)
@@ -68,14 +68,14 @@ struct VLCVideoView: UIViewRepresentable {
     // MARK: Private
     private func setMediaPlayer(context: VLCVideoView.Context) {
         DispatchQueue.main.async {
-            if let cacheUrl = self.video.cachedUrl {
-                self.media = VLCMedia(url: cacheUrl)
-                self.playerList.rootMedia = self.media
-                context.coordinator.parent.playerList.rootMedia = self.media
-            } else if let url = self.video.url {
-                self.media = VLCMedia(url: url)
-                self.playerList.rootMedia = self.media
-                context.coordinator.parent.playerList.rootMedia = self.media
+            if let cacheUrl = vlcVideoViewModel.vlcVideo.cachedUrl {
+                media = VLCMedia(url: cacheUrl)
+                playerList.rootMedia = media
+                context.coordinator.parent.playerList.rootMedia = media
+            } else if let url = vlcVideoViewModel.vlcVideo.url {
+                media = VLCMedia(url: url)
+                playerList.rootMedia = media
+                context.coordinator.parent.playerList.rootMedia = media
             }
         }
         #if DEBUG
@@ -97,17 +97,19 @@ struct VLCVideoView: UIViewRepresentable {
 
         // MARK: Player Delegate
         func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-            if let player = self.parent.playerList.mediaPlayer {
-                self.parent.video.currentTime = player.time
-                self.parent.video.remainingTime = player.remainingTime
-                self.parent.video.totalTime = VLCTime(int: self.parent.video.currentTime.intValue + abs(self.parent.video.remainingTime.intValue))
+            if let player = parent.playerList.mediaPlayer {
+                parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
+                parent.vlcVideoViewModel.vlcVideo.remainingTime = player.remainingTime
+                parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(int: parent.vlcVideoViewModel.vlcVideo.currentTime.intValue + abs(parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue))
+
+                parent.vlcVideoViewModel.vlcVideo.mediaState = player.media.state
                 // print("time", self.parent.currentTime, self.parent.remainingTime, self.parent.totalTime)
             }
         }
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
-            if let player = self.parent.playerList.mediaPlayer {
-                self.parent.video.state = player.state
+            if let player = parent.playerList.mediaPlayer {
+                parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
             }
         }
     }

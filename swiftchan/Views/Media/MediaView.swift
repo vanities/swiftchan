@@ -45,7 +45,7 @@ struct MediaView: View {
                 self.isSelected = value == self.id
             }
         case .gif:
-            GIFView(url: self.url)
+            ImageView(url: self.url, canGesture: true, isSelected: self.$isSelected)
         case .none:
             EmptyView()
         }

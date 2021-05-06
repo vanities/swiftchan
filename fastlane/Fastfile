@@ -76,7 +76,6 @@ platform :ios do
     sh("git fetch && git checkout master")
     increment_build_number
     commit_version_bump
-    add_git_tag(tag: tag)
     push_to_git_remote
   end
 end
