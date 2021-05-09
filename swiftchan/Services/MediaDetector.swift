@@ -25,7 +25,7 @@ struct MediaDetector {
         } else if url.absoluteString.hasSuffix("webm") {
             return .webm
         } else {
-            print("Error! cannot detect media extension", url)
+            debugPrint("Error! cannot detect media extension", url)
             return .none
         }
     }

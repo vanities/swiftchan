@@ -23,7 +23,7 @@ class ImageSaver: NSObject {
     }
 
     @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        print("Save finished!")
+        debugPrint("Save finished!")
     }
 
     func loadImage(url: URL, complete: @escaping (UIImage?) -> Void) {
@@ -31,11 +31,11 @@ class ImageSaver: NSObject {
             if let image = UIImage(data: data) {
                 complete(image)
             } else {
-                print("Unable to save data to photo album")
+                debugPrint("Unable to save data to photo album")
                 complete(nil)
             }
         } else {
-            print("Unable to save data to photo album")
+            debugPrint("Unable to save data to photo album")
             complete(nil)
         }
     }

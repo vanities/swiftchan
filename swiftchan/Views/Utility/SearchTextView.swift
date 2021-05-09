@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftlySearch
 
 struct SearchTextView: View {
     let textPlaceholder: String

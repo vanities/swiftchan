@@ -21,7 +21,7 @@ class VLCVideoViewModel: ObservableObject {
                     self.vlcVideo.cachedUrl = url
                 }
             case .failure(let error):
-                print(error, " failure in the Cache of video")
+                debugPrint(error, " failure in the Cache of video")
             }
         }
     }

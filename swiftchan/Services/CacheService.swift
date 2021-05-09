@@ -42,10 +42,10 @@ class CacheManager {
     func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)) {
         do {
             try self.fileManager.moveItem(at: tempURL, to: cacheURL)
-            // print("completed writing file to cache \(file.path)" )
+            debugPrint("completed writing file to cache \(cacheURL.path)" )
             complete(.success(cacheURL))
         } catch {
-            // print("failed writing file to cache \(file.path)" )
+            debugPrint("failed writing file to cache \(cacheURL.path)" )
             complete(.failure(error))
         }
     }

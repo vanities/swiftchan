@@ -33,8 +33,8 @@ struct ImageView: View {
                 ActivityIndicator()
             }
             .loadImmediately()
-            .onlyFromCache()
-            .waitForCache()
+            // .onlyFromCache()
+            // .waitForCache()
             .resizable()
             .aspectRatio(contentMode: .fit)
             .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)

@@ -10,7 +10,7 @@ import SwiftUI
 import FourChan
 
 extension CatalogView {
-    final class ViewModel: ObservableObject {
+    final class CatalogViewModel: ObservableObject {
         let boardName: String
         @Published private(set) var posts = [Post]()
         @Published private(set) var comments = [NSAttributedString]()

@@ -43,7 +43,7 @@ class Prefetcher {
             let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { (tempURL, _, _) in
                 if let tempURL = tempURL {
                     CacheManager.shared.cache(tempURL: tempURL, cacheURL: cacheURL) { _ in
-                        print("finished downloading \(url.absoluteString)")
+                        debugPrint("finished downloading \(url.absoluteString)")
                     }
                 }
             })

@@ -17,7 +17,7 @@ struct BoardsView: View {
 
     var filteredBoards: [Board] {
         self.viewModel.boards.filter({ board in
-            board.board.starts(with: self.searchText.lowercased()) && !self.favoriteBoards.contains(board)
+            board.board.starts(with: self.searchText.lowercased())
         })
     }
 
@@ -32,57 +32,61 @@ struct BoardsView: View {
             if viewModel.boards.count == 0 {
                 ActivityIndicator()
             } else {
-                VStack(spacing: 0) {
-                    SearchTextView(
-                        textPlaceholder: "Search Boards",
-                        searchText: self.$searchText
-                    )
-                    ScrollView(.vertical, showsIndicators: true) {
-                        LazyVGrid(
-                            columns: self.columns,
-                            alignment: .leading,
-                            spacing: 2
-                        ) {
-                            if self.searchText == "" {
-                                Group {
-                                    Section(header: Text("favorites")
-                                                .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                                .padding(.leading, 5)
-                                    ) {
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(
+                        columns: self.columns,
+                        alignment: .leading,
+                        spacing: 2
+                    ) {
+                        if self.searchText == "" {
+                            Group {
+                                Section(header: Text("favorites")
+                                            .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                                            .padding(.leading, 5)
+                                ) {
 
-                                        ForEach(self.favoriteBoards, id: \.self.id) { board in
-                                            NavigationLink(
-                                                destination:
-                                                    CatalogView(board.board)
-                                            ) {
-                                                BoardView(name: board.board,
-                                                          title: board.title,
-                                                          description: board.meta_description.clean)
-                                                    .padding(.horizontal, 5)
-                                            }
+                                    ForEach(self.favoriteBoards) { board in
+                                        NavigationLink(
+                                            destination:
+                                                CatalogView(board.board)
+                                        ) {
+                                            BoardView(name: board.board,
+                                                      title: board.title,
+                                                      description: board.meta_description.clean)
+                                                .padding(.horizontal, 5)
                                         }
+                                        .id("\(board.id)-f")
                                     }
+                                }
 
-                                }
                             }
-                            Section(header: Text("all")
-                                        .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                        .padding(.leading, 5)
-                            ) {
-                                ForEach(self.filteredBoards, id: \.self.id) { board in
-                                    NavigationLink(
-                                        destination: CatalogView(board.board)) {
-                                        BoardView(name: board.board,
-                                                  title: board.title,
-                                                  description: board.meta_description.clean)
-                                            .padding(.horizontal, 5)
-                                    }
+                        }
+                        Section(header: Text("all")
+                                    .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                                    .padding(.leading, 5)
+                        ) {
+                            ForEach(self.filteredBoards, id: \.self.id) { board in
+                                NavigationLink(
+                                    destination: CatalogView(board.board)) {
+                                    BoardView(name: board.board,
+                                              title: board.title,
+                                              description: board.meta_description.clean)
+                                        .padding(.horizontal, 5)
                                 }
+                                .id("\(board.id)-a")
                             }
-                                  }
-                        .buttonStyle(PlainButtonStyle())
-                        .navigationBarTitle("4chan")
+                        }
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .navigationBarTitle("4chan")
+                    .navigationBarSearch(
+                        $searchText,
+                        placeholder: "Search Boards",
+                        hidesNavigationBarDuringPresentation: true,
+                        hidesSearchBarWhenScrolling: true,
+                        cancelClicked: {},
+                        searchClicked: {}
+                    )
                 }
             }
         }

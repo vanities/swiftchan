@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FavoriteStar: View {
     @EnvironmentObject var userSettings: UserSettings
-    let viewModel: CatalogView.ViewModel
+    let viewModel: CatalogView.CatalogViewModel
 
     var favorited: Bool {
         self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
@@ -35,7 +35,7 @@ struct FavoriteStar: View {
 
 struct FavoriteStar_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = CatalogView.ViewModel(boardName: "fit")
+        let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
         FavoriteStar(viewModel: viewModel)
     }
 }

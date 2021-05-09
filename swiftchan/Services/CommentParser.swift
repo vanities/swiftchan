@@ -22,7 +22,7 @@ class CommentParser {
     }
 
     func parseComment(_ comment: String) -> NSAttributedString {
-        // print(comment)
+        // debugPrint(comment)
         let result = NSMutableAttributedString()
         let parser = PostTextParser()
         parser.parse(text: comment) { element in
