@@ -57,12 +57,12 @@
 <img src="assets/screenshot.png" alt="screenshot" width="300"> <img src="assets/board_screenshot.png" alt="screenshot" width="300"> <img src="assets/thread_screenshot.png" alt="screenshot" width="300">
 
 
-Why aren't there many open source apps? idk. Heavily inspired by TheChan. Plays webms and gifs natively in app.
+Heavily inspired by TheChan. Plays webms and gifs natively in app.
 
 Here's why:
-* ios is ok, why did you switch from android?
 * you don't want to download a shady app from 3rd party appstores and you're not jailbroken
-* apple bans the app from the app store, but leaves reddit where you can search for people killing themselves :smile:
+* native webm support
+* fast like swift
 
 
 ### Built With
