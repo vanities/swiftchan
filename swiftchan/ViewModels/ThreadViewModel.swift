@@ -11,6 +11,7 @@ import FourChan
 
 extension ThreadView {
     final class ViewModel: ObservableObject {
+        let prefetcher = Prefetcher()
         let boardName: String
         let id: Int
 
@@ -31,6 +32,10 @@ extension ThreadView {
             self.load()
         }
 
+        deinit {
+            prefetcher.stopPrefetching()
+        }
+
         func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getPosts(boardName: self.boardName,
                                      id: self.id) { [weak self] ( result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) in
@@ -45,10 +50,10 @@ extension ThreadView {
         }
 
         func prefetch() {
-            Prefetcher.shared.prefetch(urls: mediaUrls + thumbnailMediaUrls)
+            prefetcher.prefetch(urls: mediaUrls + thumbnailMediaUrls)
         }
         func stopPrefetching() {
-            Prefetcher.shared.stopPrefetching()
+            prefetcher.stopPrefetching()
         }
     }
 }

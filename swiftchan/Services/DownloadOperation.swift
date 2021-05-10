@@ -1,21 +1,12 @@
 //
-//  DownloadQueue.swift
+//  DownloadOperation.swift
 //  swiftchan
 //
-//  Created by vanities on 5/3/21.
+//  Created by vanities on 5/9/21.
 //
 // https://fluffy.es/download-files-sequentially/
 
 import Foundation
-
-class DownloadQueue {
-    static let shared = DownloadQueue()
-    static let queue = OperationQueue()
-
-    init() {
-        DownloadQueue.queue.maxConcurrentOperationCount = 5
-    }
-}
 
 class DownloadOperation: Operation {
 

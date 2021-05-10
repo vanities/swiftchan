@@ -9,7 +9,8 @@ import Foundation
 import Kingfisher
 
 class Prefetcher {
-    static let shared = Prefetcher()
+    var imagePrefetcher = ImagePrefetcher(urls: [])
+    let videoPrefetcher = VideoPrefetcher()
 
     func prefetch(urls: [URL]) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
@@ -19,22 +20,20 @@ class Prefetcher {
     }
 
     func prefetchImages(urls: [URL]) {
-        let prefetcher = ImagePrefetcher(
+        imagePrefetcher = ImagePrefetcher(
             urls: urls,
             options: [
-                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1)))
-                // .processingQueue(.mainAsync)
+                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1))),
+                .processingQueue(.mainAsync)
             ]
-        ) { _, _, _ in
-            /*
+        ) { completedResources, skippedResources, failedResources in
              debugPrint(
-             "These image resources are prefetched: \(completedResources), " +
-             "skipped: \(skippedResources), " +
-             "failed: \(failedResources)"
+                "These image resources are prefetched: \(completedResources.count), " +
+                    "skipped: \(skippedResources.count), " +
+                    "failed: \(failedResources.count)"
              )
-             */
         }
-        prefetcher.start()
+        imagePrefetcher.start()
     }
     func prefetchVideos(urls: [URL]) {
         for url in urls {
@@ -48,12 +47,13 @@ class Prefetcher {
                 }
             })
 
-            DownloadQueue.queue.addOperation(operation)
+            videoPrefetcher.queue.addOperation(operation)
         }
 
     }
 
     func stopPrefetching() {
-        DownloadQueue.queue.cancelAllOperations()
+        imagePrefetcher.stop()
+        videoPrefetcher.queue.cancelAllOperations()
     }
 }

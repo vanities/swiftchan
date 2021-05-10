@@ -12,12 +12,17 @@ import FourChan
 extension CatalogView {
     final class CatalogViewModel: ObservableObject {
         let boardName: String
+        let prefetcher = Prefetcher()
         @Published private(set) var posts = [Post]()
         @Published private(set) var comments = [NSAttributedString]()
 
         init(boardName: String) {
             self.boardName = boardName
             self.load()
+        }
+
+        deinit {
+            stopPrefetching()
         }
 
         func load(_ complete: (() -> Void)? = nil) {
@@ -33,15 +38,12 @@ extension CatalogView {
             let urls = posts.compactMap { [weak self] post in
                 return post.getMediaUrl(boardId: self?.boardName ?? "")
             }
-            let thumbnailUrls = self.posts.compactMap { [weak self] post in
-                return post.getMediaUrl(boardId: self?.boardName ?? "", thumbnail: true)
-            }
             // don't prefetch webms here.. for now
-            Prefetcher.shared.prefetchImages(urls: urls + thumbnailUrls)
+            prefetcher.prefetchImages(urls: urls)
         }
 
         func stopPrefetching() {
-            Prefetcher.shared.stopPrefetching()
+            prefetcher.stopPrefetching()
         }
     }
 }

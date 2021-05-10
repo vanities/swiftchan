@@ -33,6 +33,7 @@ struct ImageView: View {
                 ActivityIndicator()
             }
             .loadImmediately()
+            .cancelOnDisappear(true)
             // .onlyFromCache()
             // .waitForCache()
             .resizable()
