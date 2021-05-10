@@ -52,7 +52,6 @@ struct CatalogView: View {
                                        comment: viewModel.comments[index])
                             }
                         }
-                        .padding(.horizontal, 15)
                         .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
                             let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                             softVibrate.impactOccurred()
@@ -60,14 +59,14 @@ struct CatalogView: View {
                                 pullToRefreshShowing = false
                             }
                         }
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle(viewModel.boardName)
-                        .navigationBarItems(
-                            trailing: FavoriteStar(viewModel: viewModel)
-                        )
                     }
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle(viewModel.boardName)
+            .navigationBarItems(
+                trailing: FavoriteStar(viewModel: viewModel)
+            )
             .navigationBarSearch($searchText, placeholder: "Search Posts", hidesNavigationBarDuringPresentation: true, hidesSearchBarWhenScrolling: true, cancelClicked: {}, searchClicked: {})
     }
 }
