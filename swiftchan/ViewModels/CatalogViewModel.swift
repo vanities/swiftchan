@@ -35,11 +35,11 @@ extension CatalogView {
         }
 
         func prefetch() {
-            let urls = posts.compactMap { [weak self] post in
+            let thumbnailUrls = posts.compactMap { [weak self] post in
                 return post.getMediaUrl(boardId: self?.boardName ?? "")
             }
             // don't prefetch webms here.. for now
-            prefetcher.prefetchImages(urls: urls)
+            prefetcher.prefetchImages(urls: thumbnailUrls)
         }
 
         func stopPrefetching() {

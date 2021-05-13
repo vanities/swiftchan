@@ -23,8 +23,7 @@ class Prefetcher {
         imagePrefetcher = ImagePrefetcher(
             urls: urls,
             options: [
-                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1))),
-                .processingQueue(.mainAsync)
+                .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1)))
             ]
         ) { completedResources, skippedResources, failedResources in
              debugPrint(
