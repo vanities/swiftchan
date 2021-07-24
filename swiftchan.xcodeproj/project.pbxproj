@@ -454,6 +454,7 @@
 				9518178A254CFB600032616E /* Frameworks */,
 				9518178B254CFB600032616E /* Resources */,
 				95D86F5E25EA2131005A7EBC /* Embed Frameworks */,
+				B3A38E2CA3B07D2089F8A9DD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -600,6 +601,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint autocorrect && ${PODS_ROOT}/SwiftLint/swiftlint \nelse\n  echo \"warning: SwiftLint not installed, run pod install\"\nfi\n";
+		};
+		B3A38E2CA3B07D2089F8A9DD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
