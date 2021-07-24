@@ -16,21 +16,21 @@ class CommentParser {
         self.comment = comment
     }
 
-    func getComment() -> NSAttributedString {
+    func getComment() -> AttributedString {
         let nsText = self.parseComment(self.comment)
         return nsText
     }
 
-    func parseComment(_ comment: String) -> NSAttributedString {
+    func parseComment(_ comment: String) -> AttributedString {
         // debugPrint(comment)
-        let result = NSMutableAttributedString()
+        var result = AttributedString()
         let parser = PostTextParser()
         parser.parse(text: comment) { element in
-            var part = NSMutableAttributedString()
+            var part = AttributedString()
             switch element {
             case .anchor(text: let text, href: let href):
                 let font = UIFont.preferredFont(forTextStyle: .body)
-                part = NSMutableAttributedString(string: text)
+                part = AttributedString(text)
 
                 // in-thread reply
                 // >>798116 #p798116
@@ -39,86 +39,63 @@ class CommentParser {
                                             .replacingOccurrences(of: ">>", with: "")
                                             .replacingOccurrences(of: "(OP)", with: "")
                     )
-                    part.addAttributes(
-                        [.font: font,
-                         .foregroundColor: UIColor.blue
-                        ],
-                        range: NSRange(location: 0, length: part.length))
+                    part.foregroundColor = Colors.Text.reply
+                    part.font = font
                 }
                 // self-served url
                 // readme.txt http://freetexthost.com/nzjanyanw0
                 else if href.starts(with: "http") || href.starts(with: "https") {
                     if let urlString = href.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                        let url = URL(string: urlString) {
-                        part.addAttributes(
-                            [.font: font,
-                             .foregroundColor: UIColor.link,
-                             .link: url
-                            ],
-                            range: NSRange(location: 0, length: part.length))
+                        part.foregroundColor = Colors.Text.link
+                        part.font = font
+                        part.link = url
                     }
                 }
                 // TODO: get cross thread replies
                 // >>794515 /3/thread/794515#p794515
                 else {
-                    part.addAttributes(
-                        [.font: font,
-                         .foregroundColor: UIColor.blue],
-                        range: NSRange(location: 0, length: part.length))
+                    part.foregroundColor = Colors.Text.crossThreadReply
+                    part.font = font
                 }
 
             case .plain(text: let text):
                 // plain
                 let font = UIFont.preferredFont(forTextStyle: .body)
-                part = NSMutableAttributedString(string: text)
-                part.addAttributes([.font: font,
-                                    .foregroundColor: UIColor.label],
-                                   range: NSRange(location: 0, length: part.length))
+                part = AttributedString(text)
+                part.foregroundColor = Colors.Text.plain
+                part.font = font
+
                 // http://......
-                self.checkForUrls(text).forEach { (url, range) in
-                    part.addAttributes(
-                        [.font: font,
-                         .foregroundColor: UIColor.link,
-                         .link: url
-                        ],
-                        range: range)
+                self.checkForUrls(text).forEach { (url, _) in
+                    part.foregroundColor = Colors.Text.link
+                    part.font = font
+                    part.link = url
                 }
             case .bold(text: let text):
                 // 𝐛𝐨𝐥𝐝
-                part = NSMutableAttributedString(string: text)
-                let font = UIFont(descriptor: UIFont.preferredFont(forTextStyle: .body)
-                                    .fontDescriptor
-                                    .withSymbolicTraits(.traitBold)!,
-                                  size: 0)
-                part.addAttributes([.font: font,
-                                    .foregroundColor: UIColor.label],
-                                   range: NSRange(location: 0, length: part.length))
+                part = AttributedString("**\(text)**")
+                part.foregroundColor = Colors.Text.plain
+
             case .strikethrough(text: let text):
                 // s̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶
-                part = NSMutableAttributedString(string: text)
-                part.addAttributes([.strikethroughStyle: 2,
-                                    .foregroundColor: UIColor.label],
-                                   range: NSRange(location: 0, length: part.length))
+                part = AttributedString(text)
+                // part.strikethroughStyle = AttributeScopes.UIKitAttributes.StrikethroughStyleAttribute.value(for: 2)
+                part.foregroundColor = Colors.Text.plain
             case .quote(text: let text):
                 // >implying
-                part = NSMutableAttributedString(string: text)
-                let font = UIFont.preferredFont(forTextStyle: .body)
-                part.addAttributes(
-                    [.font: font,
-                     .foregroundColor: UIColor.green],
-                    range: NSRange(location: 0, length: part.length))
+                part = AttributedString(text)
+                part.foregroundColor = Colors.Text.quote
+                part.font = .body
             case .deadLink(text: let text):
                 // >>791225 (link no longer is active)
-                part = NSMutableAttributedString(string: text)
-                let font = UIFont.preferredFont(forTextStyle: .body)
-                part.addAttributes(
-                    [.font: font,
-                     .foregroundColor: UIColor.systemPink],
-                    range: NSRange(location: 0, length: part.length))
+                part = AttributedString(text)
+                part.font = .body
+                part.foregroundColor = Colors.Text.deadLink
             }
             result.append(part)
         }
-        return result.attributedSubstring(from: NSRange(location: 0, length: result.length))
+        return result
     }
 
     func checkForUrls(_ text: String) -> [(URL, NSRange)] {

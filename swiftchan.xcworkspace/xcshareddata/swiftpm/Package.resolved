@@ -2,7 +2,7 @@
   "object": {
     "pins": [
       {
-        "package": "FourChan",
+        "package": "FourChanAPI",
         "repositoryURL": "git@github.com:vanities/FourChanAPI.git",
         "state": {
           "branch": null,
@@ -29,7 +29,7 @@
         }
       },
       {
-        "package": "Introspect",
+        "package": "SwiftUI-Introspect",
         "repositoryURL": "git@github.com:siteline/SwiftUI-Introspect.git",
         "state": {
           "branch": null,

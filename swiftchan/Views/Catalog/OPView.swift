@@ -13,10 +13,10 @@ struct OPView: View {
 
     let boardName: String
     let post: Post
-    let comment: NSAttributedString
+    let comment: AttributedString
     let opCommentTrailingLength: Int = 150
 
-    init(boardName: String, post: Post, comment: NSAttributedString) {
+    init(boardName: String, post: Post, comment: AttributedString) {
         self.boardName = boardName
         self.post = post
         self.comment = comment
@@ -29,16 +29,19 @@ struct OPView: View {
     }
 
     var body: some View {
-        return NavigationLink(
-            destination:
-                ThreadView()
-                .environmentObject(self.threadViewModel)
-        ) {
-            ZStack(alignment: .topLeading) {
-                Rectangle()
-                    .fill(Color(.systemBackground))
-                    .border(Color(.gray))
-                VStack(alignment: .leading, spacing: 0) {
+        return ZStack(alignment: .topLeading) {
+            Rectangle()
+                .fill(Colors.Op.background)
+                .cornerRadius(5)
+                .border(Colors.Op.border)
+
+            NavigationLink(
+                destination:
+                    ThreadView()
+                    .environmentObject(self.threadViewModel)
+            ) {
+
+                VStack(alignment: .leading, spacing: 0.0) {
                     // image
                     if let url = self.post.getMediaUrl(boardId: self.boardName),
                        let thumbnailUrl = self.post.getMediaUrl(boardId: self.boardName, thumbnail: true) {
@@ -61,12 +64,12 @@ struct OPView: View {
                            sticky == 1 {
                             Image(systemName: "pin")
                                 .rotationEffect(.degrees(45))
-                                .foregroundColor(.yellow)
+                                .foregroundColor(Colors.Op.pinColor)
                         }
                         if let closed = post.closed,
                            closed == 1 {
                             Image(systemName: "lock")
-                                .foregroundColor(.red)
+                                .foregroundColor(Colors.Op.lockColor)
                         }
                     }
                     // subject
@@ -77,9 +80,10 @@ struct OPView: View {
                         .padding(.bottom, 5)
 
                     // comment
-                    TextView(self.comment,
-                              trailingLength: self.opCommentTrailingLength,
-                              dynamicHeight: false) // bad performance
+                    Text(self.comment)
+                        .textSelection(.enabled)
+                        .lineLimit(20)
+
                 }
                 .padding(.all, 10)
             }
@@ -91,7 +95,7 @@ struct OPView: View {
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
         if let example = Post.example() {
-            OPView(boardName: "fit", post: example, comment: NSMutableAttributedString())
+            OPView(boardName: "fit", post: example, comment: AttributedString("hello"))
         }
     }
 }

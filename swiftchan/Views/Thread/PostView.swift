@@ -19,18 +19,19 @@ struct PostView: View {
     var body: some View {
         let boardName = self.viewModel.boardName
         let post = index < self.viewModel.posts.count ?
-            self.viewModel.posts[index] : Post.example()!
+        self.viewModel.posts[index] : Post.example()!
         let comment = index < self.viewModel.comments.count ?
-            self.viewModel.comments[index] : NSMutableAttributedString(string: "")
+        self.viewModel.comments[index] : AttributedString("")
         let replies = self.viewModel.replies[index] ?? nil
 
         return ZStack(alignment: .topLeading) {
             Rectangle()
-                .fill(Color(.systemBackground))
-                .border(Color(.gray))
+                .fill(Colors.Post.background)
+                .cornerRadius(5)
+                .border(Colors.Post.border)
 
-            // subject
             VStack(alignment: .leading, spacing: 0) {
+                // subject
                 if let subject = post.sub {
                     Text(subject.clean)
                         .bold()
@@ -48,17 +49,17 @@ struct PostView: View {
                             thumbnailUrl: thumbnailUrl,
                             useThumbnailGif: false
                         )
-                        .frame(width: UIScreen.main.bounds.width/2)
+                            .frame(width: UIScreen.main.bounds.width/2)
                         // .scaledToFit()
-                        .scaledToFill() // VStack
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                self.presentationState.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-                                self.presentationState.presentingSheet = .gallery
-                                self.presentedDismissGesture.presenting.toggle()
+                            .scaledToFill() // VStack
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    self.presentationState.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
+                                    self.presentationState.presentingSheet = .gallery
+                                    self.presentedDismissGesture.presenting.toggle()
+                                }
                             }
-                        }
-                        .padding(.leading, -5)
+                            .padding(.leading, -5)
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {
@@ -71,7 +72,7 @@ struct PostView: View {
                         HStack {
                             if let capcode = post.capcode {
                                 Text(capcode)
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(Colors.Post.capcode)
                                     .bold()
                             }
                         }
@@ -89,10 +90,10 @@ struct PostView: View {
                             Text(id.description)
                                 .foregroundColor(color.isLight() ? .black : .white)
                                 .background(
-                                        Rectangle()
-                                            .fill(color)
-                                            .cornerRadius(5)
-                                            .padding(.horizontal, -5)
+                                    Rectangle()
+                                        .fill(color)
+                                        .cornerRadius(5)
+                                        .padding(.horizontal, -5)
                                 )
                                 .offset(x: 5)
 
@@ -101,19 +102,21 @@ struct PostView: View {
                         if let name = post.name {
                             Text(name)
                                 .bold()
-                                .foregroundColor(.gray)
+                                .foregroundColor(Colors.Post.name)
                         }
                         // trip
                         if let trip = post.trip {
                             Text(trip)
                                 .italic()
-                                .foregroundColor(.pink)
+                                .foregroundColor(Colors.Post.trip)
                         }
                     }
                     .padding(.leading, 1)
                 }
                 // comment
-                TextView(comment)
+                Text(comment)
+                    .lineLimit(nil)
+                    .textSelection(.enabled)
                     .id(index)
                     .padding(.top, 20)
 
@@ -132,6 +135,7 @@ struct PostView: View {
             }
             .padding(.all, 10)
         }
+
     }
 }
 
@@ -141,9 +145,9 @@ struct PostView_Previews: PreviewProvider {
         let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
         return PostView(index: 0)
-        .environmentObject(viewModel)
-        .environmentObject(AppState())
-        .environmentObject(DismissGesture())
-        .environmentObject(PresentationState())
+            .environmentObject(viewModel)
+            .environmentObject(AppState())
+            .environmentObject(DismissGesture())
+            .environmentObject(PresentationState())
     }
 }

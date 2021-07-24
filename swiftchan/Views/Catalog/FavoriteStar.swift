@@ -29,7 +29,7 @@ struct FavoriteStar: View {
                     self.userSettings.favoriteBoards.append(self.viewModel.boardName)
                 }
             }
-            .foregroundColor(.yellow)
+            .foregroundColor(Colors.Other.star)
     }
 }
 

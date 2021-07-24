@@ -24,13 +24,10 @@ struct ThreadView: View {
         return ZStack {
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: true) {
-                    VStack(spacing: 0) {
-                    // performance..
-                    /*
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
- */
+
                         ForEach(viewModel.posts.indices, id: \.self) { index in
                             if index < viewModel.comments.count {
                                 PostView(index: index)

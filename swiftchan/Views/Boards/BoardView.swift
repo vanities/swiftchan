@@ -37,7 +37,7 @@ struct BoardView: View {
                 }
             }
         }
-        .border(Color.gray)
+        .border(Colors.Board.border)
     }
 }
 

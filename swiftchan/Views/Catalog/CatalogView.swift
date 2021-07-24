@@ -15,7 +15,7 @@ struct CatalogView: View {
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
 
-    let columns = [GridItem(.flexible(), spacing: 0, alignment: .center), GridItem(.flexible(), spacing: 0, alignment: .center)]
+    let columns = [GridItem(.flexible(), spacing: 0, alignment: .top), GridItem(.flexible(), spacing: 0, alignment: .top)]
 
     var navigationCentering: CGFloat {
         return CGFloat(20 + (self.viewModel.boardName.count * 5))
@@ -28,11 +28,12 @@ struct CatalogView: View {
     var filteredPostIndices: [Int] {
         guard searchText != "" else { return Array(viewModel.posts.indices) }
         return self.viewModel.posts.indices.compactMap { index -> Int? in
-            let comment = viewModel.comments[index].string.replacingOccurrences(of: "\n", with: " ")
-            let subject = viewModel.posts[index].sub?.clean ?? ""
-            let commentAndSubject = comment.lowercased() + " " + subject.lowercased()
-            let match = (commentAndSubject).contains(searchText.lowercased())
-            return match ? index : nil
+            // let comment = viewModel.comments[index].string.replacingOccurrences(of: "\n", with: " ")
+            var comment = viewModel.comments[index]
+            comment.append(AttributedString(viewModel.posts[index].sub?.clean.lowercased() ?? ""))
+            // let match = (comment).contains(searchText.lowercased())
+            // return match ? index : nil
+            return 0
         }
     }
 

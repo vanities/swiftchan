@@ -14,7 +14,7 @@ extension CatalogView {
         let boardName: String
         let prefetcher = Prefetcher()
         @Published private(set) var posts = [Post]()
-        @Published private(set) var comments = [NSAttributedString]()
+        @Published private(set) var comments = [AttributedString]()
 
         init(boardName: String) {
             self.boardName = boardName
