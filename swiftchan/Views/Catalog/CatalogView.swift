@@ -28,47 +28,43 @@ struct CatalogView: View {
     var filteredPostIndices: [Int] {
         guard searchText != "" else { return Array(viewModel.posts.indices) }
         return self.viewModel.posts.indices.compactMap { index -> Int? in
-            // let comment = viewModel.comments[index].string.replacingOccurrences(of: "\n", with: " ")
-            var comment = viewModel.comments[index]
-            comment.append(AttributedString(viewModel.posts[index].sub?.clean.lowercased() ?? ""))
-            // let match = (comment).contains(searchText.lowercased())
-            // return match ? index : nil
-            return 0
+            let commentAndSubject = "\(viewModel.posts[index].com?.clean.lowercased() ?? "") \(viewModel.posts[index].sub?.clean.lowercased() ?? "")"
+
+            return  commentAndSubject.contains(searchText.lowercased()) ? index : nil
         }
     }
 
     var body: some View {
-        return
-            ScrollViewReader { _ in
-                ScrollView(.vertical, showsIndicators: true) {
-                    if viewModel.posts.count == 0 {
-                        ActivityIndicator()
-                    } else {
-                        LazyVGrid(columns: columns,
-                                  alignment: .center,
-                                  spacing: 0) {
-                            ForEach(filteredPostIndices, id: \.self) { index in
-                                OPView(boardName: viewModel.boardName,
-                                       post: viewModel.posts[index],
-                                       comment: viewModel.comments[index])
-                            }
-                        }
-                        .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                            let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                            softVibrate.impactOccurred()
-                            viewModel.load {
-                                pullToRefreshShowing = false
-                            }
+        return ScrollViewReader { _ in
+            ScrollView(.vertical, showsIndicators: true) {
+                if viewModel.posts.count == 0 {
+                    ActivityIndicator()
+                } else {
+                    LazyVGrid(columns: columns,
+                              alignment: .center,
+                              spacing: 0) {
+                        ForEach(filteredPostIndices, id: \.self) { index in
+                            OPView(boardName: viewModel.boardName,
+                                   post: viewModel.posts[index],
+                                   comment: viewModel.comments[index])
                         }
                     }
+                              .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                                  let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                                  softVibrate.impactOccurred()
+                                  viewModel.load {
+                                      pullToRefreshShowing = false
+                                  }
+                              }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitle(viewModel.boardName)
-            .navigationBarItems(
-                trailing: FavoriteStar(viewModel: viewModel)
-            )
-            .navigationBarSearch($searchText, placeholder: "Search Posts", hidesNavigationBarDuringPresentation: true, hidesSearchBarWhenScrolling: true, cancelClicked: {}, searchClicked: {})
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle(viewModel.boardName)
+        .navigationBarItems(
+            trailing: FavoriteStar(viewModel: viewModel)
+        )
+        .navigationBarSearch($searchText, placeholder: "Search Posts", hidesNavigationBarDuringPresentation: true, hidesSearchBarWhenScrolling: true, cancelClicked: {}, searchClicked: {})
     }
 }
 

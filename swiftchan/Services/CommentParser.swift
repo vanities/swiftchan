@@ -80,7 +80,7 @@ class CommentParser {
             case .strikethrough(text: let text):
                 // s̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶
                 part = AttributedString(text)
-                // part.strikethroughStyle = AttributeScopes.UIKitAttributes.StrikethroughStyleAttribute.value(for: 2)
+                part.strikethroughStyle = try? AttributeScopes.UIKitAttributes.StrikethroughStyleAttribute.value(for: 2)
                 part.foregroundColor = Colors.Text.plain
             case .quote(text: let text):
                 // >implying
