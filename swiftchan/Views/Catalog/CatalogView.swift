@@ -64,7 +64,7 @@ struct CatalogView: View {
         .navigationBarItems(
             trailing: FavoriteStar(viewModel: viewModel)
         )
-        .navigationBarSearch($searchText, placeholder: "Search Posts", hidesNavigationBarDuringPresentation: true, hidesSearchBarWhenScrolling: true, cancelClicked: {}, searchClicked: {})
+        .searchable(text: $searchText)
     }
 }
 

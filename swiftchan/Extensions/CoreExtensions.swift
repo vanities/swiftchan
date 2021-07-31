@@ -114,12 +114,12 @@ public extension UIFont {
         return addingAttributes([
             .featureSettings: [
                 [
-                    UIFontDescriptor.FeatureKey.featureIdentifier: kLowerCaseType,
-                    UIFontDescriptor.FeatureKey.typeIdentifier: kLowerCaseSmallCapsSelector
+                    UIFontDescriptor.FeatureKey.type: kLowerCaseType,
+                    UIFontDescriptor.FeatureKey.selector: kLowerCaseSmallCapsSelector
                 ],
                 [
-                    UIFontDescriptor.FeatureKey.featureIdentifier: kUpperCaseType,
-                    UIFontDescriptor.FeatureKey.typeIdentifier: kUpperCaseSmallCapsSelector
+                    UIFontDescriptor.FeatureKey.type: kUpperCaseType,
+                    UIFontDescriptor.FeatureKey.selector: kUpperCaseSmallCapsSelector
                 ]
             ]
         ])
@@ -129,8 +129,8 @@ public extension UIFont {
         return addingAttributes([
             .featureSettings: [
                 [
-                    UIFontDescriptor.FeatureKey.featureIdentifier: kLowerCaseType,
-                    UIFontDescriptor.FeatureKey.typeIdentifier: kLowerCaseSmallCapsSelector
+                    UIFontDescriptor.FeatureKey.type: kLowerCaseType,
+                    UIFontDescriptor.FeatureKey.selector: kLowerCaseSmallCapsSelector
                 ]
             ]
         ])
@@ -140,8 +140,8 @@ public extension UIFont {
         return addingAttributes([
             .featureSettings: [
                 [
-                    UIFontDescriptor.FeatureKey.featureIdentifier: kUpperCaseType,
-                    UIFontDescriptor.FeatureKey.typeIdentifier: kUpperCaseSmallCapsSelector
+                    UIFontDescriptor.FeatureKey.type: kUpperCaseType,
+                    UIFontDescriptor.FeatureKey.selector: kUpperCaseSmallCapsSelector
                 ]
             ]
         ])
@@ -151,8 +151,8 @@ public extension UIFont {
         return addingAttributes([
             .featureSettings: [
                 [
-                    UIFontDescriptor.FeatureKey.featureIdentifier: kNumberSpacingType,
-                    UIFontDescriptor.FeatureKey.typeIdentifier: kMonospacedNumbersSelector
+                    UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
+                    UIFontDescriptor.FeatureKey.selector: kMonospacedNumbersSelector
                 ]
             ]
         ])

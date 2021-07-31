@@ -77,16 +77,9 @@ struct BoardsView: View {
                             }
                         }
                     }
+                    .searchable(text: $searchText)
                     .buttonStyle(PlainButtonStyle())
                     .navigationBarTitle("4chan")
-                    .navigationBarSearch(
-                        $searchText,
-                        placeholder: "Search Boards",
-                        hidesNavigationBarDuringPresentation: true,
-                        hidesSearchBarWhenScrolling: true,
-                        cancelClicked: {},
-                        searchClicked: {}
-                    )
                 }
             }
         }

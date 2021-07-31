@@ -67,11 +67,18 @@ class CommentParser {
                 part.font = font
 
                 // http://......
-                self.checkForUrls(text).forEach { (url, _) in
-                    part.foregroundColor = Colors.Text.link
-                    part.font = font
-                    part.link = url
+                self.checkForUrls(text).forEach { (url, stringUrl, range) in
+                    var urlString = AttributedString(stringUrl)
+                    urlString.font = font
+                    urlString.link = url
+                    urlString.foregroundColor = Colors.Text.link
+                    if let urlRange = part.range(of: stringUrl) {
+                        part.replaceSubrange(urlRange, with: urlString)
+                    } else {
+                        // why is this not finding the range?
+                    }
                 }
+
             case .bold(text: let text):
                 // 𝐛𝐨𝐥𝐝
                 part = AttributedString("**\(text)**")
@@ -98,7 +105,7 @@ class CommentParser {
         return result
     }
 
-    func checkForUrls(_ text: String) -> [(URL, NSRange)] {
+    func checkForUrls(_ text: String) -> [(URL, String, NSRange)] {
         // let regexString = "@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS" // i like
         let regexString = "(https?://[^\\s]*)(\\r|\\n|\\s|)" // basic
 
@@ -120,12 +127,12 @@ class CommentParser {
                     let stringUrl = String(text[range]).fixZeroWidthSpace
                     // url might be good
                     if let url = URL(string: stringUrl) {
-                        return (url, match.range)
+                        return (url, stringUrl, match.range)
                     }
                     // % encode it
                     else if let escapedStringUrl = stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                       let url = URL(string: escapedStringUrl) {
-                        return (url, match.range)
+                        return (url, stringUrl, match.range)
                     }
                 }
                 return nil
