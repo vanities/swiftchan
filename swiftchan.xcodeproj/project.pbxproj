@@ -29,7 +29,7 @@
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D8C25EF2804003E0A59 /* PresentationState.swift */; };
 		95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D9025EF37F3003E0A59 /* DismissGesture.swift */; };
-		952F72EC25D0608200762154 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftPackageProductDependency */; };
+		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953508F1263F557D00C7FE83 /* Prefetcher.swift */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
@@ -38,7 +38,7 @@
 		9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */; };
 		9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */; };
 		9579F9F1263D1A1E007C70FC /* VLCVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9579F9F0263D1A1E007C70FC /* VLCVideo.swift */; };
-		957B3045264755A400D2FDCA /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 957B3044264755A400D2FDCA /* SwiftPackageProductDependency */; };
+		957B3045264755A400D2FDCA /* SwiftlySearch in Frameworks */ = {isa = PBXBuildFile; productRef = 957B3044264755A400D2FDCA /* SwiftlySearch */; };
 		957B30472648C87600D2FDCA /* DownloadOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957B30462648C87600D2FDCA /* DownloadOperation.swift */; };
 		9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582CB98255631B9008B235D /* VLCVideoView.swift */; };
 		95851DD625567314002CB2A1 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95851DD525567314002CB2A1 /* MediaDetector.swift */; };
@@ -54,8 +54,8 @@
 		9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D62D2556661600BBC8B7 /* ImageView.swift */; };
 		959E6148255CCFAB0003638E /* SearchTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959E6147255CCFAB0003638E /* SearchTextView.swift */; };
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
-		95B31D4625E2E3B400C309D4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */; };
-		95B31D5225E2E3FC00C309D4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */; };
+		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
+		95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D5125E2E3FC00C309D4 /* FourChan */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
@@ -66,7 +66,7 @@
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 		95F9DE8625C90DB50043C704 /* VLCVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */; };
-		95FFFB69263EF2AF00F4356C /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 95FFFB68263EF2AF00F4356C /* SwiftPackageProductDependency */; };
+		95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 95FFFB68263EF2AF00F4356C /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -170,11 +170,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95FFFB69263EF2AF00F4356C /* BuildFile in Frameworks */,
-				952F72EC25D0608200762154 /* BuildFile in Frameworks */,
-				95B31D5225E2E3FC00C309D4 /* BuildFile in Frameworks */,
-				957B3045264755A400D2FDCA /* BuildFile in Frameworks */,
-				95B31D4625E2E3B400C309D4 /* BuildFile in Frameworks */,
+				95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */,
+				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
+				95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */,
+				957B3045264755A400D2FDCA /* SwiftlySearch in Frameworks */,
+				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -462,11 +462,11 @@
 			);
 			name = swiftchan;
 			packageProductDependencies = (
-				952F72EB25D0608200762154 /* SwiftPackageProductDependency */,
-				95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */,
-				95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */,
-				95FFFB68263EF2AF00F4356C /* SwiftPackageProductDependency */,
-				957B3044264755A400D2FDCA /* SwiftPackageProductDependency */,
+				952F72EB25D0608200762154 /* SwiftUIPager */,
+				95B31D4525E2E3B400C309D4 /* Introspect */,
+				95B31D5125E2E3FC00C309D4 /* FourChan */,
+				95FFFB68263EF2AF00F4356C /* Kingfisher */,
+				957B3044264755A400D2FDCA /* SwiftlySearch */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -540,11 +540,11 @@
 			);
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
-				952F72EA25D0608200762154 /* RemoteSwiftPackageReference */,
-				95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */,
-				95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */,
-				95FFFB67263EF2AF00F4356C /* RemoteSwiftPackageReference */,
-				957B3043264755A400D2FDCA /* RemoteSwiftPackageReference */,
+				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
+				95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
+				95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				957B3043264755A400D2FDCA /* XCRemoteSwiftPackageReference "SwiftlySearch" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -785,7 +785,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -842,7 +842,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-Wl,-no_compact_unwind";
@@ -915,7 +915,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				INFOPLIST_FILE = swiftchanTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -937,7 +937,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
 				INFOPLIST_FILE = swiftchanTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1033,7 +1033,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		952F72EA25D0608200762154 /* RemoteSwiftPackageReference */ = {
+		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
 			requirement = {
@@ -1041,7 +1041,7 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		957B3043264755A400D2FDCA /* RemoteSwiftPackageReference */ = {
+		957B3043264755A400D2FDCA /* XCRemoteSwiftPackageReference "SwiftlySearch" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/thislooksfun/SwiftlySearch.git";
 			requirement = {
@@ -1049,7 +1049,7 @@
 				minimumVersion = 1.2.4;
 			};
 		};
-		95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */ = {
+		95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:siteline/SwiftUI-Introspect.git";
 			requirement = {
@@ -1057,7 +1057,7 @@
 				minimumVersion = 0.1.2;
 			};
 		};
-		95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */ = {
+		95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:vanities/FourChanAPI.git";
 			requirement = {
@@ -1065,7 +1065,7 @@
 				minimumVersion = 1.1.25;
 			};
 		};
-		95FFFB67263EF2AF00F4356C /* RemoteSwiftPackageReference */ = {
+		95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
@@ -1076,29 +1076,29 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		952F72EB25D0608200762154 /* SwiftPackageProductDependency */ = {
+		952F72EB25D0608200762154 /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 952F72EA25D0608200762154 /* RemoteSwiftPackageReference */;
+			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
 			productName = SwiftUIPager;
 		};
-		957B3044264755A400D2FDCA /* SwiftPackageProductDependency */ = {
+		957B3044264755A400D2FDCA /* SwiftlySearch */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 957B3043264755A400D2FDCA /* RemoteSwiftPackageReference */;
+			package = 957B3043264755A400D2FDCA /* XCRemoteSwiftPackageReference "SwiftlySearch" */;
 			productName = SwiftlySearch;
 		};
-		95B31D4525E2E3B400C309D4 /* SwiftPackageProductDependency */ = {
+		95B31D4525E2E3B400C309D4 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95B31D4425E2E3B400C309D4 /* RemoteSwiftPackageReference */;
+			package = 95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		95B31D5125E2E3FC00C309D4 /* SwiftPackageProductDependency */ = {
+		95B31D5125E2E3FC00C309D4 /* FourChan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95B31D5025E2E3FC00C309D4 /* RemoteSwiftPackageReference */;
+			package = 95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
 		};
-		95FFFB68263EF2AF00F4356C /* SwiftPackageProductDependency */ = {
+		95FFFB68263EF2AF00F4356C /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95FFFB67263EF2AF00F4356C /* RemoteSwiftPackageReference */;
+			package = 95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
