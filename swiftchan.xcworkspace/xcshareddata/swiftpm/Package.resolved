@@ -2,7 +2,7 @@
   "object": {
     "pins": [
       {
-        "package": "FourChanAPI",
+        "package": "FourChan",
         "repositoryURL": "git@github.com:vanities/FourChanAPI.git",
         "state": {
           "branch": null,
@@ -20,16 +20,7 @@
         }
       },
       {
-        "package": "SwiftlySearch",
-        "repositoryURL": "https://github.com/thislooksfun/SwiftlySearch.git",
-        "state": {
-          "branch": null,
-          "revision": "7741806e979e59e9583962da43d09ec92f598026",
-          "version": "1.2.4"
-        }
-      },
-      {
-        "package": "SwiftUI-Introspect",
+        "package": "Introspect",
         "repositoryURL": "git@github.com:siteline/SwiftUI-Introspect.git",
         "state": {
           "branch": null,
@@ -42,8 +33,8 @@
         "repositoryURL": "git@github.com:fermoya/SwiftUIPager.git",
         "state": {
           "branch": null,
-          "revision": "80a31d0e6d95f7216eb7bfe16f66d8b533fe857b",
-          "version": "2.2.0"
+          "revision": "d6745593cfa38ffa1fca75244a01e422d220d407",
+          "version": "2.3.1"
         }
       }
     ]
