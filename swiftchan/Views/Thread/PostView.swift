@@ -119,6 +119,7 @@ struct PostView: View {
                     .textSelection(.enabled)
                     .id(index)
                     .padding(.top, 20)
+                    .accessibilityLabel(AccessibilityLabels.postComment)
 
                 // replies
                 if let replies = replies {

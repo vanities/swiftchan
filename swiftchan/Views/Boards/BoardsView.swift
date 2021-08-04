@@ -56,6 +56,7 @@ struct BoardsView: View {
                                                 .padding(.horizontal, 5)
                                         }
                                         .id("\(board.id)-f")
+                                        .accessibilityLabel(AccessibilityLabels.favoriteBoard)
                                     }
                                 }
 
@@ -74,6 +75,7 @@ struct BoardsView: View {
                                         .padding(.horizontal, 5)
                                 }
                                 .id("\(board.id)-a")
+                                .accessibilityLabel(AccessibilityLabels.board)
                             }
                         }
                     }

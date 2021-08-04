@@ -62,6 +62,8 @@
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95D804D32568A553005A3128 /* PresentedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804D22568A553005A3128 /* PresentedPost.swift */; };
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
+		95E4A06A26BA1E35007B1A38 /* AccessibilityLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06926BA1E35007B1A38 /* AccessibilityLabels.swift */; };
+		95E4A06B26BA223A007B1A38 /* AccessibilityLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06926BA1E35007B1A38 /* AccessibilityLabels.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 		95F9DE8625C90DB50043C704 /* VLCVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */; };
@@ -158,6 +160,7 @@
 		95D804CD25677FF4005A3128 /* RepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesView.swift; sourceTree = "<group>"; };
 		95D804D22568A553005A3128 /* PresentedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedPost.swift; sourceTree = "<group>"; };
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
+		95E4A06926BA1E35007B1A38 /* AccessibilityLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityLabels.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 		95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoViewModel.swift; sourceTree = "<group>"; };
@@ -349,6 +352,7 @@
 				9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */,
 				957B30462648C87600D2FDCA /* DownloadOperation.swift */,
 				95CE4FA926ABD42500622F7E /* Colors.swift */,
+				95E4A06926BA1E35007B1A38 /* AccessibilityLabels.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -652,6 +656,7 @@
 				957B30472648C87600D2FDCA /* DownloadOperation.swift in Sources */,
 				958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
+				95E4A06A26BA1E35007B1A38 /* AccessibilityLabels.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
@@ -710,6 +715,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */,
+				95E4A06B26BA223A007B1A38 /* AccessibilityLabels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
