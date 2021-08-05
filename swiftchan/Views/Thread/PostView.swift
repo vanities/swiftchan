@@ -115,11 +115,11 @@ struct PostView: View {
                 }
                 // comment
                 Text(comment)
-                    .lineLimit(nil)
                     .textSelection(.enabled)
+                    .lineLimit(nil)
                     .id(index)
                     .padding(.top, 20)
-                    .accessibilityLabel(AccessibilityLabels.postComment)
+                    .accessibilityLabel("\(index) Post")
 
                 // replies
                 if let replies = replies {
@@ -136,7 +136,6 @@ struct PostView: View {
             }
             .padding(.all, 10)
         }
-
     }
 }
 

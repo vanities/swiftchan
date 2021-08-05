@@ -27,40 +27,83 @@ class SwiftchanUITests: XCTestCase {
     }
 
     func testAppLoadsBoards() throws {
-        let boards = app.buttons[AccessibilityLabels.board]
-        XCTAssertEqual(boards.staticTexts.count, 30)
+        XCTAssertEqual(app.buttons.count, 16)
+        app.assertBoard("3")
+        app.assertBoard("a")
+        app.assertBoard("aco")
+        app.assertBoard("adv")
+        app.assertBoard("an")
+        app.assertBoard("b")
+        app.assertBoard("bant")
+        app.assertBoard("c")
+        app.assertBoard("cgl")
+        app.assertBoard("ck")
+        app.assertBoard("cm")
+        app.assertBoard("co")
+        app.assertBoard("d")
+        app.assertBoard("diy")
     }
 
     func testAppLoadsOPPosts() throws {
-        let firstBoard = app.buttons[AccessibilityLabels.board].firstMatch
-        firstBoard.tap()
-
-        let opPosts = app.buttons[AccessibilityLabels.opPost]
-        opPosts.waitForExistence(timeout: 5)
-        XCTAssertEqual(opPosts.staticTexts.count, 16)
+        app.goToBoard("3")
+        app.assertOPThread(0)
+        app.assertOPThread(1)
+        app.assertOPThread(2)
+        app.assertOPThread(3)
+        // app.assertOPThread(4)
+        // app.assertOPThread(5)
     }
 
     func testAppLoadsPosts() throws {
-        let firstBoard = app.buttons[AccessibilityLabels.board].firstMatch
-        firstBoard.tap()
+        app.goToBoard("3")
+        app.goToOPThread(0)
 
-        let opPosts = app.buttons[AccessibilityLabels.opPost]
-        if opPosts.waitForExistence(timeout: 5) {
-            opPosts.firstMatch.tap()
-        }
-
-        let posts = app.staticTexts[AccessibilityLabels.postComment]
-        posts.waitForExistence(timeout: 5)
-
-        XCTAssert(posts.exists)
+        app.assertPost(0)
+        app.assertPost(1)
     }
 
     func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
+        app.terminate()
+        measure(metrics: [XCTApplicationLaunchMetric()]) {
+            app.launch()
+        }
+    }
+
+    func testBoardsScrollPerformance() throws {
+        let measureOptions = XCTMeasureOptions()
+        measureOptions.invocationOptions = [.manuallyStop]
+
+        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
+            app.swipeUp(velocity: .fast)
+            stopMeasuring()
+            app.swipeDown(velocity: .fast)
+        }
+    }
+
+    func testCatalogScrollPerformance() throws {
+        let measureOptions = XCTMeasureOptions()
+        measureOptions.invocationOptions = [.manuallyStop]
+
+        app.goToBoard("3")
+
+        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
+            app.swipeUp(velocity: .fast)
+            stopMeasuring()
+            app.swipeDown(velocity: .fast)
+        }
+    }
+
+    func testPostScrollPerformance() throws {
+        let measureOptions = XCTMeasureOptions()
+        measureOptions.invocationOptions = [.manuallyStop]
+
+        app.goToBoard("3")
+        app.goToOPThread(0)
+        
+        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
+            app.swipeUp(velocity: .fast)
+            stopMeasuring()
+            app.swipeDown(velocity: .fast)
         }
     }
 }
