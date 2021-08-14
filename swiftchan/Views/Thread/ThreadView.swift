@@ -62,7 +62,7 @@ struct ThreadView: View {
                                             }
                     )
                 }
-            }
+             }
             .onChange(of: presentedDismissGesture.draggingOffset) { value in
                 DispatchQueue.main.async {
                     withAnimation(.linear) {

@@ -118,7 +118,7 @@ struct PostView: View {
                     .textSelection(.enabled)
                     .lineLimit(nil)
                     .id(index)
-                    .padding(.top, 20)
+                    .padding(.vertical, 20)
                     .accessibilityLabel("\(index) Post")
 
                 // replies

@@ -99,7 +99,7 @@ class SwiftchanUITests: XCTestCase {
 
         app.goToBoard("3")
         app.goToOPThread(0)
-        
+
         measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
             app.swipeUp(velocity: .fast)
             stopMeasuring()

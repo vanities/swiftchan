@@ -41,7 +41,7 @@ struct OPView: View {
                     .environmentObject(self.threadViewModel)
             ) {
 
-                VStack(alignment: .leading, spacing: 0.0) {
+                VStack(alignment: .leading, spacing: 0) {
                     // image
                     if let url = self.post.getMediaUrl(boardId: self.boardName),
                        let thumbnailUrl = self.post.getMediaUrl(boardId: self.boardName, thumbnail: true) {
@@ -72,18 +72,20 @@ struct OPView: View {
                                 .foregroundColor(Colors.Op.lockColor)
                         }
                     }
-                    // subject
-                    Text(post.sub?.clean ?? "")
-                        .font(.system(size: 18))
-                        .bold()
-                        .lineLimit(nil)
-                        .padding(.bottom, 5)
+                    Group {
+                        // subject
+                        Text(post.sub?.clean ?? "")
+                            .font(.system(size: 18))
+                            .bold()
+                            .lineLimit(nil)
+                            .padding(.bottom, 5)
 
-                    // comment
-                    Text(self.comment)
-                        .textSelection(.enabled)
-                        .lineLimit(20)
+                        // comment
+                        Text(self.comment)
+                            .textSelection(.enabled)
+                            .lineLimit(20)
 
+                    }
                 }
                 .padding(.all, 10)
             }

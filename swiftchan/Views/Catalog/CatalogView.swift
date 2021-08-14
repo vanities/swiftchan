@@ -7,7 +7,6 @@
 
 import SwiftUI
 import FourChan
-import SwiftlySearch
 
 struct CatalogView: View {
     @StateObject var viewModel: CatalogViewModel
