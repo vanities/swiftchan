@@ -4,6 +4,7 @@
 
 .DS_Store
 *.p8
+github_access_token
 ## User settings
 xcuserdata/
 
