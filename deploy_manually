@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export "$(base64 < AuthKey_48RUB3TQ9V.p8)"
+export APP_STORE_CONNECT_API_KEY_BASE64="$(base64 < AuthKey_48RUB3TQ9V.p8)"
 fastlane beta
