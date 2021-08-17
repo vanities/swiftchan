@@ -67,15 +67,16 @@ class CommentParser {
                 part.font = font
 
                 // http://......
-                self.checkForUrls(text).forEach { (url, stringUrl, range) in
-                    var urlString = AttributedString(stringUrl)
+                self.checkForUrls(text).forEach { (url, originalString, range) in
+                    var urlString = AttributedString(url.absoluteString)
                     urlString.font = font
                     urlString.link = url
                     urlString.foregroundColor = Colors.Text.link
-                    if let urlRange = part.range(of: stringUrl) {
+                    if let urlRange = part.range(of: originalString) {
                         part.replaceSubrange(urlRange, with: urlString)
                     } else {
                         // why is this not finding the range?
+                        debugPrint("could not find range for url", range, urlString)
                     }
                 }
 
@@ -125,14 +126,18 @@ class CommentParser {
             return matches.compactMap { match in
                 if let range = Range(match.range(at: 1), in: text) {
                     let stringUrl = String(text[range]).fixZeroWidthSpace
+                    debugPrint(stringUrl)
+
                     // url might be good
                     if let url = URL(string: stringUrl) {
-                        return (url, stringUrl, match.range)
+                        debugPrint("good", url)
+                        return (url, String(text[range]), match.range)
                     }
                     // % encode it
                     else if let escapedStringUrl = stringUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                       let url = URL(string: escapedStringUrl) {
-                        return (url, stringUrl, match.range)
+                        debugPrint("not good", url)
+                        return (url, String(text[range]), match.range)
                     }
                 }
                 return nil
