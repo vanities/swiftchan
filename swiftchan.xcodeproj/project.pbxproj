@@ -58,6 +58,7 @@
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
 		95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CE4FA926ABD42500622F7E /* Colors.swift */; };
+		95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */ = {isa = PBXBuildFile; productRef = 95D14F6026CC82A8007AF00F /* ToastUI */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95D804D32568A553005A3128 /* PresentedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804D22568A553005A3128 /* PresentedPost.swift */; };
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
@@ -169,6 +170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */,
 				95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */,
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				95B31D5225E2E3FC00C309D4 /* FourChan in Frameworks */,
@@ -464,6 +466,7 @@
 				95B31D4525E2E3B400C309D4 /* Introspect */,
 				95B31D5125E2E3FC00C309D4 /* FourChan */,
 				95FFFB68263EF2AF00F4356C /* Kingfisher */,
+				95D14F6026CC82A8007AF00F /* ToastUI */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -541,6 +544,7 @@
 				95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 				95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -1053,6 +1057,14 @@
 				minimumVersion = 1.1.25;
 			};
 		};
+		95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/quanshousio/ToastUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -1078,6 +1090,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 95B31D5025E2E3FC00C309D4 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
+		};
+		95D14F6026CC82A8007AF00F /* ToastUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */;
+			productName = ToastUI;
 		};
 		95FFFB68263EF2AF00F4356C /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

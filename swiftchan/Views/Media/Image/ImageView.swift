@@ -32,7 +32,6 @@ struct ImageView: View {
             .placeholder {
                 ActivityIndicator()
             }
-            .loadImmediately()
             .processingQueue(.mainAsync)
             // .onlyFromCache()
             // .waitForCache()

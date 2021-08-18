@@ -8,6 +8,7 @@
 import SwiftUI
 import Introspect
 import SwiftUIPager
+import ToastUI
 
 struct GalleryView: View {
     @EnvironmentObject var state: PresentationState
@@ -22,6 +23,8 @@ struct GalleryView: View {
     @State var canShowPreview: Bool = true
     @State var showPreview: Bool = false
     @State var dragging: Bool = false
+    @State private var presentingToast: Bool = false
+    @State private var presentingToastResult: Result<URL, Error>?
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -58,8 +61,10 @@ struct GalleryView: View {
                 .fileExporter(isPresented: self.$isExportingDocument,
                               document: FileExport(url: self.urls[index].absoluteString),
                               contentType: .image,
-                              onCompletion: { _ in })
-
+                              onCompletion: { result in
+                    presentingToastResult = result
+                    presentingToast = true
+                })
                 .contextMenu {
                     Button(action: {
                         UIPasteboard.general.string = self.urls[index].absoluteString
@@ -70,7 +75,17 @@ struct GalleryView: View {
                     switch MediaDetector.detect(url: self.urls[index]) {
                     case .image, .gif:
                         Button(action: {
-                            ImageSaver().saveImageToPhotos(url: self.urls[index])
+                            let imageSaver = ImageSaver()
+                            imageSaver.successHandler = {
+                                presentingToast = true
+                                presentingToastResult = .success(self.urls[index])
+                            }
+                            imageSaver.errorHandler = { error in
+                                presentingToast = true
+                                presentingToastResult = .failure(error)
+                            }
+
+                            imageSaver.saveImageToPhotos(url: self.urls[index])
                         }, label: {
                             Text("Save to Photos")
                             Image(systemName: "square.and.arrow.down")
@@ -129,6 +144,20 @@ struct GalleryView: View {
             .opacity(self.showPreview && !self.dismissGesture.dragging ? 1 : 0)
         }
         .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
+        .toast(isPresented: $presentingToast, dismissAfter: 1.0) {
+            switch presentingToastResult {
+            case .success(_):
+                ToastView("Success!", content: {}, background: {Color.clear})
+                    .toastViewStyle(SuccessToastViewStyle())
+            case .failure(_):
+                ToastView("Failure", content: {}, background: {Color.clear})
+                    .toastViewStyle(ErrorToastViewStyle())
+            case .none:
+                ToastView("Failure", content: {}, background: {Color.clear})
+                    .toastViewStyle(ErrorToastViewStyle())
+
+            }
+        }
     }
 
     func showPreviewTap() -> some Gesture {

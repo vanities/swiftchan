@@ -8,6 +8,9 @@
 import SwiftUI
 
 class ImageSaver: NSObject {
+    var successHandler: (() -> Void)?
+    var errorHandler: ((Error) -> Void)?
+
     func saveImageToPhotos(url: URL) {
         self.loadImage(url: url) { image in
             if let image = image {
@@ -23,7 +26,11 @@ class ImageSaver: NSObject {
     }
 
     @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        debugPrint("Save finished!")
+        if let error = error {
+            errorHandler?(error)
+        } else {
+            successHandler?()
+        }
     }
 
     func loadImage(url: URL, complete: @escaping (UIImage?) -> Void) {
