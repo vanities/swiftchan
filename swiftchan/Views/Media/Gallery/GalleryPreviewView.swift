@@ -19,28 +19,28 @@ struct GalleryPreviewView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center,
                            spacing: nil) {
-                        ForEach(self.urls.indices, id: \.self) { index in
+                        ForEach(urls.indices, id: \.self) { index in
 
-                            let url = self.urls[index]
-                            let thumbnailUrl = self.thumbnailUrls[index]
+                            let url = urls[index]
+                            let thumbnailUrl = thumbnailUrls[index]
 
                             ThumbnailMediaView(
                                 url: url,
                                 thumbnailUrl: thumbnailUrl,
                                 useThumbnailGif: true)
                                 .onTapGesture {
-                                    self.selection = index
+                                    selection = index
                                 }
                                 .id(index)
-                                .border(self.selection == index ? Color.green : Color.clear, width: 2)
+                                .border(selection == index ? Color.green : Color.clear, width: 2)
                                 .frame(width: UIScreen.main.bounds.width/5)
                         }
                     }
-                    .onChange(of: self.selection, perform: { i in
+                    .onChange(of: selection) { index in
                         withAnimation(.linear(duration: 0.2)) {
-                            value.scrollTo(i)
+                            value.scrollTo(index)
                         }
-                    })
+                    }
                 }
             }
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 10)

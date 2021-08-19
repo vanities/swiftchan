@@ -10,6 +10,11 @@ import SwiftUI
 class ImageSaver: NSObject {
     var successHandler: (() -> Void)?
     var errorHandler: ((Error) -> Void)?
+    var completionHandler: ((Result<Void, Error>) -> Void)?
+
+    init(completionHandler: ((Result<Void, Error>) -> Void)?) {
+        self.completionHandler = completionHandler
+    }
 
     func saveImageToPhotos(url: URL) {
         self.loadImage(url: url) { image in
@@ -27,9 +32,9 @@ class ImageSaver: NSObject {
 
     @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
-            errorHandler?(error)
+            completionHandler?(.failure(error))
         } else {
-            successHandler?()
+            completionHandler?(.success(()))
         }
     }
 

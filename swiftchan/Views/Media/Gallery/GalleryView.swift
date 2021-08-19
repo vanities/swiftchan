@@ -41,25 +41,25 @@ struct GalleryView: View {
             Color.black.ignoresSafeArea()
 
             // gallery
-            Pager(page: self.page,
-                  data: self.urls.indices,
+            Pager(page: page,
+                  data: urls.indices,
                   id: \.self) { index in
                 MediaView(
-                    selected: self.$state.galleryIndex,
-                    url: self.urls[index],
+                    selected: $state.galleryIndex,
+                    url: urls[index],
                     id: index
                 )
                 .onMediaChanged { zoomed in
-                    self.canShowPreview = !zoomed
-                    self.canPage = !zoomed
+                    canShowPreview = !zoomed
+                    canPage = !zoomed
                     if zoomed {
                         // if zooming, remove the preview
-                        self.showPreview = !zoomed
+                        showPreview = !zoomed
                     }
-                    self.onMediaChanged?(zoomed)
+                    onMediaChanged?(zoomed)
                 }
-                .fileExporter(isPresented: self.$isExportingDocument,
-                              document: FileExport(url: self.urls[index].absoluteString),
+                .fileExporter(isPresented: $isExportingDocument,
+                              document: FileExport(url: urls[index].absoluteString),
                               contentType: .image,
                               onCompletion: { result in
                     presentingToastResult = result
@@ -67,32 +67,31 @@ struct GalleryView: View {
                 })
                 .contextMenu {
                     Button(action: {
-                        UIPasteboard.general.string = self.urls[index].absoluteString
+                        UIPasteboard.general.string = urls[index].absoluteString
                     }, label: {
                         Text("Copy URL")
                         Image(systemName: "doc.on.doc")
                     })
-                    switch MediaDetector.detect(url: self.urls[index]) {
+                    switch MediaDetector.detect(url: urls[index]) {
                     case .image, .gif:
                         Button(action: {
-                            let imageSaver = ImageSaver()
-                            imageSaver.successHandler = {
+                            let imageSaver = ImageSaver(completionHandler: { result in
                                 presentingToast = true
-                                presentingToastResult = .success(self.urls[index])
-                            }
-                            imageSaver.errorHandler = { error in
-                                presentingToast = true
-                                presentingToastResult = .failure(error)
-                            }
-
-                            imageSaver.saveImageToPhotos(url: self.urls[index])
+                                switch result {
+                                case .success(_):
+                                    presentingToastResult = .success(urls[index])
+                                case .failure(let error):
+                                    presentingToastResult = .failure(error)
+                                }
+                            })
+                            imageSaver.saveImageToPhotos(url: urls[index])
                         }, label: {
                             Text("Save to Photos")
                             Image(systemName: "square.and.arrow.down")
                         })
                     case .webm, .none:
                         Button(action: {
-                            self.isExportingDocument.toggle()
+                            isExportingDocument.toggle()
                         }, label: {
                             Text("Save to Files")
                             Image(systemName: "folder")
@@ -102,20 +101,20 @@ struct GalleryView: View {
             }
             .onDraggingEnded {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.onPageDragChanged?(.zero)
+                    onPageDragChanged?(.zero)
                 }
             }
             .onDraggingChanged { offset in
                 DispatchQueue.main.async {
-                    self.onPageDragChanged?(CGFloat(offset))
+                    onPageDragChanged?(CGFloat(offset))
                 }
             }
             .onPageChanged { index in
-                self.dragging = false
-                self.onPageDragChanged?(.zero)
-                self.state.galleryIndex = index
+                dragging = false
+                onPageDragChanged?(.zero)
+                state.galleryIndex = index
             }
-            .allowsDragging(!self.dismissGesture.dragging && self.canPage)
+            .allowsDragging(!dismissGesture.dragging && canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.allAvailable)
             .background(Color.black)
@@ -123,7 +122,7 @@ struct GalleryView: View {
 
             // dismiss button
             Button(action: {
-                self.onDismiss?()
+                onDismiss?()
             }, label: {
                 Image(systemName: "xmark")
                     .frame(width: 50, height: 50)
@@ -131,19 +130,19 @@ struct GalleryView: View {
                     .foregroundColor(.white)
             })
             .position(x: 30, y: 10)
-            .opacity(self.dismissGesture.dragging ? 0 : 1)
+            .opacity(dismissGesture.dragging ? 0 : 1)
 
             // preview
             VStack {
                 Spacer()
-                GalleryPreviewView(urls: self.urls,
-                                   thumbnailUrls: self.thumbnailUrls,
-                                   selection: self.$state.galleryIndex)
+                GalleryPreviewView(urls: urls,
+                                   thumbnailUrls: thumbnailUrls,
+                                   selection: $state.galleryIndex)
                     .padding(.bottom, 60)
             }
-            .opacity(self.showPreview && !self.dismissGesture.dragging ? 1 : 0)
+            .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
-        .gesture(self.canShowPreview ? self.showPreviewTap() : nil)
+        .gesture(canShowPreview ? showPreviewTap() : nil)
         .toast(isPresented: $presentingToast, dismissAfter: 1.0) {
             switch presentingToastResult {
             case .success(_):
@@ -158,13 +157,17 @@ struct GalleryView: View {
 
             }
         }
+        .statusBar(hidden: true)
+        .onChange(of: state.galleryIndex) { index in
+            page.update(.new(index: index))
+        }
     }
 
     func showPreviewTap() -> some Gesture {
         return TapGesture(count: 1)
             .onEnded {
                 withAnimation(.linear(duration: 0.2)) {
-                    self.showPreview.toggle()
+                    showPreview.toggle()
                 }
             }
     }
