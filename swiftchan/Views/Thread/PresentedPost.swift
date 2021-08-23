@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PresentedPost: View {
     enum PresentType {
-        case gallery, replies
+        case gallery, replies, reply
     }
 
     @EnvironmentObject var viewModel: ThreadView.ViewModel
@@ -20,35 +20,39 @@ struct PresentedPost: View {
 
     @ViewBuilder
     var body: some View {
-        switch self.state.presentingSheet {
+        switch state.presentingSheet {
         case .gallery:
             GalleryView(
-                self.state.galleryIndex,
-                urls: self.viewModel.mediaUrls,
-                thumbnailUrls: self.viewModel.thumbnailMediaUrls
+                state.galleryIndex,
+                urls: viewModel.mediaUrls,
+                thumbnailUrls: viewModel.thumbnailMediaUrls
             )
             .onDismiss {
-                self.dismissGesture.dismiss = true
+                dismissGesture.dismiss = true
             }
             .onPageDragChanged { (value) in
-                self.dismissGesture.canDrag = value.isZero
+                dismissGesture.canDrag = value.isZero
             }
             .onMediaChanged { (zoomed) in
-                self.dismissGesture.canDrag = !zoomed
+                dismissGesture.canDrag = !zoomed
                 if zoomed {
-                    self.dismissGesture.dragging = false
+                    dismissGesture.dragging = false
                 }
             }
             .dismissGesture(direction: .down)
             .transition(.identity)
 
         case .replies:
-            if let replies = self.viewModel.replies[self.state.commentRepliesIndex] {
+            if let replies = viewModel.replies[state.commentRepliesIndex] {
                 RepliesView(replies: replies,
-                            commentRepliesIndex: self.state.commentRepliesIndex)
+                            commentRepliesIndex: state.commentRepliesIndex)
                     .dismissGesture(direction: .right)
                     .transition(.identity)
             }
+        case .reply:
+            PostView(index: state.replyIndex)
+                .dismissGesture(direction: .right)
+                .transition(.identity)
         }
     }
 }

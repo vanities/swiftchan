@@ -17,12 +17,12 @@ struct PostView: View {
     let index: Int
 
     var body: some View {
-        let boardName = self.viewModel.boardName
-        let post = index < self.viewModel.posts.count ?
-        self.viewModel.posts[index] : Post.example()!
-        let comment = index < self.viewModel.comments.count ?
-        self.viewModel.comments[index] : AttributedString("")
-        let replies = self.viewModel.replies[index] ?? nil
+        let boardName = viewModel.boardName
+        let post = index < viewModel.posts.count ?
+        viewModel.posts[index] : Post.example()!
+        let comment = index < viewModel.comments.count ?
+        viewModel.comments[index] : AttributedString("")
+        let replies = viewModel.replies[index] ?? nil
 
         return ZStack(alignment: .topLeading) {
             Rectangle()

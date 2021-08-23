@@ -35,12 +35,13 @@ class CommentParser {
                 // in-thread reply
                 // >>798116 #p798116
                 if href.starts(with: "#p") {
-                    self.replies.append(text
-                                            .replacingOccurrences(of: ">>", with: "")
-                                            .replacingOccurrences(of: "(OP)", with: "")
-                    )
+                    let bareText = text
+                        .replacingOccurrences(of: ">>", with: "")
+                        .replacingOccurrences(of: "(OP)", with: "")
+                    self.replies.append(bareText)
                     part.foregroundColor = Colors.Text.reply
                     part.font = font
+                    part.link = URL(string: "swiftchan:Reply?id=\(bareText)")!
                 }
                 // self-served url
                 // readme.txt http://freetexthost.com/nzjanyanw0

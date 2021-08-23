@@ -89,11 +89,28 @@ struct ThreadView: View {
                 }
             })
         }
+        .onOpenURL { url in
+            presentationState.replyIndex = getPostIdFromUrl(url: url)
+            presentationState.presentingSheet = .reply
+            presentedDismissGesture.presenting.toggle()
+
+        }
         .onAppear {
             viewModel.prefetch()
         }
         .environmentObject(presentationState)
         .environmentObject(presentedDismissGesture)
+    }
+
+    func getPostIdFromUrl(url: URL) -> Int {
+        var index = 0
+        for post in viewModel.posts {
+            if url.absoluteString.contains(String(post.id)) {
+                return index
+            }
+            index += 1
+        }
+        return 0
     }
 }
 
