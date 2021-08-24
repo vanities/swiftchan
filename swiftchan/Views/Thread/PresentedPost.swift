@@ -50,9 +50,17 @@ struct PresentedPost: View {
                     .transition(.identity)
             }
         case .reply:
-            PostView(index: state.replyIndex)
-                .dismissGesture(direction: .right)
-                .transition(.identity)
+            ZStack {
+                Color.black
+                    .opacity(1 - Double(dismissGesture.draggingOffset / UIScreen.main.bounds.height))
+                    .ignoresSafeArea()
+                PostView(index: state.replyIndex)
+                    .dismissGesture(direction: .down)
+                    .transition(.identity)
+                    .scaledToFit()
+                    .navigationBarHidden(true)
+                    .ignoresSafeArea()
+            }
         }
     }
 }

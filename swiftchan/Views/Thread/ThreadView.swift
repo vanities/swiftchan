@@ -31,7 +31,6 @@ struct ThreadView: View {
                         ForEach(viewModel.posts.indices, id: \.self) { index in
                             if index < viewModel.comments.count {
                                 PostView(index: index)
-                                    .id(index)
                             }
                         }
                     }

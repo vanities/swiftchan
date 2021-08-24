@@ -50,7 +50,6 @@ struct PostView: View {
                             useThumbnailGif: false
                         )
                             .frame(width: UIScreen.main.bounds.width/2)
-                        // .scaledToFit()
                             .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -117,7 +116,6 @@ struct PostView: View {
                 Text(comment)
                     .textSelection(.enabled)
                     .lineLimit(nil)
-                    .id(index)
                     .padding(.vertical, 20)
                     .accessibilityLabel("\(index) Post")
 
