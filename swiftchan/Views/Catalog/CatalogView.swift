@@ -46,7 +46,7 @@ struct CatalogView: View {
                             OPView(boardName: viewModel.boardName,
                                    post: viewModel.posts[index],
                                    comment: viewModel.comments[index])
-                                .accessibilityLabel("\(index) Thread")
+                                .accessibilityIdentifier(AccessibilityIdentifiers.opButton(index))
                         }
                     }
                               .pullToRefresh(isRefreshing: $pullToRefreshShowing) {

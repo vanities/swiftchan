@@ -49,6 +49,7 @@ struct PostView: View {
                             thumbnailUrl: thumbnailUrl,
                             useThumbnailGif: false
                         )
+                            .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.main.bounds.width/2)
                             .scaledToFill() // VStack
                             .onTapGesture {
@@ -117,7 +118,7 @@ struct PostView: View {
                     .textSelection(.enabled)
                     .lineLimit(nil)
                     .padding(.vertical, 20)
-                    .accessibilityLabel("\(index) Post")
+                    .accessibilityIdentifier(AccessibilityIdentifiers.postText(index))
 
                 // replies
                 if let replies = replies {

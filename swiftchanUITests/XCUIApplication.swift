@@ -1,31 +1,44 @@
 import XCTest
 
 extension XCUIApplication {
+    func tapElement(_ element: XCUIElement, _ timeout: TimeInterval = 1) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout))
+        element.tap()
+    }
+    func longPressElement(_ element: XCUIElement, _ duration: TimeInterval = 0.5, _ timeout: TimeInterval = 1) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout))
+        element.press(forDuration: duration)
+    }
+    func assertExistence(_ element: XCUIElement, _ timeout: TimeInterval = 1) {
+        XCTAssert(element.waitForExistence(timeout: timeout), element.debugDescription)
+    }
+
     func goToBoard(_ name: String) {
-        let element = self.buttons["\(name) Board"]
-        if element.waitForExistence(timeout: 0.5) {
-            element.tap()
-        }
+        tapElement(boardButton(name))
     }
     func goToOPThread(_ index: Int) {
-        let element = self.buttons["\(index) Thread"]
-        if element.waitForExistence(timeout: 0.5) {
-            element.tap()
-        }
+        tapElement(opButton(index))
+    }
+    func tapThumbnailMedia(_ index: Int) {
+        tapElement(thumbnailMediaImage(index))
+    }
+    func longPressGalleryMedia(_ index: Int) {
+        longPressElement(galleryMediaImage(index))
+    }
+    func tapSaveToPhotosButton() {
+        tapElement(saveToPhotosButton)
     }
 
-    func assertBoard(_ name: String) {
-        let element = self.buttons["\(name) Board"]
-        XCTAssert(element.waitForExistence(timeout: 0.1), "Checking Board #\(name)")
+    func assertBoardButton(_ name: String) {
+        assertExistence(boardButton(name))
     }
-
-    func assertOPThread(_ index: Int) {
-        let element = self.buttons["\(index) Thread"]
-        XCTAssert(element.waitForExistence(timeout: 1), "Checking Thread #\(index)")
+    func assertOpButton(_ index: Int) {
+        assertExistence(opButton(index))
     }
-
     func assertPost(_ index: Int) {
-        let element = self.staticTexts["\(index) Post"]
-        XCTAssert(element.waitForExistence(timeout: 1), "Checking Post #\(index)")
+        assertExistence(postText(index))
+    }
+    func assertSuccessToastImage() {
+        assertExistence(successToastImage)
     }
 }

@@ -56,7 +56,7 @@ struct BoardsView: View {
                                                 .padding(.horizontal, 5)
                                         }
                                         .id("\(board.id)-f")
-                                        .accessibilityLabel("\(board.board) Board")
+                                        .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
                                     }
                                 }
 
@@ -75,7 +75,7 @@ struct BoardsView: View {
                                         .padding(.horizontal, 5)
                                 }
                                 .id("\(board.id)-a")
-                                .accessibilityLabel("\(board.board) Board")
+                                .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
                             }
                         }
                     }

@@ -58,6 +58,7 @@ struct GalleryView: View {
                     }
                     onMediaChanged?(zoomed)
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(index))
                 .fileExporter(isPresented: $isExportingDocument,
                               document: FileExport(url: urls[index].absoluteString),
                               contentType: .image,
@@ -89,6 +90,7 @@ struct GalleryView: View {
                             Text("Save to Photos")
                             Image(systemName: "square.and.arrow.down")
                         })
+                            .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
                     case .webm, .none:
                         Button(action: {
                             isExportingDocument.toggle()
@@ -148,6 +150,7 @@ struct GalleryView: View {
             case .success(_):
                 ToastView("Success!", content: {}, background: {Color.clear})
                     .toastViewStyle(SuccessToastViewStyle())
+                    .accessibilityIdentifier(AccessibilityIdentifiers.successToastText)
             case .failure(_):
                 ToastView("Failure", content: {}, background: {Color.clear})
                     .toastViewStyle(ErrorToastViewStyle())

@@ -28,82 +28,47 @@ class SwiftchanUITests: XCTestCase {
 
     func testAppLoadsBoards() throws {
         XCTAssertEqual(app.buttons.count, 16)
-        app.assertBoard("3")
-        app.assertBoard("a")
-        app.assertBoard("aco")
-        app.assertBoard("adv")
-        app.assertBoard("an")
-        app.assertBoard("b")
-        app.assertBoard("bant")
-        app.assertBoard("c")
-        app.assertBoard("cgl")
-        app.assertBoard("ck")
-        app.assertBoard("cm")
-        app.assertBoard("co")
-        app.assertBoard("d")
-        app.assertBoard("diy")
+        app.assertBoardButton("3")
+        app.assertBoardButton("a")
+        app.assertBoardButton("aco")
+        app.assertBoardButton("adv")
+        app.assertBoardButton("an")
+        app.assertBoardButton("b")
+        app.assertBoardButton("bant")
+        app.assertBoardButton("c")
+        app.assertBoardButton("cgl")
+        app.assertBoardButton("ck")
+        app.assertBoardButton("cm")
+        app.assertBoardButton("co")
+        // app.assertBoardButton("d")
+        // app.assertBoardButton("diy")
     }
 
     func testAppLoadsOPPosts() throws {
-        app.goToBoard("3")
-        app.assertOPThread(0)
-        app.assertOPThread(1)
-        app.assertOPThread(2)
-        app.assertOPThread(3)
+        app.goToBoard("a")
+        app.assertOpButton(0)
+        app.assertOpButton(1)
+        app.assertOpButton(2)
+        app.assertOpButton(3)
         // app.assertOPThread(4)
         // app.assertOPThread(5)
     }
 
     func testAppLoadsPosts() throws {
-        app.goToBoard("3")
+        app.goToBoard("a")
         app.goToOPThread(0)
 
         app.assertPost(0)
         app.assertPost(1)
     }
 
-    func testLaunchPerformance() throws {
-        app.terminate()
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            app.launch()
-        }
-    }
-
-    func testBoardsScrollPerformance() throws {
-        let measureOptions = XCTMeasureOptions()
-        measureOptions.invocationOptions = [.manuallyStop]
-
-        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
-            app.swipeUp(velocity: .fast)
-            stopMeasuring()
-            app.swipeDown(velocity: .fast)
-        }
-    }
-
-    func testCatalogScrollPerformance() throws {
-        let measureOptions = XCTMeasureOptions()
-        measureOptions.invocationOptions = [.manuallyStop]
-
-        app.goToBoard("3")
-
-        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
-            app.swipeUp(velocity: .fast)
-            stopMeasuring()
-            app.swipeDown(velocity: .fast)
-        }
-    }
-
-    func testPostScrollPerformance() throws {
-        let measureOptions = XCTMeasureOptions()
-        measureOptions.invocationOptions = [.manuallyStop]
-
-        app.goToBoard("3")
+    func testImageDownloaderSavesFiles() throws {
+        app.goToBoard("a")
         app.goToOPThread(0)
-
-        measure(metrics: [XCTOSSignpostMetric.scrollingAndDecelerationMetric], options: measureOptions) {
-            app.swipeUp(velocity: .fast)
-            stopMeasuring()
-            app.swipeDown(velocity: .fast)
-        }
+        app.assertPost(0)
+        app.tapThumbnailMedia(0)
+        app.longPressGalleryMedia(0)
+        app.tapSaveToPhotosButton()
+        app.assertSuccessToastImage()
     }
 }

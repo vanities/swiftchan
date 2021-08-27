@@ -64,6 +64,10 @@
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
+		95F76D8026D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
+		95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
+		95F76D8426D8830F00F6A92F /* XCUIApplication+Identifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */; };
+		95F76D8626D888BB00F6A92F /* swiftchanPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
 		95F9DE8625C90DB50043C704 /* VLCVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */; };
 		95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 95FFFB68263EF2AF00F4356C /* Kingfisher */; };
@@ -160,6 +164,9 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
+		95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
+		95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Identifiers.swift"; sourceTree = "<group>"; };
+		95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanPerformanceTests.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 		95F9DE8525C90DB50043C704 /* VLCVideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoViewModel.swift; sourceTree = "<group>"; };
 		B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
@@ -298,8 +305,10 @@
 			isa = PBXGroup;
 			children = (
 				951817AD254CFB620032616E /* swiftchanUITests.swift */,
+				95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */,
 				951817AF254CFB620032616E /* Info.plist */,
 				95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */,
+				95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */,
 			);
 			path = swiftchanUITests;
 			sourceTree = "<group>";
@@ -352,6 +361,7 @@
 				9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */,
 				957B30462648C87600D2FDCA /* DownloadOperation.swift */,
 				95CE4FA926ABD42500622F7E /* Colors.swift */,
+				95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -685,6 +695,7 @@
 				9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */,
 				95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */,
 				9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */,
+				95F76D8026D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */,
 				953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */,
 				955814B8254D24B900A966BA /* BoardView.swift in Sources */,
 				95F62460255CE64400E9147B /* URLExamples.swift in Sources */,
@@ -712,7 +723,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F76D8626D888BB00F6A92F /* swiftchanPerformanceTests.swift in Sources */,
+				95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */,
 				951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */,
+				95F76D8426D8830F00F6A92F /* XCUIApplication+Identifiers.swift in Sources */,
 				95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
