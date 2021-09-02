@@ -71,4 +71,14 @@ class SwiftchanUITests: XCTestCase {
         app.tapSaveToPhotosButton()
         app.assertSuccessToastImage()
     }
+
+    func testImageCopierCopiesUrlToPasteboard() throws {
+        app.goToBoard("a")
+        app.goToOPThread(0)
+        app.assertPost(0)
+        app.tapThumbnailMedia(0)
+        app.longPressGalleryMedia(0)
+        app.tapCopyToPasteboardButton()
+        XCTAssert(UIPasteboard.general.hasURLs)
+    }
 }

@@ -25,6 +25,10 @@ extension XCUIApplication {
     }
     var saveToPhotosButton: XCUIElement { buttons[AccessibilityIdentifiers.saveToPhotosButton]
     }
+    var saveToFilesButton: XCUIElement { buttons[AccessibilityIdentifiers.saveToFilesButton]
+    }
+    var copyToPasteboardButton: XCUIElement { buttons[AccessibilityIdentifiers.copyToPasteboardButton]
+    }
     var successToastImage: XCUIElement {
         images[AccessibilityIdentifiers.successToastText]
     }

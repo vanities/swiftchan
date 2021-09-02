@@ -65,40 +65,12 @@ struct GalleryView: View {
                               onCompletion: { result in
                     presentingToastResult = result
                     presentingToast = true
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.success)
                 })
                 .contextMenu {
-                    Button(action: {
-                        UIPasteboard.general.string = urls[index].absoluteString
-                    }, label: {
-                        Text("Copy URL")
-                        Image(systemName: "doc.on.doc")
-                    })
-                    switch MediaDetector.detect(url: urls[index]) {
-                    case .image, .gif:
-                        Button(action: {
-                            let imageSaver = ImageSaver(completionHandler: { result in
-                                presentingToast = true
-                                switch result {
-                                case .success(_):
-                                    presentingToastResult = .success(urls[index])
-                                case .failure(let error):
-                                    presentingToastResult = .failure(error)
-                                }
-                            })
-                            imageSaver.saveImageToPhotos(url: urls[index])
-                        }, label: {
-                            Text("Save to Photos")
-                            Image(systemName: "square.and.arrow.down")
-                        })
-                            .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
-                    case .webm, .none:
-                        Button(action: {
-                            isExportingDocument.toggle()
-                        }, label: {
-                            Text("Save to Files")
-                            Image(systemName: "folder")
-                        })
-                    }
+
+                    handleContextManual(index: index)
                 }
             }
             .onDraggingEnded {
@@ -145,21 +117,7 @@ struct GalleryView: View {
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
         .gesture(canShowPreview ? showPreviewTap() : nil)
-        .toast(isPresented: $presentingToast, dismissAfter: 1.0) {
-            switch presentingToastResult {
-            case .success(_):
-                ToastView("Success!", content: {}, background: {Color.clear})
-                    .toastViewStyle(SuccessToastViewStyle())
-                    .accessibilityIdentifier(AccessibilityIdentifiers.successToastText)
-            case .failure(_):
-                ToastView("Failure", content: {}, background: {Color.clear})
-                    .toastViewStyle(ErrorToastViewStyle())
-            case .none:
-                ToastView("Failure", content: {}, background: {Color.clear})
-                    .toastViewStyle(ErrorToastViewStyle())
-
-            }
-        }
+        .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: handleToast)
         .statusBar(hidden: true)
         .onChange(of: state.galleryIndex) { index in
             page.update(.new(index: index))
@@ -173,6 +131,68 @@ struct GalleryView: View {
                     showPreview.toggle()
                 }
             }
+    }
+
+    @ViewBuilder
+    func handleContextManual(index: Int) -> some View {
+        Button(action: {
+            UIPasteboard.general.string = urls[index].absoluteString
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            presentingToast = true
+            presentingToastResult = .success(urls[index])
+        }, label: {
+            Text("Copy URL")
+            Image(systemName: "doc.on.doc")
+        })
+            .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
+        switch MediaDetector.detect(url: urls[index]) {
+        case .image, .gif:
+            Button(action: {
+                let imageSaver = ImageSaver(completionHandler: { result in
+                    presentingToast = true
+                    let generator = UINotificationFeedbackGenerator()
+                    switch result {
+                    case .success(_):
+                        presentingToastResult = .success(urls[index])
+                        generator.notificationOccurred(.success)
+                    case .failure(let error):
+                        presentingToastResult = .failure(error)
+                        generator.notificationOccurred(.error)
+                    }
+                })
+                imageSaver.saveImageToPhotos(url: urls[index])
+            }, label: {
+                Text("Save to Photos")
+                Image(systemName: "square.and.arrow.down")
+            })
+            .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
+        case .webm, .none:
+            Button(action: {
+                isExportingDocument.toggle()
+            }, label: {
+                Text("Save to Files")
+                Image(systemName: "folder")
+            })
+            .accessibilityIdentifier(AccessibilityIdentifiers.saveToFilesButton)
+        }
+    }
+
+    @ViewBuilder
+    func handleToast() -> some View {
+        switch presentingToastResult {
+        case .success(_):
+            ToastView("Success!", content: {}, background: {Color.clear})
+                .toastViewStyle(SuccessToastViewStyle())
+                .accessibilityIdentifier(AccessibilityIdentifiers.successToastText)
+        case .failure(_):
+            ToastView("Failure", content: {}, background: {Color.clear})
+                .toastViewStyle(ErrorToastViewStyle())
+        case .none:
+            ToastView("Failure", content: {}, background: {Color.clear})
+                .toastViewStyle(ErrorToastViewStyle())
+
+        }
     }
 
 }

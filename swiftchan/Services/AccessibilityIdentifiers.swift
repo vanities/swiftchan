@@ -24,6 +24,8 @@ class AccessibilityIdentifiers {
         "\(index) Gallery Media Image"
     }
     static let saveToPhotosButton: String = "Save to Photos Button"
+    static let saveToFilesButton: String = "Save to Files Button"
+    static let copyToPasteboardButton: String = "Copy to Pasteboard Button"
     static let successToastText: String = "Success Toast Text"
 
 }

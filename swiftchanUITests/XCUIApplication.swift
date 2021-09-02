@@ -28,6 +28,9 @@ extension XCUIApplication {
     func tapSaveToPhotosButton() {
         tapElement(saveToPhotosButton)
     }
+    func tapCopyToPasteboardButton() {
+        tapElement(copyToPasteboardButton)
+    }
 
     func assertBoardButton(_ name: String) {
         assertExistence(boardButton(name))
