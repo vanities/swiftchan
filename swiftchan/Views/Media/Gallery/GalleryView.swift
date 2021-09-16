@@ -69,8 +69,7 @@ struct GalleryView: View {
                     generator.notificationOccurred(.success)
                 })
                 .contextMenu {
-
-                    handleContextManual(index: index)
+                    contextMenu(index: index)
                 }
             }
             .onDraggingEnded {
@@ -134,7 +133,7 @@ struct GalleryView: View {
     }
 
     @ViewBuilder
-    func handleContextManual(index: Int) -> some View {
+    func contextMenu(index: Int) -> some View {
         Button(action: {
             UIPasteboard.general.string = urls[index].absoluteString
             let generator = UINotificationFeedbackGenerator()
