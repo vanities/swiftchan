@@ -18,6 +18,9 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
+      - name: Force Xcode Version
+        run: sudo xcode-select -switch /Applications/Xcode_13.0.app
+
       - name: Swift Package Manager Cache
         id: spm-cache
         uses: actions/cache@v2
