@@ -102,9 +102,11 @@ pod install
 
 ### Testflight
 
-If you want to test it with me on testflight or think we can get it on the app store, just [email me](mailto:mischke@protonmail.com)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/vanities)
 
-use this link https://testflight.apple.com/join/yDU6gMUi
+I have to pay the $100/year apple dev fee for this, so please help out. :)
+
+If you want to test it with me on testflight or think we can get it on the app store, user [this link](https://testflight.apple.com/join/yDU6gMUi) or [email me](mailto:mischke@protonmail.com) if you have any issues.
 
 
 <!-- USAGE EXAMPLES -->
