@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'swiftchan' do
-  platform :ios, '15'
+  platform :ios, '8.4'
   pod 'MobileVLCKit', '3.3.17'
   pod 'SwiftLint'
 end
