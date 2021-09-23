@@ -2,15 +2,15 @@ import XCTest
 
 extension XCUIApplication {
     func tapElement(_ element: XCUIElement, _ timeout: TimeInterval = 1) {
-        XCTAssertTrue(element.waitForExistence(timeout: timeout))
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), "Could not tap element! \(element.debugDescription)")
         element.tap()
     }
     func longPressElement(_ element: XCUIElement, _ duration: TimeInterval = 0.5, _ timeout: TimeInterval = 1) {
-        XCTAssertTrue(element.waitForExistence(timeout: timeout))
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), "Could not long press element! \(element.debugDescription)")
         element.press(forDuration: duration)
     }
     func assertExistence(_ element: XCUIElement, _ timeout: TimeInterval = 1) {
-        XCTAssert(element.waitForExistence(timeout: timeout), element.debugDescription)
+        XCTAssert(element.waitForExistence(timeout: timeout), "Could not assert element! \(element.debugDescription)")
     }
 
     func goToBoard(_ name: String) {
