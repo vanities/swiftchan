@@ -48,7 +48,7 @@ jobs:
       - name: Test
         run: bundle exec fastlane tests
 
-     - name: Archive Failed Tests artifacts
+      - name: Archive Failed Tests artifacts
         if: failure()
         uses: actions/upload-artifact@v2
         with:
