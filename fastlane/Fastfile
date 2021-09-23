@@ -28,7 +28,7 @@ platform :ios do
 
   desc "Build the App, Send to Testflight, and push a build bump"
   lane :beta do
-    ensure_git_status_clean
+    #ensure_git_status_clean
 
     create_keychain(name: "temp", password: "temppassword")
     sync_code_signing(
