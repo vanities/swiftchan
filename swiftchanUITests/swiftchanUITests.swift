@@ -27,7 +27,7 @@ class SwiftchanUITests: XCTestCase {
     }
 
     func testAppLoadsBoards() throws {
-        XCTAssertEqual(app.buttons.count, 16)
+        XCTAssertGreaterThan(app.buttons.count, 10)
         app.assertBoardButton("3")
         app.assertBoardButton("a")
         app.assertBoardButton("aco")
