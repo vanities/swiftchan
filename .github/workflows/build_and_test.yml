@@ -46,7 +46,7 @@ jobs:
         run: pod install --repo-update
 
       - name: Test
-        run: bundle exec fastlane tests
+        run: fastlane tests
 
       - name: Archive Failed Tests artifacts
         if: failure()
