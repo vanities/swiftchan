@@ -47,3 +47,10 @@ jobs:
 
       - name: Test
         run: fastlane tests
+
+     - name: Archive Failed Tests artifacts
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: FailureDiff
+          path: .build/Logs/Test/

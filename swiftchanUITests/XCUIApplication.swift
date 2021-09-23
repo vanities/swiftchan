@@ -45,6 +45,6 @@ extension XCUIApplication {
         assertExistence(postText(index), errorMessage: "Could not assert post \(index)!")
     }
     func assertSuccessToastImage() {
-        assertExistence(successToastImage, errorMessage: "Could not assert success toast image!")
+        assertExistence(successToastImage, 1, errorMessage: "Could not assert success toast image!")
     }
 }

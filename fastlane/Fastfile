@@ -21,7 +21,8 @@ platform :ios do
     run_tests(
       use_system_scm: true,
       workspace: "swiftchan.xcworkspace",
-      scheme: "swiftchan"
+      scheme: "swiftchan",
+      device: "iPhone 13"
     )
   end
 
