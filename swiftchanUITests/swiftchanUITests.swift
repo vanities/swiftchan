@@ -62,17 +62,17 @@ class SwiftchanUITests: XCTestCase {
         app.assertPost(1)
     }
 
-    func testImageDownloaderSavesFiles() throws {
+    func xtestImageDownloaderSavesFiles() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)
         app.tapThumbnailMedia(0)
         app.longPressGalleryMedia(0)
         app.tapSaveToPhotosButton()
-        // app.assertSuccessToastImage()
+        app.assertSuccessToastImage()
     }
 
-    func testImageCopierCopiesUrlToPasteboard() throws {
+    func xtestImageCopierCopiesUrlToPasteboard() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)

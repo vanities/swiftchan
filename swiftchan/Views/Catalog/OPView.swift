@@ -84,7 +84,6 @@ struct OPView: View {
                         Text(self.comment)
                             .textSelection(.enabled)
                             .lineLimit(20)
-
                     }
                 }
                 .padding(.all, 10)
