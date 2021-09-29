@@ -40,7 +40,7 @@ class SwiftchanTests: XCTestCase {
 
     func testHyperLinkFinderQueryParam() throws {
         let urlString = "https://store.steampowered.com/app/​773840/DRAG/"
-        let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        //let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let result = parser.checkForUrls(urlString)
         XCTAssertEqual(result[0].0, URL(string: "https://store.steampowered.com/app/773840/DRAG/"))
     }

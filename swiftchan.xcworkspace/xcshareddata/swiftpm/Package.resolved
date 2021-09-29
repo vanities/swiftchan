@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "FourChan",
-        "repositoryURL": "git@github.com:vanities/FourChanAPI.git",
+        "repositoryURL": "https://github.com/jackpal/FourChanAPI",
         "state": {
           "branch": null,
-          "revision": "2977c32f4a4b5da459d4be7c04976efa6bbaf1fb",
-          "version": "1.1.25"
+          "revision": "a90349ecf3e30ec8c315aa7000720c01e91cd132",
+          "version": "1.2.9"
         }
       },
       {

@@ -101,6 +101,8 @@ class CommentParser {
                 part = AttributedString(text)
                 part.font = .body
                 part.foregroundColor = Colors.Text.deadLink
+            case .code(text: let text):
+                debugPrint("code! \(text)")
             }
             result.append(part)
         }

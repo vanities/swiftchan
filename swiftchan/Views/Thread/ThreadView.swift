@@ -39,6 +39,7 @@ struct ThreadView: View {
                         DispatchQueue.main.async {
                             if dismissing,
                                presentationState.presentingIndex != presentationState.galleryIndex,
+                               presentationState.presentingSheet == .gallery,
                                let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
                                 reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.mediaUrls.count - presentationState.galleryIndex < 3 ? .bottom : .top)
                             }
@@ -94,7 +95,7 @@ struct ThreadView: View {
             presentedDismissGesture.presenting.toggle()
 
         }
-        .onAppear {
+        .task {
             viewModel.prefetch()
         }
         .environmentObject(presentationState)
