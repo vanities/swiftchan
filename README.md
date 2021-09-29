@@ -30,7 +30,9 @@
   </p>
 </p>
 
-
+<center>
+  <a href="https://discord.gg/jcUfgedZwc" target="_blank"><img src="https://i.imgur.com/dUwek7T.jpg" alt="Discord Server" width="200" height="100"></a>
+</center>
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
