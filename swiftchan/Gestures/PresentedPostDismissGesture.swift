@@ -29,7 +29,7 @@ struct DismissGestureModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        let drag = DragGesture(minimumDistance: 15)
+        let drag = DragGesture(minimumDistance: 15, coordinateSpace: .local)
             .onChanged {self.onDragChanged(with: $0)}
             .onEnded {_ in self.onDragGestureEnded()}
         content

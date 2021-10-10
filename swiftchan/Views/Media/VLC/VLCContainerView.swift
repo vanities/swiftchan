@@ -7,12 +7,15 @@
 
 import SwiftUI
 import MobileVLCKit
+import ToastUI
 
 struct VLCContainerView: View {
     let url: URL
+    let jumpInterval: Int32 = 5
     @Binding var play: Bool
     @StateObject var vlcVideoViewModel = VLCVideoViewModel()
-    @State var showControls: Bool = false
+    @State var isShowingControls: Bool = false
+    @State var presentingToast: VLCVideo.MediaControlDirection?
 
     var onSeekChanged: ((Bool) -> Void)?
 
@@ -20,14 +23,16 @@ struct VLCContainerView: View {
         return ZStack {
             VLCVideoView()
                 .environmentObject(vlcVideoViewModel)
+
             VStack {
+                jumpControls
                 Spacer()
                 VLCPlayerControlsView()
                     .environmentObject(vlcVideoViewModel)
                     .padding(.bottom, 25)
                     .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
+                    .opacity(isShowingControls ? 1 : 0)
             }
-            .opacity(showControls ? 1 : 0)
 
             if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
                 ActivityIndicator()
@@ -37,26 +42,106 @@ struct VLCContainerView: View {
             if state == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                     withAnimation(.linear(duration: 0.2)) {
-                        showControls = false
+                        isShowingControls = false
                     }
                 }
             }
         }
-        .onTapGesture {
-            withAnimation(.linear(duration: 0.2)) {
-                showControls.toggle()
-            }
-        }
-        .onChange(of: self.play) {
+        .onChange(of: play) {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
         }
         .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
             vlcVideoViewModel.vlcVideo.url = url
             vlcVideoViewModel.setCachedMediaPlayer(url: url)
             if play {
                 vlcVideoViewModel.vlcVideo.mediaControlState = .play
             }
         }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+    }
+
+    private var jumpControls: some View {
+        HStack {
+            // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
+            ZStack {
+                if presentingToast == .backward {
+                    jumpToast(direction: .backward)
+                        .offset(x: -32, y: 32)
+                        .transition(.opacity)
+                }
+                Color.black.opacity(0.0001)
+                    .highPriorityGesture(jumpGesture(.backward))
+                    .simultaneousGesture(showControlGesture)
+            }
+            ZStack {
+                if presentingToast == .forward {
+                    jumpToast(direction: .forward)
+                        .offset(x: 32, y: 32)
+                        .transition(.opacity)
+                }
+                Color.black.opacity(0.0001)
+                    .highPriorityGesture(jumpGesture(.forward))
+                    .simultaneousGesture(showControlGesture)
+            }
+        }
+    }
+
+    private var showControlGesture: some Gesture {
+        TapGesture()
+            .onEnded {
+                showControls()
+            }
+    }
+
+    private func jumpToast(direction: VLCVideo.MediaControlDirection) -> some View {
+        AnimatedImage(
+            [
+                Image(systemName: "arrowtriangle.\(direction.rawValue)"),
+                Image(systemName: direction.rawValue)
+            ],
+            interval: 0.1,
+            finished: {
+                withAnimation {
+                    debugPrint("off")
+                    presentingToast = nil
+                }
+            })
+            .id(UUID())
+            .font(.system(size: 32))
+            .foregroundColor(.white)
+    }
+
+    private func showControls() {
+        withAnimation(.linear(duration: 0.2)) {
+            isShowingControls.toggle()
+        }
+    }
+
+    private func jumpGesture(_ direction: VLCVideo.MediaControlDirection) -> some Gesture {
+        TapGesture(count: 2)
+            .onEnded {
+                withAnimation {
+                    debugPrint("on")
+                    presentingToast = direction
+                }
+                switch direction {
+                case .backward:
+                    jumpBackward()
+                case .forward:
+                    jumpForward()
+                }
+            }
+    }
+
+    private func jumpBackward() {
+        vlcVideoViewModel.vlcVideo.mediaControlState = .jump(.backward, jumpInterval)
+    }
+
+    private func jumpForward() {
+        vlcVideoViewModel.vlcVideo.mediaControlState = .jump(.forward, jumpInterval)
     }
 }
 
@@ -70,5 +155,6 @@ struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
         return VLCContainerView(url: URLExamples.webm, play: .constant(true))
             .background(Color.black)
+            .previewInterfaceOrientation(.portrait)
     }
 }

@@ -56,8 +56,18 @@ struct VLCVideoView: UIViewRepresentable {
                     playerList.mediaPlayer?.time = time
                 }
             }
+        case .jump(let direction, let time):
+            DispatchQueue.main.async {
+                switch direction {
+                case .forward:
+                    playerList.mediaPlayer?.jumpForward(time)
+                    vlcVideoViewModel.vlcVideo.mediaControlState = .play
+                case .backward:
+                    playerList.mediaPlayer?.jumpBackward(time)
+                    vlcVideoViewModel.vlcVideo.mediaControlState = .play
+                }
+            }
         }
-
     }
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
@@ -88,7 +98,7 @@ struct VLCVideoView: UIViewRepresentable {
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate {
+    class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate, UIGestureRecognizerDelegate {
         var parent: VLCVideoView
 
         init(_ parent: VLCVideoView) {
@@ -112,6 +122,11 @@ struct VLCVideoView: UIViewRepresentable {
                 parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
             }
         }
+
+        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+        }
+
     }
 }
 

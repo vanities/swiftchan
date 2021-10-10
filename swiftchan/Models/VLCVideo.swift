@@ -13,6 +13,11 @@ struct VLCVideo {
         case play
         case pause
         case seek(VLCTime)
+        case jump(MediaControlDirection, Int32)
+    }
+    enum MediaControlDirection: String {
+        case forward
+        case backward
     }
 
     var url: URL?

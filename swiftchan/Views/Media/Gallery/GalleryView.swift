@@ -25,6 +25,7 @@ struct GalleryView: View {
     @State var dragging: Bool = false
     @State private var presentingToast: Bool = false
     @State private var presentingToastResult: Result<URL, Error>?
+    @State private var showContextMenu: Bool = true
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -49,49 +50,55 @@ struct GalleryView: View {
                     url: urls[index],
                     id: index
                 )
-                .onMediaChanged { zoomed in
-                    canShowPreview = !zoomed
-                    canPage = !zoomed
-                    if zoomed {
-                        // if zooming, remove the preview
-                        showPreview = !zoomed
+                    .onMediaChanged { zoomed in
+                        canShowPreview = !zoomed
+                        canPage = !zoomed
+                        if zoomed {
+                            // if zooming, remove the preview
+                            showPreview = !zoomed
+                        }
+                        onMediaChanged?(zoomed)
                     }
-                    onMediaChanged?(zoomed)
-                }
-                .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(index))
-                .fileExporter(isPresented: $isExportingDocument,
-                              document: FileExport(url: urls[index].absoluteString),
-                              contentType: .image,
-                              onCompletion: { result in
-                    presentingToastResult = result
-                    presentingToast = true
-                    let generator = UINotificationFeedbackGenerator()
-                    generator.notificationOccurred(.success)
-                })
-                .contextMenu {
-                    contextMenu(index: index)
-                }
+                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(index))
+                    .fileExporter(isPresented: $isExportingDocument,
+                                  document: FileExport(url: urls[index].absoluteString),
+                                  contentType: .image,
+                                  onCompletion: { result in
+                        presentingToastResult = result
+                        presentingToast = true
+                        let generator = UINotificationFeedbackGenerator()
+                        generator.notificationOccurred(.success)
+                    })
+                    .contextMenu {
+                        contextMenu(index: index)
+                    }
             }
-            .onDraggingEnded {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    onPageDragChanged?(.zero)
-                }
-            }
-            .onDraggingChanged { offset in
-                DispatchQueue.main.async {
-                    onPageDragChanged?(CGFloat(offset))
-                }
-            }
-            .onPageChanged { index in
-                dragging = false
-                onPageDragChanged?(.zero)
-                state.galleryIndex = index
-            }
-            .allowsDragging(!dismissGesture.dragging && canPage)
-            .pagingPriority(.simultaneous)
-            .swipeInteractionArea(.allAvailable)
-            .background(Color.black)
-            .ignoresSafeArea()
+                  .onDraggingEnded {
+                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                          onPageDragChanged?(.zero)
+                      }
+                  }
+                  .onDraggingBegan {
+                      showContextMenu = false
+                  }
+                  .onDraggingChanged { offset in
+                      DispatchQueue.main.async {
+                          onPageDragChanged?(CGFloat(offset))
+                      }
+                  }
+                  .onDraggingEnded {
+                      showContextMenu = true
+                  }
+                  .onPageChanged { index in
+                      dragging = false
+                      onPageDragChanged?(.zero)
+                      state.galleryIndex = index
+                  }
+                  .allowsDragging(!dismissGesture.dragging && canPage)
+                  .pagingPriority(.simultaneous)
+                  .swipeInteractionArea(.allAvailable)
+                  .background(Color.black)
+                  .ignoresSafeArea()
 
             // dismiss button
             Button(action: {
@@ -102,8 +109,8 @@ struct GalleryView: View {
                     .contentShape(Rectangle())
                     .foregroundColor(.white)
             })
-            .position(x: 30, y: 10)
-            .opacity(dismissGesture.dragging ? 0 : 1)
+                .position(x: 30, y: 10)
+                .opacity(dismissGesture.dragging ? 0 : 1)
 
             // preview
             VStack {
@@ -124,7 +131,7 @@ struct GalleryView: View {
     }
 
     func showPreviewTap() -> some Gesture {
-        return TapGesture(count: 1)
+        return TapGesture()
             .onEnded {
                 withAnimation(.linear(duration: 0.2)) {
                     showPreview.toggle()
@@ -134,46 +141,48 @@ struct GalleryView: View {
 
     @ViewBuilder
     func contextMenu(index: Int) -> some View {
-        Button(action: {
-            UIPasteboard.general.string = urls[index].absoluteString
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
-            presentingToast = true
-            presentingToastResult = .success(urls[index])
-        }, label: {
-            Text("Copy URL")
-            Image(systemName: "doc.on.doc")
-        })
-            .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
-        switch MediaDetector.detect(url: urls[index]) {
-        case .image, .gif:
+        if showContextMenu {
             Button(action: {
-                let imageSaver = ImageSaver(completionHandler: { result in
-                    presentingToast = true
-                    let generator = UINotificationFeedbackGenerator()
-                    switch result {
-                    case .success(_):
-                        presentingToastResult = .success(urls[index])
-                        generator.notificationOccurred(.success)
-                    case .failure(let error):
-                        presentingToastResult = .failure(error)
-                        generator.notificationOccurred(.error)
-                    }
+                UIPasteboard.general.string = urls[index].absoluteString
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.success)
+                presentingToast = true
+                presentingToastResult = .success(urls[index])
+            }, label: {
+                Text("Copy URL")
+                Image(systemName: "doc.on.doc")
+            })
+                .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
+            switch MediaDetector.detect(url: urls[index]) {
+            case .image, .gif:
+                Button(action: {
+                    let imageSaver = ImageSaver(completionHandler: { result in
+                        presentingToast = true
+                        let generator = UINotificationFeedbackGenerator()
+                        switch result {
+                        case .success(_):
+                            presentingToastResult = .success(urls[index])
+                            generator.notificationOccurred(.success)
+                        case .failure(let error):
+                            presentingToastResult = .failure(error)
+                            generator.notificationOccurred(.error)
+                        }
+                    })
+                    imageSaver.saveImageToPhotos(url: urls[index])
+                }, label: {
+                    Text("Save to Photos")
+                    Image(systemName: "square.and.arrow.down")
                 })
-                imageSaver.saveImageToPhotos(url: urls[index])
-            }, label: {
-                Text("Save to Photos")
-                Image(systemName: "square.and.arrow.down")
-            })
-            .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
-        case .webm, .none:
-            Button(action: {
-                isExportingDocument.toggle()
-            }, label: {
-                Text("Save to Files")
-                Image(systemName: "folder")
-            })
-            .accessibilityIdentifier(AccessibilityIdentifiers.saveToFilesButton)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
+            case .webm, .none:
+                Button(action: {
+                    isExportingDocument.toggle()
+                }, label: {
+                    Text("Save to Files")
+                    Image(systemName: "folder")
+                })
+                    .accessibilityIdentifier(AccessibilityIdentifiers.saveToFilesButton)
+            }
         }
     }
 
@@ -215,17 +224,17 @@ struct GalleryView_Previews: PreviewProvider {
                         urls: URLExamples.imageSet,
                         thumbnailUrls: URLExamples.imageSet
             )
-            .environmentObject(DismissGesture())
+                .environmentObject(DismissGesture())
             GalleryView(0,
                         urls: URLExamples.gifSet,
                         thumbnailUrls: URLExamples.gifSet
             )
-            .environmentObject(DismissGesture())
+                .environmentObject(DismissGesture())
             GalleryView(0,
                         urls: URLExamples.webmSet,
                         thumbnailUrls: URLExamples.webmSet
             )
-            .environmentObject(DismissGesture())
+                .environmentObject(DismissGesture())
         }
     }
 }
