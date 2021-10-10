@@ -24,6 +24,8 @@ struct VLCContainerView: View {
             VLCVideoView()
                 .environmentObject(vlcVideoViewModel)
 
+            jumpToast
+
             VStack {
                 jumpControls
                 Spacer()
@@ -66,27 +68,58 @@ struct VLCContainerView: View {
     private var jumpControls: some View {
         HStack {
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-            ZStack {
-                if presentingToast == .backward {
-                    jumpToast(direction: .backward)
-                        .offset(x: -32, y: 32)
-                        .transition(.opacity)
-                }
                 Color.black.opacity(0.0001)
                     .highPriorityGesture(jumpGesture(.backward))
                     .simultaneousGesture(showControlGesture)
-            }
-            ZStack {
-                if presentingToast == .forward {
-                    jumpToast(direction: .forward)
-                        .offset(x: 32, y: 32)
-                        .transition(.opacity)
-                }
                 Color.black.opacity(0.0001)
                     .highPriorityGesture(jumpGesture(.forward))
                     .simultaneousGesture(showControlGesture)
-            }
         }
+    }
+
+    private var jumpToast: some View {
+        let gradient = Gradient(stops: [
+            .init(color: .white.opacity(0.2), location: 0),
+            .init(color: .clear, location: 0.5)
+        ])
+
+        return HStack {
+            if presentingToast == .backward {
+                ZStack {
+                    LinearGradient(
+                        gradient: gradient,
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                        .cornerRadius(200)
+
+                    HStack {
+                        jumpToast(direction: .backward)
+                            .padding(-20)
+                        Spacer()
+                    }
+                }
+            }
+            if presentingToast == .forward {
+                ZStack {
+                    Spacer()
+                    LinearGradient(
+                        gradient: gradient,
+                        startPoint: .trailing,
+                        endPoint: .leading
+                    )
+                        .cornerRadius(200)
+                    HStack {
+                        Spacer()
+                        jumpToast(direction: .forward)
+                            .padding(20)
+
+                    }
+                }
+            }
+
+        }
+        .transition(.opacity)
     }
 
     private var showControlGesture: some Gesture {
@@ -153,8 +186,14 @@ extension VLCContainerView: Buildable {
 
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        return VLCContainerView(url: URLExamples.webm, play: .constant(true))
-            .background(Color.black)
+        return Group {
+            VLCContainerView(url: URLExamples.webm, play: .constant(true))
+                .background(Color.black)
             .previewInterfaceOrientation(.portrait)
+
+            VLCContainerView(url: URLExamples.webm, play: .constant(true), presentingToast: .forward)
+                .background(Color.black)
+                .previewInterfaceOrientation(.portrait)
+        }
     }
 }
