@@ -95,7 +95,7 @@ struct VLCContainerView: View {
 
                     HStack {
                         jumpToast(direction: .backward)
-                            .padding(-20)
+                            .padding(20)
                         Spacer()
                     }
                 }
