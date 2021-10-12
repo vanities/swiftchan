@@ -13,10 +13,11 @@ struct VLCContainerView: View {
     let thumbnailUrl: URL
     let url: URL
     let jumpInterval: Int32 = 5
+
     @Binding var play: Bool
     @StateObject var vlcVideoViewModel = VLCVideoViewModel()
     @State var isShowingControls: Bool = false
-    @State var presentingToast: VLCVideo.MediaControlDirection?
+    @State var presentingjumpToast: VLCVideo.MediaControlDirection?
 
     var onSeekChanged: ((Bool) -> Void)?
 
@@ -85,7 +86,7 @@ struct VLCContainerView: View {
         ])
 
         return HStack {
-            if presentingToast == .backward {
+            if presentingjumpToast == .backward {
                 ZStack {
                     LinearGradient(
                         gradient: gradient,
@@ -96,14 +97,12 @@ struct VLCContainerView: View {
 
                     HStack {
                         jumpToast(direction: .backward)
-                        Image(systemName: "forward").foregroundColor(.white
-                        )
                             .padding(20)
                         Spacer()
                     }
                 }
             }
-            if presentingToast == .forward {
+            if presentingjumpToast == .forward {
                 ZStack {
                     Spacer()
                     LinearGradient(
@@ -141,11 +140,9 @@ struct VLCContainerView: View {
             interval: 0.1,
             finished: {
                 withAnimation {
-                    debugPrint("off")
-                    presentingToast = nil
+                    presentingjumpToast = nil
                 }
             })
-            .id(UUID())
             .font(.system(size: 32))
             .foregroundColor(.white)
     }
@@ -159,15 +156,18 @@ struct VLCContainerView: View {
     private func jumpGesture(_ direction: VLCVideo.MediaControlDirection) -> some Gesture {
         TapGesture(count: 2)
             .onEnded {
-                withAnimation {
-                    debugPrint("on")
-                    presentingToast = direction
-                }
-                switch direction {
-                case .backward:
-                    jumpBackward()
-                case .forward:
-                    jumpForward()
+                if presentingjumpToast == nil {
+                    withAnimation {
+                        presentingjumpToast = direction
+                    }
+                    switch direction {
+                    case .backward:
+                        jumpBackward()
+                    case .forward:
+                        jumpForward()
+                    }
+                } else {
+                    presentingjumpToast = nil
                 }
             }
     }
@@ -202,7 +202,7 @@ struct VLCContainerView_Previews: PreviewProvider {
                 thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 play: .constant(true),
-                presentingToast: .forward
+                presentingjumpToast: .forward
             )
                 .background(Color.black)
                 .previewInterfaceOrientation(.portrait)
@@ -211,7 +211,7 @@ struct VLCContainerView_Previews: PreviewProvider {
                 thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 play: .constant(true),
-                presentingToast: .backward
+                presentingjumpToast: .backward
             )
                 .background(Color.black)
                 .previewInterfaceOrientation(.portrait)
