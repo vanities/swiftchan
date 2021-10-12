@@ -10,6 +10,7 @@ import MobileVLCKit
 import ToastUI
 
 struct VLCContainerView: View {
+    let thumbnailUrl: URL
     let url: URL
     let jumpInterval: Int32 = 5
     @Binding var play: Bool
@@ -95,6 +96,8 @@ struct VLCContainerView: View {
 
                     HStack {
                         jumpToast(direction: .backward)
+                        Image(systemName: "forward").foregroundColor(.white
+                        )
                             .padding(20)
                         Spacer()
                     }
@@ -187,11 +190,29 @@ extension VLCContainerView: Buildable {
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
         return Group {
-            VLCContainerView(url: URLExamples.webm, play: .constant(true))
+            VLCContainerView(
+                thumbnailUrl: URLExamples.image,
+                url: URLExamples.webm,
+                play: .constant(true)
+            )
                 .background(Color.black)
-            .previewInterfaceOrientation(.portrait)
+                .previewInterfaceOrientation(.portrait)
 
-            VLCContainerView(url: URLExamples.webm, play: .constant(true), presentingToast: .forward)
+            VLCContainerView(
+                thumbnailUrl: URLExamples.image,
+                url: URLExamples.webm,
+                play: .constant(true),
+                presentingToast: .forward
+            )
+                .background(Color.black)
+                .previewInterfaceOrientation(.portrait)
+
+            VLCContainerView(
+                thumbnailUrl: URLExamples.image,
+                url: URLExamples.webm,
+                play: .constant(true),
+                presentingToast: .backward
+            )
                 .background(Color.black)
                 .previewInterfaceOrientation(.portrait)
         }

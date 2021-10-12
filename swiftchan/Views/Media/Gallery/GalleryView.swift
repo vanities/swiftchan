@@ -47,6 +47,7 @@ struct GalleryView: View {
                   id: \.self) { index in
                 MediaView(
                     selected: $state.galleryIndex,
+                    thumbnailUrl: thumbnailUrls[index],
                     url: urls[index],
                     id: index
                 )

@@ -10,13 +10,18 @@ import SwiftUI
 struct MediaView: View {
     @State var isSelected: Bool
     @Binding var selected: Int
+    let thumbnailUrl: URL
     let url: URL
     let id: Int
 
     var onMediaChanged: ((Bool) -> Void)?
 
-    init(selected: Binding<Int>, url: URL, id: Int) {
+    init(selected: Binding<Int>,
+         thumbnailUrl: URL,
+         url: URL,
+         id: Int) {
         self._selected = selected
+        self.thumbnailUrl = thumbnailUrl
         self.url = url
         self.id = id
 
@@ -27,25 +32,31 @@ struct MediaView: View {
     var body: some View {
         switch MediaDetector.detect(url: url) {
         case .image:
-            ImageView(url: self.url, canGesture: true, isSelected: self.$isSelected)
+            ImageView(url: url, canGesture: true, isSelected: $isSelected)
                 .onZoomChanged { zoomed in
-                    self.onMediaChanged?(zoomed)
+                    onMediaChanged?(zoomed)
                 }
-                .onChange(of: self.selected) { value in
-                    self.isSelected = value == self.id
+                .onChange(of: selected) { value in
+                    isSelected = value == id
                 }
         case .webm:
-            VLCContainerView(url: self.url,
-                             play: self.$isSelected
-            )
-            .onSeekChanged { seeking in
-                self.onMediaChanged?(seeking)
-            }
-            .onChange(of: self.selected) { value in
-                self.isSelected = value == self.id
+            ZStack {
+                ImageView(url: thumbnailUrl, canGesture: false, isSelected: $isSelected)
+
+                VLCContainerView(
+                    thumbnailUrl: thumbnailUrl,
+                    url: url,
+                    play: $isSelected
+                )
+                    .onSeekChanged { seeking in
+                        onMediaChanged?(seeking)
+                    }
+                    .onChange(of: selected) { value in
+                        isSelected = value == id
+                    }
             }
         case .gif:
-            ImageView(url: self.url, canGesture: true, isSelected: self.$isSelected)
+            ImageView(url: url, canGesture: true, isSelected: $isSelected)
         case .none:
             EmptyView()
         }
@@ -63,16 +74,19 @@ struct MediaView_Previews: PreviewProvider {
         Group {
             MediaView(
                 selected: .constant(0),
+                thumbnailUrl: URLExamples.image,
                 url: URLExamples.image,
                 id: 0
             )
             MediaView(
                 selected: .constant(0),
+                thumbnailUrl: URLExamples.image,
                 url: URLExamples.gif,
                 id: 0
             )
             MediaView(
                 selected: .constant(0),
+                thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 id: 0
             )
