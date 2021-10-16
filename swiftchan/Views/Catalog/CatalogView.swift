@@ -76,7 +76,19 @@ struct CatalogView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(viewModel.boardName)
             .navigationBarItems(
-                trailing: Button(action: {
+                trailing:
+                    HStack {
+                        Button(action: {
+                        withAnimation {
+                            let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                            softVibrate.impactOccurred()
+                            //appState.showingCatalogMenu = true
+
+                        }
+                    }, label: {
+                        Image(systemName: "slider.horizontal.3")
+                    })
+                    Button(action: {
                     withAnimation {
                         let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                         softVibrate.impactOccurred()
@@ -86,6 +98,7 @@ struct CatalogView: View {
                 }, label: {
                     Image(systemName: "ellipsis")
                 })
+                    }
             )
             .searchable(text: $searchText)
             .multiActionSheet(isPresented: $appState.showingCatalogMenu) {

@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-let window = UIApplication.shared.windows[0]
-let topPadding = window.safeAreaInsets.top
-let bottomPadding = window.safeAreaInsets.bottom
-let safeAreaPadding = topPadding + bottomPadding
-
 internal func getFlag(from countryCode: String) -> String {
 
     return countryCode

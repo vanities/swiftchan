@@ -26,10 +26,10 @@ struct RepliesView: View {
             ZStack(alignment: .center) {
                 Blur(style: .regular).ignoresSafeArea()
                 ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(columns: self.columns,
+                    LazyVGrid(columns: columns,
                               alignment: .center,
                               spacing: 0) {
-                        ForEach(self.replies, id: \.self) { index in
+                        ForEach(replies, id: \.self) { index in
                             PostView(index: index)
                                 .environmentObject(presentationState)
                                 .environmentObject(presentedDismissGesture)
@@ -38,7 +38,7 @@ struct RepliesView: View {
                 }
             }
             .frame(width: UIScreen.main.bounds.width,
-                    height: UIScreen.main.bounds.height - safeAreaPadding)
+                    height: UIScreen.main.bounds.height - 100)
     }
 }
 
