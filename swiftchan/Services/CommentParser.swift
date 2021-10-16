@@ -21,6 +21,7 @@ class CommentParser {
         return nsText
     }
 
+    // swiftlint:disable all
     func parseComment(_ comment: String) -> AttributedString {
         // debugPrint(comment)
         var result = AttributedString()
@@ -108,7 +109,9 @@ class CommentParser {
         }
         return result
     }
+    // swiftlint:enable all
 
+    // swiftlint:disable all
     func checkForUrls(_ text: String) -> [(URL, String, NSRange)] {
         // let regexString = "@^(https?|ftp)://[^\\s/$.?#].[^\\s]*$@iS" // i like
         let regexString = "(https?://[^\\s]*)(\\r|\\n|\\s|)" // basic
@@ -142,11 +145,10 @@ class CommentParser {
                 }
                 return nil
             }
-
         } catch let error {
             debugPrint(error.localizedDescription)
         }
         return []
-
     }
+    // swiftlint:enable all
 }

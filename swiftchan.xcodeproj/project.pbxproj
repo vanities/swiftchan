@@ -20,6 +20,8 @@
 		95181798254CFB620032616E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95181797254CFB620032616E /* Preview Assets.xcassets */; };
 		951817A3254CFB620032616E /* swiftchanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817A2254CFB620032616E /* swiftchanTests.swift */; };
 		951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817AD254CFB620032616E /* swiftchanUITests.swift */; };
+		9519EAF72719AF3D0068497B /* MultiActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519EAF62719AF3C0068497B /* MultiActionSheet.swift */; };
+		9519EAFA271A06790068497B /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; };
 		9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */; };
 		9524E19F256F272200D08075 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E19E256F272200D08075 /* AppState.swift */; };
 		9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */; };
@@ -125,6 +127,7 @@
 		951817A9254CFB620032616E /* swiftchanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = swiftchanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		951817AD254CFB620032616E /* swiftchanUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanUITests.swift; sourceTree = "<group>"; };
 		951817AF254CFB620032616E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9519EAF62719AF3C0068497B /* MultiActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiActionSheet.swift; sourceTree = "<group>"; };
 		9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPrefetcher.swift; sourceTree = "<group>"; };
 		9524E19E256F272200D08075 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedPostDismissGesture.swift; sourceTree = "<group>"; };
@@ -185,6 +188,7 @@
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
+				9519EAFA271A06790068497B /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +369,7 @@
 				95CE4FA926ABD42500622F7E /* Colors.swift */,
 				95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */,
 				95DBF2072712550C00356D8F /* AnimatedImage.swift */,
+				9519EAF62719AF3C0068497B /* MultiActionSheet.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -480,6 +485,7 @@
 				95FFFB68263EF2AF00F4356C /* Kingfisher */,
 				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95E210FB2701704300B8C96A /* FourChan */,
+				9519EAF9271A06790068497B /* ConfettiSwiftUI */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -558,6 +564,7 @@
 				95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95E210FA2701704300B8C96A /* XCRemoteSwiftPackageReference "FourChanAPI" */,
+				9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -704,6 +711,7 @@
 				955814B8254D24B900A966BA /* BoardView.swift in Sources */,
 				95F62460255CE64400E9147B /* URLExamples.swift in Sources */,
 				9599CAA0254DFDA1002EB026 /* PostView.swift in Sources */,
+				9519EAF72719AF3D0068497B /* MultiActionSheet.swift in Sources */,
 				95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */,
 				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
 				95D804D32568A553005A3128 /* PresentedPost.swift in Sources */,
@@ -1051,6 +1059,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.1;
+			};
+		};
 		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
@@ -1094,6 +1110,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9519EAF9271A06790068497B /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
 		952F72EB25D0608200762154 /* SwiftUIPager */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;

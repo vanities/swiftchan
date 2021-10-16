@@ -24,6 +24,7 @@ struct VLCVideoView: UIViewRepresentable {
         return uiView
     }
 
+    // swiftlint:disable all
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
         let playerList = context.coordinator.parent.playerList
         if media == nil {
@@ -69,6 +70,7 @@ struct VLCVideoView: UIViewRepresentable {
             }
         }
     }
+    // swiftlint:enable all
 
     public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
         coordinator.parent.playerList.stop()

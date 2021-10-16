@@ -6,30 +6,43 @@
 //
 
 import SwiftUI
+import ConfettiSwiftUI
 
 struct FavoriteStar: View {
     @EnvironmentObject var userSettings: UserSettings
     let viewModel: CatalogView.CatalogViewModel
+    @State var counter: Int = 0
 
     var favorited: Bool {
-        self.userSettings.favoriteBoards.contains(self.viewModel.boardName)
+        userSettings.favoriteBoards.contains(viewModel.boardName)
     }
 
     var body: some View {
-        Image(systemName: self.favorited ? "star.fill" : "star")
-            .onTapGesture {
+        ZStack {
+            MultiActionItem(
+                icon: Image(systemName: favorited ? "star.fill" : "star")
+                    .foregroundColor(Colors.Other.star)
+                    .scaleEffect(favorited ? 1.3 : 1),
+                iconAnimation: ConfettiCannon(counter: $counter, num: 1, confettis: [.text("⭐️"), .text("⭐️"), .text("⭐️"), .text("⭐️")], confettiSize: 5, rainHeight: 50, radius: 50, repetitions: 3, repetitionInterval: 0.01),
+                text: Text("Favorite")
+            ) {
                 let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                 softVibrate.impactOccurred()
 
                 if self.favorited {
-                    if let index = self.userSettings.favoriteBoards.firstIndex(of: self.viewModel.boardName) {
-                        self.userSettings.favoriteBoards.remove(at: index)
+                    if let index = userSettings.favoriteBoards.firstIndex(of: viewModel.boardName) {
+                        withAnimation {
+                            _ = userSettings.favoriteBoards.remove(at: index)
+                        }
                     }
                 } else {
-                    self.userSettings.favoriteBoards.append(self.viewModel.boardName)
+                    withAnimation {
+                        counter += 1
+                        userSettings.favoriteBoards.append(viewModel.boardName)
+                    }
                 }
             }
-            .foregroundColor(Colors.Other.star)
+        }
     }
 }
 

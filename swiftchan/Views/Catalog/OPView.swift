@@ -10,6 +10,7 @@ import FourChan
 
 struct OPView: View {
     @StateObject var threadViewModel: ThreadView.ViewModel
+    @EnvironmentObject var appState: AppState
 
     let boardName: String
     let post: Post
@@ -90,6 +91,7 @@ struct OPView: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
+        .allowsHitTesting(!appState.showingCatalogMenu)
     }
 }
 

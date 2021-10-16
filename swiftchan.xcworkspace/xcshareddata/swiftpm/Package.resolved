@@ -2,12 +2,21 @@
   "object": {
     "pins": [
       {
+        "package": "ConfettiSwiftUI",
+        "repositoryURL": "git@github.com:simibac/ConfettiSwiftUI.git",
+        "state": {
+          "branch": null,
+          "revision": "4aac70f5264e59dfed75d6f1c282bb147f101a49",
+          "version": "0.2.1"
+        }
+      },
+      {
         "package": "FourChan",
         "repositoryURL": "https://github.com/jackpal/FourChanAPI",
         "state": {
           "branch": null,
-          "revision": "a90349ecf3e30ec8c315aa7000720c01e91cd132",
-          "version": "1.2.9"
+          "revision": "851c0fc0e0525e55367308023b8dfff7b5c62529",
+          "version": "1.2.10"
         }
       },
       {

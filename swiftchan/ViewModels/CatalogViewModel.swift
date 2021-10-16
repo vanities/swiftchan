@@ -16,9 +16,11 @@ extension CatalogView {
         @Published private(set) var posts = [Post]()
         @Published private(set) var comments = [AttributedString]()
 
-        init(boardName: String) {
+        init(boardName: String, _ complete: (() -> Void)? = nil) {
             self.boardName = boardName
-            self.load()
+            self.load {
+                complete?()
+            }
         }
 
         deinit {

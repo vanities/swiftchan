@@ -40,4 +40,8 @@ class Colors {
     class Other {
         static var star = Color(#colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1))
     }
+
+    class Background {
+        static var gray = Color(#colorLiteral(red: 0.1231701747, green: 0.1231701747, blue: 0.1231701747, alpha: 1))
+    }
 }

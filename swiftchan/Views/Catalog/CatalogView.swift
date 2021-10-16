@@ -9,10 +9,18 @@ import SwiftUI
 import FourChan
 
 struct CatalogView: View {
+    enum LoadingState {
+        case loading
+        case loaded
+    }
+
+    @EnvironmentObject var appState: AppState
     @StateObject var viewModel: CatalogViewModel
 
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
+    @State var state: LoadingState = .loading
+    @State var isShowingMenu: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .top), GridItem(.flexible(), spacing: 0, alignment: .top)]
 
@@ -33,38 +41,57 @@ struct CatalogView: View {
         }
     }
 
+    @ViewBuilder
     var body: some View {
-        return ScrollViewReader { _ in
-            ScrollView(.vertical, showsIndicators: true) {
-                if viewModel.posts.count == 0 {
-                    ActivityIndicator()
-                } else {
-                    LazyVGrid(columns: columns,
-                              alignment: .center,
-                              spacing: 0) {
-                        ForEach(filteredPostIndices, id: \.self) { index in
-                            OPView(boardName: viewModel.boardName,
-                                   post: viewModel.posts[index],
-                                   comment: viewModel.comments[index])
-                                .accessibilityIdentifier(AccessibilityIdentifiers.opButton(index))
-                        }
+        switch state {
+        case .loading:
+            ActivityIndicator()
+                .onChange(of: viewModel.comments.count) { numOfComments in
+                    if numOfComments > 0 {
+                        state = .loaded
                     }
-                              .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                                  let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                                  softVibrate.impactOccurred()
-                                  viewModel.load {
-                                      pullToRefreshShowing = false
-                                  }
-                              }
                 }
+        case .loaded:
+            ScrollView(.vertical, showsIndicators: true) {
+                LazyVGrid(columns: columns,
+                          alignment: .center,
+                          spacing: 0) {
+                    ForEach(filteredPostIndices, id: \.self) { index in
+                        OPView(boardName: viewModel.boardName,
+                               post: viewModel.posts[index],
+                               comment: viewModel.comments[index])
+                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(index))
+                    }
+                }
+                          .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                              state = .loading
+                              let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                              softVibrate.impactOccurred()
+                              viewModel.load {
+                                  pullToRefreshShowing = false
+                                  state = .loaded
+                              }
+                          }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle(viewModel.boardName)
+            .navigationBarItems(
+                trailing: Button(action: {
+                    withAnimation {
+                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                        softVibrate.impactOccurred()
+                        appState.showingCatalogMenu = true
+
+                    }
+                }, label: {
+                    Image(systemName: "ellipsis")
+                })
+            )
+            .searchable(text: $searchText)
+            .multiActionSheet(isPresented: $appState.showingCatalogMenu) {
+                    FavoriteStar(viewModel: viewModel)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle(viewModel.boardName)
-        .navigationBarItems(
-            trailing: FavoriteStar(viewModel: viewModel)
-        )
-        .searchable(text: $searchText)
     }
 }
 

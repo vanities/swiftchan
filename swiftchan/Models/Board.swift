@@ -9,6 +9,7 @@ import Foundation
 import FourChan
 
 extension Board {
+    // swiftlint:disable all
     static func examples() -> [Board] {
         let json: [String: Any] = [
             "boards": [
@@ -64,6 +65,7 @@ extension Board {
             return []
         }
     }
+    // swiftlint:enable all
 
     var descriptionText: String {
         return self.meta_description
