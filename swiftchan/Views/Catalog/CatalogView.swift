@@ -79,30 +79,33 @@ struct CatalogView: View {
                 trailing:
                     HStack {
                         Button(action: {
-                        withAnimation {
-                            let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                            softVibrate.impactOccurred()
-                            //appState.showingCatalogMenu = true
+                            withAnimation {
+                                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                                softVibrate.impactOccurred()
+                                appState.showingSortMenu = true
 
-                        }
-                    }, label: {
-                        Image(systemName: "slider.horizontal.3")
-                    })
-                    Button(action: {
-                    withAnimation {
-                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                        softVibrate.impactOccurred()
-                        appState.showingCatalogMenu = true
+                            }
+                        }, label: {
+                            Image(systemName: "slider.horizontal.3")
+                        })
+                        Button(action: {
+                            withAnimation {
+                                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                                softVibrate.impactOccurred()
+                                appState.showingCatalogMenu = true
 
-                    }
-                }, label: {
-                    Image(systemName: "ellipsis")
-                })
+                            }
+                        }, label: {
+                            Image(systemName: "ellipsis")
+                        })
                     }
             )
             .searchable(text: $searchText)
             .multiActionSheet(isPresented: $appState.showingCatalogMenu) {
-                    FavoriteStar(viewModel: viewModel)
+                FavoriteStar(viewModel: viewModel)
+            }
+            .multiActionSheet(isPresented: $appState.showingSortMenu) {
+                FavoriteStar(viewModel: viewModel)
             }
         }
     }

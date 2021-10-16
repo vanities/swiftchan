@@ -1,17 +1,22 @@
 //
-//  FavoriteStar.swift
+//  SortRow.swift
 //  swiftchan
 //
-//  Created by vanities on 11/23/20.
+//  Created by vanities on 10/15/21.
 //
 
 import SwiftUI
-import ConfettiSwiftUI
 
-struct FavoriteStar: View {
+struct SortRow: View {
+    enum SortType {
+        case ascending
+        case descending
+        case none
+    }
+
     @EnvironmentObject var userSettings: UserSettings
     let viewModel: CatalogView.CatalogViewModel
-    @State var counter: Int = 0
+    @State var sort: SortType = .none
 
     var favorited: Bool {
         userSettings.favoriteBoards.contains(viewModel.boardName)
@@ -23,7 +28,7 @@ struct FavoriteStar: View {
                 icon: Image(systemName: favorited ? "star.fill" : "star")
                     .foregroundColor(Colors.Other.star)
                     .scaleEffect(favorited ? 1.3 : 1),
-                iconAnimation: ConfettiCannon(counter: $counter, num: 1, confettis: [.text("⭐️"), .text("⭐️"), .text("⭐️"), .text("⭐️")], confettiSize: 5, rainHeight: 50, radius: 50, repetitions: 3, repetitionInterval: 0.01),
+                iconAnimation: EmptyView(),
                 text: Text("Favorite")
             ) {
                 let softVibrate = UIImpactFeedbackGenerator(style: .soft)
@@ -37,7 +42,6 @@ struct FavoriteStar: View {
                     }
                 } else {
                     withAnimation {
-                        counter += 1
                         userSettings.favoriteBoards.append(viewModel.boardName)
                     }
                 }
@@ -46,10 +50,10 @@ struct FavoriteStar: View {
     }
 }
 
-struct FavoriteStar_Previews: PreviewProvider {
+struct SortRow_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
-        FavoriteStar(viewModel: viewModel)
+        SortRow(viewModel: viewModel)
             .environmentObject(UserSettings())
     }
 }
