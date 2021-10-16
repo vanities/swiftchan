@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Defaults",
+        "repositoryURL": "git@github.com:sindresorhus/Defaults.git",
+        "state": {
+          "branch": null,
+          "revision": "8a6e4a96fd38504a05903d136c85634b65fd7c4d",
+          "version": "6.0.0"
+        }
+      },
+      {
         "package": "FourChan",
         "repositoryURL": "https://github.com/jackpal/FourChanAPI",
         "state": {
@@ -24,8 +33,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "0f55a9cb7c0bd2c0785c4fe91f80c3ebc872ab4a",
-          "version": null
+          "revision": "318e319998bf555c3e914d5c3adb6da05af86a32",
+          "version": "7.1.1"
         }
       },
       {

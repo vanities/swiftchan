@@ -7,7 +7,18 @@
 
 import SwiftUI
 
+struct RepliesSort: View {
+    let viewModel: CatalogView.CatalogViewModel
+
+    var body: some View {
+        SortRow(imageName: "arrowshape.turn.up.left.fill", text: "Replies", viewModel: viewModel)
+    }
+}
+
 struct SortRow: View {
+    var imageName: String
+    var text: String
+
     enum SortType {
         case ascending
         case descending
@@ -25,26 +36,14 @@ struct SortRow: View {
     var body: some View {
         ZStack {
             MultiActionItem(
-                icon: Image(systemName: favorited ? "star.fill" : "star")
-                    .foregroundColor(Colors.Other.star)
-                    .scaleEffect(favorited ? 1.3 : 1),
+                icon: Image(systemName: imageName)
+                    .foregroundColor(Colors.Other.star),
                 iconAnimation: EmptyView(),
-                text: Text("Favorite")
+                text: Text(text)
             ) {
-                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                softVibrate.impactOccurred()
+                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
 
-                if self.favorited {
-                    if let index = userSettings.favoriteBoards.firstIndex(of: viewModel.boardName) {
-                        withAnimation {
-                            _ = userSettings.favoriteBoards.remove(at: index)
-                        }
-                    }
-                } else {
-                    withAnimation {
-                        userSettings.favoriteBoards.append(viewModel.boardName)
-                    }
-                }
+                //if userSettings
             }
         }
     }
@@ -53,7 +52,7 @@ struct SortRow: View {
 struct SortRow_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
-        SortRow(viewModel: viewModel)
+        RepliesSort(viewModel: viewModel)
             .environmentObject(UserSettings())
     }
 }

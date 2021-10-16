@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct MediaView: View {
     @State var isSelected: Bool
@@ -56,7 +57,8 @@ struct MediaView: View {
                     }
             }
         case .gif:
-            ImageView(url: url, canGesture: true, isSelected: $isSelected)
+            KFAnimatedImage(url)
+                .scaledToFit()
         case .none:
             EmptyView()
         }

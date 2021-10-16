@@ -80,8 +80,7 @@ struct CatalogView: View {
                     HStack {
                         Button(action: {
                             withAnimation {
-                                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                                softVibrate.impactOccurred()
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 appState.showingSortMenu = true
 
                             }
@@ -90,8 +89,7 @@ struct CatalogView: View {
                         })
                         Button(action: {
                             withAnimation {
-                                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                                softVibrate.impactOccurred()
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 appState.showingCatalogMenu = true
 
                             }

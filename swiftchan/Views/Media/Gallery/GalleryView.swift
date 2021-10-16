@@ -226,16 +226,19 @@ struct GalleryView_Previews: PreviewProvider {
                         thumbnailUrls: URLExamples.imageSet
             )
                 .environmentObject(DismissGesture())
+                .environmentObject(PresentationState())
             GalleryView(0,
                         urls: URLExamples.gifSet,
                         thumbnailUrls: URLExamples.gifSet
             )
                 .environmentObject(DismissGesture())
+                .environmentObject(PresentationState())
             GalleryView(0,
                         urls: URLExamples.webmSet,
                         thumbnailUrls: URLExamples.webmSet
             )
                 .environmentObject(DismissGesture())
+                .environmentObject(PresentationState())
         }
     }
 }

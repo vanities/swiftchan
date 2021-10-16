@@ -26,8 +26,7 @@ struct FavoriteStar: View {
                 iconAnimation: ConfettiCannon(counter: $counter, num: 1, confettis: [.text("⭐️"), .text("⭐️"), .text("⭐️"), .text("⭐️")], confettiSize: 5, rainHeight: 50, radius: 50, repetitions: 3, repetitionInterval: 0.01),
                 text: Text("Favorite")
             ) {
-                let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                softVibrate.impactOccurred()
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
 
                 if self.favorited {
                     if let index = userSettings.favoriteBoards.firstIndex(of: viewModel.boardName) {

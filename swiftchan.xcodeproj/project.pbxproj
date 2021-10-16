@@ -61,6 +61,7 @@
 		95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CE4FA926ABD42500622F7E /* Colors.swift */; };
 		95CEE159271A67590016EAC1 /* SortRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CEE158271A67590016EAC1 /* SortRow.swift */; };
 		95CEE15A271A6FD30016EAC1 /* ConfettiSwiftUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 95CEE15C271ABFCD0016EAC1 /* Defaults */; };
 		95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */ = {isa = PBXBuildFile; productRef = 95D14F6026CC82A8007AF00F /* ToastUI */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95D804D32568A553005A3128 /* PresentedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804D22568A553005A3128 /* PresentedPost.swift */; };
@@ -186,6 +187,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */,
 				95E210FC2701704300B8C96A /* FourChan in Frameworks */,
 				95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */,
 				95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */,
@@ -491,6 +493,7 @@
 				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95E210FB2701704300B8C96A /* FourChan */,
 				9519EAF9271A06790068497B /* ConfettiSwiftUI */,
+				95CEE15C271ABFCD0016EAC1 /* Defaults */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -570,6 +573,7 @@
 				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95E210FA2701704300B8C96A /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 				9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -1089,6 +1093,14 @@
 				minimumVersion = 0.1.2;
 			};
 		};
+		95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:sindresorhus/Defaults.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/quanshousio/ToastUI";
@@ -1109,8 +1121,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
-				kind = revision;
-				revision = 0f55a9cb7c0bd2c0785c4fe91f80c3ebc872ab4a;
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1130,6 +1142,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 95B31D4425E2E3B400C309D4 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
+		};
+		95CEE15C271ABFCD0016EAC1 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		95D14F6026CC82A8007AF00F /* ToastUI */ = {
 			isa = XCSwiftPackageProductDependency;
