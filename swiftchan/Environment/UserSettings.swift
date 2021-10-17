@@ -5,24 +5,22 @@
 //  Created by vanities on 11/23/20.
 //
 
-import Foundation
-import Combine
+import Defaults
 import FourChan
 
-class UserSettings: ObservableObject {
-    @Published var favoriteBoards: [String] {
-        didSet {
-            UserDefaults.standard.set(favoriteBoards, forKey: "favoriteBoards")
-        }
+extension Defaults.Keys {
+    static let favoriteBoards = Key<[String]>("favoriteBoards", default: [])
+    static let deletedBoards = Key<[String]>("deletedBoards", default: [])
+    static func sortFilesBoard(boardName: String) -> Key<SortRow.SortType> {
+        return Key<SortRow.SortType>(
+            "sortFilesBoard\(boardName)",
+            default: .none
+        )
     }
-    @Published var deletedBoards: [String] {
-        didSet {
-            UserDefaults.standard.set(deletedBoards, forKey: "deletedBoards")
-        }
-    }
+}
 
-    init() {
-        self.favoriteBoards = UserDefaults.standard.object(forKey: "favoriteBoards") as? [String] ?? []
-        self.deletedBoards = UserDefaults.standard.object(forKey: "deletedBoards") as? [String] ?? []
+extension Defaults {
+    static func sortFilesBoard(boardName: String) -> SortRow.SortType {
+        return Defaults[.sortFilesBoard(boardName: boardName)]
     }
 }

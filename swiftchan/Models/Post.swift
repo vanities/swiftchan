@@ -8,7 +8,14 @@
 import Foundation
 import FourChan
 
+struct SwiftchanPost {
+    var post: Post
+    var comment: AttributedString
+
+}
+
 extension Post {
+
     func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
         let thumb = thumbnail ? "s" : ""
         if let filename = tim,

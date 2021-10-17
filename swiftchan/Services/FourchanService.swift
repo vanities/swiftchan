@@ -22,14 +22,18 @@ class FourchanService {
         }
     }
 
-    class func getPosts(boardName: String, id: Int, complete: @escaping ([Post],
-                                                                         [URL],
-                                                                         [URL],
-                                                                         [Int: Int],
-                                                                         [AttributedString],
-                                                                         [Int: [Int]]
-    ) -> Void) {
-        var mediaUrls: [URL] = []
+    class func getPosts(
+        boardName: String,
+        id: Int,
+        complete: @escaping (
+            [Post],
+            [URL],
+            [URL],
+            [Int: Int],
+            [AttributedString],
+            [Int: [Int]]
+        ) -> Void) {
+            var mediaUrls: [URL] = []
         var thumbnailMediaUrls: [URL] = []
         var postMediaMapping: [Int: Int] = [:]
         var comments: [AttributedString] = []
@@ -65,25 +69,25 @@ class FourchanService {
         }
     }
 
-    class func getCatalog(boardName: String, complete: @escaping ([Post], [AttributedString]) -> Void) {
+    class func getCatalog(boardName: String, complete: @escaping ([SwiftchanPost]) -> Void) {
         FourChanAPIService.shared.GET(endpoint: .catalog(board: boardName)) { (result: Result<Catalog, FourChanAPIService.APIError>) in
-            var flatPages: [Post] = []
+            var posts: [SwiftchanPost] = []
 
             switch result {
             case .success(let pages):
-                var comments: [AttributedString] = []
                 for page in pages {
                     for thread in page.threads {
-                        flatPages.append(thread)
-                        if let comment = thread.com {
-                            let parser = CommentParser(comment: comment)
-                            comments.append(parser.getComment())
+                        var comment: AttributedString
+
+                        if let com = thread.com {
+                            comment = CommentParser(comment: com).getComment()
                         } else {
-                            comments.append(AttributedString())
+                            comment = AttributedString()
                         }
+                        posts.append(SwiftchanPost(post: thread, comment: comment))
                     }
                 }
-                complete(flatPages, comments)
+                complete(posts)
             case .failure(let error):
                 print(error)
             }

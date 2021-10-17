@@ -7,9 +7,10 @@
 
 import SwiftUI
 import FourChan
+import Defaults
 
 struct BoardsView: View {
-    @EnvironmentObject var userSettings: UserSettings
+    @Default(.favoriteBoards) var favoriteBoardsDefault
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
 
@@ -22,8 +23,8 @@ struct BoardsView: View {
     }
 
     var favoriteBoards: [Board] {
-        self.viewModel.boards.filter({ board in
-            self.userSettings.favoriteBoards.contains(board.board)
+        viewModel.boards.filter({ board in
+            favoriteBoardsDefault.contains(board.board)
         })
     }
 

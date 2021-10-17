@@ -39,13 +39,13 @@ struct OPView: View {
             NavigationLink(
                 destination:
                     ThreadView()
-                    .environmentObject(self.threadViewModel)
+                    .environmentObject(threadViewModel)
             ) {
 
                 VStack(alignment: .leading, spacing: 0) {
                     // image
-                    if let url = self.post.getMediaUrl(boardId: self.boardName),
-                       let thumbnailUrl = self.post.getMediaUrl(boardId: self.boardName, thumbnail: true) {
+                    if let url = post.getMediaUrl(boardId: boardName),
+                       let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                         ThumbnailMediaView(url: url,
                                            thumbnailUrl: thumbnailUrl,
                                            useThumbnailGif: false)
@@ -82,7 +82,7 @@ struct OPView: View {
                             .padding(.bottom, 5)
 
                         // comment
-                        Text(self.comment)
+                        Text(comment)
                             .textSelection(.enabled)
                             .lineLimit(20)
                     }

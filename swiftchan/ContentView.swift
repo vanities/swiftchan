@@ -10,7 +10,6 @@ import FourChan
 
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
-    @StateObject private var userSettings = UserSettings()
     @StateObject private var appState = AppState()
     @StateObject private var boardViewModel = BoardsView.ViewModel()
 
@@ -19,7 +18,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             BoardsView(viewModel: self.boardViewModel)
-                .environmentObject(self.userSettings)
                 .environmentObject(self.appState)
                 .blur(radius: self.backgrounding ? 10 : 0)
 

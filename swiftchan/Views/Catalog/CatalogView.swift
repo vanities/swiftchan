@@ -22,7 +22,10 @@ struct CatalogView: View {
     @State var state: LoadingState = .loading
     @State var isShowingMenu: Bool = false
 
-    let columns = [GridItem(.flexible(), spacing: 0, alignment: .top), GridItem(.flexible(), spacing: 0, alignment: .top)]
+    let columns = [
+        GridItem(.flexible(), spacing: 0, alignment: .top),
+        GridItem(.flexible(), spacing: 0, alignment: .top)
+    ]
 
     var navigationCentering: CGFloat {
         return CGFloat(20 + (self.viewModel.boardName.count * 5))
@@ -32,12 +35,15 @@ struct CatalogView: View {
         self._viewModel = StateObject(wrappedValue: CatalogView.CatalogViewModel(boardName: boardName))
     }
 
-    var filteredPostIndices: [Int] {
-        guard searchText != "" else { return Array(viewModel.posts.indices) }
-        return self.viewModel.posts.indices.compactMap { index -> Int? in
-            let commentAndSubject = "\(viewModel.posts[index].com?.clean.lowercased() ?? "") \(viewModel.posts[index].sub?.clean.lowercased() ?? "")"
+    var filteredPosts: [SwiftchanPost] {
+        if searchText.isEmpty {
+            return viewModel.sortedPosts
+        } else {
+            return viewModel.sortedPosts.compactMap { swiftChanPost -> SwiftchanPost? in
+                let commentAndSubject = "\(swiftChanPost.post.com?.clean.lowercased() ?? "") \(swiftChanPost.post.sub?.clean.lowercased() ?? "")"
 
-            return  commentAndSubject.contains(searchText.lowercased()) ? index : nil
+                return commentAndSubject.contains(searchText.lowercased()) ? swiftChanPost : nil
+            }
         }
     }
 
@@ -46,7 +52,7 @@ struct CatalogView: View {
         switch state {
         case .loading:
             ActivityIndicator()
-                .onChange(of: viewModel.comments.count) { numOfComments in
+                .onChange(of: viewModel.posts.count) { numOfComments in
                     if numOfComments > 0 {
                         state = .loaded
                     }
@@ -56,11 +62,11 @@ struct CatalogView: View {
                 LazyVGrid(columns: columns,
                           alignment: .center,
                           spacing: 0) {
-                    ForEach(filteredPostIndices, id: \.self) { index in
+                    ForEach(filteredPosts, id: \.post.id) { post in
                         OPView(boardName: viewModel.boardName,
-                               post: viewModel.posts[index],
-                               comment: viewModel.comments[index])
-                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(index))
+                               post: post.post,
+                               comment: post.comment)
+                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.sortedPosts.firstIndex(where: { $0.post == post.post}) ?? 0))
                     }
                 }
                           .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
@@ -103,7 +109,7 @@ struct CatalogView: View {
                 FavoriteStar(viewModel: viewModel)
             }
             .multiActionSheet(isPresented: $appState.showingSortMenu) {
-                FavoriteStar(viewModel: viewModel)
+                RepliesSort(viewModel: viewModel)
             }
         }
     }
@@ -113,6 +119,5 @@ struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
         CatalogView("fit")
             .environmentObject(AppState())
-            .environmentObject(UserSettings())
     }
 }

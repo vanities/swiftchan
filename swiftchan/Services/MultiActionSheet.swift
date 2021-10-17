@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct MultiActionItem<Icon: View, IconAnimation: View>: View {
+    enum IconAnimationPlacement {
+        case zstack, hstack
+    }
+
     var icon: Icon
     var iconAnimation: IconAnimation?
+    var iconAnimationPlacement: IconAnimationPlacement = .zstack
     var text: Text
     var tapped: (() -> Void)
 
@@ -21,6 +26,11 @@ struct MultiActionItem<Icon: View, IconAnimation: View>: View {
                 HStack(alignment: .top) {
                     ZStack {
                         icon
+                        if iconAnimationPlacement == .zstack {
+                            iconAnimation
+                        }
+                    }
+                    if iconAnimationPlacement == .hstack {
                         iconAnimation
                     }
                     VStack(alignment: .leading) {

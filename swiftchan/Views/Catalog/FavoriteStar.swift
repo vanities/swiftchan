@@ -7,14 +7,15 @@
 
 import SwiftUI
 import ConfettiSwiftUI
+import Defaults
 
 struct FavoriteStar: View {
-    @EnvironmentObject var userSettings: UserSettings
+    @Default(.favoriteBoards) var favoriteBoardsDefault
     let viewModel: CatalogView.CatalogViewModel
     @State var counter: Int = 0
 
     var favorited: Bool {
-        userSettings.favoriteBoards.contains(viewModel.boardName)
+        favoriteBoardsDefault.contains(viewModel.boardName)
     }
 
     var body: some View {
@@ -29,15 +30,15 @@ struct FavoriteStar: View {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
 
                 if self.favorited {
-                    if let index = userSettings.favoriteBoards.firstIndex(of: viewModel.boardName) {
+                    if let index = favoriteBoardsDefault.firstIndex(of: viewModel.boardName) {
                         withAnimation {
-                            _ = userSettings.favoriteBoards.remove(at: index)
+                            _ = favoriteBoardsDefault.remove(at: index)
                         }
                     }
                 } else {
                     withAnimation {
                         counter += 1
-                        userSettings.favoriteBoards.append(viewModel.boardName)
+                        favoriteBoardsDefault.append(viewModel.boardName)
                     }
                 }
             }
@@ -49,6 +50,5 @@ struct FavoriteStar_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
         FavoriteStar(viewModel: viewModel)
-            .environmentObject(UserSettings())
     }
 }
