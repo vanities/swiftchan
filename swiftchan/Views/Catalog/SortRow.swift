@@ -8,46 +8,64 @@
 import SwiftUI
 import Defaults
 
-struct RepliesSort: View {
-    enum SortImageName: String {
-        case enabled = "arrowshape.turn.up.left.fill"
-        case disabled = "arrowshape.turn.up.left"
-    }
-
+struct RepliesSortRow: View {
     let viewModel: CatalogView.CatalogViewModel
-    @State var sortState: SortRow.SortType
-    @State var imageName: SortImageName
-
-    init(viewModel: CatalogView.CatalogViewModel) {
-        self.viewModel = viewModel
-        self.sortState = Defaults.sortFilesBoard(boardName: viewModel.boardName)
-        self.imageName = Defaults.sortFilesBoard(boardName: viewModel.boardName) == .none ? .disabled : .enabled
-    }
 
     var body: some View {
-
         SortRow(
-            imageName: imageName.rawValue,
+            viewModel: viewModel,
+            enabledImageName: "arrowshape.turn.up.left.fill",
+            disabledImageName: "arrowshape.turn.up.left",
             text: "Replies",
-            sortState: $sortState
+            defaultsKeyType: Defaults.Keys.sortRepliesBy
         )
-            .environmentObject(viewModel)
-            .onChange(of: sortState) { value in
-                imageName = value == .none ? .disabled : .enabled
-            }
+    }
+}
+
+struct FilesSortRow: View {
+    let viewModel: CatalogView.CatalogViewModel
+
+    var body: some View {
+        SortRow(
+            viewModel: viewModel,
+            enabledImageName: "photo.fill",
+            disabledImageName: "photo",
+            text: "Files",
+            defaultsKeyType: Defaults.Keys.sortFilesBy
+        )
     }
 }
 
 struct SortRow: View {
-    let imageName: String
+    let viewModel: CatalogView.CatalogViewModel
+    let enabledImageName: String
+    let disabledImageName: String
     let text: String
-    @Binding var sortState: SortType
-    @EnvironmentObject var viewModel: CatalogView.CatalogViewModel
+    let defaultsKeyType: ((String) -> Defaults.Key<SortRow.SortType>)
+
+    @State var imageName: String
+    @State var sortState: SortType
 
     enum SortType: String, Equatable, CaseIterable, Defaults.Serializable {
         case descending
         case ascending
         case none
+    }
+
+    init(viewModel: CatalogView.CatalogViewModel,
+         enabledImageName: String,
+         disabledImageName: String,
+         text: String,
+         defaultsKeyType: @escaping ((String) -> Defaults.Key<SortRow.SortType>)
+    ) {
+        self.viewModel = viewModel
+        self.enabledImageName = enabledImageName
+        self.disabledImageName = disabledImageName
+        self.text = text
+        self.defaultsKeyType = defaultsKeyType
+
+        self.imageName = Defaults[defaultsKeyType(viewModel.boardName)] == .none ? disabledImageName : enabledImageName
+        self.sortState = Defaults[defaultsKeyType(viewModel.boardName)]
     }
 
     @ViewBuilder
@@ -70,13 +88,16 @@ struct SortRow: View {
                 text: Text(text)
             ) {
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                Defaults[.sortFilesBoard(boardName: viewModel.boardName)].next()
+                Defaults[defaultsKeyType(viewModel
+                                            .boardName)].next()
 
                 withAnimation(.linear) {
                     sortState.next()
                 }
             }
-
+        }
+        .onChange(of: sortState) { value in
+            imageName = value == .none ? disabledImageName : enabledImageName
         }
     }
 }
@@ -86,29 +107,7 @@ struct SortRow_Previews: PreviewProvider {
         let boardName = "fit"
         let viewModel = CatalogView.CatalogViewModel(boardName: boardName)
         Group {
-            RepliesSort(viewModel: viewModel)
-                .onAppear {
-                    Defaults[Defaults.Key<SortRow.SortType>(
-                        "sortFilesBoard\(boardName)",
-                        default: .none
-                    )] = .none
-                }
-
-            RepliesSort(viewModel: viewModel)
-                .onAppear {
-                    Defaults[Defaults.Key<SortRow.SortType>(
-                        "sortFilesBoard\(boardName)",
-                        default: .none
-                    )] = .ascending
-                }
-
-            RepliesSort(viewModel: viewModel)
-                .onAppear {
-                    Defaults[Defaults.Key<SortRow.SortType>(
-                        "sortFilesBoard\(boardName)",
-                        default: .none
-                    )] = .descending
-                }
+            RepliesSortRow(viewModel: viewModel)
         }
     }
 }

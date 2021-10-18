@@ -17,7 +17,7 @@ extension CatalogView {
         let prefetcher = Prefetcher()
         @Published private(set) var sortedPosts = [SwiftchanPost]()
         @Published private(set) var posts = [SwiftchanPost]()
-        private var cancellable: AnyCancellable?
+        private var cancellable = Set<AnyCancellable>()
 
         init(boardName: String, _ complete: (() -> Void)? = nil) {
             self.boardName = boardName
@@ -28,7 +28,6 @@ extension CatalogView {
 
         deinit {
             stopPrefetching()
-            cancellable?.cancel()
         }
 
         func load(_ complete: (() -> Void)? = nil) {
@@ -39,21 +38,33 @@ extension CatalogView {
                 self?.prefetch()
             }
 
-            cancellable?.cancel()
-            let publisher = Defaults.publisher(.sortFilesBoard(boardName: boardName))
-            cancellable = publisher.sink { [weak self] change in
-                //change.newValue
-                guard change.newValue != .none else {
-                    self?.sortedPosts = self?.posts ?? []
-                    return
+            Defaults.publisher(.sortFilesBy(boardName: boardName))
+                .sink { [weak self] change in
+                    self?.handleSorting(value: change.newValue, attributeKey: "files")
                 }
-                self?.sortedPosts.sort { (lhs: SwiftchanPost, rhs: SwiftchanPost) -> Bool in
-                    // https://stackoverflow.com/questions/26829304/assigning-operator-function-in-variable
-                    let operation: (Int, Int) -> Bool = change.newValue == .ascending ? (<) : (>)
-                    return operation(lhs.post.replies ?? 0, rhs.post.replies ?? 0)
-                }
-            }
+                .store(in: &cancellable)
 
+            Defaults.publisher(.sortRepliesBy(boardName: boardName))
+                .sink { [weak self] change in
+                    self?.handleSorting(value: change.newValue, attributeKey: "replies")
+                }
+                .store(in: &cancellable)
+
+        }
+
+        func handleSorting(value: SortRow.SortType, attributeKey: String) {
+            guard value != .none else {
+                sortedPosts = posts // this may reorder values back unintentionally
+                return
+            }
+            sortedPosts.sort { (lhs: SwiftchanPost, rhs: SwiftchanPost) -> Bool in
+                // https://stackoverflow.com/questions/26829304/assigning-operator-function-in-variable
+                let operation: (Int, Int) -> Bool = value == .ascending ? (<) : (>)
+                return operation(
+                    lhs.post.valueByPropertyName(name: attributeKey),
+                    rhs.post.valueByPropertyName(name: attributeKey)
+                )
+            }
         }
 
         func prefetch() {

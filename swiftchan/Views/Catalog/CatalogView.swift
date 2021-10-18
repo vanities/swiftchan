@@ -109,7 +109,10 @@ struct CatalogView: View {
                 FavoriteStar(viewModel: viewModel)
             }
             .multiActionSheet(isPresented: $appState.showingSortMenu) {
-                RepliesSort(viewModel: viewModel)
+                Group {
+                    FilesSortRow(viewModel: viewModel)
+                    RepliesSortRow(viewModel: viewModel)
+                }
             }
         }
     }

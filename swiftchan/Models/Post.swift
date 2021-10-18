@@ -15,6 +15,13 @@ struct SwiftchanPost {
 }
 
 extension Post {
+    func valueByPropertyName(name: String) -> Int {
+        switch name {
+        case "replies": return replies ?? 0
+        case "files": return images ?? 0
+        default: fatalError("Wrong property name")
+        }
+    }
 
     func getMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
         let thumb = thumbnail ? "s" : ""
