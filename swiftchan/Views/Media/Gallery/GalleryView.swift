@@ -156,6 +156,23 @@ struct GalleryView: View {
                 .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
             switch MediaDetector.detect(url: urls[index]) {
             case .image, .gif:
+                Group {
+                Button(action: {
+                    CacheManager.shared.getFileWith(stringUrl: urls[index].absoluteString) { result in
+                        switch result {
+                        case .success(let url):
+                            UIPasteboard.general.image = UIImage(contentsOfFile: url.absoluteString)
+                            UINotificationFeedbackGenerator().notificationOccurred(.success)
+                        default: break
+                        }
+
+                    }
+
+                }, label: {
+                    Text("Copy Image")
+                    Image(systemName: "photo.on.rectangle")
+                })
+
                 Button(action: {
                     let imageSaver = ImageSaver(completionHandler: { result in
                         presentingToast = true
@@ -175,6 +192,7 @@ struct GalleryView: View {
                     Image(systemName: "square.and.arrow.down")
                 })
                     .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
+            }
             case .webm, .none:
                 Button(action: {
                     isExportingDocument.toggle()
