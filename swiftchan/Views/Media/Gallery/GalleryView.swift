@@ -161,10 +161,18 @@ struct GalleryView: View {
                     CacheManager.shared.getFileWith(stringUrl: urls[index].absoluteString) { result in
                         switch result {
                         case .success(let url):
-                            UIPasteboard.general.image = UIImage(contentsOfFile: url.absoluteString)
-                            UINotificationFeedbackGenerator().notificationOccurred(.success)
+                            let data = try? Data(contentsOf: url)
+                            if let data = data {
+                                UIPasteboard.general.image = UIImage(data: data)
+                                presentingToastResult = .success(urls[index])
+                                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                                return
+                            }
+
                         default: break
                         }
+                        presentingToastResult = .failure("Could not copy image")
+                        UINotificationFeedbackGenerator().notificationOccurred(.error)
 
                     }
 

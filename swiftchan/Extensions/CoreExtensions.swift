@@ -250,3 +250,6 @@ extension CaseIterable where Self: Equatable {
         self = allCases[nextIndex == allCases.endIndex ? allCases.startIndex : nextIndex]
     }
 }
+
+//https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift/40629365#40629365
+extension String: Error {}
