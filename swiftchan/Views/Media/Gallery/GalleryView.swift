@@ -11,18 +11,19 @@ import SwiftUIPager
 import ToastUI
 
 struct GalleryView: View {
-    @EnvironmentObject var state: PresentationState
-    @EnvironmentObject var dismissGesture: DismissGesture
-    @StateObject var page: Page
     var urls: [URL]
     var thumbnailUrls: [URL]
-    @State var canPage: Bool = true
 
+    @EnvironmentObject var state: PresentationState
+    @EnvironmentObject var dismissGesture: DismissGesture
+
+    @StateObject var page: Page
+
+    @State private var canPage: Bool = true
     @State private var isExportingDocument = false
-
-    @State var canShowPreview: Bool = true
-    @State var showPreview: Bool = false
-    @State var dragging: Bool = false
+    @State private var canShowPreview: Bool = true
+    @State private var showPreview: Bool = false
+    @State private var dragging: Bool = false
     @State private var presentingToast: Bool = false
     @State private var presentingToastResult: Result<URL, Error>?
     @State private var showContextMenu: Bool = true
@@ -71,7 +72,13 @@ struct GalleryView: View {
                         generator.notificationOccurred(.success)
                     })
                     .contextMenu {
-                        contextMenu(index: index)
+                        GalleryContextMenu(
+                            url: urls[index],
+                            isExportingDocument: $isExportingDocument,
+                            showContextMenu: $showContextMenu,
+                            presentingToast: $presentingToast,
+                            presentingToastResult: $presentingToastResult
+                        )
                     }
             }
                   .onDraggingEnded {
@@ -138,79 +145,6 @@ struct GalleryView: View {
                     showPreview.toggle()
                 }
             }
-    }
-
-    @ViewBuilder
-    func contextMenu(index: Int) -> some View {
-        if showContextMenu {
-            Button(action: {
-                UIPasteboard.general.string = urls[index].absoluteString
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.success)
-                presentingToast = true
-                presentingToastResult = .success(urls[index])
-            }, label: {
-                Text("Copy URL")
-                Image(systemName: "doc.on.doc")
-            })
-                .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
-            switch MediaDetector.detect(url: urls[index]) {
-            case .image, .gif:
-                Group {
-                Button(action: {
-                    CacheManager.shared.getFileWith(stringUrl: urls[index].absoluteString) { result in
-                        switch result {
-                        case .success(let url):
-                            let data = try? Data(contentsOf: url)
-                            if let data = data {
-                                UIPasteboard.general.image = UIImage(data: data)
-                                presentingToastResult = .success(urls[index])
-                                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                                return
-                            }
-
-                        default: break
-                        }
-                        presentingToastResult = .failure("Could not copy image")
-                        UINotificationFeedbackGenerator().notificationOccurred(.error)
-
-                    }
-
-                }, label: {
-                    Text("Copy Image")
-                    Image(systemName: "photo.on.rectangle")
-                })
-
-                Button(action: {
-                    let imageSaver = ImageSaver(completionHandler: { result in
-                        presentingToast = true
-                        let generator = UINotificationFeedbackGenerator()
-                        switch result {
-                        case .success(_):
-                            presentingToastResult = .success(urls[index])
-                            generator.notificationOccurred(.success)
-                        case .failure(let error):
-                            presentingToastResult = .failure(error)
-                            generator.notificationOccurred(.error)
-                        }
-                    })
-                    imageSaver.saveImageToPhotos(url: urls[index])
-                }, label: {
-                    Text("Save to Photos")
-                    Image(systemName: "square.and.arrow.down")
-                })
-                    .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
-            }
-            case .webm, .none:
-                Button(action: {
-                    isExportingDocument.toggle()
-                }, label: {
-                    Text("Save to Files")
-                    Image(systemName: "folder")
-                })
-                    .accessibilityIdentifier(AccessibilityIdentifiers.saveToFilesButton)
-            }
-        }
     }
 
     @ViewBuilder

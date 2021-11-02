@@ -29,6 +29,7 @@ struct PresentedPost: View {
             )
             .onDismiss {
                 dismissGesture.dismiss = true
+                UIApplication.shared.isIdleTimerDisabled = false // reneable this if it got disabled
             }
             .onPageDragChanged { (value) in
                 dismissGesture.canDrag = value.isZero

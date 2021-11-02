@@ -43,5 +43,6 @@ class Colors {
 
     class Background {
         static var gray = Color(#colorLiteral(red: 0.1231701747, green: 0.1231701747, blue: 0.1231701747, alpha: 1))
+        static var white = Color(#colorLiteral(red: 0.9498993754, green: 0.9449323416, blue: 0.9320884347, alpha: 1))
     }
 }

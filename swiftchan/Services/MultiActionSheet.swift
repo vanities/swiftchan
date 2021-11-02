@@ -21,8 +21,6 @@ struct MultiActionItem<Icon: View, IconAnimation: View>: View {
     var body: some View {
         HStack {
             ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Colors.Background.gray)
                 HStack(alignment: .top) {
                     ZStack {
                         icon
@@ -41,17 +39,18 @@ struct MultiActionItem<Icon: View, IconAnimation: View>: View {
                         Divider()
                     }
                 }
-                .padding()
             }
             .onTapGesture {
                 tapped()
             }
         }
+        .padding()
         .frame(height: 50)
     }
 }
 
 struct MultiActionSheetModifier<Body: View>: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
     @Binding var isPresented: Bool
     var content: Body
 
@@ -63,33 +62,46 @@ struct MultiActionSheetModifier<Body: View>: ViewModifier {
     func body(content: Content) -> some View {
         return ZStack {
             content
-                .opacity(isPresented ? 0.3 : 1)
-            if isPresented {
-                VStack {
-                    Spacer()
-                    Group {
-                        self.content
-                        HStack {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Colors.Background.gray)
-                                Text("Cancel")
-                                    .font(.system(size: 20, weight: .bold, design: .default))
-                                    .bold()
-                                    .foregroundColor(.blue)
-                            }
-                            .onTapGesture {
-                                withAnimation {
-                                    isPresented = false
-                                }
-                            }
-                        }
-                        .frame(height: 50)
+                .blur(radius: isPresented ? 2 : 0)
+            Color.black.opacity(isPresented ? 0.2 : 0)
+                .onTapGesture {
+                    withAnimation {
+                        isPresented = false
                     }
                 }
+
+            if isPresented {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    VStack {
+                        self.content
+                        HStack {
+                            Spacer()
+                            Text("Cancel")
+                                .font(.system(size: 20, weight: .bold, design: .default))
+                                .bold()
+                                .foregroundColor(.blue)
+                                .padding(.bottom, 30)
+                            Spacer()
+                        }
+                        .onTapGesture {
+                            withAnimation {
+                                isPresented = false
+                            }
+                        }
+                    }
+                    .padding(.top, 20)
+                    .background(colorScheme == .dark ?
+                                Colors.Background.gray.cornerRadius(10) :
+                                Colors.Background.white.cornerRadius(10)
+                    )
+                }
+                .ignoresSafeArea()
                 .zIndex(2)
                 .transition(.move(edge: .bottom))
                 .navigationBarHidden(true)
+                .statusBar(hidden: true)
             }
         }
     }
@@ -98,5 +110,16 @@ struct MultiActionSheetModifier<Body: View>: ViewModifier {
 extension View {
     func multiActionSheet<Content: View>(isPresented: Binding<Bool>, content: @escaping () -> Content) -> some View {
         self.modifier(MultiActionSheetModifier(isPresented: isPresented, content: content))
+    }
+}
+
+struct MultiActionSheetView_Previews: PreviewProvider {
+    static var previews: some View {
+        return Group {
+            Color.white
+                .multiActionSheet(isPresented: .constant(true)) {
+                    FilesSortRow(viewModel: CatalogView.CatalogViewModel(boardName: "fit"))
+                }
+        }
     }
 }

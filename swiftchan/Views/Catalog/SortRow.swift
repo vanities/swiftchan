@@ -108,6 +108,7 @@ struct SortRow_Previews: PreviewProvider {
         let viewModel = CatalogView.CatalogViewModel(boardName: boardName)
         Group {
             RepliesSortRow(viewModel: viewModel)
+                .background(Color.white)
         }
     }
 }

@@ -12,12 +12,12 @@ import ToastUI
 struct VLCContainerView: View {
     let thumbnailUrl: URL
     let url: URL
-    let jumpInterval: Int32 = 5
-
     @Binding var play: Bool
-    @StateObject var vlcVideoViewModel = VLCVideoViewModel()
-    @State var isShowingControls: Bool = false
-    @State var presentingjumpToast: VLCVideo.MediaControlDirection?
+
+    private let jumpInterval: Int32 = 5
+    @StateObject private var vlcVideoViewModel = VLCVideoViewModel()
+    @State private var isShowingControls: Bool = false
+    @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
 
     var onSeekChanged: ((Bool) -> Void)?
 
@@ -61,9 +61,6 @@ struct VLCContainerView: View {
             if play {
                 vlcVideoViewModel.vlcVideo.mediaControlState = .play
             }
-        }
-        .onDisappear {
-            UIApplication.shared.isIdleTimerDisabled = false
         }
     }
 

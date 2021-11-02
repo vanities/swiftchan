@@ -33,6 +33,8 @@
 		95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D9025EF37F3003E0A59 /* DismissGesture.swift */; };
 		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953508F1263F557D00C7FE83 /* Prefetcher.swift */; };
+		954FB581272CF257009CC52F /* GalleryContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB580272CF257009CC52F /* GalleryContextMenu.swift */; };
+		954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB5822730BDF0009CC52F /* RoundedCorners.swift */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
@@ -142,6 +144,8 @@
 		95257D8C25EF2804003E0A59 /* PresentationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationState.swift; sourceTree = "<group>"; };
 		95257D9025EF37F3003E0A59 /* DismissGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissGesture.swift; sourceTree = "<group>"; };
 		953508F1263F557D00C7FE83 /* Prefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prefetcher.swift; sourceTree = "<group>"; };
+		954FB580272CF257009CC52F /* GalleryContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryContextMenu.swift; sourceTree = "<group>"; };
+		954FB5822730BDF0009CC52F /* RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
 		955814B7254D24B900A966BA /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
@@ -395,6 +399,7 @@
 			children = (
 				95A94EFB2554F8D1001D155E /* GalleryView.swift */,
 				9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */,
+				954FB580272CF257009CC52F /* GalleryContextMenu.swift */,
 			);
 			path = Gallery;
 			sourceTree = "<group>";
@@ -453,6 +458,7 @@
 			children = (
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 				9506585B2627D56A008FD1B0 /* ActivityIndicator.swift */,
+				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -677,6 +683,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */,
 				95CEE159271A67590016EAC1 /* SortRow.swift in Sources */,
 				9524F4B62580545C0006395F /* FileExport.swift in Sources */,
 				9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */,
@@ -724,6 +731,7 @@
 				9519EAF72719AF3D0068497B /* MultiActionSheet.swift in Sources */,
 				95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */,
 				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
+				954FB581272CF257009CC52F /* GalleryContextMenu.swift in Sources */,
 				95D804D32568A553005A3128 /* PresentedPost.swift in Sources */,
 				9524F4BB258054A60006395F /* MediaSaver.swift in Sources */,
 				9524E19F256F272200D08075 /* AppState.swift in Sources */,

@@ -73,7 +73,7 @@ class DownloadOperation: Operation {
       // set the state to executing
       state = .executing
 
-      debugPrint("downloading \(self.task.originalRequest?.url?.absoluteString ?? "")")
+      debugPrint("downloading \(task.originalRequest?.url?.absoluteString ?? "")")
 
       // start the downloading
       self.task.resume()
@@ -83,6 +83,7 @@ class DownloadOperation: Operation {
       super.cancel()
 
       // cancel the downloading
-      self.task.cancel()
+      task.cancel()
+      debugPrint("canceling \(task.originalRequest?.url?.absoluteString ?? "")")
   }
 }

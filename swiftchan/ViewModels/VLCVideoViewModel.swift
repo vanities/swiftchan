@@ -17,8 +17,8 @@ class VLCVideoViewModel: ObservableObject {
         CacheManager.shared.getFileWith(stringUrl: url.absoluteString) { result in
             switch result {
             case .success(let url):
-                DispatchQueue.main.async {
-                    self.vlcVideo.cachedUrl = url
+                DispatchQueue.main.async { [weak self] in
+                    self?.vlcVideo.cachedUrl = url
                 }
             case .failure(let error):
                 debugPrint(error, " failure in the Cache of video")

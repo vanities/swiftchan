@@ -17,11 +17,11 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            BoardsView(viewModel: self.boardViewModel)
-                .environmentObject(self.appState)
-                .blur(radius: self.backgrounding ? 10 : 0)
-
-            if let fullscreenView = self.appState.fullscreenView {
+            BoardsView(viewModel: boardViewModel)
+                .environmentObject(appState)
+                .blur(radius: backgrounding ? 10 : 0)
+            
+            if let fullscreenView = appState.fullscreenView {
                 fullscreenView
             }
 
@@ -33,21 +33,21 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(.primary)
                 .frame(width: 100)
-                .opacity(self.backgrounding ? 1 :0)
+                .opacity(backgrounding ? 1 :0)
 
         }
-        .onChange(of: self.scenePhase) { value in
+        .onChange(of: scenePhase) { value in
             switch value {
             case .background, .inactive:
                 withAnimation(.linear(duration: 0.1)) {
-                    self.backgrounding = true
+                    backgrounding = true
                 }
             case .active:
                 withAnimation(.linear(duration: 0.1)) {
-                    self.backgrounding = false
+                    backgrounding = false
                 }
             @unknown default:
-                self.backgrounding = true
+                backgrounding = true
             }
         }
     }
