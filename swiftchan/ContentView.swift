@@ -20,7 +20,7 @@ struct ContentView: View {
             BoardsView(viewModel: boardViewModel)
                 .environmentObject(appState)
                 .blur(radius: backgrounding ? 10 : 0)
-            
+
             if let fullscreenView = appState.fullscreenView {
                 fullscreenView
             }

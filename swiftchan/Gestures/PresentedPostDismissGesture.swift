@@ -12,15 +12,26 @@ enum DismissDirection {
 }
 
 extension View {
-    func dismissGesture(direction: DismissDirection) -> some View {
+    func dismissGesture(
+        direction: DismissDirection,
+        minimumDuration: CGFloat = 0,
+        maximumDistance: CGFloat = 0,
+        simultaneous: Bool = true
+    ) -> some View {
         self.modifier(DismissGestureModifier(
-            direction: direction
+            direction: direction,
+            minimumDuration: minimumDuration,
+            maximumDistance: maximumDistance,
+            simultaneous: simultaneous
         ))
     }
 }
 
 struct DismissGestureModifier: ViewModifier {
     let direction: DismissDirection
+    let minimumDuration: CGFloat
+    let maximumDistance: CGFloat
+    let simultaneous: Bool
     @EnvironmentObject var dismissGesture: DismissGesture
 
     private let animationDuration = 0.2
@@ -29,23 +40,35 @@ struct DismissGestureModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        let drag = DragGesture(minimumDistance: 15, coordinateSpace: .local)
-            .onChanged {self.onDragChanged(with: $0)}
-            .onEnded {_ in self.onDragGestureEnded()}
-        content
-            .offset(
-                x: [.left, .right].contains(self.direction) ? self.dismissGesture.draggingOffset : 0,
-                y: [.up, .down].contains(self.direction) ? self.dismissGesture.draggingOffset : 0)
-            .simultaneousGesture(self.dismissGesture.canDrag ? drag : nil)
-            .onChange(of: self.dismissGesture.dismiss) { _ in
-                withAnimation(.linear(duration: self.animationDuration)) {
-                    self.dismissGesture.draggingOffset = self.getDismissOffset()
+        let drag = LongPressGesture(minimumDuration: minimumDuration, maximumDistance: maximumDistance)
+            .sequenced(before: DragGesture(minimumDistance: 15, coordinateSpace: .local))
+            .onChanged { gestureValue in
+                switch gestureValue {
+                case .first(_):
+                    return
+                case .second(_, let value):
+                    if let value = value {
+                        onDragChanged(with: value)
+                    }
                 }
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + self.animationDuration) {
-                    self.dismissGesture.presenting = false
-                    self.dismissGesture.draggingVelocity = 0
-                    self.dismissGesture.lastDraggingValue = nil
+            }
+            .onEnded {_ in onDragGestureEnded()}
+        content
+            .offset(
+                x: [.left, .right].contains(direction) ? dismissGesture.draggingOffset : 0,
+                y: [.up, .down].contains(direction) ? dismissGesture.draggingOffset : 0)
+            .gesture(!simultaneous && dismissGesture.canDrag ? drag : nil)
+            .simultaneousGesture(simultaneous && dismissGesture.canDrag ? drag : nil)
+            .onChange(of: dismissGesture.dismiss) { _ in
+                withAnimation(.linear(duration: animationDuration)) {
+                    dismissGesture.draggingOffset = getDismissOffset()
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+                    dismissGesture.presenting = false
+                    dismissGesture.draggingVelocity = 0
+                    dismissGesture.lastDraggingValue = nil
                 }
             }
             .onAppear {

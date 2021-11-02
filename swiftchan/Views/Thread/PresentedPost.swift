@@ -53,14 +53,20 @@ struct PresentedPost: View {
         case .reply:
             ZStack {
                 Color.black
-                    .opacity(1 - Double(dismissGesture.draggingOffset / UIScreen.main.bounds.height))
+                    .opacity(0.5 - Double(dismissGesture.draggingOffset / UIScreen.main.bounds.height))
                     .ignoresSafeArea()
-                PostView(index: state.replyIndex)
-                    .dismissGesture(direction: .down)
-                    .transition(.identity)
-                    .scaledToFit()
-                    .navigationBarHidden(true)
-                    .ignoresSafeArea()
+
+                ScrollView(.vertical) {
+                    PostView(index: state.replyIndex)
+                        .dismissGesture(
+                            direction: .down,
+                            minimumDuration: 0.2,
+                            maximumDistance: 100,
+                            simultaneous: false
+                        )
+                        .transition(.identity)
+                        .navigationBarHidden(true)
+                }
             }
         }
     }
@@ -68,10 +74,36 @@ struct PresentedPost: View {
 
 struct PresentedPost_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        PresentedPost()
-            .environmentObject(viewModel)
-            .environmentObject(DismissGesture())
-            .environmentObject(PresentationState())
+        let viewModel = ThreadView.ViewModel(boardName: "aco", id: 5926311)
+        let presentationStateGallery = PresentationState()
+        presentationStateGallery.replyIndex = 1
+        presentationStateGallery.commentRepliesIndex = 1
+        presentationStateGallery.presentingSheet = .gallery
+
+        let presentationStateReply = PresentationState()
+        presentationStateReply.replyIndex = 0
+        presentationStateReply.presentingSheet = .reply
+
+        let presentationStateReplies = PresentationState()
+        presentationStateReplies.commentRepliesIndex = 1
+        presentationStateReplies.presentingSheet = .replies
+        return Group {
+            PresentedPost()
+                .environmentObject(viewModel)
+                .environmentObject(DismissGesture())
+                .environmentObject(presentationStateGallery)
+
+            PresentedPost()
+                .environmentObject(viewModel)
+                .environmentObject(DismissGesture())
+                .environmentObject(presentationStateReply)
+                .background(Color.green)
+
+            PresentedPost()
+                .environmentObject(viewModel)
+                .environmentObject(DismissGesture())
+                .environmentObject(presentationStateReplies)
+                .background(Color.red)
+        }
     }
 }
