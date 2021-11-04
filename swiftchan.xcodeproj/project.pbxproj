@@ -58,11 +58,11 @@
 		95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94EFB2554F8D1001D155E /* GalleryView.swift */; };
 		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
+		95BCF1A427338E2E0075592A /* ConfettiSwiftUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
 		95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CE4FA926ABD42500622F7E /* Colors.swift */; };
 		95CEE159271A67590016EAC1 /* SortRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CEE158271A67590016EAC1 /* SortRow.swift */; };
-		95CEE15A271A6FD30016EAC1 /* ConfettiSwiftUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 95CEE15C271ABFCD0016EAC1 /* Defaults */; };
 		95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */ = {isa = PBXBuildFile; productRef = 95D14F6026CC82A8007AF00F /* ToastUI */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
@@ -105,7 +105,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				95CEE15A271A6FD30016EAC1 /* ConfettiSwiftUI in Embed Frameworks */,
+				95BCF1A427338E2E0075592A /* ConfettiSwiftUI in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

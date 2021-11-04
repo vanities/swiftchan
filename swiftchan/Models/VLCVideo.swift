@@ -8,7 +8,9 @@
 import SwiftUI
 import MobileVLCKit
 
-struct VLCVideo {
+struct VLCVideo: Identifiable {
+    var id: URL
+
     enum MediaControlState: Equatable {
         case play
         case pause

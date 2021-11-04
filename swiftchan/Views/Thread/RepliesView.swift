@@ -24,7 +24,6 @@ struct RepliesView: View {
     var body: some View {
         return
             ZStack(alignment: .center) {
-                Blur(style: .regular).ignoresSafeArea()
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(columns: columns,
                               alignment: .center,

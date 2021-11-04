@@ -10,16 +10,26 @@ import MobileVLCKit
 import ToastUI
 
 struct VLCContainerView: View {
-    let thumbnailUrl: URL
     let url: URL
     @Binding var play: Bool
 
     private let jumpInterval: Int32 = 5
-    @StateObject private var vlcVideoViewModel = VLCVideoViewModel()
+    @StateObject private var vlcVideoViewModel: VLCVideoViewModel
     @State private var isShowingControls: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
 
     var onSeekChanged: ((Bool) -> Void)?
+
+    init(
+        url: URL,
+         play: Binding<Bool>,
+        presentingJumpToast: VLCVideo.MediaControlDirection? = nil
+    ) {
+        self.url = url
+        _play = play
+        _vlcVideoViewModel = StateObject(wrappedValue: VLCVideoViewModel(url: url))
+        _presentingjumpToast = State(initialValue: presentingJumpToast)
+    }
 
     var body: some View {
         return ZStack {
@@ -56,8 +66,8 @@ struct VLCContainerView: View {
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
-            vlcVideoViewModel.vlcVideo.url = url
-            vlcVideoViewModel.setCachedMediaPlayer(url: url)
+            //vlcVideoViewModel.vlcVideo.url = url
+            //vlcVideoViewModel.setCachedMediaPlayer(url: url)
             if play {
                 vlcVideoViewModel.vlcVideo.mediaControlState = .play
             }
@@ -184,11 +194,11 @@ extension VLCContainerView: Buildable {
     }
 }
 
+/*
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
         return Group {
             VLCContainerView(
-                thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 play: .constant(true)
             )
@@ -196,7 +206,6 @@ struct VLCContainerView_Previews: PreviewProvider {
                 .previewInterfaceOrientation(.portrait)
 
             VLCContainerView(
-                thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 play: .constant(true),
                 presentingjumpToast: .forward
@@ -205,7 +214,6 @@ struct VLCContainerView_Previews: PreviewProvider {
                 .previewInterfaceOrientation(.portrait)
 
             VLCContainerView(
-                thumbnailUrl: URLExamples.image,
                 url: URLExamples.webm,
                 play: .constant(true),
                 presentingjumpToast: .backward
@@ -215,3 +223,4 @@ struct VLCContainerView_Previews: PreviewProvider {
         }
     }
 }
+*/

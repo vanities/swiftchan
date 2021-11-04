@@ -9,9 +9,12 @@ import SwiftUI
 import MobileVLCKit
 
 class VLCVideoViewModel: ObservableObject {
-    @Published var vlcVideo: VLCVideo = VLCVideo()
+    @Published var vlcVideo: VLCVideo
 
-    // MARK: Private
+    init(url: URL) {
+        self.vlcVideo = VLCVideo(id: url)
+        self.setCachedMediaPlayer(url: url)
+    }
 
     func setCachedMediaPlayer(url: URL) {
         CacheManager.shared.getFileWith(stringUrl: url.absoluteString) { result in

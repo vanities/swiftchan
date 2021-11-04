@@ -26,9 +26,10 @@ extension ThreadView {
             return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
         }
 
-        init(boardName: String, id: Int) {
+        init(boardName: String, id: Int, replies: [Int: [Int]] = [Int: [Int]]()) {
             self.boardName = boardName
             self.id = id
+            self.replies = replies
             self.load()
         }
 

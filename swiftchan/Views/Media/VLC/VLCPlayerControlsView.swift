@@ -97,7 +97,7 @@ struct VLCPlayerControlsView: View {
 struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
         VLCPlayerControlsView()
-            .environmentObject(VLCVideoViewModel())
+            .environmentObject(VLCVideoViewModel(url: URLExamples.image))
             .background(Color.black)
     }
 }

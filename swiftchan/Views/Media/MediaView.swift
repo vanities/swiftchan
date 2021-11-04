@@ -45,7 +45,6 @@ struct MediaView: View {
                 ImageView(url: thumbnailUrl, canGesture: false, isSelected: $isSelected)
 
                 VLCContainerView(
-                    thumbnailUrl: thumbnailUrl,
                     url: url,
                     play: $isSelected
                 )

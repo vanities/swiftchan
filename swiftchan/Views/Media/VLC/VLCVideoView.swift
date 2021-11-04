@@ -136,7 +136,7 @@ struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
             VLCVideoView()
-                .environmentObject(VLCVideoViewModel())
+                .environmentObject(VLCVideoViewModel(url: URLExamples.image))
         }
     }
 }

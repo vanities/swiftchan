@@ -84,8 +84,9 @@ struct PresentedPost_Previews: PreviewProvider {
         presentationStateReply.replyIndex = 0
         presentationStateReply.presentingSheet = .reply
 
+        let repliesViewModel = ThreadView.ViewModel(boardName: "aco", id: 5926311, replies: [0: [0, 1]])
         let presentationStateReplies = PresentationState()
-        presentationStateReplies.commentRepliesIndex = 1
+        presentationStateReplies.commentRepliesIndex = 0
         presentationStateReplies.presentingSheet = .replies
         return Group {
             PresentedPost()
@@ -100,7 +101,7 @@ struct PresentedPost_Previews: PreviewProvider {
                 .background(Color.green)
 
             PresentedPost()
-                .environmentObject(viewModel)
+                .environmentObject(repliesViewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(presentationStateReplies)
                 .background(Color.red)
