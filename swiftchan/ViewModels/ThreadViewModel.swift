@@ -50,7 +50,7 @@ extension ThreadView {
 
         private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
             var mediaList = [Media]()
-            for (thumbnailMediaUrl, mediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
+            for (mediaUrl, thumbnailMediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
                 mediaList.append(Media(url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
             }
             return mediaList

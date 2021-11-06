@@ -92,9 +92,9 @@ struct VLCVideoView: UIViewRepresentable {
                 context.coordinator.parent.playerList.rootMedia = media
             }
         }
-        #if DEBUG
-        // self.playerList.mediaPlayer.audio.isMuted = true
-        #endif
+#if DEBUG
+        self.playerList.mediaPlayer.audio.isMuted = true
+#endif
     }
 
     // MARK: Coordinator
