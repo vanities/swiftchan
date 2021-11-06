@@ -41,6 +41,7 @@ struct RepliesView: View {
     }
 }
 
+#if DEBUG
 struct RepliesView_Previews: PreviewProvider {
 
     static var previews: some View {
@@ -49,3 +50,4 @@ struct RepliesView_Previews: PreviewProvider {
             .environmentObject(viewModel)
     }
 }
+#endif

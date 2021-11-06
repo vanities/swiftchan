@@ -16,8 +16,7 @@ extension ThreadView {
         let id: Int
 
         @Published private(set) var posts = [Post]()
-        @Published private(set) var mediaUrls = [URL]()
-        @Published private(set) var thumbnailMediaUrls = [URL]()
+        @Published private(set) var media = [Media]()
         @Published private(set) var postMediaMapping = [Int: Int]()
         @Published private(set) var comments = [AttributedString]()
         @Published private(set) var replies = [Int: [Int]]()
@@ -41,17 +40,31 @@ extension ThreadView {
             FourchanService.getPosts(boardName: self.boardName,
                                      id: self.id) { [weak self] ( result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) in
                 self?.posts = result
-                self?.mediaUrls = mediaUrls
-                self?.thumbnailMediaUrls = thumbnailMediaUrls
                 self?.postMediaMapping = postMediaMapping
                 self?.comments = comments
                 self?.replies = replies
+                self?.setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
                 complete?()
             }
         }
 
+        private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
+            var mediaList = [Media]()
+            for (thumbnailMediaUrl, mediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
+                mediaList.append(Media(url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
+            }
+            return mediaList
+        }
+
+        func setMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) {
+            self.media = self.getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
+        }
+
         func prefetch() {
-            prefetcher.prefetch(urls: mediaUrls + thumbnailMediaUrls)
+            let urls = media.flatMap { media in
+                return [media.thumbnailUrl, media.url]
+            }
+            prefetcher.prefetch(urls: urls)
         }
         func stopPrefetching() {
             prefetcher.stopPrefetching()

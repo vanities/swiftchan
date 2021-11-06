@@ -14,26 +14,15 @@ struct VLCContainerView: View {
     @Binding var play: Bool
 
     private let jumpInterval: Int32 = 5
-    @StateObject private var vlcVideoViewModel: VLCVideoViewModel
+    @ObservedObject var vlcVideoViewModel = VLCVideoViewModel()
     @State private var isShowingControls: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
 
     var onSeekChanged: ((Bool) -> Void)?
 
-    init(
-        url: URL,
-         play: Binding<Bool>,
-        presentingJumpToast: VLCVideo.MediaControlDirection? = nil
-    ) {
-        self.url = url
-        _play = play
-        _vlcVideoViewModel = StateObject(wrappedValue: VLCVideoViewModel(url: url))
-        _presentingjumpToast = State(initialValue: presentingJumpToast)
-    }
-
     var body: some View {
         return ZStack {
-            VLCVideoView()
+            VLCVideoView(url: url)
                 .environmentObject(vlcVideoViewModel)
 
             jumpToast
@@ -66,8 +55,6 @@ struct VLCContainerView: View {
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
-            //vlcVideoViewModel.vlcVideo.url = url
-            //vlcVideoViewModel.setCachedMediaPlayer(url: url)
             if play {
                 vlcVideoViewModel.vlcVideo.mediaControlState = .play
             }
@@ -77,9 +64,9 @@ struct VLCContainerView: View {
     private var jumpControls: some View {
         HStack {
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-                Color.black.opacity(0.0001)
-                    .highPriorityGesture(jumpGesture(.backward))
-                    .simultaneousGesture(showControlGesture)
+            Color.black.opacity(0.0001)
+                .highPriorityGesture(jumpGesture(.backward))
+                .simultaneousGesture(showControlGesture)
                 Color.black.opacity(0.0001)
                     .highPriorityGesture(jumpGesture(.forward))
                     .simultaneousGesture(showControlGesture)
@@ -194,7 +181,7 @@ extension VLCContainerView: Buildable {
     }
 }
 
-/*
+#if DEBUG
 struct VLCContainerView_Previews: PreviewProvider {
     static var previews: some View {
         return Group {
@@ -223,4 +210,4 @@ struct VLCContainerView_Previews: PreviewProvider {
         }
     }
 }
-*/
+#endif

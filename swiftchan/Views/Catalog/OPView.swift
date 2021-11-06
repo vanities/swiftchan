@@ -95,6 +95,7 @@ struct OPView: View {
     }
 }
 
+#if DEBUG
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
         if let example = Post.example() {
@@ -102,3 +103,4 @@ struct OPView_Previews: PreviewProvider {
         }
     }
 }
+#endif

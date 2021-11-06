@@ -14,7 +14,7 @@ struct ThumbnailMediaView: View {
 
     @ViewBuilder
     var body: some View {
-        switch MediaDetector.detect(url: url) {
+        switch Media.detect(url: url) {
         case .image:
             ImageView(url: self.thumbnailUrl)
         case .webm:
@@ -37,6 +37,7 @@ struct ThumbnailMediaView: View {
     }
 }
 
+#if DEBUG
 struct ThumbnailMediaView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
@@ -48,3 +49,4 @@ struct ThumbnailMediaView_Previews: PreviewProvider {
 
     }
 }
+#endif

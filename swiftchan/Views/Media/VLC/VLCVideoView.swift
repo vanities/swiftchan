@@ -10,6 +10,7 @@ import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
     let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
+    let url: URL
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
     @State var media: VLCMedia?
 
@@ -80,11 +81,12 @@ struct VLCVideoView: UIViewRepresentable {
     // MARK: Private
     private func setMediaPlayer(context: VLCVideoView.Context) {
         DispatchQueue.main.async {
-            if let cacheUrl = vlcVideoViewModel.vlcVideo.cachedUrl {
+            if let cacheUrl = CacheManager.shared.getCacheValue(url) {
                 media = VLCMedia(url: cacheUrl)
                 playerList.rootMedia = media
                 context.coordinator.parent.playerList.rootMedia = media
-            } else if let url = vlcVideoViewModel.vlcVideo.url {
+                playerList.play(media)
+            } else {
                 media = VLCMedia(url: url)
                 playerList.rootMedia = media
                 context.coordinator.parent.playerList.rootMedia = media
@@ -132,11 +134,13 @@ struct VLCVideoView: UIViewRepresentable {
     }
 }
 
+#if DEBUG
 struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
         return ZStack {
-            VLCVideoView()
-                .environmentObject(VLCVideoViewModel(url: URLExamples.image))
+            VLCVideoView(url: URLExamples.webm)
+                .environmentObject(VLCVideoViewModel())
         }
     }
 }
+#endif

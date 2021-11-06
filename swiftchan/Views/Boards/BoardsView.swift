@@ -90,9 +90,11 @@ struct BoardsView: View {
     }
 }
 
+#if DEBUG
 struct BoardsView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = BoardsView.ViewModel()
         BoardsView(viewModel: viewModel)
     }
 }
+#endif

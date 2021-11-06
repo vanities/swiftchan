@@ -46,9 +46,11 @@ struct FavoriteStar: View {
     }
 }
 
+#if DEBUG
 struct FavoriteStar_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
         FavoriteStar(viewModel: viewModel)
     }
 }
+#endif

@@ -36,12 +36,17 @@ class Prefetcher {
     }
     func prefetchVideos(urls: [URL]) {
         for url in urls {
-            let cacheURL = CacheManager.shared.cacheURL(stringURL: url.absoluteString)
+            let cacheURL = CacheManager.shared.cacheURL(url)
             guard !CacheManager.shared.cacheHit(file: cacheURL) else { continue }
             let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { (tempURL, _, _) in
                 if let tempURL = tempURL {
-                    CacheManager.shared.cache(tempURL: tempURL, cacheURL: cacheURL) { _ in
-                        debugPrint("finished downloading \(url.absoluteString)")
+                    CacheManager.shared.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
+                        switch result {
+                        case .success(let cacheSuccessUrl):
+                            return
+                        case .failure(_):
+                            return
+                        }
                     }
                 }
             })

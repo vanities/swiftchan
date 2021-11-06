@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct GalleryPreviewView: View {
-    let urls: [URL]
-    let thumbnailUrls: [URL]
-
+    @EnvironmentObject var viewModel: ThreadView.ViewModel
     @Binding var selection: Int
 
     var body: some View {
@@ -19,10 +17,11 @@ struct GalleryPreviewView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center,
                            spacing: nil) {
-                        ForEach(urls.indices, id: \.self) { index in
+                        ForEach(viewModel.media.indices, id: \.self) { index in
 
-                            let url = urls[index]
-                            let thumbnailUrl = thumbnailUrls[index]
+                            let media = viewModel.media[index]
+                            let url = media.url
+                            let thumbnailUrl = media.thumbnailUrl
 
                             ThumbnailMediaView(
                                 url: url,
@@ -47,18 +46,25 @@ struct GalleryPreviewView: View {
     }
 }
 
+#if DEBUG
 struct GalleryPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            GalleryPreviewView(urls: URLExamples.imageSet,
-                               thumbnailUrls: URLExamples.imageSet,
-                               selection: .constant(0))
-            GalleryPreviewView(urls: URLExamples.gifSet,
-                               thumbnailUrls: URLExamples.imageSet,
-                               selection: .constant(0))
-            GalleryPreviewView(urls: URLExamples.webmSet,
-                               thumbnailUrls: URLExamples.imageSet,
-                               selection: .constant(0))
+        let viewModel = ThreadView.ViewModel(boardName: "pol", id: 0)
+        let urls = [
+                URLExamples.image,
+                URLExamples.gif,
+                URLExamples.webm
+            ]
+        viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
+
+        return Group {
+            GalleryPreviewView(selection: .constant(0))
+                .environmentObject(viewModel)
+            GalleryPreviewView(selection: .constant(1))
+                .environmentObject(viewModel)
+            GalleryPreviewView(selection: .constant(2))
+                .environmentObject(viewModel)
         }
     }
 }
+#endif

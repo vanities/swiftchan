@@ -11,9 +11,7 @@ import SwiftUIPager
 import ToastUI
 
 struct GalleryView: View {
-    var urls: [URL]
-    var thumbnailUrls: [URL]
-
+    @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
 
@@ -32,9 +30,7 @@ struct GalleryView: View {
     var onPageDragChanged: ((CGFloat) -> Void)?
     var onDismiss: (() -> Void)?
 
-    init(_ index: Int, urls: [URL], thumbnailUrls: [URL]) {
-        self.urls = urls
-        self.thumbnailUrls = thumbnailUrls
+    init(_ index: Int) {
         self._page =  StateObject(wrappedValue: Page.withIndex(index))
     }
 
@@ -43,14 +39,14 @@ struct GalleryView: View {
             Color.black.ignoresSafeArea()
 
             // gallery
-            Pager(page: page,
-                  data: urls.indices,
-                  id: \.self) { index in
+            Pager(
+                page: page,
+                data: viewModel.media.indices,
+                id: \.self
+            ) { index in
                 MediaView(
                     selected: $state.galleryIndex,
-                    thumbnailUrl: thumbnailUrls[index],
-                    url: urls[index],
-                    id: index
+                    index: index
                 )
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
@@ -63,7 +59,7 @@ struct GalleryView: View {
                     }
                     .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(index))
                     .fileExporter(isPresented: $isExportingDocument,
-                                  document: FileExport(url: urls[index].absoluteString),
+                                  document: FileExport(url: viewModel.media[index].url.absoluteString),
                                   contentType: .image,
                                   onCompletion: { result in
                         presentingToastResult = result
@@ -73,7 +69,7 @@ struct GalleryView: View {
                     })
                     .contextMenu {
                         GalleryContextMenu(
-                            url: urls[index],
+                            url: viewModel.media[index].url,
                             isExportingDocument: $isExportingDocument,
                             showContextMenu: $showContextMenu,
                             presentingToast: $presentingToast,
@@ -123,9 +119,7 @@ struct GalleryView: View {
             // preview
             VStack {
                 Spacer()
-                GalleryPreviewView(urls: urls,
-                                   thumbnailUrls: thumbnailUrls,
-                                   selection: $state.galleryIndex)
+                GalleryPreviewView(selection: $state.galleryIndex)
                     .padding(.bottom, 60)
             }
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
@@ -178,27 +172,31 @@ extension GalleryView: Buildable {
     }
 }
 
+#if DEBUG
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            GalleryView(0,
-                        urls: URLExamples.imageSet,
-                        thumbnailUrls: URLExamples.imageSet
-            )
+        let viewModel = ThreadView.ViewModel(boardName: "pol", id: 0)
+        let urls = [
+                URLExamples.image,
+                URLExamples.gif,
+                URLExamples.webm
+            ]
+        viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
+
+        return Group {
+            GalleryView(0)
+                .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
-            GalleryView(0,
-                        urls: URLExamples.gifSet,
-                        thumbnailUrls: URLExamples.gifSet
-            )
+            GalleryView(1)
+                .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
-            GalleryView(0,
-                        urls: URLExamples.webmSet,
-                        thumbnailUrls: URLExamples.webmSet
-            )
+            GalleryView(2)
+                .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
         }
     }
 }
+#endif

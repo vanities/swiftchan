@@ -23,9 +23,7 @@ struct PresentedPost: View {
         switch state.presentingSheet {
         case .gallery:
             GalleryView(
-                state.galleryIndex,
-                urls: viewModel.mediaUrls,
-                thumbnailUrls: viewModel.thumbnailMediaUrls
+                state.galleryIndex
             )
             .onDismiss {
                 dismissGesture.dismiss = true
@@ -72,6 +70,7 @@ struct PresentedPost: View {
     }
 }
 
+#if DEBUG
 struct PresentedPost_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "aco", id: 5926311)
@@ -108,3 +107,4 @@ struct PresentedPost_Previews: PreviewProvider {
         }
     }
 }
+#endif

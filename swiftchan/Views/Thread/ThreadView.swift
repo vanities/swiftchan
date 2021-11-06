@@ -41,7 +41,7 @@ struct ThreadView: View {
                                presentationState.presentingIndex != presentationState.galleryIndex,
                                presentationState.presentingSheet == .gallery,
                                let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-                                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.mediaUrls.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+                                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
                             }
                         }
                     }
@@ -114,6 +114,7 @@ struct ThreadView: View {
     }
 }
 
+#if DEBUG
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
@@ -124,3 +125,4 @@ struct ThreadView_Previews: PreviewProvider {
             .environmentObject(AppState())
     }
 }
+#endif

@@ -102,6 +102,7 @@ struct SortRow: View {
     }
 }
 
+#if DEBUG
 struct SortRow_Previews: PreviewProvider {
     static var previews: some View {
         let boardName = "fit"
@@ -112,3 +113,4 @@ struct SortRow_Previews: PreviewProvider {
         }
     }
 }
+#endif

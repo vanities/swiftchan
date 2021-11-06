@@ -118,9 +118,11 @@ struct CatalogView: View {
     }
 }
 
+#if DEBUG
 struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
         CatalogView("fit")
             .environmentObject(AppState())
     }
 }
+#endif

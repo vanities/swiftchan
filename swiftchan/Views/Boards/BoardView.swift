@@ -41,6 +41,7 @@ struct BoardView: View {
     }
 }
 
+#if DEBUG
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
         return VStack(alignment: .leading) {
@@ -52,3 +53,4 @@ struct BoardView_Previews: PreviewProvider {
         }
     }
 }
+#endif

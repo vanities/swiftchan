@@ -139,6 +139,7 @@ struct PostView: View {
     }
 }
 
+#if DEBUG
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
@@ -151,3 +152,4 @@ struct PostView_Previews: PreviewProvider {
             .environmentObject(PresentationState())
     }
 }
+#endif

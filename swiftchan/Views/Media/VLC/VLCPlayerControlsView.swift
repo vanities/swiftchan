@@ -9,18 +9,18 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCPlayerControlsView: View {
-    @EnvironmentObject var vlcVideoModel: VLCVideoViewModel
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
 
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
 
     private var calcSliderPos: CGFloat {
-        guard vlcVideoModel.vlcVideo.totalTime.intValue != 0 else { return .zero }
-        return CGFloat(vlcVideoModel.vlcVideo.currentTime.intValue) / CGFloat(vlcVideoModel.vlcVideo.totalTime.intValue)
+        guard vlcVideoViewModel.vlcVideo.totalTime.intValue != 0 else { return .zero }
+        return CGFloat(vlcVideoViewModel.vlcVideo.currentTime.intValue) / CGFloat(vlcVideoViewModel.vlcVideo.totalTime.intValue)
     }
 
     private var playbackImage: String {
-        switch vlcVideoModel.vlcVideo.mediaPlayerState {
+        switch vlcVideoViewModel.vlcVideo.mediaPlayerState {
         case .ended, .stopped:
             return "stop"
         case .paused:
@@ -40,28 +40,28 @@ struct VLCPlayerControlsView: View {
                     .padding()
             }
 
-            Text(vlcVideoModel.vlcVideo.currentTime.description)
+            Text(vlcVideoViewModel.vlcVideo.currentTime.description)
                 .fixedSize()
 
             Slider(value: $sliderPos,
                    in: 0...1,
                    onEditingChanged: sliderEditingChanged)
-                .onChange(of: vlcVideoModel.vlcVideo.currentTime, perform: { _ in
-                    if !vlcVideoModel.vlcVideo.seeking {
+                .onChange(of: vlcVideoViewModel.vlcVideo.currentTime, perform: { _ in
+                    if !vlcVideoViewModel.vlcVideo.seeking {
                         sliderPos = calcSliderPos
                     }
                 })
                 .onChange(of: sliderPos, perform: { _ in
-                    if vlcVideoModel.vlcVideo.seeking {
-                        let currentTime = Int32(CGFloat(vlcVideoModel.vlcVideo.totalTime.intValue) * sliderPos)
-                        vlcVideoModel.vlcVideo.currentTime = VLCTime(int: currentTime)
-                        vlcVideoModel.vlcVideo.remainingTime = VLCTime(int: currentTime - Int32(vlcVideoModel.vlcVideo.totalTime.intValue))
+                    if vlcVideoViewModel.vlcVideo.seeking {
+                        let currentTime = Int32(CGFloat(vlcVideoViewModel.vlcVideo.totalTime.intValue) * sliderPos)
+                        vlcVideoViewModel.vlcVideo.currentTime = VLCTime(int: currentTime)
+                        vlcVideoViewModel.vlcVideo.remainingTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.vlcVideo.totalTime.intValue))
                         seekingTime = VLCTime(int: currentTime)
-                        vlcVideoModel.vlcVideo.mediaControlState = .seek(seekingTime)
+                        vlcVideoViewModel.vlcVideo.mediaControlState = .seek(seekingTime)
                     }
                 })
 
-            Text(vlcVideoModel.vlcVideo.remainingTime.description)
+            Text(vlcVideoViewModel.vlcVideo.remainingTime.description)
                 .fixedSize()
         }
         .foregroundColor(.white)
@@ -69,13 +69,13 @@ struct VLCPlayerControlsView: View {
     }
 
     private func togglePlayer() {
-        switch vlcVideoModel.vlcVideo.mediaPlayerState {
+        switch vlcVideoViewModel.vlcVideo.mediaPlayerState {
         case .ended, .stopped:
             break
         case .paused:
-            vlcVideoModel.vlcVideo.mediaControlState = .play
+            vlcVideoViewModel.vlcVideo.mediaControlState = .play
         case .playing, .buffering:
-            vlcVideoModel.vlcVideo.mediaControlState = .pause
+            vlcVideoViewModel.vlcVideo.mediaControlState = .pause
         default:
             break
         }
@@ -83,21 +83,23 @@ struct VLCPlayerControlsView: View {
 
     private func sliderEditingChanged(editingStarted: Bool) {
         if editingStarted {
-            vlcVideoModel.vlcVideo.seeking = true
-            vlcVideoModel.vlcVideo.mediaControlState = .pause
+            vlcVideoViewModel.vlcVideo.seeking = true
+            vlcVideoViewModel.vlcVideo.mediaControlState = .pause
         }
 
         if !editingStarted {
-            vlcVideoModel.vlcVideo.seeking = false
-            vlcVideoModel.vlcVideo.mediaControlState = .play
+            vlcVideoViewModel.vlcVideo.seeking = false
+            vlcVideoViewModel.vlcVideo.mediaControlState = .play
         }
     }
 }
 
+#if DEBUG
 struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
         VLCPlayerControlsView()
-            .environmentObject(VLCVideoViewModel(url: URLExamples.image))
+            .environmentObject(VLCVideoViewModel())
             .background(Color.black)
     }
 }
+#endif

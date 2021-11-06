@@ -29,7 +29,7 @@ struct GalleryContextMenu: View {
                 Image(systemName: "doc.on.doc")
             })
                 .accessibilityIdentifier(AccessibilityIdentifiers.copyToPasteboardButton)
-            switch MediaDetector.detect(url: url) {
+            switch Media.detect(url: url) {
             case .image, .gif:
                 Group {
                 Button(action: {

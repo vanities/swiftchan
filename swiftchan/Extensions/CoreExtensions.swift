@@ -230,13 +230,13 @@ extension String {
 
 extension URL {
     func isWebm() -> Bool {
-        return MediaDetector.detect(url: self) == .webm
+        return Media.detect(url: self) == .webm
     }
     func isImage() -> Bool {
-        return MediaDetector.detect(url: self) == .image
+        return Media.detect(url: self) == .image
     }
     func isGif() -> Bool {
-        return MediaDetector.detect(url: self) == .gif
+        return Media.detect(url: self) == .gif
     }
 }
 

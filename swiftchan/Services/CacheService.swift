@@ -13,30 +13,38 @@ class CacheManager {
     static let shared = CacheManager()
     private let fileManager = FileManager.default
     private lazy var mainDirectoryUrl: URL = {
-        let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let documentsUrl = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
     }()
 
     func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
-        let cacheURL = self.cacheURL(stringURL: stringUrl)
+        let cacheURL = cacheURL(URL(string: stringUrl)!)
 
         // return file path if already exists in cache directory
-        guard !self.cacheHit(file: cacheURL)  else {
+        guard !cacheHit(file: cacheURL)  else {
             // print("file exists in cache \(file.path)" )
             completionHandler(.success(cacheURL))
             return
         }
 
-        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { urlOrNil, _, _ in
+        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { [weak self] urlOrNil, _, _ in
             guard let tempURL = urlOrNil else { return }
-            self.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
+            self?.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
                 completionHandler(result)
             }
         }.resume()
     }
 
-    func cacheURL(stringURL: String) -> URL {
-        return directoryFor(stringUrl: stringURL)
+    func getCacheValue(_ url: URL) -> URL? {
+        let cacheUrl = cacheURL(url)
+        if cacheHit(file: cacheUrl) {
+            return cacheUrl
+        }
+        return nil
+    }
+
+    func cacheURL(_ url: URL) -> URL {
+        return directoryFor(stringUrl: url.absoluteString)
     }
 
     func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)) {
@@ -55,12 +63,12 @@ class CacheManager {
     }
 
     private func deleteAll() {
-        let enumerator = self.fileManager.enumerator(atPath: self.mainDirectoryUrl.absoluteString)
+        let enumerator = fileManager.enumerator(atPath: mainDirectoryUrl.absoluteString)
         if let enumerator = enumerator {
             for url in enumerator.allObjects {
                 do {
                     print("removing \(url) from cache")
-                    try fileManager.removeItem(at: self.mainDirectoryUrl)
+                    try fileManager.removeItem(at: mainDirectoryUrl)
                     print("removed \(url) from cache")
                 } catch {
                     print("could not remove \(url) from cache")
@@ -75,7 +83,7 @@ class CacheManager {
 
     func directoryFor(stringUrl: String) -> URL {
         let fileURL = URL(string: stringUrl)!.lastPathComponent
-        let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
+        let file = mainDirectoryUrl.appendingPathComponent(fileURL)
         return file
     }
 
