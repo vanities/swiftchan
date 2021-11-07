@@ -61,6 +61,8 @@
 		95BCF1A427338E2E0075592A /* ConfettiSwiftUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */; };
+		95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE827386D2B000D64B1 /* SettingsView.swift */; };
+		95C01FEB27389037000D64B1 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FEA27389037000D64B1 /* Toast.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
 		95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CE4FA926ABD42500622F7E /* Colors.swift */; };
 		95CEE159271A67590016EAC1 /* SortRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CEE158271A67590016EAC1 /* SortRow.swift */; };
@@ -171,6 +173,8 @@
 		95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteStar.swift; sourceTree = "<group>"; };
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
 		95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCMediaListPlayerUIView.swift; sourceTree = "<group>"; };
+		95C01FE827386D2B000D64B1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		95C01FEA27389037000D64B1 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		95C73105256CA1F700F18257 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		95CE4FA926ABD42500622F7E /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		95CEE158271A67590016EAC1 /* SortRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortRow.swift; sourceTree = "<group>"; };
@@ -423,6 +427,7 @@
 			children = (
 				95181792254CFB600032616E /* BoardsView.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
+				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
 			);
 			path = Boards;
 			sourceTree = "<group>";
@@ -462,6 +467,7 @@
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 				9506585B2627D56A008FD1B0 /* ActivityIndicator.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
+				95C01FEA27389037000D64B1 /* Toast.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -691,6 +697,7 @@
 				9524F4B62580545C0006395F /* FileExport.swift in Sources */,
 				9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */,
 				95AFBF372735712E00F5B0CD /* VLCVideoViewModel.swift in Sources */,
+				95C01FEB27389037000D64B1 /* Toast.swift in Sources */,
 				9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */,
 				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
 				957B30472648C87600D2FDCA /* DownloadOperation.swift in Sources */,
@@ -704,6 +711,7 @@
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */,
 				95C73106256CA1F700F18257 /* UserSettings.swift in Sources */,
+				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
 				9506585C2627D56A008FD1B0 /* ActivityIndicator.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,

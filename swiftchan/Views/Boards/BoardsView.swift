@@ -13,6 +13,8 @@ struct BoardsView: View {
     @Default(.favoriteBoards) var favoriteBoardsDefault
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
+    @State var showingSettings: Bool = false
+    @State var showingCatalog: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
@@ -35,29 +37,34 @@ struct BoardsView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(
-                        columns: self.columns,
+                        columns: columns,
                         alignment: .leading,
                         spacing: 2
                     ) {
-                        if self.searchText == "" {
+                        if searchText == "" {
                             Group {
                                 Section(header: Text("favorites")
                                             .font(Font.system(size: 24, weight: .bold, design: .rounded))
                                             .padding(.leading, 5)
                                 ) {
 
-                                    ForEach(self.favoriteBoards) { board in
+                                    ForEach(favoriteBoards) { board in
                                         NavigationLink(
-                                            destination:
+                                            isActive: $showingCatalog,
+                                            destination: {
                                                 CatalogView(board.board)
-                                        ) {
-                                            BoardView(name: board.board,
-                                                      title: board.title,
-                                                      description: board.meta_description.clean)
-                                                .padding(.horizontal, 5)
-                                        }
-                                        .id("\(board.id)-f")
-                                        .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
+                                            },
+                                            label: {
+                                                BoardView(name: board.board,
+                                                          title: board.title,
+                                                          description: board.meta_description.clean)
+                                                    .padding(.horizontal, 5)
+                                            })
+                                            .onTapGesture {
+                                                showingCatalog = true
+                                            }
+                                            .id("\(board.id)-f")
+                                            .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
                                     }
                                 }
 
@@ -67,16 +74,23 @@ struct BoardsView: View {
                                     .font(Font.system(size: 24, weight: .bold, design: .rounded))
                                     .padding(.leading, 5)
                         ) {
-                            ForEach(self.filteredBoards, id: \.self.id) { board in
+                            ForEach(filteredBoards, id: \.self.id) { board in
                                 NavigationLink(
-                                    destination: CatalogView(board.board)) {
+                                    isActive: $showingCatalog,
+                                    destination: {
+                                        CatalogView(board.board)
+                                    },
+                                    label: {
                                     BoardView(name: board.board,
                                               title: board.title,
                                               description: board.meta_description.clean)
-                                        .padding(.horizontal, 5)
-                                }
-                                .id("\(board.id)-a")
-                                .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
+                                            .padding(.horizontal, 5)
+                                    })
+                                    .onTapGesture {
+                                        showingCatalog = true
+                                    }
+                                    .id("\(board.id)-a")
+                                    .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
                             }
                         }
                     }
@@ -84,9 +98,25 @@ struct BoardsView: View {
                     .buttonStyle(PlainButtonStyle())
                     .navigationBarTitle("4chan")
                 }
+                .navigationBarItems(trailing: settingsButton)
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+    var settingsButton: some View {
+        NavigationLink(
+            isActive: $showingSettings,
+            destination: {
+                SettingsView()
+            },
+            label: {
+                Image(systemName: "gear")
+                    .foregroundColor(Color.black)
+            })
+            .onTapGesture {
+                showingSettings = true
+            }
     }
 }
 

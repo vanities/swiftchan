@@ -64,23 +64,31 @@ class CacheManager {
         return cacheHit
     }
 
-    private func deleteAll() {
-        let enumerator = fileManager.enumerator(atPath: mainDirectoryUrl.absoluteString)
-        if let enumerator = enumerator {
-            for url in enumerator.allObjects {
+    func deleteAll(complete: ((Result<Void, Error>) -> Void)?) {
+        ImageCache.default.clearDiskCache { [weak self] in
+            print("Removed Kingfisher Cache")
+            self?.deleteLocal { result in
+                complete?(result)
+            }
+        }
+    }
+
+    func deleteLocal(complete: ((Result<Void, Error>) -> Void)) {
+        do {
+            let directoryContents = try FileManager.default.contentsOfDirectory(at: mainDirectoryUrl, includingPropertiesForKeys: nil, options: [])
+            for file in directoryContents {
                 do {
-                    print("removing \(url) from cache")
-                    try fileManager.removeItem(at: mainDirectoryUrl)
-                    print("removed \(url) from cache")
+                    print("removing \(file) from cache")
+                    try fileManager.removeItem(at: file)
+                    print("removed \(file) from cache")
                 } catch {
-                    print("could not remove \(url) from cache")
+                    complete(.failure("could not delete files form cache"))
                 }
             }
-        } else {
-            print("not enumerator for deleteAll cache")
+            complete(.success(()))
+        } catch {
+            complete(.failure("could not delete files form cache"))
         }
-
-        ImageCache.default.clearDiskCache { print("Removed Kingfisher Cache") }
     }
 
     func directoryFor(stringUrl: String) -> URL {

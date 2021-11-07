@@ -129,7 +129,7 @@ struct GalleryView: View {
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
         .gesture(canShowPreview ? showPreviewTap() : nil)
-        .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: handleToast)
+        .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: { Toast(presentingToastResult: presentingToastResult) })
         .statusBar(hidden: true)
         .onChange(of: state.galleryIndex) { index in
             page.update(.new(index: index))
@@ -144,24 +144,6 @@ struct GalleryView: View {
                 }
             }
     }
-
-    @ViewBuilder
-    func handleToast() -> some View {
-        switch presentingToastResult {
-        case .success(_):
-            ToastView("Success!", content: {}, background: {Color.clear})
-                .toastViewStyle(SuccessToastViewStyle())
-                .accessibilityIdentifier(AccessibilityIdentifiers.successToastText)
-        case .failure(_):
-            ToastView("Failure", content: {}, background: {Color.clear})
-                .toastViewStyle(ErrorToastViewStyle())
-        case .none:
-            ToastView("Failure", content: {}, background: {Color.clear})
-                .toastViewStyle(ErrorToastViewStyle())
-
-        }
-    }
-
 }
 
 extension GalleryView: Buildable {
