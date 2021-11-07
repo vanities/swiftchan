@@ -14,13 +14,12 @@ struct VLCVideoView: UIViewRepresentable {
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
         let view = VLCMediaListPlayerUIView(url: url, frame: .zero)
-        view.delegate = context.coordinator
+        view.mediaListPlayer.mediaPlayer.delegate = context.coordinator
         debugPrint(vlcVideoViewModel)
         vlcVideoViewModel.vlcVideo.currentTime = context.coordinator.parent.vlcVideoViewModel.vlcVideo.currentTime
         return view
     }
 
-    // swiftlint:disable all
     func updateUIView(_ uiView: VLCMediaListPlayerUIView, context: UIViewRepresentableContext<VLCVideoView>) {
         debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
         switch vlcVideoViewModel.vlcVideo.mediaControlState {
@@ -37,7 +36,6 @@ struct VLCVideoView: UIViewRepresentable {
             vlcVideoViewModel.vlcVideo.mediaControlState = .play
         }
     }
-    // swiftlint:enable all
 
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         uiView.mediaListPlayer.stop()
@@ -60,42 +58,37 @@ struct VLCVideoView: UIViewRepresentable {
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, VLCMediaListPlayerUIViewDelegate, UIGestureRecognizerDelegate {
+    class Coordinator: NSObject, UIGestureRecognizerDelegate, VLCMediaPlayerDelegate {
 
         var parent: VLCVideoView
-        var observer: Any?
 
         init(_ parent: VLCVideoView) {
             self.parent = parent
         }
 
-        // MARK: Player Delegate
-        func mediaPlayerTimeChanged(view: VLCMediaListPlayerUIView) {
-            DispatchQueue.main.async { [weak self, unowned view] in
-                guard let `self` = self else { return }
-                if let player = view.mediaListPlayer.mediaPlayer {
-                    self.parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
-                    self.parent.vlcVideoViewModel.vlcVideo.remainingTime = player.remainingTime
-                    self.parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(
-                        int: self.parent.vlcVideoViewModel.vlcVideo.currentTime.intValue +
-                        abs(self.parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue )
-                    )
+        func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+            if let player = aNotification.object as? VLCMediaPlayer {
+                self.parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
+                self.parent.vlcVideoViewModel.vlcVideo.remainingTime = player.remainingTime
+                self.parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(
+                    int: self.parent.vlcVideoViewModel.vlcVideo.currentTime.intValue +
+                    abs(self.parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue )
+                )
 
-                    self.parent.vlcVideoViewModel.vlcVideo.mediaState = player.media.state
-                    debugPrint(
-                    """
-                    updating webm time \
-                    \(self.parent.vlcVideoViewModel.vlcVideo.currentTime) \
-                    \(self.parent.vlcVideoViewModel.vlcVideo.remainingTime) \
-                    \(self.parent.vlcVideoViewModel.vlcVideo.totalTime)
-                    """
-                    )
-                }
+                self.parent.vlcVideoViewModel.vlcVideo.mediaState = player.media.state
+                debugPrint(
+                """
+                updating webm time \
+                \(self.parent.vlcVideoViewModel.vlcVideo.currentTime) \
+                \(self.parent.vlcVideoViewModel.vlcVideo.remainingTime) \
+                \(self.parent.vlcVideoViewModel.vlcVideo.totalTime)
+                """
+                )
             }
         }
 
-        func mediaPlayerStateChanged(view: VLCMediaListPlayerUIView) {
-            if let player = view.mediaListPlayer.mediaPlayer {
+        func mediaPlayerStateChanged(_ aNotification: Notification!) {
+            if let player = aNotification.object as? VLCMediaPlayer {
                 self.parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
                 switch parent.vlcVideoViewModel.vlcVideo.mediaPlayerState {
                 case .esAdded:
@@ -123,7 +116,6 @@ struct VLCVideoView: UIViewRepresentable {
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
             return true
         }
-
     }
 }
 

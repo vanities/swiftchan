@@ -14,7 +14,7 @@ struct VLCContainerView: View {
     @Binding var play: Bool
 
     private let jumpInterval: Int32 = 5
-    @ObservedObject var vlcVideoViewModel = VLCVideoViewModel()
+    @StateObject var vlcVideoViewModel = VLCVideoViewModel()
     @State private var isShowingControls: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
 
@@ -38,7 +38,7 @@ struct VLCContainerView: View {
             }
 
             if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
-                //ActivityIndicator()
+                ActivityIndicator()
             }
         }
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
