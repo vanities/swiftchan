@@ -8,7 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 
-struct VLCVideo: Identifiable {
+struct VLCVideo: Equatable, Identifiable {
     var id: URL?
 
     enum MediaControlState: Equatable, Hashable {

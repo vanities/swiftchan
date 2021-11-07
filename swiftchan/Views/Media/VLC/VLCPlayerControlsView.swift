@@ -33,6 +33,7 @@ struct VLCPlayerControlsView: View {
     }
 
     var body: some View {
+        debugPrint(vlcVideoViewModel.vlcVideo.currentTime)
         return HStack(alignment: .center) {
             Button(action: togglePlayer) {
                 Image(systemName: playbackImage)
