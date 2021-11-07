@@ -20,7 +20,10 @@ struct VLCVideoView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: VLCMediaListPlayerUIView, context: UIViewRepresentableContext<VLCVideoView>) {
+    func updateUIView(
+        _ uiView: VLCMediaListPlayerUIView,
+        context: UIViewRepresentableContext<VLCVideoView>
+    ) {
         debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
         switch vlcVideoViewModel.vlcVideo.mediaControlState {
         case .initialize:

@@ -42,6 +42,7 @@ struct ThreadView: View {
                                presentationState.presentingSheet == .gallery,
                                let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
                                 reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+                                viewModel.media[presentationState.galleryIndex].isSelected = false
                             }
                         }
                     }

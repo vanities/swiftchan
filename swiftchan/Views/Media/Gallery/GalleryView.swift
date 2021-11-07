@@ -95,10 +95,10 @@ struct GalleryView: View {
                       onPageDragChanged?(.zero)
                       state.galleryIndex = index
                       if index - 1 >= 0 {
-                          //viewModel.media[index - 1].isSelected = false
+                          viewModel.media[index - 1].isSelected = false
                       }
                       if index + 1 <= viewModel.media.count {
-                          //viewModel.media[index + 1].isSelected = false
+                          viewModel.media[index + 1].isSelected = false
                       }
                       viewModel.media[index].isSelected = true
                   }

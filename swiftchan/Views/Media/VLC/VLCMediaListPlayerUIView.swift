@@ -29,14 +29,12 @@ class VLCMediaListPlayerUIView: UIView {
 
     func play() {
         debugPrint("trying to play webm \(url)")
-        if !mediaListPlayer.mediaPlayer.isPlaying,
-           mediaListPlayer.mediaPlayer.willPlay {
+        if !mediaListPlayer.mediaPlayer.isPlaying {
             debugPrint("will play webm \(url)")
             DispatchQueue.main.async { [weak self] in
                 self?.mediaListPlayer.play(self?.media)
             }
-        }
-        else {
+        } else {
             debugPrint("will not play webm \(url)")
         }
     }
