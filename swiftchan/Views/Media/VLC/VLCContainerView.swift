@@ -57,9 +57,10 @@ struct VLCContainerView: View {
             vlcVideoViewModel.vlcVideo.url = url
             vlcVideoViewModel.vlcVideo.id = url
             UIApplication.shared.isIdleTimerDisabled = true
-            if play {
-                vlcVideoViewModel.vlcVideo.mediaControlState = .play
-            }
+        }
+        .onDisappear {
+            //vlcVideoViewModel.vlcVideo.mediaControlState = .pause
+            //play = false
         }
     }
 

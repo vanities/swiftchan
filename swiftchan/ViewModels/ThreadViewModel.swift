@@ -16,7 +16,7 @@ extension ThreadView {
         let id: Int
 
         @Published private(set) var posts = [Post]()
-        @Published private(set) var media = [Media]()
+        @Published var media = [Media]()
         @Published private(set) var postMediaMapping = [Int: Int]()
         @Published private(set) var comments = [AttributedString]()
         @Published private(set) var replies = [Int: [Int]]()
@@ -50,8 +50,10 @@ extension ThreadView {
 
         private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
             var mediaList = [Media]()
+            var id = 0
             for (mediaUrl, thumbnailMediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
-                mediaList.append(Media(url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
+                mediaList.append(Media(id: id, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
+                id += 1
             }
             return mediaList
         }

@@ -8,57 +8,87 @@
 import SwiftUI
 import MobileVLCKit
 
+class PlayerUIView: UIView, VLCMediaPlayerDelegate, VLCMediaListPlayerDelegate {
+    private let url: URL
+    let mediaListPlayer = VLCMediaListPlayer()
+    private let mediaPlayer = VLCMediaPlayer()
+    var media: VLCMedia?
+
+    init(url: URL, frame: CGRect) {
+        self.url = url
+        super.init(frame: frame)
+        let urls = VLCVideoView.getUrl(url: url)
+        media = VLCMedia(url: urls)
+        mediaListPlayer.rootMedia = media
+        mediaListPlayer.mediaPlayer.media = media
+        mediaListPlayer.mediaPlayer.delegate = self
+        mediaListPlayer.mediaPlayer.drawable = self
+        mediaListPlayer.repeatMode = .repeatCurrentItem
+#if DEBUG
+        mediaListPlayer.mediaPlayer.audio.isMuted = true
+#endif
+    }
+
+    func play() {
+        debugPrint("trying to play webm \(url)")
+        if !mediaListPlayer.mediaPlayer.isPlaying {
+            if mediaListPlayer.mediaPlayer.willPlay {
+                debugPrint("will play webm \(url)")
+            } else {
+                debugPrint("will not play webm \(url)")
+            }
+            DispatchQueue.main.async { [weak self] in
+                self?.mediaListPlayer.play(self?.media)
+            }
+        }
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+}
+
 struct VLCVideoView: UIViewRepresentable {
-    let playerList: VLCMediaListPlayer = VLCMediaListPlayer()
     let url: URL
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
-    @State var media: VLCMedia?
 
-    func makeUIView(context: Context) -> UIView {
-        let uiView = UIView()
-
-        setMediaPlayer(context: context)
-
-        playerList.mediaPlayer.drawable = uiView
-        playerList.repeatMode = .repeatCurrentItem
-
+    func makeUIView(context: Context) -> PlayerUIView {
+        let uiView = PlayerUIView(url: url, frame: .init(x: 150, y: 300, width: 300, height: 300))
         return uiView
     }
 
     // swiftlint:disable all
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<VLCVideoView>) {
-        let playerList = context.coordinator.parent.playerList
-        if media == nil {
-            setMediaPlayer(context: context)
-        }
-
+    func updateUIView(_ uiView: PlayerUIView, context: UIViewRepresentableContext<VLCVideoView>) {
+        let playerList = uiView.mediaListPlayer
+        guard let url = playerList.rootMedia?.url else {return}
+        
+        guard let player = playerList.mediaPlayer else { return }
+        debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
         switch vlcVideoViewModel.vlcVideo.mediaControlState {
+        case .initialize:
+            return
         case .play:
-            if let player = playerList.mediaPlayer,
-               !player.isPlaying,
-               let media = media {
-                DispatchQueue.main.async {
-                    if player.media == nil {
-                        playerList.play(media)
-                        player.delegate = context.coordinator
-                    } else {
-                        playerList.play()
-                    }
-                }
-            }
+            uiView.play()
         case .pause:
             if playerList.mediaPlayer.canPause {
+                debugPrint("will pause webm \(url)")
                 DispatchQueue.main.async {
                     playerList.pause()
                 }
             }
         case .seek(let time):
             if playerList.mediaPlayer.isSeekable {
+                debugPrint("will seek webm \(url)")
                 DispatchQueue.main.async {
                     playerList.mediaPlayer?.time = time
                 }
             }
         case .jump(let direction, let time):
+            debugPrint("will jump webm \(url)")
             DispatchQueue.main.async {
                 switch direction {
                 case .forward:
@@ -73,35 +103,30 @@ struct VLCVideoView: UIViewRepresentable {
     }
     // swiftlint:enable all
 
-    public static func dismantleUIView(_ uiView: UIView, coordinator: VLCVideoView.Coordinator) {
-        coordinator.parent.playerList.stop()
-        coordinator.parent.playerList.rootMedia = nil
+    public static func dismantleUIView(_ uiView: PlayerUIView, coordinator: VLCVideoView.Coordinator) {
+        uiView.mediaListPlayer.stop()
+        uiView.mediaListPlayer.rootMedia = nil
     }
 
     // MARK: Private
-    private func setMediaPlayer(context: VLCVideoView.Context) {
-        DispatchQueue.main.async {
-            if let cacheUrl = CacheManager.shared.getCacheValue(url) {
-                media = VLCMedia(url: cacheUrl)
-                playerList.rootMedia = media
-                context.coordinator.parent.playerList.rootMedia = media
-                playerList.play(media)
-            } else {
-                media = VLCMedia(url: url)
-                playerList.rootMedia = media
-                context.coordinator.parent.playerList.rootMedia = media
-            }
+    static func getUrl(url: URL) -> URL {
+        if let cacheUrl = CacheManager.shared.getCacheValue(url) {
+            debugPrint("cache hit webm \(cacheUrl)")
+            return cacheUrl
+        } else {
+            debugPrint("cache miss webm \(url)")
+            return url
         }
-#if DEBUG
-        self.playerList.mediaPlayer.audio.isMuted = true
-#endif
     }
 
     // MARK: Coordinator
+    /*
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
+     */
 
+    /*
     class Coordinator: NSObject, VLCMediaPlayerDelegate, VLCMediaDelegate, UIGestureRecognizerDelegate {
         var parent: VLCVideoView
 
@@ -123,24 +148,51 @@ struct VLCVideoView: UIViewRepresentable {
 
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
             if let player = parent.playerList.mediaPlayer {
+                /*
+                 switch player.state {
+                 case .esAdded:
+                 debugPrint("added webm \(parent.url)")
+                 case .playing:
+                 debugPrint("playing webm \(parent.url)")
+                 case .buffering:
+                 debugPrint("buffering webm \(parent.url)")
+                 case .ended:
+                 debugPrint("ended webm \(parent.url)")
+                 case .opening:
+                 debugPrint("opening webm \(parent.url)")
+                 case .paused:
+                 debugPrint("paused webm \(parent.url)")
+                 case .error:
+                 debugPrint("error webm \(parent.url)")
+                 case .stopped:
+                 debugPrint("stopped webm \(parent.url)")
+                 @unknown default:
+                 debugPrint("unknown state webm \(parent.url)")
+                 }
+                 */
                 parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
             }
         }
 
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+            return true
         }
+     
 
     }
+     */
 }
 
-#if DEBUG
-struct VlcPlayerDemo_Previews: PreviewProvider {
-    static var previews: some View {
-        return ZStack {
-            VLCVideoView(url: URLExamples.webm)
-                .environmentObject(VLCVideoViewModel())
-        }
-    }
-}
-#endif
+/*
+ #if DEBUG
+ struct VlcPlayerDemo_Previews: PreviewProvider {
+ static var previews: some View {
+ return ZStack {
+ VLCVideoView(url: URLExamples.webm)
+ .environmentObject(VLCVideoViewModel())
+ }
+ }
+ }
+ #endif
+ 
+ */

@@ -20,6 +20,7 @@ struct VLCVideo: Identifiable {
         static func == (lhs: MediaControlState, rhs: MediaControlState) -> Bool {
             lhs.hashValue == rhs.hashValue
         }
+        case initialize
     }
     enum MediaControlDirection: String {
         case forward
@@ -27,7 +28,7 @@ struct VLCVideo: Identifiable {
     }
 
     var url: URL?
-    var mediaControlState: MediaControlState = .pause
+    var mediaControlState: MediaControlState = .initialize
     var mediaPlayerState: VLCMediaPlayerState = .buffering
     var mediaState: VLCMediaState = .buffering
     var currentTime: VLCTime = VLCTime(int: 0)

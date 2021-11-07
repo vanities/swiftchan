@@ -59,7 +59,9 @@ class CacheManager {
     }
 
     func cacheHit(file: URL) -> Bool {
-        return fileManager.fileExists(atPath: file.path)
+        let cacheHit = fileManager.fileExists(atPath: file.path)
+        //debugPrint("cache \(cacheHit ? "hit" : "miss") \(file)")
+        return cacheHit
     }
 
     private func deleteAll() {

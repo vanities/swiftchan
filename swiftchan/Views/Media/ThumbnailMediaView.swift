@@ -16,19 +16,19 @@ struct ThumbnailMediaView: View {
     var body: some View {
         switch Media.detect(url: url) {
         case .image:
-            ImageView(url: self.thumbnailUrl)
+            ImageView(url: thumbnailUrl)
         case .webm:
             ZStack {
-                ImageView(url: self.thumbnailUrl)
+                ImageView(url: thumbnailUrl)
                 Image(systemName: "play.circle")
                     .imageScale(.large)
                     .foregroundColor(.white)
             }
         case .gif:
-            if self.useThumbnailGif {
-                ImageView(url: self.thumbnailUrl)
+            if useThumbnailGif {
+                ImageView(url: thumbnailUrl)
             } else {
-                ImageView(url: self.url)
+                ImageView(url: url)
                     .scaledToFit()
             }
         case .none:

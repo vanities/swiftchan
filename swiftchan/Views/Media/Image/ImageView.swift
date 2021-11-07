@@ -10,8 +10,7 @@ import Kingfisher
 
 struct ImageView: View {
     let url: URL
-    @Binding var isSelected: Bool
-    let canGesture: Bool
+    var canGesture: Bool = true
     let minimumScale: CGFloat = 1
 
     @State var scale: CGFloat = 1.0
@@ -20,12 +19,6 @@ struct ImageView: View {
     @State private var position = CGSize.zero
 
     var onZoomChanged: ((Bool) -> Void)?
-
-    init(url: URL, canGesture: Bool = false, isSelected: Binding<Bool> = .constant(true)) {
-        self.url = url
-        self.canGesture = canGesture
-        self._isSelected = isSelected
-    }
 
     var body: some View {
         return KFImage(url)
@@ -38,20 +31,18 @@ struct ImageView: View {
             .resizable()
             .aspectRatio(contentMode: .fit)
             .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
-            .scaleEffect(self.scale)
-            .gesture(self.canGesture ? self.zoomMagnificationGesture() : nil)
+            .scaleEffect(scale)
+            .gesture(canGesture ? zoomMagnificationGesture() : nil)
             // allow drag, only if zoomed in or out
             .highPriorityGesture(
-                self.zoomed && self.canGesture ? self.panDragGesture() : nil
+                zoomed && canGesture ? panDragGesture() : nil
             )
-            .simultaneousGesture(self.canGesture ? self.zoomTapGesture() : nil)
-            .onChange(of: self.isSelected) { selected in
-                if !selected {
-                    self.zoomed = false
-                    self.onZoomChanged?(self.zoomed)
-                    self.scale = 1
-                    self.position = .zero
-                }
+            .simultaneousGesture(canGesture ? zoomTapGesture() : nil)
+            .onDisappear {
+                zoomed = false
+                onZoomChanged?(zoomed)
+                scale = 1
+                position = .zero
             }
     }
 
@@ -59,20 +50,20 @@ struct ImageView: View {
         return TapGesture(count: 2)
             .onEnded {
                 // zoom in
-                if self.scale == 1 {
+                if scale == 1 {
                     withAnimation(.easeIn(duration: 0.2)) {
-                        self.scale = 2
-                        self.zoomed = true
-                        self.onZoomChanged?(self.zoomed)
+                        scale = 2
+                        zoomed = true
+                        onZoomChanged?(zoomed)
                     }
                 }
                 // zoom back
                 else {
                     withAnimation(.easeOut(duration: 0.2)) {
-                        self.scale = 1
-                        self.position = .zero
-                        self.zoomed = false
-                        self.onZoomChanged?(self.zoomed)
+                        scale = 1
+                        position = .zero
+                        zoomed = false
+                        onZoomChanged?(zoomed)
                     }
                 }
             }
@@ -87,24 +78,24 @@ struct ImageView: View {
 
             })
             .onEnded({ (value) in
-                self.position.height += value.translation.height/2
-                self.position.width += value.translation.width/2
+                position.height += value.translation.height/2
+                position.width += value.translation.width/2
             })
     }
 
     func zoomMagnificationGesture() -> some Gesture {
         return MagnificationGesture()
             .onChanged({ (value) in
-                self.scale = value
+                scale = value
             })
             .onEnded({ (value) in
-                self.scale = max(value, self.minimumScale)
-                if self.scale == 1 {
+                scale = max(value, minimumScale)
+                if scale == 1 {
                     let vibrate = UIImpactFeedbackGenerator(style: .light)
                     vibrate.impactOccurred()
                 } else {
-                    self.zoomed = true
-                    self.onZoomChanged?(self.zoomed)
+                    zoomed = true
+                    onZoomChanged?(zoomed)
                 }
             })
     }
@@ -119,7 +110,7 @@ extension ImageView: Buildable {
 #if DEBUG
 struct ImageView_Previews: PreviewProvider {
     static var previews: some View {
-        ImageView(url: URLExamples.image, canGesture: true, isSelected: .constant(true))
+        ImageView(url: URLExamples.image, canGesture: true)
     }
 }
 #endif

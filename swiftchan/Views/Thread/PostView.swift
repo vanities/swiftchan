@@ -54,9 +54,10 @@ struct PostView: View {
                             .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    self.presentationState.galleryIndex = self.viewModel.postMediaMapping[index] ?? 0
-                                    self.presentationState.presentingSheet = .gallery
-                                    self.presentedDismissGesture.presenting.toggle()
+                                    viewModel.media[index].isSelected = true
+                                    presentationState.galleryIndex = viewModel.postMediaMapping[index] ?? 0
+                                    presentationState.presentingSheet = .gallery
+                                    presentedDismissGesture.presenting.toggle()
                                 }
                             }
                             .padding(.leading, -5)
@@ -64,7 +65,7 @@ struct PostView: View {
                     // index, postnumber, date
                     VStack(alignment: .leading) {
                         HStack {
-                            Text(String(self.index))
+                            Text(String(index))
                             Text("•")
                             Text("#" + String(post.no))
                         }
@@ -126,9 +127,9 @@ struct PostView: View {
                     Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
                         .bold()
                         .onTapGesture {
-                            self.presentationState.commentRepliesIndex = index
-                            self.presentationState.presentingSheet = .replies
-                            self.presentedDismissGesture.presenting.toggle()
+                            presentationState.commentRepliesIndex = index
+                            presentationState.presentingSheet = .replies
+                            presentedDismissGesture.presenting.toggle()
                         }
                         .zIndex(-1)
                         .padding(.top, 10)

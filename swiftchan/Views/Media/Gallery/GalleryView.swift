@@ -41,12 +41,11 @@ struct GalleryView: View {
             // gallery
             Pager(
                 page: page,
-                data: viewModel.media.indices,
+                data: viewModel.media,
                 id: \.self
-            ) { index in
+            ) { media in
                 MediaView(
-                    selected: $state.galleryIndex,
-                    index: index
+                    index: media.id
                 )
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
@@ -57,9 +56,9 @@ struct GalleryView: View {
                         }
                         onMediaChanged?(zoomed)
                     }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(index))
+                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(media.id))
                     .fileExporter(isPresented: $isExportingDocument,
-                                  document: FileExport(url: viewModel.media[index].url.absoluteString),
+                                  document: FileExport(url: media.url.absoluteString),
                                   contentType: .image,
                                   onCompletion: { result in
                         presentingToastResult = result
@@ -69,7 +68,7 @@ struct GalleryView: View {
                     })
                     .contextMenu {
                         GalleryContextMenu(
-                            url: viewModel.media[index].url,
+                            url: media.url,
                             isExportingDocument: $isExportingDocument,
                             showContextMenu: $showContextMenu,
                             presentingToast: $presentingToast,
@@ -85,10 +84,8 @@ struct GalleryView: View {
                   .onDraggingBegan {
                       showContextMenu = false
                   }
-                  .onDraggingChanged { offset in
-                      DispatchQueue.main.async {
-                          onPageDragChanged?(CGFloat(offset))
-                      }
+                  .onDraggingChanged {
+                      onPageDragChanged?(CGFloat($0))
                   }
                   .onDraggingEnded {
                       showContextMenu = true
@@ -97,6 +94,13 @@ struct GalleryView: View {
                       dragging = false
                       onPageDragChanged?(.zero)
                       state.galleryIndex = index
+                      if index - 1 >= 0 {
+                          //viewModel.media[index - 1].isSelected = false
+                      }
+                      if index + 1 <= viewModel.media.count {
+                          //viewModel.media[index + 1].isSelected = false
+                      }
+                      viewModel.media[index].isSelected = true
                   }
                   .allowsDragging(!dismissGesture.dragging && canPage)
                   .pagingPriority(.simultaneous)
@@ -109,7 +113,7 @@ struct GalleryView: View {
                 onDismiss?()
             }, label: {
                 Image(systemName: "xmark")
-                    .frame(width: 50, height: 50)
+                    .frame(width: 75, height: 75)
                     .contentShape(Rectangle())
                     .foregroundColor(.white)
             })

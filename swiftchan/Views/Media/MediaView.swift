@@ -10,17 +10,10 @@ import Kingfisher
 
 struct MediaView: View {
     @EnvironmentObject var threadViewModel: ThreadView.ViewModel
-    @State var isSelected: Bool
-    @Binding var selected: Int
     let index: Int
+    @State var playWebm: Bool = false
 
     var onMediaChanged: ((Bool) -> Void)?
-
-    init(selected: Binding<Int>, index: Int) {
-        self._selected = selected
-        self.index = index
-        self._isSelected = State(initialValue: selected.wrappedValue == index)
-    }
 
     @ViewBuilder
     var body: some View {
@@ -28,30 +21,29 @@ struct MediaView: View {
 
         switch media.format {
         case .image:
-            ImageView(url: media.url, canGesture: true, isSelected: $isSelected)
+            ImageView(url: media.url)
                 .onZoomChanged { zoomed in
                     onMediaChanged?(zoomed)
-                }
-                .onChange(of: selected) { value in
-                    isSelected = value == index
                 }
         case .webm:
             ZStack {
                 ImageView(
                     url: media.thumbnailUrl,
-                    canGesture: false,
-                    isSelected: $isSelected
+                    canGesture: false
                 )
 
                 VLCContainerView(
                     url: media.url,
-                    play: $isSelected
+                    play: $playWebm
                 )
                     .onSeekChanged { seeking in
                         onMediaChanged?(seeking)
                     }
-                    .onChange(of: selected) { value in
-                        isSelected = value == index
+                    .onChange(of: threadViewModel.media[index].isSelected) { selected in
+                        playWebm = selected
+                    }
+                    .onAppear {
+                        playWebm = threadViewModel.media[index].isSelected
                     }
             }
         case .gif:
@@ -82,17 +74,14 @@ struct MediaView_Previews: PreviewProvider {
 
         return Group {
             MediaView(
-                selected: .constant(0),
                 index: 0
             )
                 .environmentObject(viewModel)
             MediaView(
-                selected: .constant(1),
                 index: 1
             )
                 .environmentObject(viewModel)
             MediaView(
-                selected: .constant(2),
                 index: 2
             )
                 .environmentObject(viewModel)

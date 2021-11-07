@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Media: Identifiable {
-    var id: URL
+    var id: Int
 
     enum Format {
         case image, gif, webm, none
@@ -17,9 +17,10 @@ struct Media: Identifiable {
     let format: Format
     let url: URL
     let thumbnailUrl: URL
+    var isSelected: Bool = false
 
-    init(url: URL, thumbnailUrl: URL) {
-        self.id = url
+    init(id: Int, url: URL, thumbnailUrl: URL) {
+        self.id = id
         self.url = url
         self.thumbnailUrl = thumbnailUrl
         self.format = Media.detect(url: url)
