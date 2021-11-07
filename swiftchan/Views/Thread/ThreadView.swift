@@ -99,6 +99,9 @@ struct ThreadView: View {
         .task {
             viewModel.prefetch()
         }
+        .onDisappear {
+            viewModel.stopPrefetching()
+        }
         .environmentObject(presentationState)
         .environmentObject(presentedDismissGesture)
     }
