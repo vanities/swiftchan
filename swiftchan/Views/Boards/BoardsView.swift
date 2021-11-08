@@ -112,7 +112,7 @@ struct BoardsView: View {
             },
             label: {
                 Image(systemName: "gear")
-                    .foregroundColor(Color.black)
+                    .foregroundColor(Color.primary)
             })
             .onTapGesture {
                 showingSettings = true
