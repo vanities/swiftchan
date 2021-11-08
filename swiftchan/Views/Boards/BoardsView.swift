@@ -14,7 +14,6 @@ struct BoardsView: View {
     @ObservedObject var viewModel: ViewModel
     @State var searchText: String = ""
     @State var showingSettings: Bool = false
-    @State var showingCatalog: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
@@ -50,7 +49,6 @@ struct BoardsView: View {
 
                                     ForEach(favoriteBoards) { board in
                                         NavigationLink(
-                                            isActive: $showingCatalog,
                                             destination: {
                                                 CatalogView(board.board)
                                             },
@@ -60,9 +58,6 @@ struct BoardsView: View {
                                                           description: board.meta_description.clean)
                                                     .padding(.horizontal, 5)
                                             })
-                                            .onTapGesture {
-                                                showingCatalog = true
-                                            }
                                             .id("\(board.id)-f")
                                             .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
                                     }
@@ -76,7 +71,6 @@ struct BoardsView: View {
                         ) {
                             ForEach(filteredBoards, id: \.self.id) { board in
                                 NavigationLink(
-                                    isActive: $showingCatalog,
                                     destination: {
                                         CatalogView(board.board)
                                     },
@@ -86,9 +80,6 @@ struct BoardsView: View {
                                               description: board.meta_description.clean)
                                             .padding(.horizontal, 5)
                                     })
-                                    .onTapGesture {
-                                        showingCatalog = true
-                                    }
                                     .id("\(board.id)-a")
                                     .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
                             }
