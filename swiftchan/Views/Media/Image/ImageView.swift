@@ -23,7 +23,7 @@ struct ImageView: View {
     var body: some View {
         return KFImage(url)
             .placeholder {
-                ActivityIndicator()
+                ProgressView()
             }
             .processingQueue(.mainAsync)
             // .onlyFromCache()

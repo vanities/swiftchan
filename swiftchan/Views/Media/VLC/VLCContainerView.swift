@@ -38,7 +38,7 @@ struct VLCContainerView: View {
             }
 
             if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
-                ActivityIndicator()
+                ProgressView()
             }
         }
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in

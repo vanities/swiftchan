@@ -96,7 +96,7 @@ struct ThreadView: View {
             presentedDismissGesture.presenting.toggle()
 
         }
-        .task {
+        .onAppear {
             viewModel.prefetch()
         }
         .onDisappear {

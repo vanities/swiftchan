@@ -51,7 +51,7 @@ struct CatalogView: View {
     var body: some View {
         switch state {
         case .loading:
-            ActivityIndicator()
+            ProgressView()
                 .onChange(of: viewModel.posts.count) { numOfComments in
                     if numOfComments > 0 {
                         state = .loaded

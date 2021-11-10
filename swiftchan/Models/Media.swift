@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Media: Identifiable {
+class Media: ObservableObject, Identifiable {
     var id: Int
 
     enum Format {
@@ -15,7 +15,7 @@ struct Media: Identifiable {
     }
 
     let format: Format
-    let url: URL
+    @Published var url: URL
     let thumbnailUrl: URL
     var isSelected: Bool = false
 
@@ -40,11 +40,16 @@ struct Media: Identifiable {
             return .none
         }
     }
+}
 
+extension Media: Equatable {
+    static func == (lhs: Media, rhs: Media) -> Bool {
+        lhs.url == rhs.url
+    }
 }
 
 extension Media: Hashable {
-    static func == (lhs: Media, rhs: Media) -> Bool {
-        lhs.url == rhs.url
+    public func hash(into hasher: inout Hasher) {
+         hasher.combine(ObjectIdentifier(self))
     }
 }

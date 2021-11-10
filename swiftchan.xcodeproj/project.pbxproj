@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
-		9506585C2627D56A008FD1B0 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9506585B2627D56A008FD1B0 /* ActivityIndicator.swift */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
 		950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950EB4DB256CBE08000703C0 /* PullToRefresh.swift */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
@@ -118,7 +117,6 @@
 /* Begin PBXFileReference section */
 		5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
-		9506585B2627D56A008FD1B0 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		950E393F255CDA3B00A00A74 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
 		950EB4DB256CBE08000703C0 /* PullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefresh.swift; sourceTree = "<group>"; };
 		95105368256600C9002E4051 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -465,7 +463,6 @@
 			isa = PBXGroup;
 			children = (
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
-				9506585B2627D56A008FD1B0 /* ActivityIndicator.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
 			);
@@ -712,7 +709,6 @@
 				9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */,
 				95C73106256CA1F700F18257 /* UserSettings.swift in Sources */,
 				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
-				9506585C2627D56A008FD1B0 /* ActivityIndicator.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
 				9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */,

@@ -32,7 +32,7 @@ struct BoardsView: View {
     var body: some View {
         return NavigationView {
             if viewModel.boards.count == 0 {
-                ActivityIndicator()
+                ProgressView()
             } else {
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(

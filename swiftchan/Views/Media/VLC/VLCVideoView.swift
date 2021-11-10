@@ -13,10 +13,11 @@ struct VLCVideoView: UIViewRepresentable {
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
-        let view = VLCMediaListPlayerUIView(url: url, frame: .zero)
+        let view = VLCMediaListPlayerUIView(
+            url: url,
+            frame: .zero
+        )
         view.mediaListPlayer.mediaPlayer.delegate = context.coordinator
-        debugPrint(vlcVideoViewModel)
-        vlcVideoViewModel.vlcVideo.currentTime = context.coordinator.parent.vlcVideoViewModel.vlcVideo.currentTime
         return view
     }
 
@@ -24,7 +25,7 @@ struct VLCVideoView: UIViewRepresentable {
         _ uiView: VLCMediaListPlayerUIView,
         context: UIViewRepresentableContext<VLCVideoView>
     ) {
-        debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
+        //debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
         switch vlcVideoViewModel.vlcVideo.mediaControlState {
         case .initialize:
             return
@@ -43,17 +44,6 @@ struct VLCVideoView: UIViewRepresentable {
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         uiView.mediaListPlayer.stop()
         uiView.mediaListPlayer.rootMedia = nil
-    }
-
-    // MARK: Private
-    static func getUrl(url: URL) -> URL {
-        if let cacheUrl = CacheManager.shared.getCacheValue(url) {
-            debugPrint("cache hit webm \(cacheUrl)")
-            return cacheUrl
-        } else {
-            debugPrint("cache miss webm \(url)")
-            return url
-        }
     }
 
     // MARK: Coordinator
@@ -79,6 +69,7 @@ struct VLCVideoView: UIViewRepresentable {
                 )
 
                 self.parent.vlcVideoViewModel.vlcVideo.mediaState = player.media.state
+                /*
                 debugPrint(
                 """
                 updating webm time \
@@ -87,6 +78,7 @@ struct VLCVideoView: UIViewRepresentable {
                 \(self.parent.vlcVideoViewModel.vlcVideo.totalTime)
                 """
                 )
+                 */
             }
         }
 
