@@ -59,7 +59,7 @@ struct PresentedPost: View {
                         .dismissGesture(
                             direction: .down,
                             minimumDuration: 0.2,
-                            maximumDistance: 100,
+                            maximumDistance: 50,
                             simultaneous: false
                         )
                         .transition(.identity)
