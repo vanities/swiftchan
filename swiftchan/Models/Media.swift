@@ -7,20 +7,22 @@
 
 import SwiftUI
 
-class Media: ObservableObject, Identifiable {
-    var id: Int
+struct Media {
+    let index: Int
+    let id: URL
 
     enum Format {
         case image, gif, webm, none
     }
 
     let format: Format
-    @Published var url: URL
+    var url: URL
     let thumbnailUrl: URL
     var isSelected: Bool = false
 
-    init(id: Int, url: URL, thumbnailUrl: URL) {
-        self.id = id
+    init(index: Int, url: URL, thumbnailUrl: URL) {
+        self.index = index
+        self.id = url
         self.url = url
         self.thumbnailUrl = thumbnailUrl
         self.format = Media.detect(url: url)
@@ -48,8 +50,6 @@ extension Media: Equatable {
     }
 }
 
-extension Media: Hashable {
-    public func hash(into hasher: inout Hasher) {
-         hasher.combine(ObjectIdentifier(self))
-    }
+extension Media: Identifiable, Hashable {
+
 }

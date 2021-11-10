@@ -45,7 +45,7 @@ struct GalleryView: View {
                 id: \.self
             ) { media in
                 MediaView(
-                    index: media.id
+                    index: media.index
                 )
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
@@ -56,7 +56,7 @@ struct GalleryView: View {
                         }
                         onMediaChanged?(zoomed)
                     }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(media.id))
+                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(media.index))
                     .fileExporter(isPresented: $isExportingDocument,
                                   document: FileExport(url: media.url.absoluteString),
                                   contentType: .image,

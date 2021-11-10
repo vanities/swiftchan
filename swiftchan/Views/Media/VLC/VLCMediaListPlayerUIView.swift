@@ -8,7 +8,7 @@
 import Foundation
 import MobileVLCKit
 
-class VLCMediaListPlayerUIView: UIView {
+class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var url: URL
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
@@ -25,6 +25,7 @@ class VLCMediaListPlayerUIView: UIView {
         mediaListPlayer.rootMedia = media
         mediaListPlayer.mediaPlayer.media = media
         mediaListPlayer.mediaPlayer.drawable = self
+        mediaListPlayer.mediaPlayer.delegate = self
         mediaListPlayer.repeatMode = .repeatCurrentItem
 #if DEBUG
         mediaListPlayer.mediaPlayer.audio.isMuted = true

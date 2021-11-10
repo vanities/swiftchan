@@ -50,10 +50,10 @@ extension ThreadView {
 
         private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
             var mediaList = [Media]()
-            var id = 0
+            var index = 0
             for (mediaUrl, thumbnailMediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
-                mediaList.append(Media(id: id, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
-                id += 1
+                mediaList.append(Media(index: index, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
+                index += 1
             }
             return mediaList
         }
@@ -68,13 +68,11 @@ extension ThreadView {
             }
             DispatchQueue.main.async { [weak self] in
                 self?.prefetcher.prefetch(urls: urls) { videoUrl, videoCacheUrl in
-                    self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
-                    /*
+                    //self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
                     if let row = self?.media.firstIndex(where: { $0.url == videoUrl }) {
                         self?.media[row].url = videoCacheUrl
                         debugPrint("set \(videoUrl)")
                     }
-                     */
                 }
             }
 

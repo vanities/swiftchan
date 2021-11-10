@@ -56,7 +56,6 @@ class Prefetcher {
 
             videoPrefetcher.queue.addOperation(operation)
         }
-
     }
 
     func stopPrefetching() {
