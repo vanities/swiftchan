@@ -54,8 +54,9 @@ struct PostView: View {
                             .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    viewModel.media[index].isSelected = true
-                                    presentationState.galleryIndex = viewModel.postMediaMapping[index] ?? 0
+                                    let mediaIndex = viewModel.postMediaMapping[index] ?? 0
+                                    viewModel.media[mediaIndex].isSelected = true
+                                    presentationState.galleryIndex = mediaIndex 
                                     presentationState.presentingSheet = .gallery
                                     presentedDismissGesture.presenting.toggle()
                                 }
