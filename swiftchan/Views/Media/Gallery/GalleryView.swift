@@ -97,7 +97,7 @@ struct GalleryView: View {
                       if index - 1 >= 0 {
                           viewModel.media[index - 1].isSelected = false
                       }
-                      if index + 1 <= viewModel.media.count {
+                      if index + 1 <= viewModel.media.count - 1 {
                           viewModel.media[index + 1].isSelected = false
                       }
                       viewModel.media[index].isSelected = true
