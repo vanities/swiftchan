@@ -67,7 +67,7 @@ extension ThreadView {
                 return [media.thumbnailUrl, media.url]
             }
             prefetcher.prefetch(urls: urls) { [weak self] videoUrl, videoCacheUrl in
-                //self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
+                // self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
                 if let row = self?.media.firstIndex(where: { $0.url == videoUrl }) {
                     self?.media[row].url = videoCacheUrl
                 }

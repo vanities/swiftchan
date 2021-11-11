@@ -61,7 +61,7 @@ struct GalleryContextMenu: View {
                 Button(action: {
                     let imageSaver = ImageSaver(completionHandler: { result in
                         switch result {
-                        case .success(_):
+                        case .success:
                             presentingToastResult = .success(url)
                             notificationGenerator.notificationOccurred(.success)
                         case .failure(let error):

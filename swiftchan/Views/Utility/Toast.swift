@@ -14,11 +14,11 @@ struct Toast<T>: View {
     @ViewBuilder
     var body: some View {
         switch presentingToastResult {
-        case .success(_):
+        case .success:
             ToastView("Success!", content: {}, background: {Color.clear})
                 .toastViewStyle(SuccessToastViewStyle())
                 .accessibilityIdentifier(AccessibilityIdentifiers.successToastText)
-        case .failure(_):
+        case .failure:
             ToastView("Failure", content: {}, background: {Color.clear})
                 .toastViewStyle(ErrorToastViewStyle())
         case .none:

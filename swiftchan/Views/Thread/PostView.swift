@@ -56,7 +56,7 @@ struct PostView: View {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     let mediaIndex = viewModel.postMediaMapping[index] ?? 0
                                     viewModel.media[mediaIndex].isSelected = true
-                                    presentationState.galleryIndex = mediaIndex 
+                                    presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingSheet = .gallery
                                     presentedDismissGesture.presenting.toggle()
                                 }

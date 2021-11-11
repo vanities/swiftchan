@@ -44,7 +44,7 @@ struct DismissGestureModifier: ViewModifier {
             .sequenced(before: DragGesture(minimumDistance: 15, coordinateSpace: .local))
             .onChanged { gestureValue in
                 switch gestureValue {
-                case .first(_):
+                case .first:
                     return
                 case .second(_, let value):
                     if let value = value {

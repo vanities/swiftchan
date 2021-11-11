@@ -25,7 +25,7 @@ struct VLCVideoView: UIViewRepresentable {
         _ uiView: VLCMediaListPlayerUIView,
         context: UIViewRepresentableContext<VLCVideoView>
     ) {
-        //debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
+        // debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
         switch vlcVideoViewModel.vlcVideo.mediaControlState {
         case .initialize:
             return

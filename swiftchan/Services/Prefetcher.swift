@@ -47,7 +47,7 @@ class Prefetcher {
                         case .success(let cacheSuccessUrl):
                             videoComplete?(url, cacheSuccessUrl)
                             return
-                        case .failure(_):
+                        case .failure:
                             return
                         }
                     }
