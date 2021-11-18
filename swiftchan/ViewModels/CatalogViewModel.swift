@@ -13,18 +13,21 @@ import Combine
 
 extension CatalogView {
     final class CatalogViewModel: ObservableObject {
+        enum LoadingState {
+            case loading
+            case loaded
+        }
+
         let boardName: String
         let prefetcher = Prefetcher()
+
         @Published private(set) var posts = [SwiftchanPost]()
+        @Published var state: LoadingState = .loading
+
         private var cancellable = Set<AnyCancellable>()
 
-        init(boardName: String, _ complete: (() -> Void)? = nil) {
+        init(boardName: String) {
             self.boardName = boardName
-            self.load {
-                complete?()
-                self.handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
-                self.handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
-            }
         }
 
         deinit {
@@ -32,10 +35,17 @@ extension CatalogView {
         }
 
         func load(_ complete: (() -> Void)? = nil) {
+            state = .loading
             FourchanService.getCatalog(boardName: boardName) { [weak self] posts in
-                self?.posts = posts
+                guard let self = self else {
+                    return
+                }
+                self.posts = posts
+                self.prefetch()
+                self.handleSorting(value: Defaults.sortFilesBy(boardName: self.boardName), attributeKey: "files")
+                self.handleSorting(value: Defaults.sortRepliesBy(boardName: self.boardName), attributeKey: "replies")
+                self.state = .loaded
                 complete?()
-                self?.prefetch()
             }
 
             Defaults.publisher(.sortFilesBy(boardName: boardName))

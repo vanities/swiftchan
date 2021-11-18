@@ -10,17 +10,11 @@ import FourChan
 import Defaults
 
 struct CatalogView: View {
-    enum LoadingState {
-        case loading
-        case loaded
-    }
-
     @EnvironmentObject var appState: AppState
-    @StateObject var viewModel: CatalogViewModel
+    @ObservedObject var viewModel: CatalogViewModel
 
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
-    @State var state: LoadingState = .loading
     @State var isShowingMenu: Bool = false
 
     let columns = [
@@ -34,11 +28,7 @@ struct CatalogView: View {
 
     var sorting: Bool {
         !(Defaults.sortFilesBy(boardName: viewModel.boardName) == .none &&
-        Defaults.sortRepliesBy(boardName: viewModel.boardName) == .none)
-    }
-
-    init(_ boardName: String) {
-        self._viewModel = StateObject(wrappedValue: CatalogView.CatalogViewModel(boardName: boardName))
+          Defaults.sortRepliesBy(boardName: viewModel.boardName) == .none)
     }
 
     var filteredPosts: [SwiftchanPost] {
@@ -55,55 +45,53 @@ struct CatalogView: View {
 
     @ViewBuilder
     var body: some View {
-        switch state {
-        case .loading:
-            ProgressView()
-                .onChange(of: viewModel.posts.count) { numOfComments in
-                    if numOfComments > 0 {
-                        state = .loaded
+        ZStack {
+            switch viewModel.state {
+            case .loading:
+                ProgressView()
+            case .loaded:
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(columns: columns,
+                              alignment: .center,
+                              spacing: 0) {
+                        ForEach(filteredPosts, id: \.post.id) { post in
+                            OPView(boardName: viewModel.boardName,
+                                   post: post.post,
+                                   comment: post.comment)
+                                .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.posts.firstIndex(where: { $0.post == post.post}) ?? 0))
+                        }
                     }
-                }
-        case .loaded:
-            ScrollView(.vertical, showsIndicators: true) {
-                LazyVGrid(columns: columns,
-                          alignment: .center,
-                          spacing: 0) {
-                    ForEach(filteredPosts, id: \.post.id) { post in
-                        OPView(boardName: viewModel.boardName,
-                               post: post.post,
-                               comment: post.comment)
-                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.posts.firstIndex(where: { $0.post == post.post}) ?? 0))
-                    }
-                }
-                          .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                              state = .loading
-                              let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                              softVibrate.impactOccurred()
-                              viewModel.load {
-                                  pullToRefreshShowing = false
-                                  state = .loaded
+                              .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                                  let softVibrate = UIImpactFeedbackGenerator(style: .soft)
+                                  softVibrate.impactOccurred()
+                                  viewModel.load {
+                                      pullToRefreshShowing = false
+                                  }
                               }
-                          }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitle(viewModel.boardName)
-            .navigationBarItems(
-                trailing:
-                    HStack {
-                        sortingButton
-                        settingsButton
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle(viewModel.boardName)
+                .navigationBarItems(
+                    trailing:
+                        HStack {
+                            sortingButton
+                            settingsButton
+                        }
+                )
+                .searchable(text: $searchText)
+                .multiActionSheet(isPresented: $appState.showingCatalogMenu) {
+                    FavoriteStar(viewModel: viewModel)
+                }
+                .multiActionSheet(isPresented: $appState.showingSortMenu) {
+                    Group {
+                        FilesSortRow(viewModel: viewModel)
+                        RepliesSortRow(viewModel: viewModel)
                     }
-            )
-            .searchable(text: $searchText)
-            .multiActionSheet(isPresented: $appState.showingCatalogMenu) {
-                FavoriteStar(viewModel: viewModel)
-            }
-            .multiActionSheet(isPresented: $appState.showingSortMenu) {
-                Group {
-                    FilesSortRow(viewModel: viewModel)
-                    RepliesSortRow(viewModel: viewModel)
                 }
             }
+        }
+        .task {
+            viewModel.load()
         }
     }
 
@@ -117,7 +105,7 @@ struct CatalogView: View {
         }, label: {
             Image(systemName: sorting ?
                   "arrow.up.and.down.righttriangle.up.righttriangle.down.fill" :
-                  "arrow.up.and.down.righttriangle.up.righttriangle.down")
+                    "arrow.up.and.down.righttriangle.up.righttriangle.down")
         })
     }
 
@@ -137,7 +125,7 @@ struct CatalogView: View {
 #if DEBUG
 struct CatalogView_Previews: PreviewProvider {
     static var previews: some View {
-        CatalogView("fit")
+        CatalogView(viewModel: CatalogView.CatalogViewModel(boardName: "fit"))
             .environmentObject(AppState())
     }
 }

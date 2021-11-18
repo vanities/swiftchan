@@ -23,7 +23,7 @@ struct PresentedPost: View {
         switch state.presentingSheet {
         case .gallery:
             GalleryView(
-                state.galleryIndex
+                index: state.galleryIndex
             )
             .onDismiss {
                 dismissGesture.dismiss = true
