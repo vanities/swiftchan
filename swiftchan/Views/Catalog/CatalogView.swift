@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FourChan
+import Defaults
 
 struct CatalogView: View {
     enum LoadingState {
@@ -31,15 +32,20 @@ struct CatalogView: View {
         return CGFloat(20 + (self.viewModel.boardName.count * 5))
     }
 
+    var sorting: Bool {
+        !(Defaults.sortFilesBy(boardName: viewModel.boardName) == .none &&
+        Defaults.sortRepliesBy(boardName: viewModel.boardName) == .none)
+    }
+
     init(_ boardName: String) {
         self._viewModel = StateObject(wrappedValue: CatalogView.CatalogViewModel(boardName: boardName))
     }
 
     var filteredPosts: [SwiftchanPost] {
         if searchText.isEmpty {
-            return viewModel.sortedPosts
+            return viewModel.posts
         } else {
-            return viewModel.sortedPosts.compactMap { swiftChanPost -> SwiftchanPost? in
+            return viewModel.posts.compactMap { swiftChanPost -> SwiftchanPost? in
                 let commentAndSubject = "\(swiftChanPost.post.com?.clean.lowercased() ?? "") \(swiftChanPost.post.sub?.clean.lowercased() ?? "")"
 
                 return commentAndSubject.contains(searchText.lowercased()) ? swiftChanPost : nil
@@ -66,7 +72,7 @@ struct CatalogView: View {
                         OPView(boardName: viewModel.boardName,
                                post: post.post,
                                comment: post.comment)
-                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.sortedPosts.firstIndex(where: { $0.post == post.post}) ?? 0))
+                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.posts.firstIndex(where: { $0.post == post.post}) ?? 0))
                     }
                 }
                           .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
@@ -84,24 +90,8 @@ struct CatalogView: View {
             .navigationBarItems(
                 trailing:
                     HStack {
-                        Button(action: {
-                            withAnimation {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                appState.showingSortMenu = true
-
-                            }
-                        }, label: {
-                            Image(systemName: "slider.horizontal.3")
-                        })
-                        Button(action: {
-                            withAnimation {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                appState.showingCatalogMenu = true
-
-                            }
-                        }, label: {
-                            Image(systemName: "ellipsis")
-                        })
+                        sortingButton
+                        settingsButton
                     }
             )
             .searchable(text: $searchText)
@@ -115,6 +105,32 @@ struct CatalogView: View {
                 }
             }
         }
+    }
+
+    var sortingButton: some View {
+        Button(action: {
+            withAnimation {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                appState.showingSortMenu = true
+
+            }
+        }, label: {
+            Image(systemName: sorting ?
+                  "arrow.up.and.down.righttriangle.up.righttriangle.down.fill" :
+                  "arrow.up.and.down.righttriangle.up.righttriangle.down")
+        })
+    }
+
+    var settingsButton: some View {
+        Button(action: {
+            withAnimation {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                appState.showingCatalogMenu = true
+
+            }
+        }, label: {
+            Image(systemName: "ellipsis")
+        })
     }
 }
 

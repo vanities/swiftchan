@@ -15,7 +15,6 @@ extension CatalogView {
     final class CatalogViewModel: ObservableObject {
         let boardName: String
         let prefetcher = Prefetcher()
-        @Published private(set) var sortedPosts = [SwiftchanPost]()
         @Published private(set) var posts = [SwiftchanPost]()
         private var cancellable = Set<AnyCancellable>()
 
@@ -23,6 +22,8 @@ extension CatalogView {
             self.boardName = boardName
             self.load {
                 complete?()
+                self.handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
+                self.handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
             }
         }
 
@@ -33,7 +34,6 @@ extension CatalogView {
         func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getCatalog(boardName: boardName) { [weak self] posts in
                 self?.posts = posts
-                self?.sortedPosts = posts
                 complete?()
                 self?.prefetch()
             }
@@ -54,10 +54,9 @@ extension CatalogView {
 
         func handleSorting(value: SortRow.SortType, attributeKey: String) {
             guard value != .none else {
-                sortedPosts = posts // this may reorder values back unintentionally
                 return
             }
-            sortedPosts.sort { (lhs: SwiftchanPost, rhs: SwiftchanPost) -> Bool in
+            posts.sort { (lhs: SwiftchanPost, rhs: SwiftchanPost) -> Bool in
                 // https://stackoverflow.com/questions/26829304/assigning-operator-function-in-variable
                 let operation: (Int, Int) -> Bool = value == .ascending ? (<) : (>)
                 return operation(
