@@ -18,7 +18,7 @@ extension CatalogView {
             case loaded
         }
 
-        let boardName: String
+        var boardName: String
         let prefetcher = Prefetcher()
 
         @Published private(set) var posts = [SwiftchanPost]()
@@ -34,16 +34,15 @@ extension CatalogView {
             stopPrefetching()
         }
 
-        func load(_ complete: (() -> Void)? = nil) {
-            state = .loading
+        func load(boardName: String, _ complete: (() -> Void)? = nil) {
             FourchanService.getCatalog(boardName: boardName) { [weak self] posts in
                 guard let self = self else {
                     return
                 }
                 self.posts = posts
-                self.prefetch()
-                self.handleSorting(value: Defaults.sortFilesBy(boardName: self.boardName), attributeKey: "files")
-                self.handleSorting(value: Defaults.sortRepliesBy(boardName: self.boardName), attributeKey: "replies")
+                self.prefetch(boardName: boardName)
+                self.handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
+                self.handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
                 self.state = .loaded
                 complete?()
             }
@@ -76,9 +75,9 @@ extension CatalogView {
             }
         }
 
-        func prefetch() {
-            let thumbnailUrls = posts.compactMap { [weak self] post in
-                return post.post.getMediaUrl(boardId: self?.boardName ?? "")
+        func prefetch(boardName: String) {
+            let thumbnailUrls = posts.compactMap { post in
+                return post.post.getMediaUrl(boardId: boardName)
             }
             // don't prefetch webms here.. for now
             prefetcher.prefetchImages(urls: thumbnailUrls)
