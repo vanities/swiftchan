@@ -15,6 +15,7 @@ struct PresentedPost: View {
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
+    let namespace: Namespace.ID
 
     var onOffsetChanged: ((CGFloat) -> Void)?
 
@@ -23,7 +24,7 @@ struct PresentedPost: View {
         switch state.presentingSheet {
         case .gallery:
             GalleryView(
-                state.galleryIndex
+                index: state.galleryIndex
             )
             .onDismiss {
                 dismissGesture.dismiss = true
@@ -38,8 +39,7 @@ struct PresentedPost: View {
                     dismissGesture.dragging = false
                 }
             }
-            .dismissGesture(direction: .down)
-            .transition(.identity)
+            .scrollViewDismissGesture(namespace: namespace)
 
         case .replies:
             if let replies = viewModel.replies[state.commentRepliesIndex] {
@@ -73,6 +73,7 @@ struct PresentedPost: View {
 #if DEBUG
 struct PresentedPost_Previews: PreviewProvider {
     static var previews: some View {
+        @Namespace var namespase
         let viewModel = ThreadView.ViewModel(boardName: "aco", id: 5926311)
         let presentationStateGallery = PresentationState()
         presentationStateGallery.replyIndex = 1
@@ -88,18 +89,18 @@ struct PresentedPost_Previews: PreviewProvider {
         presentationStateReplies.commentRepliesIndex = 0
         presentationStateReplies.presentingSheet = .replies
         return Group {
-            PresentedPost()
+            PresentedPost(namespace: namespase)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(presentationStateGallery)
 
-            PresentedPost()
+            PresentedPost(namespace: namespase)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(presentationStateReply)
                 .background(Color.green)
 
-            PresentedPost()
+            PresentedPost(namespace: namespase)
                 .environmentObject(repliesViewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(presentationStateReplies)

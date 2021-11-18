@@ -15,4 +15,5 @@ class DismissGesture: ObservableObject {
     @Published var draggingOffset: CGFloat = UIScreen.main.bounds.height
     @Published var lastDraggingValue: DragGesture.Value?
     @Published var draggingVelocity: Double = 0
+    @Published var tappedImageFrame: CGRect = .zero
 }

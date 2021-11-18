@@ -13,6 +13,10 @@ struct PostView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var presentationState: PresentationState
     @EnvironmentObject var presentedDismissGesture: DismissGesture
+    var namespace: Namespace.ID?
+
+    @State var imageRect: CGRect = .zero
+    @State var showThumbnail: Bool = true
 
     let index: Int
 
@@ -50,18 +54,22 @@ struct PostView: View {
                             useThumbnailGif: false
                         )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
-                            .frame(width: UIScreen.main.bounds.width/2)
-                            .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    let mediaIndex = viewModel.postMediaMapping[index] ?? 0
+                                    presentedDismissGesture.tappedImageFrame = imageRect
+                                        let mediaIndex = viewModel.postMediaMapping[index] ?? 0
                                     viewModel.media[mediaIndex].isSelected = true
                                     presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingSheet = .gallery
                                     presentedDismissGesture.presenting.toggle()
                                 }
                             }
-                            .padding(.leading, -5)
+                            .readSize { size in
+                                imageRect = size
+                            }
+                            .matchedGeometryEffect(id: "1", in: namespace!, properties: .frame)
+                            .frame(maxWidth: UIScreen.main.bounds.width/2, maxHeight: 500)
+                            .opacity(showThumbnail ? 1 : 0)
                     }
                     // index, postnumber, date
                     VStack(alignment: .leading) {
@@ -137,6 +145,17 @@ struct PostView: View {
                 }
             }
             .padding(.all, 10)
+            .onChange(of: presentedDismissGesture.presenting) { _ in
+                /*
+                if !p {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showThumbnail = !p
+                    }
+                } else {
+                    showThumbnail = !p
+                }
+                 */
+            }
         }
     }
 }
@@ -146,8 +165,9 @@ struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+        @Namespace var namespace
 
-        return PostView(index: 0)
+        return PostView(namespace: namespace, index: 0)
             .environmentObject(viewModel)
             .environmentObject(AppState())
             .environmentObject(DismissGesture())
@@ -155,3 +175,20 @@ struct PostView_Previews: PreviewProvider {
     }
 }
 #endif
+
+extension View {
+  func readSize(onChange: @escaping (CGRect) -> Void) -> some View {
+    background(
+      GeometryReader { geometryProxy in
+        Color.clear
+              .preference(key: SizePreferenceKey.self, value: geometryProxy.frame(in: .global))
+      }
+    )
+    .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+  }
+}
+
+private struct SizePreferenceKey: PreferenceKey {
+  static var defaultValue: CGRect = .zero
+  static func reduce(value: inout CGRect, nextValue: () -> CGRect) {}
+}

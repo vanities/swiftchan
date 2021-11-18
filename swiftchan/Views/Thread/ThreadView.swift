@@ -8,29 +8,39 @@
 import SwiftUI
 import FourChan
 
+class TrackableScrollViewState: ObservableObject {
+    @Published var contentOffset: CGFloat = 0
+}
+
 struct ThreadView: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
-    @StateObject var presentationState: PresentationState = PresentationState()
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ViewModel
 
+    @StateObject var presentedDismissGesture = DismissGesture()
+    @StateObject var presentationState = PresentationState()
+    @StateObject var trackableScrollViewState = TrackableScrollViewState()
+
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
+    @Namespace var namespace
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
         return ZStack {
             ScrollViewReader { reader in
-                ScrollView(.vertical, showsIndicators: true) {
+                TrackableScrollView(
+                    .vertical,
+                    showIndicators: true,
+                    contentOffset: $trackableScrollViewState.contentOffset
+                ) {
                     LazyVGrid(columns: self.columns,
                               alignment: .center,
                               spacing: 0) {
 
                         ForEach(viewModel.posts.indices, id: \.self) { index in
                             if index < viewModel.comments.count {
-                                PostView(index: index)
+                                PostView(namespace: namespace, index: index)
                             }
                         }
                     }
@@ -73,8 +83,9 @@ struct ThreadView: View {
             }
             .onChange(of: presentedDismissGesture.presenting, perform: { value in
                 if value && appState.fullscreenView == nil {
+                    withAnimation(.linear) {
                     appState.fullscreenView = AnyView(
-                        PresentedPost()
+                        PresentedPost(namespace: namespace)
                             .onDisappear {
                                 opacity = 1
                                 presentedDismissGesture.dismiss = false
@@ -84,9 +95,13 @@ struct ThreadView: View {
                             .environmentObject(viewModel)
                             .environmentObject(presentationState)
                             .environmentObject(presentedDismissGesture)
+                            .environmentObject(trackableScrollViewState)
                     )
+                    }
                 } else {
+                    withAnimation(.linear) {
                     appState.fullscreenView = nil
+                    }
                 }
             })
         }

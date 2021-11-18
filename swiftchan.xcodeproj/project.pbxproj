@@ -74,6 +74,8 @@
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
 		95E210FC2701704300B8C96A /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95E210FB2701704300B8C96A /* FourChan */; };
 		95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */; };
+		95EBFBDB273DFB6200989346 /* PresentedScrollViewGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EBFBDA273DFB6200989346 /* PresentedScrollViewGesture.swift */; };
+		95EBFBDD273DFD8100989346 /* TrackableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EBFBDC273DFD8100989346 /* TrackableScrollView.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F76D8026D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
 		95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
@@ -182,6 +184,8 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95DBF2072712550C00356D8F /* AnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImage.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
+		95EBFBDA273DFB6200989346 /* PresentedScrollViewGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedScrollViewGesture.swift; sourceTree = "<group>"; };
+		95EBFBDC273DFD8100989346 /* TrackableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackableScrollView.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
 		95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Identifiers.swift"; sourceTree = "<group>"; };
@@ -338,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */,
+				95EBFBDA273DFB6200989346 /* PresentedScrollViewGesture.swift */,
 			);
 			path = Gestures;
 			sourceTree = "<group>";
@@ -465,6 +470,7 @@
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
+				95EBFBDC273DFD8100989346 /* TrackableScrollView.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -698,6 +704,7 @@
 				9599D62E2556661600BBC8B7 /* ImageView.swift in Sources */,
 				9599D6292556655400BBC8B7 /* GalleryPreviewView.swift in Sources */,
 				957B30472648C87600D2FDCA /* DownloadOperation.swift in Sources */,
+				95EBFBDD273DFD8100989346 /* TrackableScrollView.swift in Sources */,
 				958934332558F5FC000DEEDC /* VLCPlayerControlsView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
@@ -723,6 +730,7 @@
 				95CFC2FA2734B66E0053D62A /* Media.swift in Sources */,
 				950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */,
 				95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */,
+				95EBFBDB273DFB6200989346 /* PresentedScrollViewGesture.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
 				9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */,
 				958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */,

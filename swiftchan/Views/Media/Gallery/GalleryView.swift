@@ -11,11 +11,12 @@ import SwiftUIPager
 import ToastUI
 
 struct GalleryView: View {
+    let index: Int
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
 
-    @StateObject var page: Page
+    @StateObject var page: Page = Page.first()
 
     @State private var canPage: Bool = true
     @State private var isExportingDocument = false
@@ -29,10 +30,6 @@ struct GalleryView: View {
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
     var onDismiss: (() -> Void)?
-
-    init(_ index: Int) {
-        self._page =  StateObject(wrappedValue: Page.withIndex(index))
-    }
 
     var body: some View {
         return ZStack {
@@ -105,9 +102,14 @@ struct GalleryView: View {
                   .allowsDragging(!dismissGesture.dragging && canPage)
                   .pagingPriority(.simultaneous)
                   .swipeInteractionArea(.allAvailable)
-                  .background(Color.black)
-                  .ignoresSafeArea()
+                  .onChange(of: state.galleryIndex) { index in
+                      page.update(.new(index: index))
+                  }
+                  .onAppear {
+                      page.update(.new(index: index))
+                  }
 
+            /*
             // dismiss button
             Button(action: {
                 onDismiss?()
@@ -127,13 +129,11 @@ struct GalleryView: View {
                     .padding(.bottom, 60)
             }
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
+             */
         }
         .gesture(canShowPreview ? showPreviewTap() : nil)
         .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: { Toast(presentingToastResult: presentingToastResult) })
         .statusBar(hidden: true)
-        .onChange(of: state.galleryIndex) { index in
-            page.update(.new(index: index))
-        }
     }
 
     func showPreviewTap() -> some Gesture {
@@ -170,15 +170,15 @@ struct GalleryView_Previews: PreviewProvider {
         viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
 
         return Group {
-            GalleryView(0)
+            GalleryView(index: 0)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
-            GalleryView(1)
+            GalleryView(index: 1)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
-            GalleryView(2)
+            GalleryView(index: 2)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
