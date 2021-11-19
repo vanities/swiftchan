@@ -7,31 +7,21 @@
 
 import SwiftUI
 import ToastUI
+import Defaults
 
 struct SettingsView: View {
     @State var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
+    @Default(.fullImagesForThumbanails) var fullImageForThumbnails
+    @Default(.showGifThumbnails) var showGifThumbnails
 
     var body: some View {
         return ScrollView(.vertical) {
             HStack {
                 VStack(alignment: .leading) {
-                    Section(content: {
-                        Button(
-                            role: .destructive,
-                            action: {
-                                CacheManager.shared.deleteAll { result in
-                                    cacheResult = result
-                                    showCacheDeleteToast = true
-                                }
-                            },
-                            label: {
-                                Label("Delete Cache", systemImage: "trash")
-                            }
-                        )
-                    }, header: {
-                        Text("Cache")
-                    })
+                    cache
+                        .padding()
+                    media
                         .padding()
                 }
                 Spacer()
@@ -44,12 +34,42 @@ struct SettingsView: View {
             Toast(presentingToastResult: cacheResult)
         })
     }
+
+    var cache: some View {
+        let header = "Cache"
+        return Section(content: {
+            Button(
+                role: .destructive,
+                action: {
+                    CacheManager.shared.deleteAll { result in
+                        cacheResult = result
+                        showCacheDeleteToast = true
+                    }
+                },
+                label: {
+                    Label("Delete Cache", systemImage: "trash")
+                }
+            )
+        }, header: {
+            Text(header).font(.title)
+        })
+    }
+
+    var media: some View {
+        let header = "Media"
+        return Section(content: {
+            Toggle("High Res Thumbnails", isOn: $fullImageForThumbnails)
+            Toggle("Show Gifs Thumnails", isOn: $showGifThumbnails)
+        }, header: {
+            Text(header).font(.title)
+        })
+    }
 }
 
 #if DEBUG
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        return SettingsView()
+    struct SettingsView_Previews: PreviewProvider {
+        static var previews: some View {
+            return SettingsView()
+        }
     }
-}
 #endif

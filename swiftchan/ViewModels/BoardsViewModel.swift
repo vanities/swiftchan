@@ -19,7 +19,6 @@ extension BoardsView {
         func load() {
             FourchanService.getBoards { [weak self] result in
                 self?.boards = result
-
             }
         }
     }

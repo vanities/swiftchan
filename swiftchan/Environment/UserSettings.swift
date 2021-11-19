@@ -23,6 +23,8 @@ extension Defaults.Keys {
             default: .none
         )
     }
+    static let fullImagesForThumbanails = Key<Bool>("fullImagesForThumbnails", default: false)
+    static let showGifThumbnails = Key<Bool>("showGifThumbnails", default: false)
 }
 
 extension Defaults {

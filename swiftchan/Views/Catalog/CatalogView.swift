@@ -56,7 +56,7 @@ struct CatalogView: View {
         case .loading:
             ProgressView()
                 .onAppear {
-                    viewModel.load(boardName: boardName)
+                    viewModel.load()
                 }
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
@@ -73,7 +73,7 @@ struct CatalogView: View {
                           .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
                               let softVibrate = UIImpactFeedbackGenerator(style: .soft)
                               softVibrate.impactOccurred()
-                              viewModel.load(boardName: boardName) {
+                              viewModel.load {
                                   pullToRefreshShowing = false
                               }
                           }

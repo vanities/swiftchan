@@ -6,17 +6,26 @@
 //
 
 import SwiftUI
+import Defaults
+import Kingfisher
 
 struct ThumbnailMediaView: View {
     let url: URL
     let thumbnailUrl: URL
-    var useThumbnailGif: Bool = true
+    @Default(.fullImagesForThumbanails) var fullImageForThumbnails
+    @Default(.showGifThumbnails) var showGifThumbnails
 
     @ViewBuilder
     var body: some View {
         switch Media.detect(url: url) {
         case .image:
-            ImageView(url: thumbnailUrl)
+            ZStack {
+                if fullImageForThumbnails {
+                    ImageView(url: url)
+                } else {
+                    ImageView(url: thumbnailUrl)
+                }
+            }
         case .webm:
             ZStack {
                 ImageView(url: thumbnailUrl)
@@ -25,11 +34,11 @@ struct ThumbnailMediaView: View {
                     .foregroundColor(.white)
             }
         case .gif:
-            if useThumbnailGif {
-                ImageView(url: thumbnailUrl)
-            } else {
-                ImageView(url: url)
+            if showGifThumbnails {
+                KFAnimatedImage(url)
                     .scaledToFit()
+            } else {
+                ImageView(url: thumbnailUrl)
             }
         case .none:
             EmptyView()

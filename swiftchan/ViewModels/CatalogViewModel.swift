@@ -10,6 +10,7 @@ import SwiftUI
 import FourChan
 import Defaults
 import Combine
+import Defaults
 
 extension CatalogView {
     final class CatalogViewModel: ObservableObject {
@@ -34,15 +35,15 @@ extension CatalogView {
             stopPrefetching()
         }
 
-        func load(boardName: String, _ complete: (() -> Void)? = nil) {
+        func load(_ complete: (() -> Void)? = nil) {
             FourchanService.getCatalog(boardName: boardName) { [weak self] posts in
                 guard let self = self else {
                     return
                 }
                 self.posts = posts
-                self.prefetch(boardName: boardName)
-                self.handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
-                self.handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
+                self.prefetch(boardName: self.boardName)
+                self.handleSorting(value: Defaults.sortFilesBy(boardName: self.boardName), attributeKey: "files")
+                self.handleSorting(value: Defaults.sortRepliesBy(boardName: self.boardName), attributeKey: "replies")
                 self.state = .loaded
                 complete?()
             }
@@ -76,11 +77,10 @@ extension CatalogView {
         }
 
         func prefetch(boardName: String) {
-            let thumbnailUrls = posts.compactMap { post in
-                return post.post.getMediaUrl(boardId: boardName)
+            let urls = posts.compactMap { post in
+                return post.post.getMediaUrl(boardId: boardName, thumbnail: Defaults[.fullImagesForThumbanails])
             }
-            // don't prefetch webms here.. for now
-            prefetcher.prefetchImages(urls: thumbnailUrls)
+            prefetcher.prefetchImages(urls: urls)
         }
 
         func stopPrefetching() {

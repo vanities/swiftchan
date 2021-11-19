@@ -47,8 +47,7 @@ struct OPView: View {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                         ThumbnailMediaView(url: url,
-                                           thumbnailUrl: thumbnailUrl,
-                                           useThumbnailGif: false)
+                                           thumbnailUrl: thumbnailUrl)
 
                     }
                     // sticky, closed, image count, thread count

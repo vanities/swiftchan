@@ -46,8 +46,7 @@ struct PostView: View {
 
                         ThumbnailMediaView(
                             url: url,
-                            thumbnailUrl: thumbnailUrl,
-                            useThumbnailGif: false
+                            thumbnailUrl: thumbnailUrl
                         )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.main.bounds.width/2)
