@@ -78,7 +78,7 @@ extension CatalogView {
 
         func prefetch(boardName: String) {
             let urls = posts.compactMap { post in
-                return post.post.getMediaUrl(boardId: boardName, thumbnail: Defaults[.fullImagesForThumbanails])
+                return post.post.getMediaUrl(boardId: boardName, thumbnail: !Defaults[.fullImagesForThumbanails])
             }
             prefetcher.prefetchImages(urls: urls)
         }
