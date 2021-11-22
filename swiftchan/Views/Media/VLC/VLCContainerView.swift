@@ -13,34 +13,25 @@ struct VLCContainerView: View {
     let url: URL
     @Binding var play: Bool
 
-    private let jumpInterval: Int32 = 5
     @StateObject var vlcVideoViewModel = VLCVideoViewModel()
     @State private var isShowingControls: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
+    @EnvironmentObject var threadViewModel: ThreadView.ViewModel
 
     var onSeekChanged: ((Bool) -> Void)?
 
     var body: some View {
         return ZStack {
             VLCVideoView(url: url)
-                .environmentObject(vlcVideoViewModel)
-
-            jumpToast
-
-            VStack {
-                jumpControls
-                Spacer()
-                VLCPlayerControlsView()
-                    .environmentObject(vlcVideoViewModel)
-                    .padding(.bottom, 25)
-                    .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
-                    .opacity(isShowingControls ? 1 : 0)
-            }
+                .mediaDownloadMenu(url: url)
 
             if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
                 ProgressView()
             }
         }
+        .playerControl(presenting: $isShowingControls)
+        .jumpControl()
+        .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
             if state == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
@@ -63,125 +54,6 @@ struct VLCContainerView: View {
             vlcVideoViewModel.vlcVideo.mediaControlState = .pause
             play = false
         }
-    }
-
-    private var jumpControls: some View {
-        HStack {
-            // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-            Color.black.opacity(0.0001)
-                .highPriorityGesture(jumpGesture(.backward))
-                .simultaneousGesture(showControlGesture)
-                Color.black.opacity(0.0001)
-                    .highPriorityGesture(jumpGesture(.forward))
-                    .simultaneousGesture(showControlGesture)
-        }
-    }
-
-    private var jumpToast: some View {
-        let gradient = Gradient(stops: [
-            .init(color: .white.opacity(0.2), location: 0),
-            .init(color: .clear, location: 0.5)
-        ])
-
-        return HStack {
-            if presentingjumpToast == .backward {
-                ZStack {
-                    LinearGradient(
-                        gradient: gradient,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                        .cornerRadius(200)
-
-                    HStack {
-                        jumpToast(direction: .backward)
-                            .padding(20)
-                        Spacer()
-                    }
-                }
-            }
-            if presentingjumpToast == .forward {
-                ZStack {
-                    Spacer()
-                    LinearGradient(
-                        gradient: gradient,
-                        startPoint: .trailing,
-                        endPoint: .leading
-                    )
-                        .cornerRadius(200)
-                    HStack {
-                        Spacer()
-                        jumpToast(direction: .forward)
-                            .padding(20)
-
-                    }
-                }
-            }
-
-        }
-        .transition(.opacity)
-    }
-
-    private var showControlGesture: some Gesture {
-        TapGesture()
-            .onEnded {
-                showControls()
-            }
-    }
-
-    private func jumpToast(direction: VLCVideo.MediaControlDirection) -> some View {
-        AnimatedImage(
-            [
-                Image(systemName: "arrowtriangle.\(direction.rawValue)"),
-                Image(systemName: direction.rawValue)
-            ],
-            interval: 0.1,
-            finished: {
-                withAnimation {
-                    presentingjumpToast = nil
-                }
-            })
-            .font(.system(size: 32))
-            .foregroundColor(.white)
-    }
-
-    private func showControls() {
-        withAnimation(.linear(duration: 0.2)) {
-            isShowingControls.toggle()
-        }
-    }
-
-    private func jumpGesture(_ direction: VLCVideo.MediaControlDirection) -> some Gesture {
-        TapGesture(count: 2)
-            .onEnded {
-                if presentingjumpToast == nil {
-                    withAnimation {
-                        presentingjumpToast = direction
-                    }
-                    switch direction {
-                    case .backward:
-                        jumpBackward()
-                    case .forward:
-                        jumpForward()
-                    }
-                } else {
-                    presentingjumpToast = nil
-                }
-            }
-    }
-
-    private func jumpBackward() {
-        vlcVideoViewModel.vlcVideo.mediaControlState = .jump(.backward, jumpInterval)
-    }
-
-    private func jumpForward() {
-        vlcVideoViewModel.vlcVideo.mediaControlState = .jump(.forward, jumpInterval)
-    }
-}
-
-extension VLCContainerView: Buildable {
-    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
-        mutating(keyPath: \.onSeekChanged, value: callback)
     }
 }
 

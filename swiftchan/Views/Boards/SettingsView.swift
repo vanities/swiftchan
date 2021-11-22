@@ -14,6 +14,7 @@ struct SettingsView: View {
     @State private var cacheResult: Result<Void, Error>?
     @Default(.fullImagesForThumbanails) var fullImageForThumbnails
     @Default(.showGifThumbnails) var showGifThumbnails
+    @Default(.showGalleryPreview) var showGalleryPreview
 
     var body: some View {
         return ScrollView(.vertical) {
@@ -60,6 +61,7 @@ struct SettingsView: View {
         return Section(content: {
             Toggle("High Res Thumbnails", isOn: $fullImageForThumbnails)
             Toggle("Show Gifs Thumnails", isOn: $showGifThumbnails)
+            Toggle("Gallery Preview", isOn: $showGalleryPreview)
         }, header: {
             Text(header).font(.title)
         })

@@ -25,6 +25,7 @@ extension Defaults.Keys {
     }
     static let fullImagesForThumbanails = Key<Bool>("fullImagesForThumbnails", default: false)
     static let showGifThumbnails = Key<Bool>("showGifThumbnails", default: false)
+    static let showGalleryPreview = Key<Bool>("showGalleryPreview", default: false)
 }
 
 extension Defaults {

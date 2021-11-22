@@ -18,6 +18,7 @@ struct Media {
     let format: Format
     var url: URL
     let thumbnailUrl: URL
+    var cacheUrl: URL?
     var isSelected: Bool = false
 
     init(index: Int, url: URL, thumbnailUrl: URL) {

@@ -8,6 +8,58 @@
 import SwiftUI
 import MobileVLCKit
 
+extension View {
+    func playerControl(
+        presenting: Binding<Bool>,
+        onSeekChanged: ((Bool) -> Void)? = nil
+    ) -> some View {
+        modifier(VLCPlayerControlViewModifier(
+            isShowingControls: presenting,
+            onSeekChanged: onSeekChanged
+        ))
+    }
+}
+
+struct VLCPlayerControlViewModifier: ViewModifier {
+    @EnvironmentObject private var vlcVideoViewModel: VLCVideoViewModel
+    @Binding var isShowingControls: Bool
+    var onSeekChanged: ((Bool) -> Void)?
+
+    func body(content: Content) -> some View {
+        content
+        ZStack {
+            HStack {
+                // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
+                Color.black.opacity(0.0001)
+                    .simultaneousGesture(showControlGesture)
+                Color.black.opacity(0.0001)
+                    .simultaneousGesture(showControlGesture)
+            }
+            VStack {
+                Spacer()
+                VLCPlayerControlsView()
+                    .padding(.bottom, 25)
+                    .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
+                    .opacity(isShowingControls ? 1 : 0)
+            }
+        }
+    }
+
+    private var showControlGesture: some Gesture {
+        TapGesture()
+            .onEnded {
+                showControls()
+            }
+    }
+
+    private func showControls() {
+        withAnimation(.linear(duration: 0.2)) {
+            isShowingControls.toggle()
+        }
+    }
+
+}
+
 struct VLCPlayerControlsView: View {
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
 
@@ -60,12 +112,33 @@ struct VLCPlayerControlsView: View {
                         vlcVideoViewModel.vlcVideo.mediaControlState = .seek(seekingTime)
                     }
                 })
+                .introspectSlider { slider in
+                    slider.setThumbImage(getBiggerSliderButton(), for: .normal)
+
+                }
 
             Text(vlcVideoViewModel.vlcVideo.remainingTime.description)
                 .fixedSize()
         }
         .foregroundColor(.white)
         .padding(.trailing, 20)
+    }
+
+    private func getBiggerSliderButton() -> UIImage? {
+        return makeCircleWith(size: CGSize(width: 35, height: 35), backgroundColor: UIColor.white)
+    }
+
+    fileprivate func makeCircleWith(size: CGSize, backgroundColor: UIColor) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        let context = UIGraphicsGetCurrentContext()
+        context?.setFillColor(backgroundColor.cgColor)
+        context?.setStrokeColor(UIColor.clear.cgColor)
+        let bounds = CGRect(origin: .zero, size: size)
+        context?.addEllipse(in: bounds)
+        context?.drawPath(using: .fill)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
     }
 
     private func togglePlayer() {
@@ -91,6 +164,12 @@ struct VLCPlayerControlsView: View {
             vlcVideoViewModel.vlcVideo.seeking = false
             vlcVideoViewModel.vlcVideo.mediaControlState = .play
         }
+    }
+}
+
+extension VLCPlayerControlViewModifier: Buildable {
+    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onSeekChanged, value: callback)
     }
 }
 

@@ -25,6 +25,7 @@ struct MediaView: View {
                 .onZoomChanged { zoomed in
                     onMediaChanged?(zoomed)
                 }
+                .mediaDownloadMenu(url: media.url)
         case .webm:
             ZStack {
                 ImageView(
@@ -36,9 +37,6 @@ struct MediaView: View {
                     url: media.url,
                     play: $playWebm
                 )
-                    .onSeekChanged { seeking in
-                        onMediaChanged?(seeking)
-                    }
                     .onChange(of: threadViewModel.media[index].isSelected) { selected in
                         playWebm = selected
                     }
@@ -48,6 +46,7 @@ struct MediaView: View {
             }
         case .gif:
             KFAnimatedImage(media.url)
+                .mediaDownloadMenu(url: media.url)
                 .scaledToFit()
         case .none:
             EmptyView()

@@ -9,6 +9,7 @@ import SwiftUI
 import Introspect
 import SwiftUIPager
 import ToastUI
+import Defaults
 
 struct GalleryView: View {
     let index: Int
@@ -16,17 +17,14 @@ struct GalleryView: View {
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
+    @Default(.showGalleryPreview) var showGalleryPreview
 
     @StateObject var page: Page = Page.first()
 
     @State private var canPage: Bool = true
-    @State private var isExportingDocument = false
     @State private var canShowPreview: Bool = true
     @State private var showPreview: Bool = false
     @State private var dragging: Bool = false
-    @State private var presentingToast: Bool = false
-    @State private var presentingToastResult: Result<URL, Error>?
-    @State private var showContextMenu: Bool = true
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -55,62 +53,38 @@ struct GalleryView: View {
                         onMediaChanged?(zoomed)
                     }
                     .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(media.index))
-                    .fileExporter(isPresented: $isExportingDocument,
-                                  document: FileExport(url: media.url.absoluteString),
-                                  contentType: .image,
-                                  onCompletion: { result in
-                        presentingToastResult = result
-                        presentingToast = true
-                        let generator = UINotificationFeedbackGenerator()
-                        generator.notificationOccurred(.success)
-                    })
-                    .contextMenu {
-                        GalleryContextMenu(
-                            url: media.url,
-                            isExportingDocument: $isExportingDocument,
-                            showContextMenu: $showContextMenu,
-                            presentingToast: $presentingToast,
-                            presentingToastResult: $presentingToastResult
-                        )
-                    }
             }
-                  .onDraggingEnded {
-                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                          onPageDragChanged?(.zero)
-                      }
-                  }
-                  .onDraggingBegan {
-                      showContextMenu = false
-                  }
-                  .onDraggingChanged {
-                      onPageDragChanged?(CGFloat($0))
-                  }
-                  .onDraggingEnded {
-                      showContextMenu = true
-                  }
-                  .onPageChanged { index in
-                      dragging = false
-                      onPageDragChanged?(.zero)
-                      state.galleryIndex = index
-                      if index - 1 >= 0 {
-                          viewModel.media[index - 1].isSelected = false
-                      }
-                      if index + 1 <= viewModel.media.count - 1 {
-                          viewModel.media[index + 1].isSelected = false
-                      }
-                      viewModel.media[index].isSelected = true
-                  }
-                  .allowsDragging(!dismissGesture.dragging && canPage)
-                  .pagingPriority(.simultaneous)
-                  .swipeInteractionArea(.allAvailable)
-                  .background(Color.black)
-                  .ignoresSafeArea()
-                  .onChange(of: state.galleryIndex) { index in
-                      page.update(.new(index: index))
-                  }
-                  .onAppear {
-                      page.update(.new(index: index))
-                  }
+            .onDraggingEnded {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    onPageDragChanged?(.zero)
+                }
+            }
+            .onDraggingChanged {
+                onPageDragChanged?(CGFloat($0))
+            }
+            .onPageChanged { index in
+                dragging = false
+                onPageDragChanged?(.zero)
+                state.galleryIndex = index
+                if index - 1 >= 0 {
+                    viewModel.media[index - 1].isSelected = false
+                }
+                if index + 1 <= viewModel.media.count - 1 {
+                    viewModel.media[index + 1].isSelected = false
+                }
+                viewModel.media[index].isSelected = true
+            }
+            .allowsDragging(!dismissGesture.dragging && canPage)
+            .pagingPriority(.simultaneous)
+            .swipeInteractionArea(.allAvailable)
+            .background(Color.black)
+            .ignoresSafeArea()
+            .onChange(of: state.galleryIndex) { index in
+                page.update(.new(index: index))
+            }
+            .onAppear {
+                page.update(.new(index: index))
+            }
 
             // dismiss button
             Button(action: {
@@ -132,8 +106,7 @@ struct GalleryView: View {
             }
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
-        .gesture(canShowPreview ? showPreviewTap() : nil)
-        .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: { Toast(presentingToastResult: presentingToastResult) })
+        .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
         .statusBar(hidden: true)
     }
 
@@ -164,10 +137,10 @@ struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ThreadView.ViewModel(boardName: "pol", id: 0)
         let urls = [
-                URLExamples.image,
-                URLExamples.gif,
-                URLExamples.webm
-            ]
+            URLExamples.image,
+            URLExamples.gif,
+            URLExamples.webm
+        ]
         viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
 
         return Group {

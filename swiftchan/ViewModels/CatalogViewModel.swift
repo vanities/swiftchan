@@ -10,7 +10,6 @@ import SwiftUI
 import FourChan
 import Defaults
 import Combine
-import Defaults
 
 extension CatalogView {
     final class CatalogViewModel: ObservableObject {

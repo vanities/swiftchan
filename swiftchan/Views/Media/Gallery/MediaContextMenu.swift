@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GalleryContextMenu: View {
+struct MediaContextMenu: View {
     let url: URL
 
     @State private var notificationGenerator = UINotificationFeedbackGenerator()
