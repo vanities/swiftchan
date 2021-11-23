@@ -66,11 +66,11 @@ extension ThreadView {
             let urls = media.flatMap { media in
                 return [media.thumbnailUrl, media.url]
             }
-            DispatchQueue.main.async { [weak self] in
-                self?.prefetcher.prefetch(urls: urls) { videoUrl, videoCacheUrl in
-                    // self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
-                    if let row = self?.media.firstIndex(where: { $0.url == videoUrl }) {
-                        if var media = self?.media[row] {
+            prefetcher.prefetch(urls: urls) { [weak self] videoUrl, videoCacheUrl in
+                // self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
+                if let row = self?.media.firstIndex(where: { $0.url == videoUrl }) {
+                    if var media = self?.media[row] {
+                        DispatchQueue.main.async {
                             media.cacheUrl = videoCacheUrl
                             self?.media[row] = media
                         }

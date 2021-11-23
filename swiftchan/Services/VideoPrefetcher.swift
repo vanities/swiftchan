@@ -12,5 +12,6 @@ class VideoPrefetcher {
 
     init() {
         queue.maxConcurrentOperationCount = 3
+        queue.underlyingQueue = .main
     }
 }
