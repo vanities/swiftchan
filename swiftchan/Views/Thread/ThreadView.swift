@@ -7,9 +7,13 @@
 
 import SwiftUI
 import FourChan
+import Defaults
 
 struct ThreadView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Default(.autoRefreshEnabled) var autoRefreshEnabled
+    @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
+
     @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
     @StateObject var presentationState: PresentationState = PresentationState()
     @EnvironmentObject var appState: AppState
@@ -17,6 +21,10 @@ struct ThreadView: View {
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
+    @State private var pauseAutoRefresh: Bool = false
+
+    @State private var autoRefreshTimer: Double = 0
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -48,8 +56,7 @@ struct ThreadView: View {
                     }
                     .opacity(opacity)
                     .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                        let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                        softVibrate.impactOccurred()
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                         viewModel.load {
                             pullToRefreshShowing = false
                             viewModel.prefetch()
@@ -58,9 +65,12 @@ struct ThreadView: View {
 
                     .navigationTitle(viewModel.posts.first?.sub?.clean ?? "")
                     .navigationBarItems(trailing:
-                                            Link(destination: viewModel.url) {
-                                                Image(systemName: "square.and.arrow.up")
-                                            }
+                                            HStack {
+                        autoRefreshButton
+                        Link(destination: viewModel.url) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
                     )
                 }
              }
@@ -102,6 +112,18 @@ struct ThreadView: View {
         .onDisappear {
             viewModel.stopPrefetching()
         }
+        .onReceive(timer) { _ in
+            guard !pauseAutoRefresh else { return }
+
+            autoRefreshTimer += 1
+            if autoRefreshTimer > 10 {
+                autoRefreshTimer = 0
+                viewModel.load {
+                    pullToRefreshShowing = false
+                    viewModel.prefetch()
+                }
+            }
+        }
         .environmentObject(presentationState)
         .environmentObject(presentedDismissGesture)
     }
@@ -116,6 +138,21 @@ struct ThreadView: View {
         }
         return 0
     }
+
+    @ViewBuilder
+    var autoRefreshButton: some View {
+        if autoRefreshEnabled {
+            ProgressView(value: Double(autoRefreshThreadTime)-autoRefreshTimer, total: Double(autoRefreshThreadTime)) {
+                Text("\(Int(autoRefreshThreadTime-Int(autoRefreshTimer)))")
+            }
+            .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))
+            .onTapGesture {
+                pauseAutoRefresh.toggle()
+            }
+        } else {
+            EmptyView()
+        }
+    }
 }
 
 #if DEBUG
@@ -124,9 +161,33 @@ struct ThreadView_Previews: PreviewProvider {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
         let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
-        ThreadView()
-            .environmentObject(viewModel)
-            .environmentObject(AppState())
+        Group {
+            ThreadView()
+                .environmentObject(viewModel)
+                .environmentObject(AppState())
+
+            NavigationView {
+                ThreadView()
+                    .environmentObject(viewModel)
+                    .environmentObject(AppState())
+            }
+        }
     }
 }
 #endif
+
+struct CustomCircularProgressViewStyle: ProgressViewStyle {
+    var paused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            Circle()
+                .trim(from: 0.0, to: CGFloat(configuration.fractionCompleted ?? 0))
+                .stroke(paused ? .red : .blue, style: StrokeStyle(lineWidth: 2, dash: [10, 1]))
+                .rotationEffect(.degrees(-90))
+                .frame(width: 25)
+
+            configuration.label
+        }
+    }
+}

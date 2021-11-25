@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
+		950846FA274F4ABE0098DF73 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 950846F9274F4ABE0098DF73 /* ConfettiSwiftUI */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
 		950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950EB4DB256CBE08000703C0 /* PullToRefresh.swift */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
@@ -22,7 +23,6 @@
 		95193386274AC54F00AD3894 /* MediaDownloadMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95193385274AC54F00AD3894 /* MediaDownloadMenu.swift */; };
 		95193388274B101500AD3894 /* VLCPlayerJumpControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95193387274B101500AD3894 /* VLCPlayerJumpControl.swift */; };
 		9519EAF72719AF3D0068497B /* MultiActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519EAF62719AF3C0068497B /* MultiActionSheet.swift */; };
-		9519EAFA271A06790068497B /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; };
 		9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */; };
 		9524E19F256F272200D08075 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E19E256F272200D08075 /* AppState.swift */; };
 		9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */; };
@@ -59,7 +59,6 @@
 		95AFBF372735712E00F5B0CD /* VLCVideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95AFBF362735712E00F5B0CD /* VLCVideoViewModel.swift */; };
 		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
-		95BCF1A427338E2E0075592A /* ConfettiSwiftUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9519EAF9271A06790068497B /* ConfettiSwiftUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
 		95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */; };
 		95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE827386D2B000D64B1 /* SettingsView.swift */; };
@@ -109,7 +108,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				95BCF1A427338E2E0075592A /* ConfettiSwiftUI in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,8 +203,8 @@
 				95FFFB69263EF2AF00F4356C /* Kingfisher in Frameworks */,
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
+				950846FA274F4ABE0098DF73 /* ConfettiSwiftUI in Frameworks */,
 				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
-				9519EAFA271A06790068497B /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,8 +508,8 @@
 				95FFFB68263EF2AF00F4356C /* Kingfisher */,
 				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95E210FB2701704300B8C96A /* FourChan */,
-				9519EAF9271A06790068497B /* ConfettiSwiftUI */,
 				95CEE15C271ABFCD0016EAC1 /* Defaults */,
+				950846F9274F4ABE0098DF73 /* ConfettiSwiftUI */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -590,8 +588,8 @@
 				95FFFB67263EF2AF00F4356C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95E210FA2701704300B8C96A /* XCRemoteSwiftPackageReference "FourChanAPI" */,
-				9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
+				950846F8274F4ABE0098DF73 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -1093,12 +1091,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+		950846F8274F4ABE0098DF73 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:simibac/ConfettiSwiftUI.git";
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.1;
+				branch = master;
+				kind = branch;
 			};
 		};
 		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
@@ -1152,9 +1150,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9519EAF9271A06790068497B /* ConfettiSwiftUI */ = {
+		950846F9274F4ABE0098DF73 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9519EAF8271A06780068497B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			package = 950846F8274F4ABE0098DF73 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
 		};
 		952F72EB25D0608200762154 /* SwiftUIPager */ = {

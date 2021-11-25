@@ -26,6 +26,8 @@ extension Defaults.Keys {
     static let fullImagesForThumbanails = Key<Bool>("fullImagesForThumbnails", default: false)
     static let showGifThumbnails = Key<Bool>("showGifThumbnails", default: false)
     static let showGalleryPreview = Key<Bool>("showGalleryPreview", default: false)
+    static let autoRefreshThreadTime = Key<Int>("autoRefreshThreadTime", default: 10)
+    static let autoRefreshEnabled = Key<Bool>("autoRefreshEnabled", default: true)
 }
 
 extension Defaults {

@@ -15,6 +15,8 @@ struct SettingsView: View {
     @Default(.fullImagesForThumbanails) var fullImageForThumbnails
     @Default(.showGifThumbnails) var showGifThumbnails
     @Default(.showGalleryPreview) var showGalleryPreview
+    @Default(.autoRefreshEnabled) var autoRefreshEnabled
+    @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
 
     var body: some View {
         return ScrollView(.vertical) {
@@ -23,6 +25,8 @@ struct SettingsView: View {
                     cache
                         .padding()
                     media
+                        .padding()
+                    thread
                         .padding()
                 }
                 Spacer()
@@ -62,6 +66,23 @@ struct SettingsView: View {
             Toggle("High Res Thumbnails", isOn: $fullImageForThumbnails)
             Toggle("Show Gifs Thumnails", isOn: $showGifThumbnails)
             Toggle("Gallery Preview", isOn: $showGalleryPreview)
+        }, header: {
+            Text(header).font(.title)
+        })
+    }
+    
+    var thread: some View {
+        let header = "Thread"
+        return Section(content: {
+            Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
+            HStack {
+                Text("Auto Refresh Time")
+                Spacer()
+                TextField("Auto Refresh Time", value: $autoRefreshThreadTime, formatter: NumberFormatter())
+                .frame(width: 50)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .keyboardType(.decimalPad)
+            }
         }, header: {
             Text(header).font(.title)
         })

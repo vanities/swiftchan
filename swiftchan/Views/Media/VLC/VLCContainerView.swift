@@ -17,6 +17,7 @@ struct VLCContainerView: View {
     @State private var isShowingControls: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @EnvironmentObject var threadViewModel: ThreadView.ViewModel
+    @EnvironmentObject var appState: AppState
 
     var onSeekChanged: ((Bool) -> Void)?
 
@@ -29,8 +30,8 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-        .playerControl(presenting: $isShowingControls)
-        .jumpControl()
+                        .playerControl(presenting: $isShowingControls)
+                        .jumpControl()
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
             if state == .play {

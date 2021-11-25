@@ -16,8 +16,10 @@ extension View {
 
 struct VLCPlayerJumpControlModifier: ViewModifier {
     func body(content: Content) -> some View {
-        content
-        VLCPlayerJumpControlView()
+        return ZStack {
+            content
+            VLCPlayerJumpControlView()
+        }
     }
 }
 

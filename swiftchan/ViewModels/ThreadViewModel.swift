@@ -72,6 +72,7 @@ extension ThreadView {
                     if var media = self?.media[row] {
                         DispatchQueue.main.async {
                             media.cacheUrl = videoCacheUrl
+                            media.url = videoCacheUrl
                             self?.media[row] = media
                         }
                     }

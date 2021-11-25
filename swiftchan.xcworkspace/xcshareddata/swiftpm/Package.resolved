@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "ConfettiSwiftUI",
-        "repositoryURL": "git@github.com:simibac/ConfettiSwiftUI.git",
+        "repositoryURL": "https://github.com/simibac/ConfettiSwiftUI.git",
         "state": {
-          "branch": null,
-          "revision": "4aac70f5264e59dfed75d6f1c282bb147f101a49",
-          "version": "0.2.1"
+          "branch": "master",
+          "revision": "cab01453f51c70f18727a7607e80fe90e08c4218",
+          "version": null
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "git@github.com:sindresorhus/Defaults.git",
         "state": {
           "branch": null,
-          "revision": "8a6e4a96fd38504a05903d136c85634b65fd7c4d",
-          "version": "6.0.0"
+          "revision": "55f3302c3ab30a8760f10042d0ebc0a6907f865a",
+          "version": "6.1.0"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "git@github.com:fermoya/SwiftUIPager.git",
         "state": {
           "branch": null,
-          "revision": "d6745593cfa38ffa1fca75244a01e422d220d407",
-          "version": "2.3.1"
+          "revision": "3c0485ffc369f2138477ec508cafc5fffd39f2bf",
+          "version": "2.3.2"
         }
       },
       {

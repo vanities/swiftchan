@@ -18,7 +18,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             BoardsView(viewModel: boardViewModel)
-                .environmentObject(appState)
                 .blur(radius: backgrounding ? 10 : 0)
 
             if let fullscreenView = appState.fullscreenView {
@@ -36,6 +35,7 @@ struct ContentView: View {
                 .opacity(backgrounding ? 1 :0)
 
         }
+        .environmentObject(appState)
         .onChange(of: scenePhase) { value in
             switch value {
             case .background, .inactive:

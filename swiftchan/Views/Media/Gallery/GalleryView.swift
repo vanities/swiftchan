@@ -14,6 +14,7 @@ import Defaults
 struct GalleryView: View {
     let index: Int
 
+    @EnvironmentObject var appState: AppState
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
@@ -77,8 +78,6 @@ struct GalleryView: View {
             .allowsDragging(!dismissGesture.dragging && canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.allAvailable)
-            .background(Color.black)
-            .ignoresSafeArea()
             .onChange(of: state.galleryIndex) { index in
                 page.update(.new(index: index))
             }

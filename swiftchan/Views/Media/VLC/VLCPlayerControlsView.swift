@@ -26,15 +26,11 @@ struct VLCPlayerControlViewModifier: ViewModifier {
     var onSeekChanged: ((Bool) -> Void)?
 
     func body(content: Content) -> some View {
-        content
-        ZStack {
-            HStack {
-                // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-                Color.black.opacity(0.0001)
-                    .simultaneousGesture(showControlGesture)
-                Color.black.opacity(0.0001)
-                    .simultaneousGesture(showControlGesture)
-            }
+
+        return ZStack {
+            content
+                .simultaneousGesture(showControlGesture)
+            // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
             VStack {
                 Spacer()
                 VLCPlayerControlsView()
@@ -46,8 +42,8 @@ struct VLCPlayerControlViewModifier: ViewModifier {
     }
 
     private var showControlGesture: some Gesture {
-        TapGesture()
-            .onEnded {
+        LongPressGesture(minimumDuration: 0.1, maximumDistance: 1)
+            .onEnded {_ in
                 showControls()
             }
     }
@@ -176,9 +172,15 @@ extension VLCPlayerControlViewModifier: Buildable {
 #if DEBUG
 struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
-        VLCPlayerControlsView()
-            .environmentObject(VLCVideoViewModel())
-            .background(Color.black)
+        Group {
+            Color.green
+                .playerControl(presenting: .constant(true), onSeekChanged: {_ in })
+                .environmentObject(VLCVideoViewModel())
+
+            VLCPlayerControlsView()
+                .environmentObject(VLCVideoViewModel())
+                .background(Color.black)
+        }
     }
 }
 #endif
