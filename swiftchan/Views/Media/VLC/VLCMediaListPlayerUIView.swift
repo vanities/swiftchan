@@ -16,6 +16,10 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     init(url: URL, frame: CGRect) {
         self.url = url
         super.init(frame: frame)
+        self.initialize(url: url)
+    }
+
+    func initialize(url: URL) {
         self.url = getUrl(url: url)
         media = VLCMedia(url: url)
         if let media = media {
@@ -35,9 +39,11 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         // debugPrint("trying to play webm \(url)")
         printState(mediaPlayerState: mediaListPlayer.mediaPlayer.state)
         if !mediaListPlayer.mediaPlayer.isPlaying {
-           // mediaListPlayer.mediaPlayer.willPlay {
             debugPrint("will play webm \(url)")
             DispatchQueue.main.async { [weak self] in
+                if let url = self?.url {
+                    self?.initialize(url: url)
+                }
                 self?.mediaListPlayer.play(self?.media)
             }
         } else {

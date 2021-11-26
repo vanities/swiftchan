@@ -64,8 +64,8 @@ struct SettingsView: View {
         let header = "Media"
         return Section(content: {
             Toggle("High Res Thumbnails", isOn: $fullImageForThumbnails)
-            Toggle("Show Gifs Thumnails", isOn: $showGifThumbnails)
-            Toggle("Gallery Preview", isOn: $showGalleryPreview)
+            Toggle("Show Gifs Thumbnails", isOn: $showGifThumbnails)
+            Toggle("Tap Gallery to show Gallery Preview", isOn: $showGalleryPreview)
         }, header: {
             Text(header).font(.title)
         })
