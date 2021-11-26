@@ -70,7 +70,7 @@ struct SettingsView: View {
             Text(header).font(.title)
         })
     }
-    
+
     var thread: some View {
         let header = "Thread"
         return Section(content: {
