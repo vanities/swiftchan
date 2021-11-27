@@ -10,21 +10,21 @@ import FourChan
 import Defaults
 
 struct ThreadView: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @Default(.autoRefreshEnabled) var autoRefreshEnabled
-    @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
+    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+    @Default(.autoRefreshEnabled) private var autoRefreshEnabled
+    @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
 
-    @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
-    @StateObject var presentationState: PresentationState = PresentationState()
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var viewModel: ViewModel
+    @StateObject private var presentedDismissGesture: DismissGesture = DismissGesture()
+    @StateObject private var presentationState: PresentationState = PresentationState()
+    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var viewModel: ViewModel
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
     @State private var pauseAutoRefresh: Bool = false
 
     @State private var autoRefreshTimer: Double = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 

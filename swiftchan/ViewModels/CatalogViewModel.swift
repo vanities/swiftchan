@@ -13,10 +13,12 @@ import Combine
 
 extension CatalogView {
     final class CatalogViewModel: ObservableObject {
+        // swiftlint:disable nesting
         enum LoadingState {
             case loading
             case loaded
         }
+        // swiftlint:enable nesting
 
         var boardName: String
         let prefetcher = Prefetcher()
