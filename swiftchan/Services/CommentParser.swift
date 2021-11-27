@@ -42,7 +42,7 @@ class CommentParser {
                     self.replies.append(bareText)
                     part.foregroundColor = Colors.Text.reply
                     part.font = font
-                    part.link = URL(string: "swiftchan:Reply?id=\(bareText)")!
+                    part.link = URL.inThreadReply(id: bareText)
                 }
                 // self-served url
                 // readme.txt http://freetexthost.com/nzjanyanw0
@@ -55,10 +55,25 @@ class CommentParser {
                     }
                 }
                 // TODO: get cross thread replies
-                // >>794515 /3/thread/794515#p794515
                 else {
                     part.foregroundColor = Colors.Text.crossThreadReply
                     part.font = font
+                    
+                    // text: >>>/pol/
+                    // href: //boards.4chan.org/pol/
+                    if text.starts(with: ">>>") {
+                        part.link = URL.board(name: text.replacingOccurrences(of: ">>>", with: "").replacingOccurrences(of: "/", with: ""))
+                    }
+                    // text: >>794515
+                    // href: /3/thread/794515#p794515
+                    else if text.starts(with: ">>") {
+                        part.link = URL(string: "swiftchan:Post?id=\(text.replacingOccurrences(of: ">>", with: ""))")
+                    }
+                    // link without protocol
+                    else {
+                        part.link = URL(string: href)
+                    }
+                    //part.link = URL(string: "swiftchan://\(part)")!
                 }
 
             case .plain(text: let text):

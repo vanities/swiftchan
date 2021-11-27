@@ -91,8 +91,7 @@ struct ImageView: View {
             .onEnded({ (value) in
                 scale = max(value, minimumScale)
                 if scale == 1 {
-                    let vibrate = UIImpactFeedbackGenerator(style: .light)
-                    vibrate.impactOccurred()
+                   UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 } else {
                     zoomed = true
                     onZoomChanged?(zoomed)

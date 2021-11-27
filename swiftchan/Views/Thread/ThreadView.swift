@@ -101,10 +101,11 @@ struct ThreadView: View {
             })
         }
         .onOpenURL { url in
-            presentationState.replyIndex = getPostIdFromUrl(url: url)
-            presentationState.presentingSheet = .reply
-            presentedDismissGesture.presenting.toggle()
-
+            if case .post(let id) = Deeplinker.getType(url: url) {
+                presentationState.replyIndex = getPostIndexFromId(id)
+                presentationState.presentingSheet = .reply
+                presentedDismissGesture.presenting.toggle()
+            }
         }
         .task {
             viewModel.prefetch()
@@ -128,10 +129,10 @@ struct ThreadView: View {
         .environmentObject(presentedDismissGesture)
     }
 
-    func getPostIdFromUrl(url: URL) -> Int {
+    func getPostIndexFromId(_ id: String) -> Int {
         var index = 0
         for post in viewModel.posts {
-            if url.absoluteString.contains(String(post.id)) {
+            if id.contains(String(post.id)) {
                 return index
             }
             index += 1
@@ -147,6 +148,7 @@ struct ThreadView: View {
             }
             .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))
             .onTapGesture {
+                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
                 pauseAutoRefresh.toggle()
             }
         } else {

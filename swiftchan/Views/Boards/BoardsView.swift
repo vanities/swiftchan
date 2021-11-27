@@ -10,16 +10,20 @@ import FourChan
 import Defaults
 
 struct BoardsView: View {
-    @Default(.favoriteBoards) var favoriteBoardsDefault
-    @ObservedObject var viewModel: ViewModel
-    @State var searchText: String = ""
-    @State var showingSettings: Bool = false
+    @Default(.favoriteBoards) private var favoriteBoardsDefault
+    @EnvironmentObject private var appState: AppState
+
+    @StateObject var viewModel = ViewModel()
+
+    @State var navigationSelection: String?
+    @State private var searchText: String = ""
+    @State private var showingSettings: Bool = false
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
     var filteredBoards: [Board] {
-        self.viewModel.boards.filter({ board in
-            board.board.starts(with: self.searchText.lowercased())
+        viewModel.boards.filter({ board in
+            board.board.starts(with: searchText.lowercased()) && !favoriteBoardsDefault.contains(board.board)
         })
     }
 
@@ -34,65 +38,37 @@ struct BoardsView: View {
             if viewModel.boards.count == 0 {
                 ProgressView()
             } else {
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .leading,
-                        spacing: 2
-                    ) {
-                        if searchText == "" {
-                            Group {
-                                Section(header: Text("favorites")
-                                            .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                            .padding(.leading, 5)
-                                ) {
-
-                                    ForEach(favoriteBoards) { board in
-                                        NavigationLink(
-                                            destination: {
-                                                CatalogView(boardName: board.board)
-                                            },
-                                            label: {
-                                                BoardView(name: board.board,
-                                                          title: board.title,
-                                                          description: board.meta_description.clean)
-                                                    .padding(.horizontal, 5)
-                                            })
-                                            .id("\(board.id)-f")
-                                            .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
-                                    }
-                                }
-
+                ZStack {
+                    navigation
+                        .hidden()
+                    ScrollView(.vertical, showsIndicators: true) {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            if searchText == "" {
+                                BoardSection(
+                                    headerText: "favorites",
+                                    list: favoriteBoards,
+                                    selection: $navigationSelection
+                                )
                             }
-                        }
-                        Section(header: Text("all")
-                                    .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                                    .padding(.leading, 5)
-                        ) {
-                            ForEach(filteredBoards, id: \.self.id) { board in
-                                NavigationLink(
-                                    destination: {
-                                        CatalogView(boardName: board.board)
-                                    },
-                                    label: {
-                                    BoardView(name: board.board,
-                                              title: board.title,
-                                              description: board.meta_description.clean)
-                                            .padding(.horizontal, 5)
-                                    })
-                                    .id("\(board.id)-a")
-                                    .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
-                            }
+                            BoardSection(
+                                headerText: "all",
+                                list: filteredBoards,
+                                selection: $navigationSelection
+                            )
                         }
                     }
                     .searchable(text: $searchText)
-                    .buttonStyle(PlainButtonStyle())
-                    .navigationBarTitle("4chan")
                 }
+                .navigationBarTitle("4chan")
                 .navigationBarItems(trailing: settingsButton)
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onOpenURL { url in
+            if case .board(let name) = Deeplinker.getType(url: url) {
+                navigationSelection = name
+            }
+        }
     }
 
     var settingsButton: some View {
@@ -108,6 +84,17 @@ struct BoardsView: View {
             .onTapGesture {
                 showingSettings = true
             }
+    }
+
+    var navigation: some View {
+        ForEach(favoriteBoards + filteredBoards, id: \.self) { board in
+            NavigationLink(
+                tag: board.board,
+                selection: $navigationSelection,
+                destination: {CatalogView(boardName: board.board)},
+                label: { EmptyView() }
+            )
+        }
     }
 }
 

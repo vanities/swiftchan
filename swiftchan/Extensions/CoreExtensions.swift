@@ -238,6 +238,26 @@ extension URL {
     func isGif() -> Bool {
         return Media.detect(url: self) == .gif
     }
+    static var appScheme: String = "swiftchan"
+
+    enum DetailType: String {
+        case reply = "/reply"
+        case board = "/board"
+        case none
+    }
+
+    func getDetailType() -> DetailType {
+        return DetailType(rawValue: path) ?? .none
+    }
+
+    static func inThreadReply(id: String) -> Self {
+        Self(string: "swiftchan:\(URL.DetailType.reply.rawValue)?id=\(id)")!
+    }
+
+    static func board(name: String) -> Self {
+        Self(string: "swiftchan:\(URL.DetailType.board.rawValue)?name=\(name)")!
+    }
+
 }
 
 extension CaseIterable where Self: Equatable {

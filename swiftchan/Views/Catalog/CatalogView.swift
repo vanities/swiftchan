@@ -71,8 +71,7 @@ struct CatalogView: View {
                     }
                 }
                           .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                              let softVibrate = UIImpactFeedbackGenerator(style: .soft)
-                              softVibrate.impactOccurred()
+                              UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                               viewModel.load {
                                   pullToRefreshShowing = false
                               }

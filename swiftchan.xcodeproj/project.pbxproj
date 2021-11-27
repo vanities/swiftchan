@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
 		950846FA274F4ABE0098DF73 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 950846F9274F4ABE0098DF73 /* ConfettiSwiftUI */; };
+		950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FB2751E3DA0098DF73 /* DeepLinker.swift */; };
+		950846FE2752CA260098DF73 /* BoardSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FD2752CA260098DF73 /* BoardSection.swift */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
 		950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950EB4DB256CBE08000703C0 /* PullToRefresh.swift */; };
 		95105369256600C9002E4051 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95105368256600C9002E4051 /* Post.swift */; };
@@ -117,6 +119,8 @@
 /* Begin PBXFileReference section */
 		5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
+		950846FB2751E3DA0098DF73 /* DeepLinker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinker.swift; sourceTree = "<group>"; };
+		950846FD2752CA260098DF73 /* BoardSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSection.swift; sourceTree = "<group>"; };
 		950E393F255CDA3B00A00A74 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
 		950EB4DB256CBE08000703C0 /* PullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefresh.swift; sourceTree = "<group>"; };
 		95105368256600C9002E4051 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -386,6 +390,7 @@
 				95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */,
 				95DBF2072712550C00356D8F /* AnimatedImage.swift */,
 				9519EAF62719AF3C0068497B /* MultiActionSheet.swift */,
+				950846FB2751E3DA0098DF73 /* DeepLinker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -430,6 +435,7 @@
 				95181792254CFB600032616E /* BoardsView.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
+				950846FD2752CA260098DF73 /* BoardSection.swift */,
 			);
 			path = Boards;
 			sourceTree = "<group>";
@@ -707,6 +713,7 @@
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
+				950846FE2752CA260098DF73 /* BoardSection.swift in Sources */,
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
 				95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
@@ -751,6 +758,7 @@
 				956D9052256B18270000D84C /* Buildable.swift in Sources */,
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
 				9579F9F1263D1A1E007C70FC /* VLCVideo.swift in Sources */,
+				950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */,
 				95193388274B101500AD3894 /* VLCPlayerJumpControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

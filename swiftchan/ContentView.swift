@@ -11,13 +11,12 @@ import FourChan
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
     @StateObject private var appState = AppState()
-    @StateObject private var boardViewModel = BoardsView.ViewModel()
 
     @State var backgrounding: Bool = false
 
     var body: some View {
         ZStack {
-            BoardsView(viewModel: boardViewModel)
+            BoardsView()
                 .blur(radius: backgrounding ? 10 : 0)
 
             if let fullscreenView = appState.fullscreenView {
