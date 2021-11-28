@@ -24,7 +24,7 @@ struct ThreadView: View {
     @State private var pauseAutoRefresh: Bool = false
 
     @State private var autoRefreshTimer: Double = 0
-    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -116,9 +116,11 @@ struct ThreadView: View {
         .onReceive(timer) { _ in
             guard !pauseAutoRefresh else { return }
 
-            autoRefreshTimer += 1
-            if autoRefreshTimer > 10 {
-                autoRefreshTimer = 0
+            withAnimation(.linear(duration: 1)) {
+                autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
+            }
+
+            if autoRefreshTimer == 0 {
                 viewModel.load {
                     pullToRefreshShowing = false
                     viewModel.prefetch()
@@ -145,6 +147,7 @@ struct ThreadView: View {
         if autoRefreshEnabled {
             ProgressView(value: Double(autoRefreshThreadTime)-autoRefreshTimer, total: Double(autoRefreshThreadTime)) {
                 Text("\(Int(autoRefreshThreadTime-Int(autoRefreshTimer)))")
+                    .animation(nil)
             }
             .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))
             .onTapGesture {
@@ -185,7 +188,7 @@ struct CustomCircularProgressViewStyle: ProgressViewStyle {
         ZStack {
             Circle()
                 .trim(from: 0.0, to: CGFloat(configuration.fractionCompleted ?? 0))
-                .stroke(paused ? .red : .blue, style: StrokeStyle(lineWidth: 2, dash: [10, 1]))
+                .stroke(paused ? .red : .blue, style: StrokeStyle(lineWidth: 2))
                 .rotationEffect(.degrees(-90))
                 .frame(width: 25)
 

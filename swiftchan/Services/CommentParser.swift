@@ -54,7 +54,6 @@ class CommentParser {
                         part.link = url
                     }
                 }
-                // TODO: get cross thread replies
                 else {
                     part.foregroundColor = Colors.Text.crossThreadReply
                     part.font = font
@@ -66,6 +65,7 @@ class CommentParser {
                     }
                     // text: >>794515
                     // href: /3/thread/794515#p794515
+                    // TODO: get cross thread replies
                     else if text.starts(with: ">>") {
                         part.link = URL(string: "swiftchan:Post?id=\(text.replacingOccurrences(of: ">>", with: ""))")
                     }
