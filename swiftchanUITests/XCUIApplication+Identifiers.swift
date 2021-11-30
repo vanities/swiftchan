@@ -9,7 +9,7 @@ import XCTest
 
 extension XCUIApplication {
     func boardButton(_ name: String) -> XCUIElement {
-        buttons[AccessibilityIdentifiers.boardButton(name)]
+        staticTexts[AccessibilityIdentifiers.boardButton(name)]
     }
     func opButton(_ index: Int) -> XCUIElement {
         buttons[AccessibilityIdentifiers.opButton(index)]

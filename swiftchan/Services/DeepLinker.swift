@@ -26,7 +26,7 @@ class Deeplinker {
             let id = String(url.query?.split(separator: "=").last ?? "")
             return .post(id: id)
         case .none:
-            return .none
+            return Deeplinker.Deeplink.none
         }
     }
 }

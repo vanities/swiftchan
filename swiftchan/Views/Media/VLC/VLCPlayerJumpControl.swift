@@ -33,9 +33,10 @@ struct VLCPlayerJumpControlView: View {
         HStack {
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
             Color.black.opacity(0.0001)
-                .highPriorityGesture(jumpGesture(.backward))
+                .simultaneousGesture(jumpGesture(.backward))
             Color.black.opacity(0.0001)
-                .highPriorityGesture(jumpGesture(.forward))
+                .simultaneousGesture(jumpGesture(.backward))
+                //.highPriorityGesture(jumpGesture(.forward))
         }
     }
 

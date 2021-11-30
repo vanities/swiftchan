@@ -30,8 +30,8 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-                        .playerControl(presenting: $isShowingControls)
-                        .jumpControl()
+        .playerControl(presenting: $isShowingControls)
+        //.jumpControl()
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
             if state == .play {
@@ -64,7 +64,7 @@ struct VLCContainerView_Previews: PreviewProvider {
         return Group {
             VLCContainerView(
                 url: URLExamples.webm,
-                play: .constant(true)
+                play: .constant(false)
             )
                 .background(Color.black)
                 .previewInterfaceOrientation(.portrait)
