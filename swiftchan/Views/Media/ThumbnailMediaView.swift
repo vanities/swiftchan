@@ -21,14 +21,14 @@ struct ThumbnailMediaView: View {
         case .image:
             ZStack {
                 if fullImageForThumbnails {
-                    ImageView(url: url)
+                    ImageView(url: url, canGesture: false)
                 } else {
-                    ImageView(url: thumbnailUrl)
+                    ImageView(url: thumbnailUrl, canGesture: false)
                 }
             }
         case .webm:
             ZStack {
-                ImageView(url: thumbnailUrl)
+                ImageView(url: thumbnailUrl, canGesture: false)
                 Image(systemName: "play.circle")
                     .imageScale(.large)
                     .foregroundColor(.white)
@@ -38,7 +38,7 @@ struct ThumbnailMediaView: View {
                 KFAnimatedImage(url)
                     .scaledToFit()
             } else {
-                ImageView(url: thumbnailUrl)
+                ImageView(url: thumbnailUrl, canGesture: false)
             }
         case .none:
             EmptyView()

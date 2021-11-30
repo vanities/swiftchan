@@ -77,7 +77,7 @@ struct GalleryView: View {
             }
             .allowsDragging(!dismissGesture.dragging && canPage)
             .pagingPriority(.simultaneous)
-            .swipeInteractionArea(.allAvailable)
+            .swipeInteractionArea(.page)
             .onChange(of: state.galleryIndex) { index in
                 page.update(.new(index: index))
             }
@@ -147,14 +147,17 @@ struct GalleryView_Previews: PreviewProvider {
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
+                .environmentObject(AppState())
             GalleryView(index: 1)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
+                .environmentObject(AppState())
             GalleryView(index: 2)
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(PresentationState())
+                .environmentObject(AppState())
         }
     }
 }

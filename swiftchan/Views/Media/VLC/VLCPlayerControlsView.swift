@@ -31,7 +31,7 @@ struct VLCPlayerControlViewModifier: ViewModifier {
             content
 
             Color.black.opacity(0.0001)
-                .highPriorityGesture(showControlGesture)
+                .gesture(showControlGesture)
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
             VStack {
                 Spacer()
