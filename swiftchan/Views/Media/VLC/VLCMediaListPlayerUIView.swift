@@ -13,6 +13,18 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
 
+    var urlIsStreaming: Bool {
+        self.url.host == "i.4cdn.org"
+    }
+
+    var urlIsLocal: Bool {
+        self.url.host == nil
+    }
+
+    var cacheMiss: Bool {
+        getUrl(url: url) == url
+    }
+
     init(url: URL, frame: CGRect) {
         self.url = url
         super.init(frame: frame)
@@ -20,31 +32,54 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     }
 
     func initialize(url: URL) {
-        self.url = getUrl(url: url)
-        media = VLCMedia(url: url)
-        if let media = media {
-            media.addOption("-vv")
-            media.addOption("—network-caching=10000")
-        }
-        mediaListPlayer.rootMedia = media
-        mediaListPlayer.mediaPlayer.media = media
-        mediaListPlayer.mediaPlayer.drawable = self
-        mediaListPlayer.repeatMode = .repeatCurrentItem
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.url = self.getUrl(url: url)
+            self.media = VLCMedia(url: url)
+            if let media = self.media {
+                media.addOption("-vv")
+                media.addOption("—network-caching=10000")
+            }
+            self.mediaListPlayer.rootMedia = self.media
+            self.mediaListPlayer.mediaPlayer.media = self.media
+            self.mediaListPlayer.mediaPlayer.drawable = self
+            self.mediaListPlayer.repeatMode = .repeatCurrentItem
 #if DEBUG
-        mediaListPlayer.mediaPlayer.audio.isMuted = true
+            self.mediaListPlayer.mediaPlayer.audio.isMuted = true
 #endif
+        }
     }
 
     func play() {
-        // debugPrint("trying to play webm \(url)")
         printState(mediaPlayerState: mediaListPlayer.mediaPlayer.state)
+        if mediaListPlayer.mediaPlayer.state == .buffering {
+            //return
+        }
+        /*a
+        if urlIsStreaming, !mediaListPlayer.mediaPlayer.isPlaying, mediaListPlayer.mediaPlayer.state != .buffering {
+            DispatchQueue.main.async { [weak self] in
+                self?.mediaListPlayer.play(self?.media)
+            }
+            return
+         }
+         */
+        // debugPrint("trying to play webm \(url)")
+        //guard mediaListPlayer.mediaPlayer.state == .stopped else { return }
+
         if !mediaListPlayer.mediaPlayer.isPlaying {
             debugPrint("will play webm \(url)")
+            self.mediaListPlayer.play()
             DispatchQueue.main.async { [weak self] in
                 if let url = self?.url {
+                    // reset to cached video
                     self?.initialize(url: url)
+                    if let urlIsStreaming = self?.urlIsStreaming,
+                       urlIsStreaming, self?.mediaListPlayer.mediaPlayer.state == .buffering {
+                        return
+                    }
+                    self?.mediaListPlayer.play(self?.media)
+                    debugPrint("playing \(url)")
                 }
-                self?.mediaListPlayer.play(self?.media)
             }
         } else {
             debugPrint("will not play webm \(url)")
@@ -84,23 +119,23 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     func printState(mediaPlayerState: VLCMediaPlayerState) {
         switch mediaPlayerState {
         case .esAdded:
-            debugPrint("added webm")
+            debugPrint("added webm \(url)")
         case .playing:
-            debugPrint("playing webm")
+            debugPrint("playing webm \(url)")
         case .buffering:
-            debugPrint("buffering webm")
+            debugPrint("buffering webm \(url)")
         case .ended:
-            debugPrint("ended webm")
+            debugPrint("ended webm \(url)")
         case .opening:
-            debugPrint("opening webm")
+            debugPrint("opening webm \(url)")
         case .paused:
-            debugPrint("paused webm")
+            debugPrint("paused webm \(url)")
         case .error:
-            debugPrint("error webm")
+            debugPrint("error webm \(url)")
         case .stopped:
-            debugPrint("stopped webm")
+            debugPrint("stopped webm \(url)")
         @unknown default:
-            debugPrint("unknown state webm")
+            debugPrint("unknown state webm \(url)")
         }
     }
 

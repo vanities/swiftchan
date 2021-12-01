@@ -85,6 +85,8 @@ struct GalleryView: View {
                 page.update(.new(index: index))
             }
 
+            appState.vlcPlayerControlView
+
             // dismiss button
             Button(action: {
                 onDismiss?()

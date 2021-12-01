@@ -30,7 +30,7 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-        .playerControl(presenting: $isShowingControls)
+        //.playerControl(presenting: $isShowingControls)
         //.jumpControl()
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
@@ -44,6 +44,15 @@ struct VLCContainerView: View {
         }
         .onChange(of: play) {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
+            if $0 {
+                /*
+                appState.vlcPlayerControlView = AnyView(
+                    EmptyView()
+                        .playerControl(presenting: $isShowingControls)
+                        .environmentObject(vlcVideoViewModel)
+                )
+                 */
+            }
         }
         .onAppear {
             vlcVideoViewModel.vlcVideo.url = url

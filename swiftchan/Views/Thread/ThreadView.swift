@@ -94,9 +94,12 @@ struct ThreadView: View {
                             .environmentObject(viewModel)
                             .environmentObject(presentationState)
                             .environmentObject(presentedDismissGesture)
+
                     )
+                    timer.upstream.connect().cancel()
                 } else {
                     appState.fullscreenView = nil
+                    timer =  Timer.publish(every: 1, on: .current, in: .common).autoconnect()
                 }
             })
         }

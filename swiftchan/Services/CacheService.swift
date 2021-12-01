@@ -47,14 +47,14 @@ class CacheManager {
         return directoryFor(stringUrl: url.absoluteString)
     }
 
-    func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)) {
+    func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)? = nil) {
         do {
             try self.fileManager.moveItem(at: tempURL, to: cacheURL)
             debugPrint("completed writing file to cache \(cacheURL.path)" )
-            complete(.success(cacheURL))
+            complete?(.success(cacheURL))
         } catch {
             debugPrint("failed writing file to cache \(cacheURL.path)" )
-            complete(.failure(error))
+            complete?(.failure(error))
         }
     }
 

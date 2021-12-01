@@ -11,6 +11,7 @@ import MobileVLCKit
 struct VLCVideoView: UIViewRepresentable {
     let url: URL
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+    @State private var toldToPlay: Bool = false
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
         let view = VLCMediaListPlayerUIView(
@@ -30,9 +31,17 @@ struct VLCVideoView: UIViewRepresentable {
         case .initialize:
             return
         case .play:
-            uiView.play()
+            //if !toldToPlay {
+                uiView.play()
+                DispatchQueue.main.async {
+                    toldToPlay = true
+                }
+            //}
         case .pause:
             uiView.pause()
+            DispatchQueue.main.async {
+                toldToPlay = false
+            }
         case .seek(let time):
             uiView.seek(time: time)
         case .jump(let direction, let time):
@@ -85,6 +94,7 @@ struct VLCVideoView: UIViewRepresentable {
         func mediaPlayerStateChanged(_ aNotification: Notification!) {
             if let player = aNotification.object as? VLCMediaPlayer {
                 self.parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
+                /*
                 switch parent.vlcVideoViewModel.vlcVideo.mediaPlayerState {
                 case .esAdded:
                     debugPrint("added webm \(parent.url)")
@@ -105,6 +115,7 @@ struct VLCVideoView: UIViewRepresentable {
                 @unknown default:
                     debugPrint("unknown state webm \(parent.url)")
                 }
+                 */
             }
         }
 
