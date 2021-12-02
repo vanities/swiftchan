@@ -38,7 +38,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             self.media = VLCMedia(url: url)
             if let media = self.media {
                 media.addOption("-vv")
-                media.addOption("—network-caching=10000")
+                //media.addOption("—network-caching=10000")
             }
             self.mediaListPlayer.rootMedia = self.media
             self.mediaListPlayer.mediaPlayer.media = self.media
@@ -53,7 +53,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     func play() {
         printState(mediaPlayerState: mediaListPlayer.mediaPlayer.state)
         if mediaListPlayer.mediaPlayer.state == .buffering {
-            //return
+            return
         }
         /*a
         if urlIsStreaming, !mediaListPlayer.mediaPlayer.isPlaying, mediaListPlayer.mediaPlayer.state != .buffering {
@@ -68,15 +68,15 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
         if !mediaListPlayer.mediaPlayer.isPlaying {
             debugPrint("will play webm \(url)")
-            self.mediaListPlayer.play()
             DispatchQueue.main.async { [weak self] in
                 if let url = self?.url {
-                    // reset to cached video
+                    // set to cached video
                     self?.initialize(url: url)
                     if let urlIsStreaming = self?.urlIsStreaming,
                        urlIsStreaming, self?.mediaListPlayer.mediaPlayer.state == .buffering {
                         return
                     }
+                    //self?.mediaListPlayer.play()
                     self?.mediaListPlayer.play(self?.media)
                     debugPrint("playing \(url)")
                 }
