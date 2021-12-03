@@ -52,7 +52,14 @@ extension ThreadView {
             var mediaList = [Media]()
             var index = 0
             for (mediaUrl, thumbnailMediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
-                mediaList.append(Media(index: index, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl))
+                var media = Media(index: index, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl)
+                if media.format == .webm {
+                    if let cacheUrl = CacheManager.shared.getCacheValue(media.url) {
+                        media = Media(index: index, url: cacheUrl, thumbnailUrl: thumbnailMediaUrl)
+                    }
+                }
+
+                mediaList.append(media)
                 index += 1
             }
             return mediaList

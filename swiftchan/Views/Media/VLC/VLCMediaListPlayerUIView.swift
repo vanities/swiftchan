@@ -13,18 +13,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
 
-    var urlIsStreaming: Bool {
-        self.url.host == "i.4cdn.org"
-    }
-
-    var urlIsLocal: Bool {
-        self.url.host == nil
-    }
-
-    var cacheMiss: Bool {
-        getUrl(url: url) == url
-    }
-
     init(url: URL, frame: CGRect) {
         self.url = url
         super.init(frame: frame)
@@ -34,7 +22,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     func initialize(url: URL) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            //self.url = self.getUrl(url: url)
             self.media = VLCMedia(url: url)
             if let media = self.media {
                 media.addOption("-vv")
@@ -55,22 +42,12 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         if mediaListPlayer.mediaPlayer.state == .buffering {
             return
         }
-        /*a
-        if urlIsStreaming, !mediaListPlayer.mediaPlayer.isPlaying, mediaListPlayer.mediaPlayer.state != .buffering {
-            DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.play(self?.media)
-            }
-            return
-         }
-         */
-        // debugPrint("trying to play webm \(url)")
-        //guard mediaListPlayer.mediaPlayer.state == .stopped else { return }
 
         if !mediaListPlayer.mediaPlayer.isPlaying {
             debugPrint("will play webm \(url)")
             DispatchQueue.main.async { [weak self] in
                 self?.mediaListPlayer.play(self?.media)
-                debugPrint("playing \(self?.url)")
+                debugPrint("playing \(String(describing: self?.url))")
             }
         } else {
             debugPrint("will not play webm \(url)")
@@ -136,17 +113,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-    }
-
-    // MARK: Private
-    private func getUrl(url: URL) -> URL {
-        if let cacheUrl = CacheManager.shared.getCacheValue(url) {
-            debugPrint("cache hit webm \(cacheUrl)")
-            return cacheUrl
-        } else {
-            debugPrint("cache miss webm \(url)")
-            return url
-        }
     }
 }
 

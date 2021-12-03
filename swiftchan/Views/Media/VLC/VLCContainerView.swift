@@ -30,7 +30,7 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-        //.playerControl(presenting: $isShowingControls)
+        .playerControl(presenting: $isShowingControls)
         //.jumpControl()
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
