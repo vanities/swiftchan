@@ -15,6 +15,7 @@ extension View {
 }
 
 struct VLCPlayerJumpControlModifier: ViewModifier {
+
     func body(content: Content) -> some View {
         return ZStack {
             content
@@ -24,7 +25,7 @@ struct VLCPlayerJumpControlModifier: ViewModifier {
 }
 
 struct VLCPlayerJumpControlView: View {
-    @EnvironmentObject private var vlcVideoViewModel: VLCVideoViewModel
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     private let jumpInterval: Int32 = 5
 

@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 class AppState: ObservableObject {
     @Published var fullscreenView: (AnyView)?
     @Published var showingCatalogMenu: Bool = false
     @Published var showingSortMenu: Bool = false
-    @Published var vlcPlayerControlView: (AnyView)?
+    @Published var vlcPlayerControlModifier: VLCPlayerControlModifier?
 }

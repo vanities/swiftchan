@@ -8,6 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 import ToastUI
+import Kingfisher
 
 struct VLCContainerView: View {
     let url: URL
@@ -30,8 +31,7 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-        .playerControl(presenting: $isShowingControls)
-        //.jumpControl()
+        .jumpControl()
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
             if state == .play {
@@ -45,13 +45,8 @@ struct VLCContainerView: View {
         .onChange(of: play) {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
             if $0 {
-                /*
-                appState.vlcPlayerControlView = AnyView(
-                    EmptyView()
-                        .playerControl(presenting: $isShowingControls)
-                        .environmentObject(vlcVideoViewModel)
-                )
-                 */
+                appState.vlcPlayerControlModifier = VLCPlayerControlModifier(vlcVideoViewModel: vlcVideoViewModel, isShowingControls: $isShowingControls)
+                //appState.vlcPlayerJumpControlModifier = VLCPlayerJumpControlModifier(vlcVideoViewModel: vlcVideoViewModel)
             }
         }
         .onAppear {

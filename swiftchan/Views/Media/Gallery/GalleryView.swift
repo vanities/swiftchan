@@ -84,8 +84,7 @@ struct GalleryView: View {
             .onAppear {
                 page.update(.new(index: index))
             }
-
-            appState.vlcPlayerControlView
+            .ifModifier(appState.vlcPlayerControlModifier)
 
             // dismiss button
             Button(action: {
@@ -164,3 +163,16 @@ struct GalleryView_Previews: PreviewProvider {
     }
 }
 #endif
+
+extension View {
+  @ViewBuilder
+    func ifModifier<Modifier: ViewModifier>(
+    _ value: Modifier?
+  ) -> some View {
+    if let value = value {
+        self.modifier(value)
+    } else {
+      self
+    }
+  }
+}

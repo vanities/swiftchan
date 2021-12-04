@@ -56,12 +56,7 @@ struct PresentedPost: View {
 
                 ScrollView(.vertical) {
                     PostView(index: state.replyIndex)
-                        .dismissGesture(
-                            direction: .down,
-                            minimumDuration: 0.2,
-                            maximumDistance: 50,
-                            simultaneous: false
-                        )
+                        .dismissGesture(direction: .right)
                         .transition(.identity)
                         .navigationBarHidden(true)
                 }
