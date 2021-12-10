@@ -13,6 +13,8 @@ struct PostView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var presentationState: PresentationState
     @EnvironmentObject var presentedDismissGesture: DismissGesture
+    @State private var showReply: Bool = false
+    @State private var replyId: Int = 0
 
     let index: Int
 
@@ -58,6 +60,20 @@ struct PostView: View {
                                     presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingSheet = .gallery
                                     presentedDismissGesture.presenting.toggle()
+                                    appState.fullscreenView = AnyView(
+                                        PresentedPost()
+                                            .onDisappear {
+                                                //opacity = 1
+                                                presentedDismissGesture.dismiss = false
+                                                presentedDismissGesture.canDrag = true
+                                                presentedDismissGesture.dragging = false
+                                            }
+                                            .environmentObject(appState)
+                                            .environmentObject(viewModel)
+                                            .environmentObject(presentationState)
+                                            .environmentObject(presentedDismissGesture)
+
+                                    )
                                 }
                             }
                             .padding(.leading, -5)
@@ -124,15 +140,22 @@ struct PostView: View {
 
                 // replies
                 if let replies = replies {
-                    Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
-                        .bold()
-                        .onTapGesture {
-                            presentationState.commentRepliesIndex = index
-                            presentationState.presentingSheet = .replies
-                            presentedDismissGesture.presenting.toggle()
+                    NavigationLink(
+                        destination: {
+                            if let replies = viewModel.replies[index] {
+                                RepliesView(replies: replies)
+                                    .environmentObject(viewModel)
+                                    .environmentObject(presentationState)
+                                    .environmentObject(presentedDismissGesture)
+                            }
+                        },
+                        label: {
+                            Text("\(replies.count) \(replies.count == 1 ? "REPLY" : "REPLIES")")
+                                .bold()
+                                .padding(.top, 10)
+
                         }
-                        .zIndex(-1)
-                        .padding(.top, 10)
+                    )
                 }
             }
             .padding(.all, 10)

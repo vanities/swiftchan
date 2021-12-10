@@ -8,36 +8,20 @@
 import SwiftUI
 
 struct RepliesView: View {
-    @EnvironmentObject var viewModel: ThreadView.ViewModel
     let replies: [Int]
-
-    @StateObject var presentedDismissGesture: DismissGesture = DismissGesture()
-    @StateObject var presentationState: PresentationState = PresentationState()
-
-    @State var postIndex: Int = 0
-    @State var commentRepliesIndex: Int = 0
-    @State var isPresenting = false
-    @State var presentingSheet: PresentedPost.PresentType = .replies
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
-        return
-            ZStack(alignment: .center) {
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(columns: columns,
-                              alignment: .center,
-                              spacing: 0) {
-                        ForEach(replies, id: \.self) { index in
-                            PostView(index: index)
-                                .environmentObject(presentationState)
-                                .environmentObject(presentedDismissGesture)
-                        }
-                    }
+        return ScrollView(.vertical, showsIndicators: true) {
+            LazyVGrid(columns: columns,
+                      alignment: .center,
+                      spacing: 0) {
+                ForEach(replies, id: \.self) { index in
+                    PostView(index: index)
                 }
             }
-            .frame(width: UIScreen.main.bounds.width,
-                    height: UIScreen.main.bounds.height - 100)
+        }
     }
 }
 
