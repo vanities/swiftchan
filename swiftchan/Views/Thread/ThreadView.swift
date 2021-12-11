@@ -8,6 +8,11 @@
 import SwiftUI
 import FourChan
 import Defaults
+import Combine
+
+func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
+    return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
+}
 
 struct ThreadView: View {
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
@@ -22,14 +27,32 @@ struct ThreadView: View {
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
     @State private var pauseAutoRefresh: Bool = false
+    @State private var showReply: Bool = false
+    @State private var replyId: Int = 0
 
     @State private var autoRefreshTimer: Double = 0
-    @State private var timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
+    @State private var timer = createThreadUpdateTimer()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     var body: some View {
         return ZStack {
+            NavigationLink(
+                isActive: $showReply,
+                destination: {
+                    PostView(index: replyId)
+                        .environmentObject(viewModel)
+                        .environmentObject(presentationState)
+                        .environmentObject(presentedDismissGesture)
+                        .onAppear {
+                            timer.upstream.connect().cancel()
+                        }
+                        .onDisappear {
+                            timer = createThreadUpdateTimer()
+                        }
+                },
+                label: {})
+
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(columns: self.columns,
@@ -81,33 +104,11 @@ struct ThreadView: View {
                     }
                 }
             }
-            .onChange(of: presentedDismissGesture.presenting, perform: { value in
-                if value && appState.fullscreenView == nil {
-                    appState.fullscreenView = AnyView(
-                        PresentedPost()
-                            .onDisappear {
-                                opacity = 1
-                                presentedDismissGesture.dismiss = false
-                                presentedDismissGesture.canDrag = true
-                                presentedDismissGesture.dragging = false
-                            }
-                            .environmentObject(viewModel)
-                            .environmentObject(presentationState)
-                            .environmentObject(presentedDismissGesture)
-
-                    )
-                    timer.upstream.connect().cancel()
-                } else {
-                    appState.fullscreenView = nil
-                    timer =  Timer.publish(every: 1, on: .current, in: .common).autoconnect()
-                }
-            })
         }
         .onOpenURL { url in
             if case .post(let id) = Deeplinker.getType(url: url) {
-                presentationState.replyIndex = getPostIndexFromId(id)
-                presentationState.presentingSheet = .reply
-                presentedDismissGesture.presenting.toggle()
+                showReply = true
+                replyId = getPostIndexFromId(id)
             }
         }
         .task {

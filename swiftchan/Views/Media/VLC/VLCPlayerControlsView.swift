@@ -8,19 +8,19 @@
 import SwiftUI
 import MobileVLCKit
 
-/*
 extension View {
     func playerControl(
+        vlcVideoViewModel: VLCVideoViewModel,
         presenting: Binding<Bool>,
         onSeekChanged: ((Bool) -> Void)? = nil
     ) -> some View {
-        modifier(VLCPlayerControlViewModifier(
+        modifier(VLCPlayerControlModifier(
+            vlcVideoViewModel: vlcVideoViewModel,
             isShowingControls: presenting,
             onSeekChanged: onSeekChanged
         ))
     }
 }
- */
 
 struct VLCPlayerControlModifier: ViewModifier {
     @ObservedObject var vlcVideoViewModel: VLCVideoViewModel
@@ -31,7 +31,7 @@ struct VLCPlayerControlModifier: ViewModifier {
 
         return ZStack {
             content
-                .simultaneousGesture(showControlGesture)
+                .highPriorityGesture(showControlGesture)
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
             VStack {
                 Spacer()
@@ -177,8 +177,11 @@ struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Color.green
-                //.playerControl(presenting: .constant(true), onSeekChanged: {_ in })
-                .environmentObject(VLCVideoViewModel())
+                .playerControl(
+                    vlcVideoViewModel: VLCVideoViewModel(),
+                    presenting: .constant(true),
+                    onSeekChanged: {_ in }
+                )
 
             VLCPlayerControlsView()
                 .environmentObject(VLCVideoViewModel())

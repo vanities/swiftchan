@@ -106,6 +106,9 @@ struct GalleryView: View {
             }
             .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
+        .onDisappear {
+            appState.vlcPlayerControlModifier = nil
+        }
         .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
         .statusBar(hidden: true)
     }

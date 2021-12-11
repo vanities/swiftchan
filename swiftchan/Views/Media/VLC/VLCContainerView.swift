@@ -46,7 +46,6 @@ struct VLCContainerView: View {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
             if $0 {
                 appState.vlcPlayerControlModifier = VLCPlayerControlModifier(vlcVideoViewModel: vlcVideoViewModel, isShowingControls: $isShowingControls)
-                //appState.vlcPlayerJumpControlModifier = VLCPlayerJumpControlModifier(vlcVideoViewModel: vlcVideoViewModel)
             }
         }
         .onAppear {
@@ -62,6 +61,7 @@ struct VLCContainerView: View {
         .onDisappear {
             vlcVideoViewModel.vlcVideo.mediaControlState = .pause
             play = false
+            appState.vlcPlayerControlModifier = nil
         }
     }
 }

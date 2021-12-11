@@ -9,12 +9,13 @@ import SwiftUI
 
 struct PresentedPost: View {
     enum PresentType {
-        case gallery, replies, reply
+        case gallery
     }
 
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var state: PresentationState
     @EnvironmentObject var dismissGesture: DismissGesture
+    @EnvironmentObject var appState: AppState
 
     var onOffsetChanged: ((CGFloat) -> Void)?
 
@@ -27,7 +28,6 @@ struct PresentedPost: View {
             )
             .onDismiss {
                 dismissGesture.dismiss = true
-                UIApplication.shared.isIdleTimerDisabled = false // reneable this if it got disabled
             }
             .onPageDragChanged { (value) in
                 dismissGesture.canDrag = value.isZero
@@ -40,25 +40,10 @@ struct PresentedPost: View {
             }
             .dismissGesture(direction: .down)
             .transition(.identity)
-
-        case .replies:
-            if let replies = viewModel.replies[state.commentRepliesIndex] {
-                RepliesView(replies: replies,
-                            commentRepliesIndex: state.commentRepliesIndex)
-                    .dismissGesture(direction: .right)
-                    .transition(.identity)
-            }
-        case .reply:
-            ZStack {
-                Color.black
-                    .opacity(0.5 - Double(dismissGesture.draggingOffset / UIScreen.main.bounds.height))
-                    .ignoresSafeArea()
-
-                ScrollView(.vertical) {
-                    PostView(index: state.replyIndex)
-                        .dismissGesture(direction: .right)
-                        .transition(.identity)
-                        .navigationBarHidden(true)
+            .onChange(of: dismissGesture.presenting) { value in
+                if !value {
+                    UIApplication.shared.isIdleTimerDisabled = false // reneable this if it got disabled
+                    appState.fullscreenView = nil
                 }
             }
         }
@@ -74,31 +59,11 @@ struct PresentedPost_Previews: PreviewProvider {
         presentationStateGallery.commentRepliesIndex = 1
         presentationStateGallery.presentingSheet = .gallery
 
-        let presentationStateReply = PresentationState()
-        presentationStateReply.replyIndex = 0
-        presentationStateReply.presentingSheet = .reply
-
-        let repliesViewModel = ThreadView.ViewModel(boardName: "aco", id: 5926311, replies: [0: [0, 1]])
-        let presentationStateReplies = PresentationState()
-        presentationStateReplies.commentRepliesIndex = 0
-        presentationStateReplies.presentingSheet = .replies
         return Group {
             PresentedPost()
                 .environmentObject(viewModel)
                 .environmentObject(DismissGesture())
                 .environmentObject(presentationStateGallery)
-
-            PresentedPost()
-                .environmentObject(viewModel)
-                .environmentObject(DismissGesture())
-                .environmentObject(presentationStateReply)
-                .background(Color.green)
-
-            PresentedPost()
-                .environmentObject(repliesViewModel)
-                .environmentObject(DismissGesture())
-                .environmentObject(presentationStateReplies)
-                .background(Color.red)
         }
     }
 }
