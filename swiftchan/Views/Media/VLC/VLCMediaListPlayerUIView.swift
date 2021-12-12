@@ -25,7 +25,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             self.media = VLCMedia(url: url)
             if let media = self.media {
                 media.addOption("-vv")
-                //media.addOption("—network-caching=10000")
+                // media.addOption("—network-caching=10000")
             }
             self.mediaListPlayer.rootMedia = self.media
             self.mediaListPlayer.mediaPlayer.media = self.media

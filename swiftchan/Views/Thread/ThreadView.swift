@@ -131,7 +131,7 @@ struct ThreadView: View {
                 }
             }
         }
-        .onChange(of:presentedDismissGesture.presenting) { presenting in
+        .onChange(of: presentedDismissGesture.presenting) { presenting in
             if presenting {
                 timer.upstream.connect().cancel()
             } else {

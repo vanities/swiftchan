@@ -11,7 +11,6 @@ import MobileVLCKit
 struct VLCVideoView: UIViewRepresentable {
     let url: URL
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
-    @State private var toldToPlay: Bool = false
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
         let view = VLCMediaListPlayerUIView(
@@ -31,17 +30,9 @@ struct VLCVideoView: UIViewRepresentable {
         case .initialize:
             return
         case .play:
-            //if !toldToPlay {
-                uiView.play()
-                DispatchQueue.main.async {
-                    toldToPlay = true
-                }
-            //}
+            uiView.play()
         case .pause:
             uiView.pause()
-            DispatchQueue.main.async {
-                toldToPlay = false
-            }
         case .seek(let time):
             uiView.seek(time: time)
         case .jump(let direction, let time):

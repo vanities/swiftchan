@@ -63,7 +63,7 @@ struct PostView: View {
                                     appState.fullscreenView = AnyView(
                                         PresentedPost()
                                             .onDisappear {
-                                                //opacity = 1
+                                                // opacity = 1
                                                 presentedDismissGesture.dismiss = false
                                                 presentedDismissGesture.canDrag = true
                                                 presentedDismissGesture.dragging = false
