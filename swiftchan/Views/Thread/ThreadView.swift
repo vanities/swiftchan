@@ -131,6 +131,13 @@ struct ThreadView: View {
                 }
             }
         }
+        .onChange(of:presentedDismissGesture.presenting) { presenting in
+            if presenting {
+                timer.upstream.connect().cancel()
+            } else {
+                timer = createThreadUpdateTimer()
+            }
+        }
         .environmentObject(presentationState)
         .environmentObject(presentedDismissGesture)
     }
