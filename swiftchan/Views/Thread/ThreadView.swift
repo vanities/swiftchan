@@ -29,12 +29,13 @@ struct ThreadView: View {
     @State private var pauseAutoRefresh: Bool = false
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-
+    
     @State private var autoRefreshTimer: Double = 0
     @State private var timer = createThreadUpdateTimer()
-
+    @State private var scrollViewOffset: CGFloat = 0
+    
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
-
+    
     var body: some View {
         return ZStack {
             NavigationLink(
@@ -52,51 +53,54 @@ struct ThreadView: View {
                         }
                 },
                 label: {})
-
+            
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(columns: self.columns,
+                    LazyVGrid(columns: columns,
                               alignment: .center,
                               spacing: 0) {
-
+                        
                         ForEach(viewModel.posts.indices, id: \.self) { index in
                             if index < viewModel.comments.count {
                                 PostView(index: index)
                             }
                         }
                     }
-                    .padding(.all, 3)
-                    .onChange(of: presentedDismissGesture.dismiss) { dismissing in
-                        DispatchQueue.main.async {
-                            if dismissing,
-                               presentationState.presentingIndex != presentationState.galleryIndex,
-                               presentationState.presentingSheet == .gallery,
-                               let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-                                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
-                                viewModel.media[presentationState.galleryIndex].isSelected = false
-                            }
-                        }
-                    }
-                    .opacity(opacity)
-                    .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        viewModel.load {
-                            pullToRefreshShowing = false
-                            viewModel.prefetch()
-                        }
-                    }
-
-                    .navigationTitle(viewModel.posts.first?.sub?.clean ?? "")
-                    .navigationBarItems(trailing:
-                                            HStack {
-                        autoRefreshButton
-                        Link(destination: viewModel.url) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                    }
-                    )
+                              .onAppear {
+                                  reader.scrollTo(1)
+                              }
+                              .onDisappear {
+                              }
+                              .padding(.all, 3)
+                              .onChange(of: presentedDismissGesture.dismiss) { dismissing in
+                                  DispatchQueue.main.async {
+                                      if dismissing,
+                                         presentationState.presentingIndex != presentationState.galleryIndex,
+                                         presentationState.presentingSheet == .gallery,
+                                         let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
+                                          reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+                                          viewModel.media[presentationState.galleryIndex].isSelected = false
+                                      }
+                                  }
+                              }
+                              .opacity(opacity)
+                              .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                                  UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                  viewModel.load {
+                                      pullToRefreshShowing = false
+                                      viewModel.prefetch()
+                                  }
+                              }
+                              .navigationTitle(viewModel.posts.first?.sub?.clean ?? "")
+                              .navigationBarItems(trailing:
+                                                    HStack {
+                                  autoRefreshButton
+                                  Link(destination: viewModel.url) {
+                                      Image(systemName: "square.and.arrow.up")
+                                  }
+                              })
                 }
-             }
+            }
             .onChange(of: presentedDismissGesture.draggingOffset) { value in
                 DispatchQueue.main.async {
                     withAnimation(.linear) {
@@ -114,14 +118,18 @@ struct ThreadView: View {
         .task {
             viewModel.prefetch()
         }
+        .onAppear {
+            scrollViewOffset = Defaults[.scrollViewThreadPosition(viewModel.id)]
+        }
         .onDisappear {
             viewModel.stopPrefetching()
+            Defaults[.scrollViewThreadPosition(viewModel.id)] = scrollViewOffset
         }
         .onReceive(timer) { _ in
             guard !pauseAutoRefresh else { return }
 
             withAnimation(.linear(duration: 1)) {
-                autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
+                //autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
             }
 
             if autoRefreshTimer == 0 {

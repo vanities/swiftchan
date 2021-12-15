@@ -77,6 +77,7 @@
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
 		95E210FC2701704300B8C96A /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95E210FB2701704300B8C96A /* FourChan */; };
 		95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */; };
+		95F565F4276835D800EC4011 /* TrackableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F565F3276835D800EC4011 /* TrackableScrollView.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F76D8026D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
 		95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
@@ -188,6 +189,7 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95DBF2072712550C00356D8F /* AnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImage.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
+		95F565F3276835D800EC4011 /* TrackableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackableScrollView.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
 		95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Identifiers.swift"; sourceTree = "<group>"; };
@@ -475,6 +477,7 @@
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
+				95F565F3276835D800EC4011 /* TrackableScrollView.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -728,6 +731,7 @@
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
+				95F565F4276835D800EC4011 /* TrackableScrollView.swift in Sources */,
 				95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */,
 				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95D804E22568F9D8005A3128 /* View.swift in Sources */,
