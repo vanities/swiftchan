@@ -12,16 +12,15 @@ import ToastUI
 import Defaults
 
 struct GalleryView: View {
-    let index: Int
-
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var viewModel: ThreadView.ViewModel
-    @EnvironmentObject var state: PresentationState
-    @EnvironmentObject var dismissGesture: DismissGesture
     @Default(.showGalleryPreview) var showGalleryPreview
 
-    @StateObject var page: Page = Page.first()
+    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var viewModel: ThreadView.ViewModel
+    @EnvironmentObject private var state: PresentationState
 
+    let index: Int
+
+    @StateObject var page: Page = Page.first()
     @State private var canPage: Bool = true
     @State private var canShowPreview: Bool = true
     @State private var showPreview: Bool = false
@@ -29,7 +28,6 @@ struct GalleryView: View {
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
-    var onDismiss: (() -> Void)?
 
     var body: some View {
         return ZStack {
@@ -75,7 +73,7 @@ struct GalleryView: View {
                 }
                 viewModel.media[index].isSelected = true
             }
-            .allowsDragging(!dismissGesture.dragging && canPage)
+            .allowsDragging(canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.page)
             .onChange(of: state.galleryIndex) { index in
@@ -84,27 +82,16 @@ struct GalleryView: View {
             .onAppear {
                 page.update(.new(index: index))
             }
-            .ifModifier(appState.vlcPlayerControlModifier)
-
-            // dismiss button
-            Button(action: {
-                onDismiss?()
-            }, label: {
-                Image(systemName: "xmark")
-                    .frame(width: 75, height: 75)
-                    .contentShape(Rectangle())
-                    .foregroundColor(.white)
-            })
-                .position(x: 30, y: 10)
-                .opacity(dismissGesture.dragging ? 0 : 1)
 
             // preview
-            VStack {
-                Spacer()
-                GalleryPreviewView(selection: $state.galleryIndex)
-                    .padding(.bottom, 60)
+            if showPreview {
+                VStack {
+                    Spacer()
+                    GalleryPreviewView(selection: $state.galleryIndex)
+                        .transition(.opacity)
+                        .padding(.bottom, 60)
+                }
             }
-            .opacity(showPreview && !dismissGesture.dragging ? 1 : 0)
         }
         .onDisappear {
             appState.vlcPlayerControlModifier = nil
@@ -129,9 +116,6 @@ extension GalleryView: Buildable {
     }
     func onPageDragChanged(_ callback: ((CGFloat) -> Void)?) -> Self {
         mutating(keyPath: \.onPageDragChanged, value: callback)
-    }
-    func onDismiss(_ callback: (() -> Void)?) -> Self {
-        mutating(keyPath: \.onDismiss, value: callback)
     }
 }
 
@@ -166,16 +150,3 @@ struct GalleryView_Previews: PreviewProvider {
     }
 }
 #endif
-
-extension View {
-  @ViewBuilder
-    func ifModifier<Modifier: ViewModifier>(
-    _ value: Modifier?
-  ) -> some View {
-    if let value = value {
-        self.modifier(value)
-    } else {
-      self
-    }
-  }
-}

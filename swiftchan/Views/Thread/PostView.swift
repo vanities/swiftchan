@@ -12,7 +12,6 @@ struct PostView: View {
     @EnvironmentObject var viewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var presentationState: PresentationState
-    @EnvironmentObject var presentedDismissGesture: DismissGesture
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
 
@@ -58,22 +57,7 @@ struct PostView: View {
                                     let mediaIndex = viewModel.postMediaMapping[index] ?? 0
                                     viewModel.media[mediaIndex].isSelected = true
                                     presentationState.galleryIndex = mediaIndex
-                                    presentationState.presentingSheet = .gallery
-                                    presentedDismissGesture.presenting.toggle()
-                                    appState.fullscreenView = AnyView(
-                                        PresentedPost()
-                                            .onDisappear {
-                                                // opacity = 1
-                                                presentedDismissGesture.dismiss = false
-                                                presentedDismissGesture.canDrag = true
-                                                presentedDismissGesture.dragging = false
-                                            }
-                                            .environmentObject(appState)
-                                            .environmentObject(viewModel)
-                                            .environmentObject(presentationState)
-                                            .environmentObject(presentedDismissGesture)
-
-                                    )
+                                    presentationState.presentingGallery = true
                                 }
                             }
                             .padding(.leading, -5)
@@ -146,7 +130,12 @@ struct PostView: View {
                                 RepliesView(replies: replies)
                                     .environmentObject(viewModel)
                                     .environmentObject(presentationState)
-                                    .environmentObject(presentedDismissGesture)
+                                    .onAppear {
+                                        presentationState.presentingReplies = true
+                                    }
+                                    .onDisappear {
+                                        presentationState.presentingReplies = false
+                                    }
                             }
                         },
                         label: {

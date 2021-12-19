@@ -15,30 +15,18 @@ extension View {
 }
 
 struct VLCPlayerJumpControlModifier: ViewModifier {
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+
+    @State var presentingToastDirection: VLCVideo.MediaControlDirection?
+
+    private let jumpInterval: Int32 = 5
 
     func body(content: Content) -> some View {
         return ZStack {
             content
-            VLCPlayerJumpControlView()
-        }
-    }
-}
+                .gesture(jumpGesture)
 
-struct VLCPlayerJumpControlView: View {
-    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
-    @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
-    private let jumpInterval: Int32 = 5
-
-    var body: some View {
-        jumpToast
-        HStack {
-            // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-            Color.black.opacity(0.0001)
-                .simultaneousGesture(jumpGesture(.backward))
-                // .highPriorityGesture(jumpGesture(.backward))
-            Color.black.opacity(0.0001)
-                .simultaneousGesture(jumpGesture(.forward))
-                // .highPriorityGesture(jumpGesture(.forward))
+            VLCPlayerJumpToastView(direction: $presentingToastDirection)
         }
     }
 
@@ -50,49 +38,33 @@ struct VLCPlayerJumpControlView: View {
         vlcVideoViewModel.vlcVideo.mediaControlState = .jump(.forward, jumpInterval)
     }
 
-    private func jumpGesture(_ direction: VLCVideo.MediaControlDirection) -> some Gesture {
-        TapGesture(count: 2)
-            .onEnded {
-                if presentingjumpToast == nil {
-                    withAnimation {
-                        presentingjumpToast = direction
-                    }
-                    switch direction {
-                    case .backward:
-                        jumpBackward()
-                    case .forward:
+    var jumpGesture: some Gesture {
+        TapGesture(count: 1).sequenced(
+            before:
+                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                .onEnded {
+                    if $0.location.x > UIScreen.main.bounds.width/2 {
                         jumpForward()
+
+                    } else {
+                        jumpBackward()
                     }
-                } else {
-                    presentingjumpToast = nil
                 }
-            }
+        )
     }
+}
 
-    private func jumpToast(direction: VLCVideo.MediaControlDirection) -> some View {
-        AnimatedImage(
-            [
-                Image(systemName: "arrowtriangle.\(direction.rawValue)"),
-                Image(systemName: direction.rawValue)
-            ],
-            interval: 0.1,
-            finished: {
-                withAnimation {
-                    presentingjumpToast = nil
-                }
-            })
-            .font(.system(size: 32))
-            .foregroundColor(.white)
-    }
+struct VLCPlayerJumpToastView: View {
+    @Binding var direction: VLCVideo.MediaControlDirection?
 
-    private var jumpToast: some View {
-        let gradient = Gradient(stops: [
+    private let gradient = Gradient(stops: [
             .init(color: .white.opacity(0.2), location: 0),
             .init(color: .clear, location: 0.5)
         ])
 
+    var body: some View {
         return HStack {
-            if presentingjumpToast == .backward {
+            if direction == .backward {
                 ZStack {
                     LinearGradient(
                         gradient: gradient,
@@ -108,7 +80,7 @@ struct VLCPlayerJumpControlView: View {
                     }
                 }
             }
-            if presentingjumpToast == .forward {
+            if direction == .forward {
                 ZStack {
                     Spacer()
                     LinearGradient(
@@ -129,12 +101,26 @@ struct VLCPlayerJumpControlView: View {
         }
         .transition(.opacity)
     }
+
+    private func jumpToast(direction: VLCVideo.MediaControlDirection) -> some View {
+        AnimatedImage(
+            [
+                Image(systemName: "arrowtriangle.\(direction.rawValue)"),
+                Image(systemName: direction.rawValue)
+            ],
+            interval: 0.1,
+            finished: {
+                self.direction = nil
+            })
+            .font(.system(size: 32))
+            .foregroundColor(.white)
+    }
 }
 
 #if DEBUG
 struct VLCPlayerJumpControlView_Previews: PreviewProvider {
     static var previews: some View {
-        VLCPlayerJumpControlView()
+        VLCPlayerJumpToastView(direction: .constant(.backward))
             .environmentObject(VLCVideoViewModel())
             .background(Color.black)
     }

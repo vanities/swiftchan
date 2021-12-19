@@ -15,7 +15,7 @@ struct VLCContainerView: View {
     @Binding var play: Bool
 
     @StateObject var vlcVideoViewModel = VLCVideoViewModel()
-    @State private var isShowingControls: Bool = false
+    @State private var presentingPlayerControl: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @EnvironmentObject var threadViewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
@@ -31,22 +31,19 @@ struct VLCContainerView: View {
                 ProgressView()
             }
         }
-        .jumpControl()
+        .playerControl(presenting: $presentingPlayerControl)
         .environmentObject(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
             if state == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                     withAnimation(.linear(duration: 0.2)) {
-                        isShowingControls = false
+                        presentingPlayerControl = false
                     }
                 }
             }
         }
         .onChange(of: play) {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
-            if $0 {
-                appState.vlcPlayerControlModifier = VLCPlayerControlModifier(vlcVideoViewModel: vlcVideoViewModel, isShowingControls: $isShowingControls)
-            }
         }
         .onAppear {
             if let cachedUrl = CacheManager.shared.getCacheValue(url) {

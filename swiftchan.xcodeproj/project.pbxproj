@@ -27,7 +27,6 @@
 		9519EAF72719AF3D0068497B /* MultiActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519EAF62719AF3C0068497B /* MultiActionSheet.swift */; };
 		9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */; };
 		9524E19F256F272200D08075 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E19E256F272200D08075 /* AppState.swift */; };
-		9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */; };
 		9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A9256F87EA00D08075 /* CoreExtensions.swift */; };
 		9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1AE256F8E4D00D08075 /* Blur.swift */; };
 		9524F4B62580545C0006395F /* FileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4B52580545C0006395F /* FileExport.swift */; };
@@ -72,7 +71,6 @@
 		95CFC2FA2734B66E0053D62A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CFC2F92734B66E0053D62A /* Media.swift */; };
 		95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */ = {isa = PBXBuildFile; productRef = 95D14F6026CC82A8007AF00F /* ToastUI */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
-		95D804D32568A553005A3128 /* PresentedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804D22568A553005A3128 /* PresentedPost.swift */; };
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
 		95E210FC2701704300B8C96A /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 95E210FB2701704300B8C96A /* FourChan */; };
@@ -143,7 +141,6 @@
 		9519EAF62719AF3C0068497B /* MultiActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiActionSheet.swift; sourceTree = "<group>"; };
 		9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPrefetcher.swift; sourceTree = "<group>"; };
 		9524E19E256F272200D08075 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedPostDismissGesture.swift; sourceTree = "<group>"; };
 		9524E1A9256F87EA00D08075 /* CoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreExtensions.swift; sourceTree = "<group>"; };
 		9524E1AE256F8E4D00D08075 /* Blur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blur.swift; sourceTree = "<group>"; };
 		9524F4B52580545C0006395F /* FileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExport.swift; sourceTree = "<group>"; };
@@ -184,7 +181,6 @@
 		95CEE158271A67590016EAC1 /* SortRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortRow.swift; sourceTree = "<group>"; };
 		95CFC2F92734B66E0053D62A /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		95D804CD25677FF4005A3128 /* RepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesView.swift; sourceTree = "<group>"; };
-		95D804D22568A553005A3128 /* PresentedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedPost.swift; sourceTree = "<group>"; };
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95DBF2072712550C00356D8F /* AnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImage.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
@@ -295,7 +291,6 @@
 		9518178F254CFB600032616E /* swiftchan */ = {
 			isa = PBXGroup;
 			children = (
-				9524E1A3256F83BE00D08075 /* Gestures */,
 				95C73101256C9D8B00F18257 /* Environment */,
 				95D804E02568F9BA005A3128 /* Extensions */,
 				9510536725660071002E4051 /* Models */,
@@ -338,14 +333,6 @@
 				95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */,
 			);
 			path = swiftchanUITests;
-			sourceTree = "<group>";
-		};
-		9524E1A3256F83BE00D08075 /* Gestures */ = {
-			isa = PBXGroup;
-			children = (
-				9524E1A4256F83D800D08075 /* PresentedPostDismissGesture.swift */,
-			);
-			path = Gestures;
 			sourceTree = "<group>";
 		};
 		955814B6254D249B00A966BA /* Views */ = {
@@ -445,7 +432,6 @@
 			children = (
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
-				95D804D22568A553005A3128 /* PresentedPost.swift */,
 				95D804CD25677FF4005A3128 /* RepliesView.swift */,
 			);
 			path = Thread;
@@ -472,9 +458,9 @@
 		95D86F6F25EA301A005A7EBC /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
+				9524E1AE256F8E4D00D08075 /* Blur.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -717,7 +703,6 @@
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
 				95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
-				9524E1A5256F83D800D08075 /* PresentedPostDismissGesture.swift in Sources */,
 				95C73106256CA1F700F18257 /* UserSettings.swift in Sources */,
 				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
@@ -751,7 +736,6 @@
 				95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */,
 				95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */,
 				954FB581272CF257009CC52F /* MediaContextMenu.swift in Sources */,
-				95D804D32568A553005A3128 /* PresentedPost.swift in Sources */,
 				9524F4BB258054A60006395F /* MediaSaver.swift in Sources */,
 				95193386274AC54F00AD3894 /* MediaDownloadMenu.swift in Sources */,
 				9524E19F256F272200D08075 /* AppState.swift in Sources */,

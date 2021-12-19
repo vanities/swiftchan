@@ -15,21 +15,19 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 }
 
 struct ThreadView: View {
-    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
     @Default(.autoRefreshEnabled) private var autoRefreshEnabled
     @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
 
-    @StateObject private var presentedDismissGesture: DismissGesture = DismissGesture()
-    @StateObject private var presentationState: PresentationState = PresentationState()
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var viewModel: ViewModel
+
+    @StateObject private var presentationState: PresentationState = PresentationState()
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
     @State private var pauseAutoRefresh: Bool = false
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-
     @State private var autoRefreshTimer: Double = 0
     @State private var timer = createThreadUpdateTimer()
 
@@ -37,45 +35,27 @@ struct ThreadView: View {
 
     var body: some View {
         return ZStack {
-            NavigationLink(
-                isActive: $showReply,
-                destination: {
-                    PostView(index: replyId)
-                        .environmentObject(viewModel)
-                        .environmentObject(presentationState)
-                        .environmentObject(presentedDismissGesture)
-                        .onAppear {
-                            timer.upstream.connect().cancel()
-                        }
-                        .onDisappear {
-                            timer = createThreadUpdateTimer()
-                        }
-                },
-                label: {})
+            replyNavigation
 
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(columns: self.columns,
-                              alignment: .center,
-                              spacing: 0) {
-
-                        ForEach(viewModel.posts.indices, id: \.self) { index in
+                    LazyVGrid(
+                        columns: columns,
+                        alignment: .center,
+                        spacing: 0
+                    ) {
+                        ForEach(
+                            viewModel.posts.indices,
+                            id: \.self
+                        ) { index in
                             if index < viewModel.comments.count {
                                 PostView(index: index)
                             }
                         }
                     }
                     .padding(.all, 3)
-                    .onChange(of: presentedDismissGesture.dismiss) { dismissing in
-                        DispatchQueue.main.async {
-                            if dismissing,
-                               presentationState.presentingIndex != presentationState.galleryIndex,
-                               presentationState.presentingSheet == .gallery,
-                               let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-                                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
-                                viewModel.media[presentationState.galleryIndex].isSelected = false
-                            }
-                        }
+                    .onChange(of: presentationState.presentingGallery) { _ in
+                        scrollToPost(reader: reader)
                     }
                     .opacity(opacity)
                     .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
@@ -96,19 +76,33 @@ struct ThreadView: View {
                     }
                     )
                 }
-             }
-            .onChange(of: presentedDismissGesture.draggingOffset) { value in
-                DispatchQueue.main.async {
-                    withAnimation(.linear) {
-                        opacity = Double(value / UIScreen.main.bounds.height)
-                    }
-                }
             }
         }
+        .sheet(
+            isPresented: $presentationState.presentingGallery,
+            onDismiss: {
+                // reneable this if it got disabled
+                UIApplication.shared.isIdleTimerDisabled = false
+
+            },
+            content: {
+                GalleryView(
+                    index: presentationState.galleryIndex
+                )
+                    .environmentObject(appState)
+                    .environmentObject(viewModel)
+                    .onAppear {
+                        timer.upstream.connect().cancel()
+                    }
+                    .onDisappear {
+                        timer = createThreadUpdateTimer()
+                    }
+            }
+        )
         .onOpenURL { url in
             if case .post(let id) = Deeplinker.getType(url: url) {
                 showReply = true
-                replyId = getPostIndexFromId(id)
+                replyId = viewModel.getPostIndexFromId(id)
             }
         }
         .task {
@@ -117,21 +111,8 @@ struct ThreadView: View {
         .onDisappear {
             viewModel.stopPrefetching()
         }
-        .onReceive(timer) { _ in
-            guard !pauseAutoRefresh else { return }
-
-            withAnimation(.linear(duration: 1)) {
-                autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
-            }
-
-            if autoRefreshTimer == 0 {
-                viewModel.load {
-                    pullToRefreshShowing = false
-                    viewModel.prefetch()
-                }
-            }
-        }
-        .onChange(of: presentedDismissGesture.presenting) { presenting in
+        .onReceive(timer) { _ in incrementRefreshTimer() }
+        .onChange(of: presentationState.presentingReplies) { presenting in
             if presenting {
                 timer.upstream.connect().cancel()
             } else {
@@ -139,18 +120,24 @@ struct ThreadView: View {
             }
         }
         .environmentObject(presentationState)
-        .environmentObject(presentedDismissGesture)
     }
 
-    func getPostIndexFromId(_ id: String) -> Int {
-        var index = 0
-        for post in viewModel.posts {
-            if id.contains(String(post.id)) {
-                return index
-            }
-            index += 1
-        }
-        return 0
+    var replyNavigation: some View {
+        NavigationLink(
+            isActive: $showReply,
+            destination: {
+                PostView(index: replyId)
+                    .environmentObject(viewModel)
+                    .environmentObject(presentationState)
+                    .onAppear {
+                        timer.upstream.connect().cancel()
+                    }
+                    .onDisappear {
+                        timer = createThreadUpdateTimer()
+                    }
+            },
+            label: {}
+        )
     }
 
     @ViewBuilder
@@ -167,6 +154,30 @@ struct ThreadView: View {
             }
         } else {
             EmptyView()
+        }
+    }
+
+    func scrollToPost(reader: ScrollViewProxy) {
+        if !presentationState.presentingGallery,
+           presentationState.presentingIndex != presentationState.galleryIndex,
+           let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
+            DispatchQueue.main.async {
+                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+                viewModel.media[presentationState.galleryIndex].isSelected = false
+            }
+        }
+    }
+
+    func incrementRefreshTimer() {
+        guard !pauseAutoRefresh else { return }
+        withAnimation(.linear(duration: 1)) {
+            autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
+        }
+        if autoRefreshTimer == 0 {
+            viewModel.load {
+                pullToRefreshShowing = false
+                viewModel.prefetch()
+            }
         }
     }
 }

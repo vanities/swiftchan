@@ -86,8 +86,20 @@ extension ThreadView {
             }
 
         }
+
         func stopPrefetching() {
             prefetcher.stopPrefetching()
+        }
+
+        func getPostIndexFromId(_ id: String) -> Int {
+            var index = 0
+            for post in posts {
+                if id.contains(String(post.id)) {
+                    return index
+                }
+                index += 1
+            }
+            return 0
         }
     }
 }

@@ -19,10 +19,6 @@ struct ContentView: View {
             BoardsView()
                 .blur(radius: backgrounding ? 10 : 0)
 
-            if let fullscreenView = appState.fullscreenView {
-                fullscreenView
-            }
-
             // privacy splash
             Image("swallow")
                 .renderingMode(.template)

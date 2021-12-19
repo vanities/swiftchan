@@ -10,21 +10,20 @@ import MobileVLCKit
 
 extension View {
     func playerControl(
-        vlcVideoViewModel: VLCVideoViewModel,
         presenting: Binding<Bool>,
         onSeekChanged: ((Bool) -> Void)? = nil
     ) -> some View {
         modifier(VLCPlayerControlModifier(
-            vlcVideoViewModel: vlcVideoViewModel,
-            isShowingControls: presenting,
+            presenting: presenting,
             onSeekChanged: onSeekChanged
         ))
     }
 }
 
 struct VLCPlayerControlModifier: ViewModifier {
-    @ObservedObject var vlcVideoViewModel: VLCVideoViewModel
-    @Binding var isShowingControls: Bool
+    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+
+    @Binding var presenting: Bool
     var onSeekChanged: ((Bool) -> Void)?
 
     func body(content: Content) -> some View {
@@ -33,19 +32,21 @@ struct VLCPlayerControlModifier: ViewModifier {
             content
                 .highPriorityGesture(showControlGesture)
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-            VStack {
-                Spacer()
-                VLCPlayerControlsView()
-                    .padding(.bottom, 25)
-                    .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
-                    .opacity(isShowingControls ? 1 : 0)
-                    .environmentObject(vlcVideoViewModel)
+            if presenting {
+                VStack {
+                    Spacer()
+                    VLCPlayerControlsView()
+                        .padding(.bottom, 25)
+                        .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
+                        .environmentObject(vlcVideoViewModel)
+                        .transition(.opacity)
+                }
             }
         }
     }
 
     private var showControlGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.1, maximumDistance: 1)
+        LongPressGesture(minimumDuration: 0.1, maximumDistance: 10)
             .onEnded {_ in
                 showControls()
             }
@@ -53,7 +54,7 @@ struct VLCPlayerControlModifier: ViewModifier {
 
     private func showControls() {
         withAnimation(.linear(duration: 0.2)) {
-            isShowingControls.toggle()
+            presenting.toggle()
         }
     }
 
@@ -177,8 +178,8 @@ struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Color.green
+                .environmentObject(VLCVideoViewModel())
                 .playerControl(
-                    vlcVideoViewModel: VLCVideoViewModel(),
                     presenting: .constant(true),
                     onSeekChanged: {_ in }
                 )
