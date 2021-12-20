@@ -30,7 +30,7 @@ struct VLCPlayerControlModifier: ViewModifier {
 
         return ZStack {
             content
-                .highPriorityGesture(showControlGesture)
+                .simultaneousGesture(showControlGesture)
             // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
             if presenting {
                 VStack {
@@ -46,7 +46,7 @@ struct VLCPlayerControlModifier: ViewModifier {
     }
 
     private var showControlGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.1, maximumDistance: 10)
+        TapGesture()
             .onEnded {_ in
                 showControls()
             }

@@ -90,6 +90,7 @@ struct ThreadView: View {
                     index: presentationState.galleryIndex
                 )
                     .environmentObject(appState)
+                    .environmentObject(presentationState)
                     .environmentObject(viewModel)
                     .onAppear {
                         timer.upstream.connect().cancel()
