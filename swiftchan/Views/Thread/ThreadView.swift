@@ -163,10 +163,7 @@ struct ThreadView: View {
     func scrollToPost(reader: ScrollViewProxy) {
         if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-            DispatchQueue.main.async {
-                reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
-                viewModel.media[presentationState.galleryIndex].isSelected = false
-            }
+            reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
         }
     }
 
