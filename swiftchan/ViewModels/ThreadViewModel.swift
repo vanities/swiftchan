@@ -25,6 +25,10 @@ extension ThreadView {
             return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
         }
 
+        var title: String {
+            posts.first?.sub?.clean ?? ""
+        }
+
         init(boardName: String, id: Int, replies: [Int: [Int]] = [Int: [Int]]()) {
             self.boardName = boardName
             self.id = id

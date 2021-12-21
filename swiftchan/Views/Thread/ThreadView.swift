@@ -54,7 +54,7 @@ struct ThreadView: View {
                         }
                     }
                     .padding(.all, 3)
-                    .onChange(of: presentationState.presentingGallery) { _ in
+                    .onChange(of: presentationState.galleryIndex) { _ in
                         scrollToPost(reader: reader)
                     }
                     .opacity(opacity)
@@ -65,16 +65,6 @@ struct ThreadView: View {
                             viewModel.prefetch()
                         }
                     }
-
-                    .navigationTitle(viewModel.posts.first?.sub?.clean ?? "")
-                    .navigationBarItems(trailing:
-                                            HStack {
-                        autoRefreshButton
-                        Link(destination: viewModel.url) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                    }
-                    )
                 }
             }
         }
@@ -121,6 +111,14 @@ struct ThreadView: View {
             }
         }
         .environmentObject(presentationState)
+        .navigationTitle(viewModel.title)
+        .navigationBarItems(trailing:
+                                HStack {
+            autoRefreshButton
+            Link(destination: viewModel.url) {
+                Image(systemName: "square.and.arrow.up")
+            }
+        })
     }
 
     var replyNavigation: some View {
@@ -144,8 +142,12 @@ struct ThreadView: View {
     @ViewBuilder
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
-            ProgressView(value: Double(autoRefreshThreadTime)-autoRefreshTimer, total: Double(autoRefreshThreadTime)) {
-                Text("\(Int(autoRefreshThreadTime-Int(autoRefreshTimer)))")
+            ProgressView(
+                value: Double(autoRefreshThreadTime), // - autoRefreshTimer,
+                total: Double(autoRefreshThreadTime)
+            ) {
+                // TODO: fix this scrolling issue
+                Text("\(Int(autoRefreshThreadTime))") //-Int(autoRefreshTimer)))")
                     .animation(nil)
             }
             .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))
@@ -159,8 +161,7 @@ struct ThreadView: View {
     }
 
     func scrollToPost(reader: ScrollViewProxy) {
-        if !presentationState.presentingGallery,
-           presentationState.presentingIndex != presentationState.galleryIndex,
+        if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
             DispatchQueue.main.async {
                 reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
