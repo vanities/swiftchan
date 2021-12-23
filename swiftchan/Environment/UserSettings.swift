@@ -28,6 +28,8 @@ extension Defaults.Keys {
     static let showGalleryPreview = Key<Bool>("showGalleryPreview", default: false)
     static let autoRefreshThreadTime = Key<Int>("autoRefreshThreadTime", default: 10)
     static let autoRefreshEnabled = Key<Bool>("autoRefreshEnabled", default: true)
+    static let biometricsEnabled = Key<Bool>("biometricsEnabled", default: false)
+    static let didUnlockBiometrics = Key<Bool>("didUnlokcBiometrics", default: false)
 }
 
 extension Defaults {

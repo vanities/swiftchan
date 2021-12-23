@@ -10,13 +10,16 @@ import ToastUI
 import Defaults
 
 struct SettingsView: View {
-    @State var showCacheDeleteToast = false
-    @State private var cacheResult: Result<Void, Error>?
     @Default(.fullImagesForThumbanails) var fullImageForThumbnails
     @Default(.showGifThumbnails) var showGifThumbnails
     @Default(.showGalleryPreview) var showGalleryPreview
     @Default(.autoRefreshEnabled) var autoRefreshEnabled
     @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
+    @Default(.biometricsEnabled) var biometricsEnabled
+
+    @EnvironmentObject private var appContext: AppContext
+    @State var showCacheDeleteToast = false
+    @State private var cacheResult: Result<Void, Error>?
 
     var body: some View {
         return ScrollView(.vertical) {
@@ -27,6 +30,8 @@ struct SettingsView: View {
                     media
                         .padding()
                     thread
+                        .padding()
+                    biometrics
                         .padding()
                 }
                 Spacer()
@@ -83,6 +88,15 @@ struct SettingsView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.decimalPad)
             }
+        }, header: {
+            Text(header).font(.title)
+        })
+    }
+
+    var biometrics: some View {
+        let header = "Biometrics"
+        return Section(content: {
+            Toggle("enabled", isOn: $biometricsEnabled)
         }, header: {
             Text(header).font(.title)
         })

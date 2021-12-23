@@ -7,17 +7,28 @@
 
 import SwiftUI
 import FourChan
+import Defaults
 
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
-    @StateObject private var appState = AppState()
+    @Default(.biometricsEnabled) var biometricsEnabled
+    @Default(.didUnlockBiometrics) var didUnlockBiometrics
 
+    @StateObject private var appState = AppState()
+    @StateObject private var appContext = AppContext()
     @State var backgrounding: Bool = false
+
+    var authorized: Bool {
+        return (biometricsEnabled && didUnlockBiometrics) || !biometricsEnabled
+    }
 
     var body: some View {
         ZStack {
-            BoardsView()
-                .blur(radius: backgrounding ? 10 : 0)
+            if (biometricsEnabled && didUnlockBiometrics) ||
+                !biometricsEnabled {
+                BoardsView()
+                    .blur(radius: backgrounding || !authorized ? 10 : 0)
+            }
 
             // privacy splash
             Image("swallow")
@@ -27,17 +38,34 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(.primary)
                 .frame(width: 100)
-                .opacity(backgrounding ? 1 :0)
+                .opacity(backgrounding || !authorized ? 1 : 0)
 
         }
         .environmentObject(appState)
+        .environmentObject(appContext)
+        .onChange(of: biometricsEnabled) { enabled in
+            if enabled {
+                appContext.requestBiometricUnlock()
+            }
+        }
+        .onAppear {
+            if biometricsEnabled {
+                appContext.requestBiometricUnlock()
+            }
+        }
         .onChange(of: scenePhase) { value in
             switch value {
             case .background, .inactive:
                 withAnimation(.linear(duration: 0.1)) {
                     backgrounding = true
                 }
+                didUnlockBiometrics = false
             case .active:
+                if biometricsEnabled, !didUnlockBiometrics {
+                    appContext.requestBiometricUnlock { success in
+                        didUnlockBiometrics = success
+                    }
+                }
                 withAnimation(.linear(duration: 0.1)) {
                     backgrounding = false
                 }

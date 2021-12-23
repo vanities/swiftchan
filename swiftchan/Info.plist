@@ -43,6 +43,8 @@
 	<string>Our application needs permission to write photos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Our application needs permission to write photos</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Hide your posts viewing!</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
