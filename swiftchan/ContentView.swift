@@ -24,11 +24,8 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            if (biometricsEnabled && didUnlockBiometrics) ||
-                !biometricsEnabled {
-                BoardsView()
-                    .blur(radius: backgrounding || !authorized ? 10 : 0)
-            }
+            BoardsView()
+                .blur(radius: backgrounding || !authorized ? 10 : 0)
 
             // privacy splash
             Image("swallow")
