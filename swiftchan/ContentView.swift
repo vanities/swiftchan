@@ -52,7 +52,7 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { value in
             switch value {
-            case .background, .inactive:
+            case .background:
                 withAnimation(.linear(duration: 0.1)) {
                     backgrounding = true
                 }
@@ -66,6 +66,8 @@ struct ContentView: View {
                 withAnimation(.linear(duration: 0.1)) {
                     backgrounding = false
                 }
+            case .inactive:
+                break
             @unknown default:
                 backgrounding = true
             }
