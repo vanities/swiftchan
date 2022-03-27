@@ -107,9 +107,9 @@ struct CatalogView: View {
 
             }
         }, label: {
-            Image(systemName: sorting ?
-                  "arrow.up.and.down.righttriangle.up.righttriangle.down.fill" :
-                    "arrow.up.and.down.righttriangle.up.righttriangle.down")
+            Image("sorting")
+                .resizable()
+                .frame(width: 25, height: 25)
         })
     }
 
