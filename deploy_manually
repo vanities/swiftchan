@@ -2,4 +2,4 @@
 
 export APP_STORE_CONNECT_API_KEY_BASE64="$(base64 < AuthKey_48RUB3TQ9V.p8)"
 export GITHUB_ACCESS_TOKEN="$(cat github_access_token)"
-fastlane beta
+bundle exec fastlane beta
