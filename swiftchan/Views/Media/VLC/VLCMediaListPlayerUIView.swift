@@ -32,7 +32,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             self.mediaListPlayer.mediaPlayer.drawable = self
             self.mediaListPlayer.repeatMode = .repeatCurrentItem
 #if DEBUG
-            self.mediaListPlayer.mediaPlayer.audio.isMuted = true
+            self.mediaListPlayer.mediaPlayer.audio?.isMuted = true
 #endif
         }
     }
