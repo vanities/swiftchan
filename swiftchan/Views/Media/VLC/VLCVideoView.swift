@@ -62,8 +62,7 @@ struct VLCVideoView: UIViewRepresentable {
         func mediaPlayerTimeChanged(_ aNotification: Notification) {
             if let player = aNotification.object as? VLCMediaPlayer,
                let remainingTime = player.remainingTime,
-               let media = player.media
-            {
+               let media = player.media {
                 self.parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
                 self.parent.vlcVideoViewModel.vlcVideo.remainingTime = remainingTime
                 self.parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(
@@ -84,7 +83,7 @@ struct VLCVideoView: UIViewRepresentable {
                  */
             }
         }
-        
+
         func mediaPlayerStateChanged(_ aNotification: Notification) {
             if let player = aNotification.object as? VLCMediaPlayer {
                 self.parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
