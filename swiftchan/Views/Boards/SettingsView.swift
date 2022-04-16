@@ -16,6 +16,7 @@ struct SettingsView: View {
     @Default(.autoRefreshEnabled) var autoRefreshEnabled
     @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
     @Default(.biometricsEnabled) var biometricsEnabled
+    @Default(.showNSFWBoards) var showNSFWBoards
 
     @EnvironmentObject private var appContext: AppContext
     @State var showCacheDeleteToast = false
@@ -26,6 +27,8 @@ struct SettingsView: View {
             HStack {
                 VStack(alignment: .leading) {
                     cache
+                        .padding()
+                    board
                         .padding()
                     media
                         .padding()
@@ -60,6 +63,15 @@ struct SettingsView: View {
                     Label("Delete Cache", systemImage: "trash")
                 }
             )
+        }, header: {
+            Text(header).font(.title)
+        })
+    }
+
+    var board: some View {
+        let header = "Board"
+        return Section(content: {
+            Toggle("Show NSFW Boards", isOn: $showNSFWBoards)
         }, header: {
             Text(header).font(.title)
         })

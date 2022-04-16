@@ -18,6 +18,7 @@ extension Defaults.Keys {
     static let autoRefreshEnabled = Key<Bool>("autoRefreshEnabled", default: true)
     static let biometricsEnabled = Key<Bool>("biometricsEnabled", default: false)
     static let didUnlockBiometrics = Key<Bool>("didUnlokcBiometrics", default: false)
+    static let showNSFWBoards = Key<Bool>("showNSFWBoards", default: false)
 
     static func sortRepliesBy(boardName: String) -> Key<SortRow.SortType> {
         return Key<SortRow.SortType>(
