@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FourChan
+import BottomSheet
 
 struct OPView: View {
     @StateObject var threadViewModel: ThreadView.ViewModel
@@ -46,6 +47,7 @@ struct OPView: View {
                     // image
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
+
                         ThumbnailMediaView(url: url,
                                            thumbnailUrl: thumbnailUrl)
 

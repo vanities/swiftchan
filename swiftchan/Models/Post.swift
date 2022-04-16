@@ -7,6 +7,7 @@
 
 import Foundation
 import FourChan
+import Defaults
 
 struct SwiftchanPost {
     var post: Post
@@ -73,5 +74,26 @@ extension Post {
         } catch {
             return nil
         }
+    }
+}
+
+extension Post {
+    var isOp: Bool {
+        self.sub != nil
+    }
+}
+
+extension Post {
+    func isHidden(boardName: String) -> Bool {
+        return Defaults[.hiddenPosts(
+            boardName: boardName,
+            postId: self.id
+        )] == true
+    }
+    func hide(boardName: String) {
+        Defaults[.hiddenPosts(
+            boardName: boardName,
+            postId: self.id
+        )] = true
     }
 }

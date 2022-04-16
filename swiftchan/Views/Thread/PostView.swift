@@ -116,13 +116,14 @@ struct PostView: View {
                     }
                     .padding(.leading, 1)
 
-                    Spacer()
+                        Spacer()
 
-                    Image(systemName: "ellipsis")
-                        .frame(width: 25, height: 25)
-                        .onTapGesture {
+                        Button(action: {
                             appState.showingBottomSheet = true
                             appState.selectedBottomSheetPost = viewModel.posts[index]
+                        }) {
+                            Image(systemName: "ellipsis")
+                                .padding(5)
                         }
                     }
                 }

@@ -17,6 +17,7 @@ extension ThreadView {
 
         @Published private(set) var posts = [Post]()
         @Published var media = [Media]()
+        // @Published private(set) var media = [Media]()
         @Published private(set) var postMediaMapping = [Int: Int]()
         @Published private(set) var comments = [AttributedString]()
         @Published private(set) var replies = [Int: [Int]]()

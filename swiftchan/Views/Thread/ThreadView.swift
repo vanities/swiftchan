@@ -49,7 +49,8 @@ struct ThreadView: View {
                             viewModel.posts.indices,
                             id: \.self
                         ) { index in
-                            if index < viewModel.comments.count {
+                            if index < viewModel.comments.count,
+                               !viewModel.posts[index].isHidden(boardName: viewModel.boardName) {
                                 PostView(index: index)
                             }
                         }
@@ -125,10 +126,12 @@ struct ThreadView: View {
         }
         .bottomSheet(
             isPresented: $appState.showingBottomSheet,
-            height: 300
+            height: 100
         ) {
-            Button("Filter Post") {
-                
+            if let post = appState.selectedBottomSheetPost {
+                Button("Hide \(post.isOp ? "Thread" : "Post")") {
+                    post.hide(boardName: viewModel.boardName)
+                }
             }
         }
     }

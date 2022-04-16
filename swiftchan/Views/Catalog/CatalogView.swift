@@ -65,10 +65,12 @@ struct CatalogView: View {
                           alignment: .center,
                           spacing: 0) {
                     ForEach(filteredPosts, id: \.post.id) { post in
-                        OPView(boardName: boardName,
-                               post: post.post,
-                               comment: post.comment)
+                        if !post.post.isHidden(boardName: boardName) {
+                            OPView(boardName: boardName,
+                                   post: post.post,
+                                   comment: post.comment)
                             .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.posts.firstIndex(where: { $0.post == post.post}) ?? 0))
+                        }
                     }
                 }
                           .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
