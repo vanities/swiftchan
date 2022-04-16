@@ -46,12 +46,6 @@ struct VLCContainerView: View {
             vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
         }
         .onAppear {
-            if let cachedUrl = CacheManager.shared.getCacheValue(url) {
-                vlcVideoViewModel.vlcVideo.url = cachedUrl
-            } else {
-                vlcVideoViewModel.vlcVideo.url = url
-            }
-            vlcVideoViewModel.vlcVideo.id = url
             UIApplication.shared.isIdleTimerDisabled = true
             play = true
         }

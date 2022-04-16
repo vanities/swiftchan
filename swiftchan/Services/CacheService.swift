@@ -58,6 +58,17 @@ class CacheManager {
         }
     }
 
+    func cache(tempURL: URL, cacheURL: URL) -> Result<URL, Error> {
+        do {
+            try self.fileManager.moveItem(at: tempURL, to: cacheURL)
+            debugPrint("completed writing file to cache \(cacheURL.path)" )
+            return .success(cacheURL)
+        } catch {
+            debugPrint("failed writing file to cache \(cacheURL.path)" )
+            return .failure(error)
+        }
+    }
+
     func cacheHit(file: URL) -> Bool {
         let cacheHit = fileManager.fileExists(atPath: file.path)
         // debugPrint("cache \(cacheHit ? "hit" : "miss") \(file)")

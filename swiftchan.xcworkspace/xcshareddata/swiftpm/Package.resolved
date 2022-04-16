@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "bottom-sheet",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:weitieda/bottom-sheet.git",
+      "state" : {
+        "revision" : "b924a83dbd37f418f284791229cb50567cb11a6a",
+        "version" : "1.0.7"
+      }
+    },
+    {
       "identity" : "confettiswiftui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/simibac/ConfettiSwiftUI.git",

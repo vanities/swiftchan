@@ -73,7 +73,7 @@ struct SortRow: View {
         ZStack {
             MultiActionItem(
                 icon: Image(systemName: imageName)
-                    .foregroundColor(Colors.Other.star)
+                    .foregroundColor(Color.primary)
                     .scaleEffect(sortState == .none ? 1.5 : 1)
                     .offset(y: sortState == .none ? 0 : 10)
                 ,
@@ -85,7 +85,7 @@ struct SortRow: View {
                         .opacity(sortState == .none ? 0 : 1)
                     .scaleEffect(sortState == .none ? 0 : 1)
                     .offset(y: -10),
-                text: Text(text)
+                text: Text("Sort by \(text)")
             ) {
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
                 Defaults[defaultsKeyType(viewModel

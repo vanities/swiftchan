@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Defaults
 import Combine
+import BottomSheet
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
@@ -79,15 +80,15 @@ struct ThreadView: View {
                 GalleryView(
                     index: presentationState.galleryIndex
                 )
-                    .environmentObject(appState)
-                    .environmentObject(presentationState)
-                    .environmentObject(viewModel)
-                    .onAppear {
-                        timer.upstream.connect().cancel()
-                    }
-                    .onDisappear {
-                        timer = createThreadUpdateTimer()
-                    }
+                .environmentObject(appState)
+                .environmentObject(presentationState)
+                .environmentObject(viewModel)
+                .onAppear {
+                    timer.upstream.connect().cancel()
+                }
+                .onDisappear {
+                    timer = createThreadUpdateTimer()
+                }
             }
         )
         .onOpenURL { url in
@@ -112,13 +113,24 @@ struct ThreadView: View {
         }
         .environmentObject(presentationState)
         .navigationTitle(viewModel.title)
-        .navigationBarItems(trailing:
-                                HStack {
-            autoRefreshButton
-            Link(destination: viewModel.url) {
-                Image(systemName: "square.and.arrow.up")
+        .toolbar {
+            ToolbarItem(placement: ToolbarItemPlacement.navigationBarTrailing) {
+                HStack {
+                    autoRefreshButton
+                    Link(destination: viewModel.url) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                }
             }
-        })
+        }
+        .bottomSheet(
+            isPresented: $appState.showingBottomSheet,
+            height: 300
+        ) {
+            Button("Filter Post") {
+                
+            }
+        }
     }
 
     var replyNavigation: some View {
@@ -143,11 +155,10 @@ struct ThreadView: View {
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
             ProgressView(
-                value: Double(autoRefreshThreadTime), // - autoRefreshTimer,
+                value: Double(autoRefreshThreadTime) - autoRefreshTimer,
                 total: Double(autoRefreshThreadTime)
             ) {
-                // TODO: fix this scrolling issue
-                Text("\(Int(autoRefreshThreadTime))") //-Int(autoRefreshTimer)))")
+                Text("\(Int(autoRefreshThreadTime) - Int(autoRefreshTimer))")
                     .animation(nil)
             }
             .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))

@@ -11,7 +11,7 @@ import FourChan
 
 extension ThreadView {
     final class ViewModel: ObservableObject {
-        let prefetcher = Prefetcher()
+        let prefetcher = Prefetcher.shared
         let boardName: String
         let id: Int
 
@@ -77,18 +77,7 @@ extension ThreadView {
             let urls = media.flatMap { media in
                 return [media.thumbnailUrl, media.url]
             }
-            prefetcher.prefetch(urls: urls) { [weak self] videoUrl, videoCacheUrl in
-                // self?.media.first {  $0.url == videoUrl }?.url = videoCacheUrl
-                if let row = self?.media.firstIndex(where: { $0.url == videoUrl }) {
-                    if var media = self?.media[row] {
-                        DispatchQueue.main.async {
-                            media.url = videoCacheUrl
-                            self?.media[row] = media
-                        }
-                    }
-                }
-            }
-
+            prefetcher.prefetch(urls: urls)
         }
 
         func stopPrefetching() {

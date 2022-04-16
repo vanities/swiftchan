@@ -38,7 +38,6 @@ class DownloadOperation: Operation {
     init(session: URLSession, downloadTaskURL: URL, completionHandler: ((URL?, URLResponse?, Error?) -> Void)?) {
         super.init()
 
-        // use weak self to prevent retain cycle
         task = session.downloadTask(with: downloadTaskURL, completionHandler: { [weak self] (localURL, response, error) in
 
             /*

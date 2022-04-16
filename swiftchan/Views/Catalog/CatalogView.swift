@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Defaults
 import MapKit
+import BottomSheet
 
 struct CatalogView: View {
     var boardName: String
@@ -80,37 +81,21 @@ struct CatalogView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(boardName)
             .navigationBarItems(
-                trailing:
-                    HStack {
-                        sortingButton
-                        settingsButton
-                    }
+                trailing: settingsButton
+
             )
             .searchable(text: $searchText)
-            .multiActionSheet(isPresented: $appState.showingCatalogMenu) {
-                FavoriteStar(viewModel: viewModel)
-            }
-            .multiActionSheet(isPresented: $appState.showingSortMenu) {
+            .bottomSheet(
+                isPresented: $appState.showingCatalogMenu,
+                height: 400
+            ) {
                 Group {
+                    FavoriteStar(viewModel: viewModel)
                     FilesSortRow(viewModel: viewModel)
                     RepliesSortRow(viewModel: viewModel)
                 }
             }
         }
-    }
-
-    var sortingButton: some View {
-        Button(action: {
-            withAnimation {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                appState.showingSortMenu = true
-
-            }
-        }, label: {
-            Image("sorting")
-                .resizable()
-                .frame(width: 25, height: 25)
-        })
     }
 
     var settingsButton: some View {

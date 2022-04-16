@@ -7,11 +7,12 @@
 
 import SwiftUI
 import FourChan
+import BottomSheet
 
 struct PostView: View {
-    @EnvironmentObject var viewModel: ThreadView.ViewModel
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var presentationState: PresentationState
+    @EnvironmentObject private var viewModel: ThreadView.ViewModel
+    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var presentationState: PresentationState
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
 
@@ -41,7 +42,7 @@ struct PostView: View {
                 }
 
                 // media
-                HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 0) {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
 
@@ -62,6 +63,7 @@ struct PostView: View {
                             }
                             .padding(.leading, -5)
                     }
+                    HStack(alignment: .top, spacing: 0) {
                     // index, postnumber, date
                     VStack(alignment: .leading) {
                         HStack {
@@ -113,6 +115,16 @@ struct PostView: View {
                         }
                     }
                     .padding(.leading, 1)
+
+                    Spacer()
+
+                    Image(systemName: "ellipsis")
+                        .frame(width: 25, height: 25)
+                        .onTapGesture {
+                            appState.showingBottomSheet = true
+                            appState.selectedBottomSheetPost = viewModel.posts[index]
+                        }
+                    }
                 }
                 // comment
                 Text(comment)
