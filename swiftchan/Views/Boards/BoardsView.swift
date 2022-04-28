@@ -22,24 +22,6 @@ struct BoardsView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
 
-    var filteredBoards: [Board] {
-        viewModel.boards
-            .filter { board in
-                board.board.starts(with: searchText.lowercased()) && !favoriteBoardsDefault.contains(board.board)
-            }
-            .filter { board in
-                guard !showNSFWBoards else { return true }
-                return board.ws_board == 1
-            }
-    }
-
-    var favoriteBoards: [Board] {
-        viewModel.boards
-            .filter { board in
-                favoriteBoardsDefault.contains(board.board)
-            }
-    }
-
     var body: some View {
         return NavigationView {
             if viewModel.boards.count == 0 {
@@ -53,13 +35,13 @@ struct BoardsView: View {
                             if searchText == "" {
                                 BoardSection(
                                     headerText: "favorites",
-                                    list: favoriteBoards,
+                                    list: viewModel.getFavoriteBoards(),
                                     selection: $navigationSelection
                                 )
                             }
                             BoardSection(
                                 headerText: "all",
-                                list: filteredBoards,
+                                list: viewModel.getFilteredBoards(searchText: searchText),
                                 selection: $navigationSelection
                             )
                         }
@@ -94,7 +76,7 @@ struct BoardsView: View {
     }
 
     var navigation: some View {
-        ForEach(favoriteBoards + filteredBoards, id: \.self) { board in
+        ForEach(viewModel.getAllBoards(searchText: searchText)) { board in
             NavigationLink(
                 tag: board.board,
                 selection: $navigationSelection,
