@@ -14,41 +14,39 @@ struct BoardsView: View {
     @Default(.showNSFWBoards) private var showNSFWBoards
     @EnvironmentObject private var appState: AppState
 
-    @StateObject var viewModel = ViewModel()
+    @StateObject var boardsViewModel = BoardsViewModel()
 
     @State var navigationSelection: String?
     @State private var searchText: String = ""
     @State private var showingSettings: Bool = false
 
-    let columns = [GridItem(.flexible(), spacing: 0, alignment: .topLeading)]
-
     var body: some View {
         return NavigationView {
-            if viewModel.boards.count == 0 {
+            if boardsViewModel.boards.count == .zero {
                 ProgressView()
             } else {
                 ZStack {
                     navigation
                         .hidden()
                     ScrollView(.vertical, showsIndicators: true) {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            if searchText == "" {
+                        LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
+                            if searchText.isEmpty {
                                 BoardSection(
-                                    headerText: "favorites",
-                                    list: viewModel.getFavoriteBoards(),
+                                    headerText: Constants.favoritesText,
+                                    list: boardsViewModel.getFavoriteBoards(),
                                     selection: $navigationSelection
                                 )
                             }
                             BoardSection(
-                                headerText: "all",
-                                list: viewModel.getFilteredBoards(searchText: searchText),
+                                headerText: Constants.allText,
+                                list: boardsViewModel.getFilteredBoards(searchText: searchText),
                                 selection: $navigationSelection
                             )
                         }
                     }
                     .searchable(text: $searchText)
                 }
-                .navigationBarTitle("4chan")
+                .navigationBarTitle(Constants.title)
                 .navigationBarItems(trailing: settingsButton)
             }
         }
@@ -67,7 +65,7 @@ struct BoardsView: View {
                 SettingsView()
             },
             label: {
-                Image(systemName: "gear")
+                Image(systemName: Constants.settingsIcon)
                     .foregroundColor(Color.primary)
             })
             .onTapGesture {
@@ -76,7 +74,7 @@ struct BoardsView: View {
     }
 
     var navigation: some View {
-        ForEach(viewModel.getAllBoards(searchText: searchText)) { board in
+        ForEach(boardsViewModel.getAllBoards(searchText: searchText)) { board in
             NavigationLink(
                 tag: board.board,
                 selection: $navigationSelection,
@@ -85,13 +83,21 @@ struct BoardsView: View {
             )
         }
     }
+
+    struct Constants {
+        static let favoritesText = "favorites"
+        static let allText = "all"
+        static let title = "4chan"
+        static let settingsIcon = "gear"
+        static let gridSpacing: CGFloat = 1
+    }
 }
 
 #if DEBUG
 struct BoardsView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = BoardsView.ViewModel()
-        BoardsView(viewModel: viewModel)
+        BoardsView()
+            .previewInterfaceOrientation(.portrait)
     }
 }
 #endif
