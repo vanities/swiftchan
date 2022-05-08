@@ -14,12 +14,13 @@ struct OPView: View {
     @EnvironmentObject var appState: AppState
     @Namespace var fullscreenNspace
 
+    let index: Int
     let boardName: String
     let post: Post
     let comment: AttributedString
-    let opCommentTrailingLength: Int = 150
 
-    init(boardName: String, post: Post, comment: AttributedString) {
+    init(index: Int, boardName: String, post: Post, comment: AttributedString) {
+        self.index = index
         self.boardName = boardName
         self.post = post
         self.comment = comment
@@ -35,7 +36,7 @@ struct OPView: View {
         return ZStack(alignment: .topLeading) {
             Rectangle()
                 .fill(Colors.Op.background)
-                .cornerRadius(5)
+                .cornerRadius(Constants.backgroundCornerRadius)
                 .border(Colors.Op.border)
 
             NavigationLink(
@@ -44,10 +45,13 @@ struct OPView: View {
                     .environmentObject(threadViewModel)
             ) {
 
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: Constants.vstackSpacing) {
                     // image
                     if let url = post.getMediaUrl(boardId: boardName),
-                       let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
+                       let thumbnailUrl = post.getMediaUrl(
+                        boardId: boardName,
+                        thumbnail: true
+                       ) {
 
                         ThumbnailMediaView(
                             url: url,
@@ -57,20 +61,22 @@ struct OPView: View {
                             id: FullscreenModel.id,
                             in: fullscreenNspace
                         )
-                            /*
                         .onTapGesture {
                             withAnimation {
                                 appState.setFullscreen(
                                     FullscreenModel(
                                         view: AnyView(
-                                            ImageView(url: url)
+                                            ZStack {
+                                                Color.black.ignoresSafeArea()
+                                                ImageView(url: url)
+                                            }
                                         ),
                                         nspace: fullscreenNspace
                                     )
                                 )
                             }
                         }
-                             */
+                        .zIndex(1)
                     }
                     // sticky, closed, image count, thread count
                     HStack(alignment: .center) {
@@ -85,7 +91,7 @@ struct OPView: View {
                         if let sticky = post.sticky,
                            sticky == 1 {
                             Image(systemName: "pin")
-                                .rotationEffect(.degrees(45))
+                                .rotationEffect(.degrees(Constants.stickyPinRotation))
                                 .foregroundColor(Colors.Op.pinColor)
                         }
                         if let closed = post.closed,
@@ -97,22 +103,40 @@ struct OPView: View {
                     Group {
                         // subject
                         Text(post.sub?.clean ?? "")
-                            .font(.system(size: 18))
+                            .font(Constants.subjectFont)
                             .bold()
                             .lineLimit(nil)
-                            .padding(.bottom, 5)
+                            .padding(.bottom, Constants.subjectPadding)
 
                         // comment
                         Text(comment)
                             .textSelection(.enabled)
-                            .lineLimit(20)
+                            .lineLimit(Constants.commentLineLimit)
                     }
+                    .accessibilityIdentifier(
+                        AccessibilityIdentifiers.opButton(index)
+                    )
                 }
-                .padding(.all, 10)
+                .padding(.all, Constants.padding)
             }
         }
         .buttonStyle(PlainButtonStyle())
         .allowsHitTesting(!appState.showingCatalogMenu)
+    }
+
+    struct Constants {
+        static let padding: CGFloat = 10
+
+        static let subjectFont: Font = .system(size: 18)
+        static let subjectPadding: CGFloat = 5
+
+        static let commentLineLimit: Int = 20
+
+        static let stickyPinRotation: CGFloat = 45
+
+        static let vstackSpacing: CGFloat = 0
+
+        static let backgroundCornerRadius: CGFloat = 5
     }
 }
 
@@ -120,7 +144,12 @@ struct OPView: View {
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
         if let example = Post.example() {
-            OPView(boardName: "fit", post: example, comment: AttributedString("hello"))
+            OPView(
+                index: 0,
+                boardName: "fit",
+                post: example,
+                comment: AttributedString("hello")
+            )
         }
     }
 }

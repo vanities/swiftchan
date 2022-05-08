@@ -9,10 +9,12 @@ import Foundation
 import FourChan
 import Defaults
 
-struct SwiftchanPost {
+struct SwiftchanPost: Identifiable, Hashable {
     var post: Post
     var comment: AttributedString
-
+    var id: Int {
+        post.id
+    }
 }
 
 extension Post {

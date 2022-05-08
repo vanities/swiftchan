@@ -14,7 +14,7 @@ import BottomSheet
 struct CatalogView: View {
     var boardName: String
     @EnvironmentObject var appState: AppState
-    @StateObject var viewModel: CatalogViewModel
+    @StateObject var catalogViewModel: CatalogViewModel
 
     @State var searchText: String = ""
     @State var pullToRefreshShowing: Bool = false
@@ -25,60 +25,46 @@ struct CatalogView: View {
         GridItem(.flexible(), spacing: 0, alignment: .top)
     ]
 
-    var navigationCentering: CGFloat {
-        return CGFloat(20 + (boardName.count * 5))
-    }
-
-    var sorting: Bool {
-        !(Defaults.sortFilesBy(boardName: boardName) == .none &&
-          Defaults.sortRepliesBy(boardName: boardName) == .none)
-    }
-
-    var filteredPosts: [SwiftchanPost] {
-        if searchText.isEmpty {
-            return viewModel.posts
-        } else {
-            return viewModel.posts.compactMap { swiftChanPost -> SwiftchanPost? in
-                let commentAndSubject = "\(swiftChanPost.post.com?.clean.lowercased() ?? "") \(swiftChanPost.post.sub?.clean.lowercased() ?? "")"
-
-                return commentAndSubject.contains(searchText.lowercased()) ? swiftChanPost : nil
-            }
-        }
-    }
-
     init(boardName: String) {
         self.boardName = boardName
-        self._viewModel = StateObject(wrappedValue: CatalogViewModel(boardName: boardName))
+        self._catalogViewModel = StateObject(
+            wrappedValue: CatalogViewModel(boardName: boardName)
+        )
     }
 
     @ViewBuilder
     var body: some View {
-        switch viewModel.state {
+        let filteredPosts = catalogViewModel.getFilteredPosts(searchText: searchText)
+        switch catalogViewModel.state {
         case .loading:
             ProgressView()
                 .onAppear {
-                    viewModel.load()
+                    catalogViewModel.load()
                 }
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
-                LazyVGrid(columns: columns,
-                          alignment: .center,
-                          spacing: 0) {
-                    ForEach(filteredPosts, id: \.post.id) { post in
-                        if !post.post.isHidden(boardName: boardName) {
-                            OPView(boardName: boardName,
-                                   post: post.post,
-                                   comment: post.comment)
-                            .accessibilityIdentifier(AccessibilityIdentifiers.opButton(viewModel.posts.firstIndex(where: { $0.post == post.post}) ?? 0))
+                LazyVGrid(
+                    columns: columns,
+                    alignment: .center,
+                    spacing: 0
+                ) {
+                    ForEach(filteredPosts.indices, id: \.self) { postIndex in
+                        if !filteredPosts[postIndex].post.isHidden(boardName: boardName) {
+                            OPView(
+                                index: postIndex,
+                                boardName: boardName,
+                                post: filteredPosts[postIndex].post,
+                                comment: filteredPosts[postIndex].comment
+                            )
                         }
                     }
                 }
-                          .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                              UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                              viewModel.load {
-                                  pullToRefreshShowing = false
-                              }
-                          }
+                .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    catalogViewModel.load {
+                        pullToRefreshShowing = false
+                    }
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(boardName)
@@ -92,9 +78,9 @@ struct CatalogView: View {
                 height: 400
             ) {
                 Group {
-                    FavoriteStar(viewModel: viewModel)
-                    FilesSortRow(viewModel: viewModel)
-                    RepliesSortRow(viewModel: viewModel)
+                    FavoriteStar(viewModel: catalogViewModel)
+                    FilesSortRow(viewModel: catalogViewModel)
+                    RepliesSortRow(viewModel: catalogViewModel)
                 }
             }
         }

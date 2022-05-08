@@ -4,7 +4,10 @@ extension XCUIApplication {
     func tapElement(_ element: XCUIElement, _ timeout: TimeInterval = 10, errorMessage: String? = nil) {
         assertExistence(element, timeout, errorMessage: errorMessage ?? "Could not tap element! \(element.debugDescription)")
         element.firstMatch.tap()
-
+    }
+    func offsetTapElement(_ element: XCUIElement, offset: CGVector, _ timeout: TimeInterval = 10, errorMessage: String? = nil) {
+        assertExistence(element, timeout, errorMessage: errorMessage ?? "Could not tap element! \(element.debugDescription)")
+        element.firstMatch.coordinate(withNormalizedOffset: offset).tap()
     }
     func longPressElement(_ element: XCUIElement,
                           _ duration: TimeInterval = 0.5,

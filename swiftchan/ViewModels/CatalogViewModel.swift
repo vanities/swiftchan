@@ -28,6 +28,17 @@ extension CatalogView {
 
         private var cancellable = Set<AnyCancellable>()
 
+        func getFilteredPosts(searchText: String) -> [SwiftchanPost] {
+            if searchText.isEmpty {
+                return posts
+            } else {
+                return posts.compactMap { swiftChanPost in
+                    let commentAndSubject = "\(swiftChanPost.post.com?.clean.lowercased() ?? "") \(swiftChanPost.post.sub?.clean.lowercased() ?? "")"
+                    return commentAndSubject.contains(searchText.lowercased()) ? swiftChanPost : nil
+                }
+            }
+        }
+
         init(boardName: String) {
             self.boardName = boardName
         }

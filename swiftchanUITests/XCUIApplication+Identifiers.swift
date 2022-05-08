@@ -12,7 +12,7 @@ extension XCUIApplication {
         staticTexts[AccessibilityIdentifiers.boardButton(name)]
     }
     func opButton(_ index: Int) -> XCUIElement {
-        buttons[AccessibilityIdentifiers.opButton(index)]
+        staticTexts[AccessibilityIdentifiers.opButton(index)]
     }
     func thumbnailMediaImage(_ index: Int) -> XCUIElement {
         images[AccessibilityIdentifiers.thumbnailMediaImage(index)]
