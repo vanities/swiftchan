@@ -43,7 +43,7 @@ struct VLCPlayerJumpControlModifier: ViewModifier {
             before:
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                 .onEnded {
-                    if $0.location.x > UIScreen.main.bounds.width/2 {
+                    if $0.location.x > UIScreen.width/2 {
                         jumpForward()
 
                     } else {

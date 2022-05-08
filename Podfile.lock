@@ -1,5 +1,5 @@
 PODS:
-  - MobileVLCKit (3.4.1b5)
+  - MobileVLCKit (3.4.1b7)
   - SwiftLint (0.40.3)
 
 DEPENDENCIES:
@@ -12,7 +12,7 @@ SPEC REPOS:
     - SwiftLint
 
 SPEC CHECKSUMS:
-  MobileVLCKit: 95f024133a825a6997e0ce0e30e311c3d12dc67a
+  MobileVLCKit: 56a7e2a88f2b031eac94b90b18f42ac7b85a4623
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
 
 PODFILE CHECKSUM: ff3e7561e4eca584b317d1e8f7692a9723710cd8

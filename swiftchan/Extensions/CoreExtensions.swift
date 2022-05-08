@@ -273,3 +273,18 @@ extension CaseIterable where Self: Equatable {
 
 //https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift/40629365#40629365
 extension String: Error {}
+
+extension UIScreen {
+    static var height: CGFloat {
+        self.main.bounds.height
+    }
+    static var halfHeight: CGFloat {
+        self.height / 2
+    }
+    static var width: CGFloat {
+        self.main.bounds.width
+    }
+    static var halfWidth: CGFloat {
+        self.width / 2
+    }
+}

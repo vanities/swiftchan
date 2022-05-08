@@ -51,7 +51,7 @@ struct PostView: View {
                             thumbnailUrl: thumbnailUrl
                         )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
-                            .frame(width: UIScreen.main.bounds.width/2)
+                            .frame(width: UIScreen.halfWidth)
                             .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -118,13 +118,15 @@ struct PostView: View {
 
                         Spacer()
 
-                        Button(action: {
-                            appState.showingBottomSheet = true
-                            appState.selectedBottomSheetPost = viewModel.posts[index]
-                        }) {
-                            Image(systemName: "ellipsis")
-                                .padding(5)
-                        }
+                        Button(
+                            action: {
+                                appState.showingBottomSheet = true
+                                appState.selectedBottomSheetPost = viewModel.posts[index]
+                            }, label: {
+                                Image(systemName: "ellipsis")
+                                    .padding(5)
+                            }
+                        )
                     }
                 }
                 // comment

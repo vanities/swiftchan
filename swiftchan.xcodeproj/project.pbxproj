@@ -40,6 +40,7 @@
 		954FB581272CF257009CC52F /* MediaContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB580272CF257009CC52F /* MediaContextMenu.swift */; };
 		954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB5822730BDF0009CC52F /* RoundedCorners.swift */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
+		956295FE2826BF70008A775F /* FullscreenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956295FD2826BF70008A775F /* FullscreenModel.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
@@ -155,6 +156,7 @@
 		954FB580272CF257009CC52F /* MediaContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaContextMenu.swift; sourceTree = "<group>"; };
 		954FB5822730BDF0009CC52F /* RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
 		955814B7254D24B900A966BA /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		956295FD2826BF70008A775F /* FullscreenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenModel.swift; sourceTree = "<group>"; };
 		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
 		9574CDF5255E254F000C99B6 /* FourchanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourchanService.swift; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 				95257D9025EF37F3003E0A59 /* DismissGesture.swift */,
 				9579F9F0263D1A1E007C70FC /* VLCVideo.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
+				956295FD2826BF70008A775F /* FullscreenModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -720,6 +723,7 @@
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
 				9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */,
+				956295FE2826BF70008A775F /* FullscreenModel.swift in Sources */,
 				9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */,
 				9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,

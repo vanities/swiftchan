@@ -12,7 +12,7 @@ class DismissGesture: ObservableObject {
     @Published var presenting: Bool = false
     @Published var canDrag: Bool = true
     @Published var dragging: Bool = false
-    @Published var draggingOffset: CGFloat = UIScreen.main.bounds.height
+    @Published var draggingOffset: CGFloat = UIScreen.height
     @Published var lastDraggingValue: DragGesture.Value?
     @Published var draggingVelocity: Double = 0
 }

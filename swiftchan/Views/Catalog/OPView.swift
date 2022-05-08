@@ -12,6 +12,7 @@ import BottomSheet
 struct OPView: View {
     @StateObject var threadViewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
+    @Namespace var fullscreenNspace
 
     let boardName: String
     let post: Post
@@ -48,9 +49,26 @@ struct OPView: View {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
 
-                        ThumbnailMediaView(url: url,
-                                           thumbnailUrl: thumbnailUrl)
-
+                        ThumbnailMediaView(
+                            url: url,
+                            thumbnailUrl: thumbnailUrl
+                        )
+                        .matchedGeometryEffect(
+                            id: FullscreenModel.id,
+                            in: fullscreenNspace
+                        )
+                        .onTapGesture {
+                            withAnimation {
+                                appState.setFullscreen(
+                                    FullscreenModel(
+                                        view: AnyView(
+                                            ImageView(url: url)
+                                        ),
+                                        nspace: fullscreenNspace
+                                    )
+                                )
+                            }
+                        }
                     }
                     // sticky, closed, image count, thread count
                     HStack(alignment: .center) {

@@ -30,7 +30,7 @@ struct GalleryPreviewView: View {
                             }
                             .id(index)
                             .border(selection == index ? Color.green : Color.clear, width: 2)
-                            .frame(width: UIScreen.main.bounds.width/5)
+                            .frame(width: UIScreen.width/5)
                     }
                 }
                        .onChange(of: selection) { index in
@@ -40,7 +40,7 @@ struct GalleryPreviewView: View {
                        }
             }
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 10)
+        .frame(width: UIScreen.width, height: UIScreen.height / 10)
     }
 }
 

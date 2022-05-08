@@ -10,9 +10,13 @@ import Kingfisher
 import FourChan
 
 class AppState: ObservableObject {
-    @Published var fullscreenView: (AnyView)?
+    @Published private(set) var fullscreen: FullscreenModel?
     @Published var showingCatalogMenu: Bool = false
     @Published var vlcPlayerControlModifier: VLCPlayerControlModifier?
     @Published var showingBottomSheet = false
     @Published var selectedBottomSheetPost: Post?
+
+    func setFullscreen(_ fullscreen: FullscreenModel?) {
+        self.fullscreen = fullscreen
+    }
 }

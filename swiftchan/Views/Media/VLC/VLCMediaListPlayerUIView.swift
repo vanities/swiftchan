@@ -50,10 +50,12 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             return
         }
 
+        guard let media = self.media else { return }
+
         if !mediaListPlayer.mediaPlayer.isPlaying {
             debugPrint("will play webm \(_url)")
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.play(self?.media)
+                self?.mediaListPlayer.play(media)
                 debugPrint("playing \(String(describing: self?._url))")
             }
         } else {
@@ -74,7 +76,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         if mediaListPlayer.mediaPlayer.isSeekable {
             debugPrint("will seek webm \(_url)")
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.mediaPlayer?.time = time
+                self?.mediaListPlayer.mediaPlayer.time = time
             }
         }
     }
@@ -84,9 +86,9 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         DispatchQueue.main.async { [weak self] in
             switch direction {
             case .forward:
-                self?.mediaListPlayer.mediaPlayer?.jumpForward(time)
+                self?.mediaListPlayer.mediaPlayer.jumpForward(time)
             case .backward:
-                self?.mediaListPlayer.mediaPlayer?.jumpBackward(time)
+                self?.mediaListPlayer.mediaPlayer.jumpBackward(time)
             }
         }
     }

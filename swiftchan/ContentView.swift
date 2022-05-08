@@ -27,11 +27,25 @@ struct ContentView: View {
             BoardsView()
                 .blur(radius: backgrounding || !authorized ? 10 : 0)
 
+            if let fullscreen = appState.fullscreen {
+                fullscreen.view
+                    .matchedGeometryEffect(
+                        id: FullscreenModel.id,
+                        in: fullscreen.nspace
+                    )
+                    .onTapGesture {
+                        withAnimation {
+                            appState.setFullscreen(nil)
+                        }
+                    }
+                    .zIndex(1)
+            }
+
             // privacy splash
             Image("swallow")
                 .renderingMode(.template)
                 .resizable()
-                .zIndex(1)
+                .zIndex(2)
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(.primary)
                 .frame(width: 100)
