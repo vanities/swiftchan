@@ -6,49 +6,20 @@
 //
 
 import SwiftUI
+import Photos
 
-class ImageSaver: NSObject {
-    var successHandler: (() -> Void)?
-    var errorHandler: ((Error) -> Void)?
-    var completionHandler: ((Result<Void, Error>) -> Void)?
-
-    init(completionHandler: ((Result<Void, Error>) -> Void)?) {
-        self.completionHandler = completionHandler
-    }
-
-    func saveImageToPhotos(url: URL) {
-        self.loadImage(url: url) { image in
-            if let image = image {
-                self.saveImageToPhotoAlbum(image: image)
-            }
-        }
-
-    }
-
-    // images
-    func saveImageToPhotoAlbum(image: UIImage) {
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveError), nil)
-    }
-
-    @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            completionHandler?(.failure(error))
-        } else {
-            completionHandler?(.success(()))
-        }
-    }
-
-    func loadImage(url: URL, complete: @escaping (UIImage?) -> Void) {
-        if let data = try? Data(contentsOf: url) {
-            if let image = UIImage(data: data) {
-                complete(image)
-            } else {
-                debugPrint("Unable to save data to photo album")
-                complete(nil)
-            }
-        } else {
-            debugPrint("Unable to save data to photo album")
-            complete(nil)
+class ImageSaver {
+    static func saveImageToPhotoAlbum(url: URL, complete: @escaping ((Result<Void, Error>) -> Void)) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let data = try? Data(contentsOf: url) else { return }
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
+            }, completionHandler: { success, error in
+                if let error = error {
+                    complete(.failure(error))
+                }
+                complete(.success(()))
+            })
         }
     }
 }

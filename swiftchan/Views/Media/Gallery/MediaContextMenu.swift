@@ -38,7 +38,11 @@ struct MediaContextMenu: View {
                         case .success(let url):
                             let data = try? Data(contentsOf: url)
                             if let data = data {
-                                UIPasteboard.general.image = UIImage(data: data)
+                                if url.isGif() {
+                                    UIPasteboard.general.setData(data, forPasteboardType: "com.compuserve.gif")
+                                } else {
+                                    UIPasteboard.general.image = UIImage(data: data)
+                                }
                                 presentingToastResult = .success(url)
                                 notificationGenerator.notificationOccurred(.success)
                                 presentingToast = true
@@ -59,7 +63,7 @@ struct MediaContextMenu: View {
                 })
 
                 Button(action: {
-                    let imageSaver = ImageSaver(completionHandler: { result in
+                    ImageSaver.saveImageToPhotoAlbum(url: url) { result in
                         switch result {
                         case .success:
                             presentingToastResult = .success(url)
@@ -69,8 +73,7 @@ struct MediaContextMenu: View {
                             notificationGenerator.notificationOccurred(.error)
                         }
                         presentingToast = true
-                    })
-                    imageSaver.saveImageToPhotos(url: url)
+                    }
                 }, label: {
                     Text("Save to Photos")
                     Image(systemName: "square.and.arrow.down")

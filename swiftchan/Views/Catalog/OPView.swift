@@ -57,6 +57,7 @@ struct OPView: View {
                             id: FullscreenModel.id,
                             in: fullscreenNspace
                         )
+                            /*
                         .onTapGesture {
                             withAnimation {
                                 appState.setFullscreen(
@@ -69,6 +70,7 @@ struct OPView: View {
                                 )
                             }
                         }
+                             */
                     }
                     // sticky, closed, image count, thread count
                     HStack(alignment: .center) {
