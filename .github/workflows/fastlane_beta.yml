@@ -9,7 +9,7 @@ jobs:
     runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -23,7 +23,7 @@ jobs:
 
       - name: Swift Package Manager Cache
         id: spm-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .build
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
@@ -31,7 +31,7 @@ jobs:
             ${{ runner.os }}-spm-
 
       - name: Pods Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: pods-cache
         with:
           path: Pods
@@ -53,8 +53,3 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
           GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 15
