@@ -39,9 +39,7 @@ struct GalleryView: View {
                 data: viewModel.media,
                 id: \.self
             ) { media in
-                MediaView(
-                    index: media.index
-                )
+                MediaView(media: media)
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
                         canPage = !zoomed

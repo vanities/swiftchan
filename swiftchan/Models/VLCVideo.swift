@@ -35,6 +35,7 @@ struct VLCVideo: Equatable, Identifiable {
     var remainingTime: VLCTime = VLCTime(int: 0)
     var totalTime: VLCTime = VLCTime(int: 0)
     var seeking: Bool = false
+    var initializing: Bool = true
 }
 
 extension VLCVideo: Hashable {

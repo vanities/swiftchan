@@ -8,8 +8,10 @@
 import SwiftUI
 import FourChan
 import BottomSheet
+import Defaults
 
 struct OPView: View {
+    @Default(.showOPPreview) var showOPPreview
     @StateObject var threadViewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
     @Namespace var fullscreenNspace
@@ -61,21 +63,28 @@ struct OPView: View {
                             id: FullscreenModel.id,
                             in: fullscreenNspace
                         )
-                        .onTapGesture {
+                        .gesture(showOPPreview ? TapGesture().onEnded {
                             withAnimation {
                                 appState.setFullscreen(
                                     FullscreenModel(
                                         view: AnyView(
                                             ZStack {
                                                 Color.black.ignoresSafeArea()
-                                                ImageView(url: url)
+                                                MediaView(
+                                                    media: Media(
+                                                        index: 0,
+                                                        url: url,
+                                                        thumbnailUrl: thumbnailUrl
+                                                    ),
+                                                    playWebm: true
+                                                )
                                             }
                                         ),
                                         nspace: fullscreenNspace
                                     )
                                 )
                             }
-                        }
+                        } : nil)
                         .zIndex(1)
                     }
                     // sticky, closed, image count, thread count

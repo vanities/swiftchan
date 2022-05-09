@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Default(.fullImagesForThumbanails) var fullImageForThumbnails
     @Default(.showGifThumbnails) var showGifThumbnails
     @Default(.showGalleryPreview) var showGalleryPreview
+    @Default(.showOPPreview) var showOPPreview
     @Default(.autoRefreshEnabled) var autoRefreshEnabled
     @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
     @Default(.biometricsEnabled) var biometricsEnabled
@@ -83,6 +84,7 @@ struct SettingsView: View {
             Toggle("High Res Thumbnails", isOn: $fullImageForThumbnails)
             Toggle("Show Gifs Thumbnails", isOn: $showGifThumbnails)
             Toggle("Tap Gallery to show Gallery Preview", isOn: $showGalleryPreview)
+            Toggle("Tap OP thumnail to show Fullscreen Preview", isOn: $showOPPreview)
         }, header: {
             Text(header).font(.title)
         })

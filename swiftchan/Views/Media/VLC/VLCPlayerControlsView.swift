@@ -8,18 +8,6 @@
 import SwiftUI
 import MobileVLCKit
 
-extension View {
-    func playerControl(
-        presenting: Binding<Bool>,
-        onSeekChanged: ((Bool) -> Void)? = nil
-    ) -> some View {
-        modifier(VLCPlayerControlModifier(
-            presenting: presenting,
-            onSeekChanged: onSeekChanged
-        ))
-    }
-}
-
 struct VLCPlayerControlModifier: ViewModifier {
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
 
@@ -31,16 +19,13 @@ struct VLCPlayerControlModifier: ViewModifier {
         return ZStack {
             content
                 .simultaneousGesture(showControlGesture)
-            // https://stackoverflow.com/questions/56819847/tap-action-not-working-when-color-is-clear-swiftui
-            if presenting {
-                VStack {
-                    Spacer()
-                    VLCPlayerControlsView()
-                        .padding(.bottom, 25)
-                        .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
-                        .environmentObject(vlcVideoViewModel)
-                        .transition(.opacity)
-                }
+            VStack {
+                Spacer()
+                VLCPlayerControlsView()
+                    .padding(.bottom, 25)
+                    .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
+                    .environmentObject(vlcVideoViewModel)
+                    .opacity(presenting ? 1 : 0)
             }
         }
     }
@@ -170,6 +155,18 @@ struct VLCPlayerControlsView: View {
 extension VLCPlayerControlModifier: Buildable {
     func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onSeekChanged, value: callback)
+    }
+}
+
+extension View {
+    func playerControl(
+        presenting: Binding<Bool>,
+        onSeekChanged: ((Bool) -> Void)? = nil
+    ) -> some View {
+        modifier(VLCPlayerControlModifier(
+            presenting: presenting,
+            onSeekChanged: onSeekChanged
+        ))
     }
 }
 

@@ -19,6 +19,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var url: URL
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
+    weak var delegate: VLCMediaListPlayerUIViewDelegate?
 
     init(url: URL, frame: CGRect) {
         self.url = url
@@ -41,6 +42,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 #if DEBUG
             self.mediaListPlayer.mediaPlayer.audio?.isMuted = true
 #endif
+            self.delegate?.isInitialized()
         }
     }
 
@@ -125,6 +127,8 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     }
 }
 
-extension VLCMediaListPlayerUIView: StreamDelegate {
+extension VLCMediaListPlayerUIView: StreamDelegate { }
 
+protocol VLCMediaListPlayerUIViewDelegate: AnyObject {
+    func isInitialized()
 }

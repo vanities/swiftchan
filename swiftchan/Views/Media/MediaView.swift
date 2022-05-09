@@ -10,16 +10,13 @@ import SwiftUI
 import Kingfisher
 
 struct MediaView: View {
-    @EnvironmentObject var threadViewModel: ThreadView.ViewModel
-    let index: Int
+    let media: Media
     @State var playWebm: Bool = false
 
     var onMediaChanged: ((Bool) -> Void)?
 
     @ViewBuilder
     var body: some View {
-        let media = threadViewModel.media[index]
-
         switch media.format {
         case .image:
             ImageView(url: media.url)
@@ -38,11 +35,11 @@ struct MediaView: View {
                     url: media.url,
                     play: $playWebm
                 )
-                .onChange(of: threadViewModel.media[index].isSelected) { selected in
+                .onChange(of: media.isSelected) { selected in
                     playWebm = selected
                 }
                 .onAppear {
-                    playWebm = threadViewModel.media[index].isSelected
+                    playWebm = media.isSelected
                 }
             }
         case .gif:
@@ -79,17 +76,14 @@ struct MediaView_Previews: PreviewProvider {
 
         return Group {
             MediaView(
-                index: 0
+                media: viewModel.media[0]
             )
-                .environmentObject(viewModel)
             MediaView(
-                index: 1
+                media: viewModel.media[1]
             )
-                .environmentObject(viewModel)
             MediaView(
-                index: 2
+                media: viewModel.media[2]
             )
-                .environmentObject(viewModel)
         }
     }
 }
