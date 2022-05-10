@@ -15,6 +15,7 @@ struct SwiftchanPost: Identifiable, Hashable {
     var id: Int {
         post.id
     }
+    let index: Int
 }
 
 extension Post {

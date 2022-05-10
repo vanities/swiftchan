@@ -21,15 +21,15 @@ struct OPView: View {
     let post: Post
     let comment: AttributedString
 
-    init(index: Int, boardName: String, post: Post, comment: AttributedString) {
-        self.index = index
+    init(boardName: String, post: SwiftchanPost) {
         self.boardName = boardName
-        self.post = post
-        self.comment = comment
+        self.post = post.post
+        self.comment = post.comment
+        self.index = post.index
         self._threadViewModel = StateObject(
             wrappedValue: ThreadView.ViewModel(
                 boardName: boardName,
-                id: post.no
+                id: post.post.no
             )
         )
     }
@@ -153,11 +153,14 @@ struct OPView: View {
 struct OPView_Previews: PreviewProvider {
     static var previews: some View {
         if let example = Post.example() {
-            OPView(
-                index: 0,
-                boardName: "fit",
+            let swiftchanPost = SwiftchanPost(
                 post: example,
-                comment: AttributedString("hello")
+                comment: AttributedString("hello"),
+                index: 0
+            )
+            OPView(
+                boardName: "fit",
+                post: swiftchanPost
             )
         }
     }

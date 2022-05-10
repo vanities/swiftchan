@@ -48,13 +48,11 @@ struct CatalogView: View {
                     alignment: .center,
                     spacing: 0
                 ) {
-                    ForEach(filteredPosts.indices, id: \.self) { postIndex in
-                        if !filteredPosts[postIndex].post.isHidden(boardName: boardName) {
+                    ForEach(filteredPosts) { post in
+                        if !post.post.isHidden(boardName: boardName) {
                             OPView(
-                                index: postIndex,
                                 boardName: boardName,
-                                post: filteredPosts[postIndex].post,
-                                comment: filteredPosts[postIndex].comment
+                                post: post
                             )
                         }
                     }

@@ -52,7 +52,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertOPThread(5)
     }
 
-    func xtestAppLoadsPosts() throws {
+    func testAppLoadsPosts() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
 
@@ -60,7 +60,7 @@ class SwiftchanUITests: XCTestCase {
         app.assertPost(1)
     }
 
-    func xtestImageDownloaderSavesFiles() throws {
+    func testImageDownloaderSavesFiles() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)
@@ -70,7 +70,7 @@ class SwiftchanUITests: XCTestCase {
         app.assertSuccessToastImage()
     }
 
-    func xtestImageCopierCopiesUrlToPasteboard() throws {
+    func testImageCopierCopiesUrlToPasteboard() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)

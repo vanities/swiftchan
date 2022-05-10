@@ -72,6 +72,7 @@ class FourchanService {
     class func getCatalog(boardName: String, complete: @escaping ([SwiftchanPost]) -> Void) {
         FourChanAPIService.shared.GET(endpoint: .catalog(board: boardName)) { (result: Result<Catalog, FourChanAPIService.APIError>) in
             var posts: [SwiftchanPost] = []
+            var index = 0
 
             switch result {
             case .success(let pages):
@@ -84,7 +85,8 @@ class FourchanService {
                         } else {
                             comment = AttributedString()
                         }
-                        posts.append(SwiftchanPost(post: thread, comment: comment))
+                        posts.append(SwiftchanPost(post: thread, comment: comment, index: index))
+                        index += 1
                     }
                 }
                 complete(posts)
