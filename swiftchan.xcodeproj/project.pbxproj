@@ -23,7 +23,6 @@
 		951817A3254CFB620032616E /* swiftchanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817A2254CFB620032616E /* swiftchanTests.swift */; };
 		951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817AD254CFB620032616E /* swiftchanUITests.swift */; };
 		95193386274AC54F00AD3894 /* MediaDownloadMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95193385274AC54F00AD3894 /* MediaDownloadMenu.swift */; };
-		95193388274B101500AD3894 /* VLCPlayerJumpControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95193387274B101500AD3894 /* VLCPlayerJumpControl.swift */; };
 		951A29E827EF8ABF00FC49B5 /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951A29E727EF8ABF00FC49B5 /* Defaults+Workaround.swift */; };
 		9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */; };
 		9524E19F256F272200D08075 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E19E256F272200D08075 /* AppState.swift */; };
@@ -141,7 +140,6 @@
 		951817AD254CFB620032616E /* swiftchanUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanUITests.swift; sourceTree = "<group>"; };
 		951817AF254CFB620032616E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95193385274AC54F00AD3894 /* MediaDownloadMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDownloadMenu.swift; sourceTree = "<group>"; };
-		95193387274B101500AD3894 /* VLCPlayerJumpControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerJumpControl.swift; sourceTree = "<group>"; };
 		951A29E727EF8ABF00FC49B5 /* Defaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Defaults+Workaround.swift"; sourceTree = "<group>"; };
 		9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPrefetcher.swift; sourceTree = "<group>"; };
 		9524E19E256F272200D08075 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -400,7 +398,6 @@
 				9582CB98255631B9008B235D /* VLCVideoView.swift */,
 				95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */,
 				958934322558F5FC000DEEDC /* VLCPlayerControlsView.swift */,
-				95193387274B101500AD3894 /* VLCPlayerJumpControl.swift */,
 			);
 			path = VLC;
 			sourceTree = "<group>";
@@ -759,7 +756,6 @@
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
 				9579F9F1263D1A1E007C70FC /* VLCVideo.swift in Sources */,
 				950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */,
-				95193388274B101500AD3894 /* VLCPlayerJumpControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

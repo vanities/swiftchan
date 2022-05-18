@@ -17,7 +17,7 @@ class CommentParser {
     }
 
     func getComment() -> AttributedString {
-        let nsText = self.parseComment(self.comment)
+        let nsText = parseComment(comment)
         return nsText
     }
 
@@ -39,7 +39,7 @@ class CommentParser {
                     let bareText = text
                         .replacingOccurrences(of: ">>", with: "")
                         .replacingOccurrences(of: "(OP)", with: "")
-                    self.replies.append(bareText)
+                    replies.append(bareText)
                     part.foregroundColor = Colors.Text.reply
                     part.font = font
                     part.link = URL.inThreadReply(id: bareText)

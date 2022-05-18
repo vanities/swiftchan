@@ -43,14 +43,18 @@ struct VLCContainerView: View {
             }
         }
         .onChange(of: play) {
-            vlcVideoViewModel.vlcVideo.mediaControlState = $0 ? .play : .pause
+            if $0 {
+                vlcVideoViewModel.play()
+            } else {
+                vlcVideoViewModel.pause()
+            }
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
             play = true
         }
         .onDisappear {
-            vlcVideoViewModel.vlcVideo.mediaControlState = .pause
+            vlcVideoViewModel.pause()
             play = false
             appState.vlcPlayerControlModifier = nil
         }

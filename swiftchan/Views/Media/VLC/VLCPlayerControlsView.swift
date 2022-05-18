@@ -91,10 +91,10 @@ struct VLCPlayerControlsView: View {
                 .onChange(of: sliderPos, perform: { _ in
                     if vlcVideoViewModel.vlcVideo.seeking {
                         let currentTime = Int32(CGFloat(vlcVideoViewModel.vlcVideo.totalTime.intValue) * sliderPos)
-                        vlcVideoViewModel.vlcVideo.currentTime = VLCTime(int: currentTime)
-                        vlcVideoViewModel.vlcVideo.remainingTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.vlcVideo.totalTime.intValue))
-                        seekingTime = VLCTime(int: currentTime)
-                        vlcVideoViewModel.vlcVideo.mediaControlState = .seek(seekingTime)
+                        let currentVLCTime = VLCTime(int: currentTime)
+                        let remainingVLCTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.vlcVideo.totalTime.intValue))
+                        vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
+                        vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
                     }
                 })
                 .introspectSlider { slider in
@@ -131,9 +131,9 @@ struct VLCPlayerControlsView: View {
         case .ended, .stopped:
             break
         case .paused:
-            vlcVideoViewModel.vlcVideo.mediaControlState = .play
+            vlcVideoViewModel.play()
         case .playing, .buffering:
-            vlcVideoViewModel.vlcVideo.mediaControlState = .pause
+            vlcVideoViewModel.pause()
         default:
             break
         }
@@ -141,13 +141,13 @@ struct VLCPlayerControlsView: View {
 
     private func sliderEditingChanged(editingStarted: Bool) {
         if editingStarted {
-            vlcVideoViewModel.vlcVideo.seeking = true
-            vlcVideoViewModel.vlcVideo.mediaControlState = .pause
+            vlcVideoViewModel.setSeeking(true)
+            vlcVideoViewModel.pause()
         }
 
         if !editingStarted {
-            vlcVideoViewModel.vlcVideo.seeking = false
-            vlcVideoViewModel.vlcVideo.mediaControlState = .play
+            vlcVideoViewModel.setSeeking(false)
+            vlcVideoViewModel.play()
         }
     }
 }

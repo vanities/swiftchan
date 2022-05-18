@@ -23,7 +23,7 @@ platform :ios do
       workspace: "swiftchan.xcworkspace",
       scheme: "swiftchan",
       device: "iPhone 13",
-      skip_testing: ["swiftchanUITests/swiftchanPerformanceTests"]
+      skip_testing: ["swiftchanUITests/SwiftchanPerformanceTests"]
     )
   end
 

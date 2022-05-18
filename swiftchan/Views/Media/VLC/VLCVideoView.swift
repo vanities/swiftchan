@@ -39,7 +39,7 @@ struct VLCVideoView: UIViewRepresentable {
             uiView.seek(time: time)
         case .jump(let direction, let time):
             uiView.jump(direction: direction, time: time)
-            vlcVideoViewModel.vlcVideo.mediaControlState = .play
+            vlcVideoViewModel.play()
         }
     }
 
@@ -58,7 +58,7 @@ struct VLCVideoView: UIViewRepresentable {
                        VLCMediaPlayerDelegate,
                        VLCMediaListPlayerUIViewDelegate {
         func isInitialized() {
-            self.parent.vlcVideoViewModel.vlcVideo.initializing = false
+            self.parent.vlcVideoViewModel.setDoneInitializing()
         }
 
         var parent: VLCVideoView
@@ -71,16 +71,17 @@ struct VLCVideoView: UIViewRepresentable {
             if let player = aNotification.object as? VLCMediaPlayer,
                let remainingTime = player.remainingTime,
                let media = player.media {
-                self.parent.vlcVideoViewModel.vlcVideo.currentTime = player.time
-                self.parent.vlcVideoViewModel.vlcVideo.remainingTime = remainingTime
-                self.parent.vlcVideoViewModel.vlcVideo.totalTime = VLCTime(
-                    int: self.parent.vlcVideoViewModel.vlcVideo.currentTime.intValue +
-                    abs(self.parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue )
+                parent.vlcVideoViewModel.updateTime(
+                    current: player.time,
+                    remaining: remainingTime,
+                    total: VLCTime(
+                        int: parent.vlcVideoViewModel.vlcVideo.currentTime.intValue +
+                        abs(parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue )
+                    )
                 )
-
-                self.parent.vlcVideoViewModel.vlcVideo.mediaState = media.state
+                parent.vlcVideoViewModel.setMediaState(media.state)
                 /*
-                debugPrint(
+                 debugPrint(
                 """
                 updating webm time \
                 \(self.parent.vlcVideoViewModel.vlcVideo.currentTime) \
@@ -94,7 +95,7 @@ struct VLCVideoView: UIViewRepresentable {
 
         func mediaPlayerStateChanged(_ aNotification: Notification) {
             if let player = aNotification.object as? VLCMediaPlayer {
-                self.parent.vlcVideoViewModel.vlcVideo.mediaPlayerState = player.state
+                self.parent.vlcVideoViewModel.setMediaPlayerState(player.state)
                 /*
                 switch parent.vlcVideoViewModel.vlcVideo.mediaPlayerState {
                 case .esAdded:
