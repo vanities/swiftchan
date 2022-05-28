@@ -52,7 +52,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertOPThread(5)
     }
 
-    func testAppLoadsPosts() throws {
+    func x_testAppLoadsPosts() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
 
