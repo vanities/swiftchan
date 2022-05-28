@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:vanities/FourChanAPI.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "15330449d5c5519fd6ca090f0b5527c7e9aa5afc"
+        "revision" : "424923670f05a560abf3336898edb850634a5323",
+        "version" : "1.2.11"
       }
     },
     {
