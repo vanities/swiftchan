@@ -25,7 +25,6 @@ struct VLCContainerView: View {
     var body: some View {
         return ZStack {
             VLCVideoView(url: url)
-                .mediaDownloadMenu(url: url)
 
             if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
                 ProgressView()

@@ -12,13 +12,13 @@ struct MediaContextMenu: View {
 
     @State private var notificationGenerator = UINotificationFeedbackGenerator()
     @Binding var isExportingDocument: Bool
-    @Binding private(set) var showContextMenu: Bool
+    @Binding private(set) var canShowContextMenu: Bool
     @Binding var presentingToast: Bool
     @Binding var presentingToastResult: Result<URL, Error>?
 
     @ViewBuilder
     var body: some View {
-        if showContextMenu {
+        if canShowContextMenu {
             Button(action: {
                 UIPasteboard.general.string = url.absoluteString
                 notificationGenerator.notificationOccurred(.success)

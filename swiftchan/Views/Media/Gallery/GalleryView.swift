@@ -20,11 +20,12 @@ struct GalleryView: View {
 
     let index: Int
 
-    @StateObject var page: Page = Page.first()
-    @State private var canPage: Bool = true
-    @State private var canShowPreview: Bool = true
-    @State private var showPreview: Bool = false
-    @State private var dragging: Bool = false
+    @StateObject var page = Page.first()
+    @State private var canPage = true
+    @State private var canShowPreview = true
+    @State private var showPreview = false
+    @State private var dragging  = false
+    @State private var canShowContextMenu = true
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -36,31 +37,39 @@ struct GalleryView: View {
             // gallery
             Pager(
                 page: page,
-                data: viewModel.media,
-                id: \.self
+                data: viewModel.media
             ) { media in
                 MediaView(media: media)
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
                         canPage = !zoomed
+                        canShowContextMenu = !zoomed
                         if zoomed {
                             // if zooming, remove the preview
                             showPreview = !zoomed
                         }
                         onMediaChanged?(zoomed)
                     }
-                    .accessibilityIdentifier(AccessibilityIdentifiers.galleryMediaImage(media.index))
+                    .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
+                    .accessibilityIdentifier(
+                        AccessibilityIdentifiers.galleryMediaImage(media.index)
+                    )
             }
             .onDraggingEnded {
+                dragging = false
+                canShowContextMenu = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     onPageDragChanged?(.zero)
                 }
             }
             .onDraggingChanged {
+                dragging = true
+                canShowContextMenu = false
                 onPageDragChanged?(CGFloat($0))
             }
             .onPageChanged { index in
                 dragging = false
+                canShowContextMenu = true
                 onPageDragChanged?(.zero)
                 state.galleryIndex = index
                 if index - 1 >= 0 {

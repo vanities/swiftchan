@@ -23,7 +23,6 @@ struct MediaView: View {
                 .onZoomChanged { zoomed in
                     onMediaChanged?(zoomed)
                 }
-                .mediaDownloadMenu(url: media.url)
         case .webm:
             ZStack {
                 ImageView(
@@ -47,9 +46,7 @@ struct MediaView: View {
                 .configure { _ in
                     // read current/max here or progress view
                     //view.animator?.currentFrameIndex
-
                 }
-                .mediaDownloadMenu(url: media.url)
                 .scaledToFit()
         case .none:
             EmptyView()

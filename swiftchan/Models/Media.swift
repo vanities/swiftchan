@@ -50,6 +50,4 @@ extension Media: Equatable {
     }
 }
 
-extension Media: Identifiable, Hashable {
-
-}
+extension Media: Identifiable, Hashable { }

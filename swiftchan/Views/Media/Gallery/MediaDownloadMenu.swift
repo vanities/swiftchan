@@ -8,35 +8,36 @@
 import SwiftUI
 
 extension View {
-    func mediaDownloadMenu(url: URL) -> some View {
-        modifier(MediaDownloadMenuModifier(url: url))
+    func mediaDownloadMenu(url: URL, canShowContextMenu: Binding<Bool>) -> some View {
+        modifier(MediaDownloadMenuModifier(url: url, canShowContextMenu: canShowContextMenu))
     }
 }
 
 struct MediaDownloadMenuModifier: ViewModifier {
     let url: URL
+    @Binding var canShowContextMenu: Bool
 
     @State var isExportingDocument: Bool = false
     @State private var presentingToast: Bool = false
     @State private var presentingToastResult: Result<URL, Error>?
-    @State private var showContextMenu: Bool = true
 
     func body(content: Content) -> some View {
         content
-            .fileExporter(isPresented: $isExportingDocument,
+            .fileExporter(
+                isPresented: $isExportingDocument,
                           document: FileExport(url: url.absoluteString),
-                          contentType: .image,
-                          onCompletion: { result in
+                          contentType: .image
+            ) { result in
                 presentingToastResult = result
                 presentingToast = true
                 let generator = UINotificationFeedbackGenerator()
                 generator.notificationOccurred(.success)
-            })
+            }
             .contextMenu {
                 MediaContextMenu(
                     url: url,
                     isExportingDocument: $isExportingDocument,
-                    showContextMenu: $showContextMenu,
+                    canShowContextMenu: $canShowContextMenu,
                     presentingToast: $presentingToast,
                     presentingToastResult: $presentingToastResult
                 )
