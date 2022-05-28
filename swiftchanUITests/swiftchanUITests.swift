@@ -60,7 +60,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertPost(1)
     }
 
-    func testImageDownloaderSavesFiles() throws {
+    func x_testImageDownloaderSavesFiles() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)
