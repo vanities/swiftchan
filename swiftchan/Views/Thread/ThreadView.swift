@@ -45,12 +45,9 @@ struct ThreadView: View {
                         alignment: .center,
                         spacing: 0
                     ) {
-                        ForEach(
-                            viewModel.posts.indices,
-                            id: \.self
-                        ) { index in
-                            if index < viewModel.comments.count,
-                               !viewModel.posts[index].isHidden(boardName: viewModel.boardName) {
+                        ForEach(viewModel.posts) { post in
+                            if let index = viewModel.posts.firstIndex(of: post),
+                               !post.isHidden(boardName: viewModel.boardName) {
                                 PostView(index: index)
                             }
                         }
@@ -117,7 +114,7 @@ struct ThreadView: View {
         .toolbar {
             ToolbarItem(placement: ToolbarItemPlacement.navigationBarTrailing) {
                 HStack {
-                    autoRefreshButton
+                    // autoRefreshButton
                     Link(destination: viewModel.url) {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -128,8 +125,9 @@ struct ThreadView: View {
             isPresented: $appState.showingBottomSheet,
             height: 100
         ) {
-            if let post = appState.selectedBottomSheetPost {
-                Button("Hide \(post.isOp ? "Thread" : "Post")") {
+            if let post = appState.selectedBottomSheetPost,
+               let index = viewModel.posts.firstIndex(of: post) {
+                Button("Hide \(index == 0 ? "Thread" : "Post")") {
                     post.hide(boardName: viewModel.boardName)
                 }
             }
@@ -154,6 +152,9 @@ struct ThreadView: View {
         )
     }
 
+    /*
+    // TODO: fix this from redrawing the whole posts in ThreadView,
+    // Seems to be happening on every update from the timer
     @ViewBuilder
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
@@ -173,6 +174,7 @@ struct ThreadView: View {
             EmptyView()
         }
     }
+     */
 
     func scrollToPost(reader: ScrollViewProxy) {
         if presentationState.presentingIndex != presentationState.galleryIndex,
@@ -182,7 +184,7 @@ struct ThreadView: View {
     }
 
     func incrementRefreshTimer() {
-        guard !pauseAutoRefresh else { return }
+        guard !pauseAutoRefresh, autoRefreshEnabled else { return }
         withAnimation(.linear(duration: 1)) {
             autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
         }

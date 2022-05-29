@@ -81,22 +81,16 @@ extension Post {
 }
 
 extension Post {
-    var isOp: Bool {
-        self.sub != nil
-    }
-}
-
-extension Post {
     func isHidden(boardName: String) -> Bool {
         return Defaults[.hiddenPosts(
             boardName: boardName,
-            postId: self.id
+            postId: id
         )] == true
     }
     func hide(boardName: String) {
         Defaults[.hiddenPosts(
             boardName: boardName,
-            postId: self.id
+            postId: id
         )] = true
     }
 }

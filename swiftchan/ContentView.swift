@@ -16,74 +16,60 @@ struct ContentView: View {
 
     @StateObject private var appState = AppState()
     @StateObject private var appContext = AppContext()
-    @State var backgrounding: Bool = false
-
-    var authorized: Bool {
-        return (biometricsEnabled && didUnlockBiometrics) || !biometricsEnabled
-    }
+    @State var showPrivacyView = false
 
     var body: some View {
         ZStack {
-            BoardsView()
-                .blur(radius: backgrounding || !authorized ? 10 : 0)
+                BoardsView()
 
-            if let fullscreen = appState.fullscreen {
-                fullscreen.view
-                    .matchedGeometryEffect(
-                        id: FullscreenModel.id,
-                        in: fullscreen.nspace
-                    )
-                    .onTapGesture {
-                        withAnimation {
-                            appState.setFullscreen(nil)
+                if let fullscreen = appState.fullscreen {
+                    fullscreen.view
+                        .matchedGeometryEffect(
+                            id: FullscreenModel.id,
+                            in: fullscreen.nspace
+                        )
+                        .onTapGesture {
+                            withAnimation {
+                                appState.setFullscreen(nil)
+                            }
                         }
-                    }
-                    .zIndex(1)
-            }
-
-            // privacy splash
-            Image("swallow")
-                .renderingMode(.template)
-                .resizable()
-                .zIndex(2)
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(.primary)
-                .frame(width: 100)
-                .opacity(backgrounding || !authorized ? 1 : 0)
-
+                        .zIndex(1)
+                }
         }
+        .privacyView(enabled: $showPrivacyView)
         .environmentObject(appState)
         .environmentObject(appContext)
         .onChange(of: biometricsEnabled) { enabled in
             if enabled {
+                showPrivacyView = true
                 appContext.requestBiometricUnlock()
             }
         }
         .onAppear {
             if biometricsEnabled {
+                showPrivacyView = true
                 appContext.requestBiometricUnlock()
             }
         }
         .onChange(of: scenePhase) { value in
             switch value {
-            case .background:
-                withAnimation(.linear(duration: 0.1)) {
-                    backgrounding = true
+            case .background, .inactive:
+                withAnimation {
+                    showPrivacyView = true
                 }
                 didUnlockBiometrics = false
             case .active:
                 if biometricsEnabled, !didUnlockBiometrics {
                     appContext.requestBiometricUnlock { success in
                         didUnlockBiometrics = success
+                        showPrivacyView = success
                     }
                 }
-                withAnimation(.linear(duration: 0.1)) {
-                    backgrounding = false
+                withAnimation {
+                    showPrivacyView = false
                 }
-            case .inactive:
-                break
             @unknown default:
-                backgrounding = true
+                showPrivacyView = true
             }
         }
     }
