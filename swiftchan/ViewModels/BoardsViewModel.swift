@@ -33,7 +33,7 @@ final class BoardsViewModel: ObservableObject {
             }
             .filter { board in
                 guard !Defaults[.showNSFWBoards] else { return true }
-                return board.ws_board == 1
+                return !board.isNSFW
             }
     }
 

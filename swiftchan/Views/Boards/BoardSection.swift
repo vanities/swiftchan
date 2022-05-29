@@ -24,6 +24,7 @@ struct BoardSection: View {
                 ForEach(list) { board in
                     BoardView(
                         name: board.board,
+                        nsfw: board.isNSFW,
                         title: board.title,
                         description: board.meta_description.clean
                     )

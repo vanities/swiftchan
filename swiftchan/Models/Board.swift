@@ -72,4 +72,8 @@ extension Board {
             .replacingOccurrences(of: "&amp;", with: "")
             .replacingOccurrences(of: "&quot;", with: "")
     }
+
+    var isNSFW: Bool {
+        ws_board == 0
+    }
 }

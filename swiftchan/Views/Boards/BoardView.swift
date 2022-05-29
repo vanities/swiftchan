@@ -10,6 +10,7 @@ import FourChan
 
 struct BoardView: View {
     let name: String
+    let nsfw: Bool
     let title: String
     let description: String
 
@@ -19,14 +20,22 @@ struct BoardView: View {
                 .fill(Color.clear)
             HStack {
                 VStack(alignment: .leading) {
-                    Text(self.name + " - " + self.title)
-                        .font(Font.system(size: 17, weight: .bold, design: .monospaced))
+                    HStack {
+                        Text(self.name + " - " + self.title)
+
+                        if nsfw {
+                            NSFWTagView()
+                        }
+                    }
+                    .font(DrawingConstants.titleFont)
                     Text(self.description)
-                        .font(Font.system(size: 15, weight: .regular, design: .rounded))
+                        .font(DrawingConstants.descriptionFont)
                         .lineLimit(nil)
                 }
             }
-            .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+            .padding(
+                EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15)
+            )
             HStack(alignment: .center) {
                 Spacer()
                 VStack(alignment: .trailing) {
@@ -39,17 +48,42 @@ struct BoardView: View {
         }
         .border(Colors.Board.border)
     }
+
+    struct DrawingConstants {
+        static let titleFont = Font.system(size: 17, weight: .bold, design: .monospaced)
+        static let descriptionFont = Font.system(size: 15, weight: .regular, design: .rounded)
+    }
 }
 
 #if DEBUG
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
-        return VStack(alignment: .leading) {
-            ForEach(Board.examples(), id: \.self.id) { board in
-                BoardView(name: board.board,
-                          title: board.title,
-                          description: board.descriptionText)
+        Group {
+            VStack(alignment: .leading) {
+                ForEach(Board.examples(), id: \.self.id) { board in
+                    BoardView(
+                        name: board.board,
+                        nsfw: board.isNSFW,
+                        title: board.title,
+                        description: board.descriptionText
+                    )
+                    .frame(height: 200)
+                }
             }
+            .padding(.horizontal, 10)
+
+            VStack(alignment: .leading) {
+                ForEach(Board.examples(), id: \.self.id) { board in
+                    BoardView(
+                        name: board.board,
+                        nsfw: true,
+                        title: board.title,
+                        description: board.descriptionText
+                    )
+                    .frame(height: 200)
+                }
+            }
+            .padding(.horizontal, 10)
         }
     }
 }
