@@ -54,8 +54,8 @@ extension ThreadView {
                 strongSelf.postMediaMapping = postMediaMapping
                 strongSelf.comments = comments
                 strongSelf.replies = replies
-                strongSelf.setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
             }
+            setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
             print("Thread /\(boardName)/-\(id) successfully got \(posts.count) posts.")
         }
 
@@ -77,7 +77,10 @@ extension ThreadView {
         }
 
         func setMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) {
-            self.media = self.getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
+            let media = getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
+            DispatchQueue.main.async { [weak self] in
+                self?.media = media
+            }
         }
 
         func prefetch() {

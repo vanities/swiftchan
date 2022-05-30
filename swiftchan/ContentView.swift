@@ -53,11 +53,15 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { value in
             switch value {
-            case .background, .inactive:
+            case .background:
                 withAnimation {
                     showPrivacyView = true
                 }
                 didUnlockBiometrics = false
+            case .inactive:
+                withAnimation {
+                    showPrivacyView = true
+                }
             case .active:
                 if biometricsEnabled, !didUnlockBiometrics {
                     appContext.requestBiometricUnlock { success in
@@ -69,7 +73,9 @@ struct ContentView: View {
                     showPrivacyView = false
                 }
             @unknown default:
-                showPrivacyView = true
+                withAnimation {
+                    showPrivacyView = true
+                }
             }
         }
     }

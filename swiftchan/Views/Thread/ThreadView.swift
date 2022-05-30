@@ -160,22 +160,22 @@ struct ThreadView: View {
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
             ProgressView(
-                value: Double(autoRefreshThreadTime) - autoRefreshTimer,
+                value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
                 total: Double(autoRefreshThreadTime)
             ) {
-                Text("\(Int(autoRefreshThreadTime) - Int(autoRefreshTimer))")
+                Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
                     .animation(nil)
             }
-            .progressViewStyle(CustomCircularProgressViewStyle(paused: pauseAutoRefresh))
+            .progressViewStyle(CustomCircularProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                pauseAutoRefresh.toggle()
+                threadAutorefresher.pauseAutoRefresh.toggle()
             }
         } else {
             EmptyView()
         }
     }
-     */
+    */
 
     private func update() {
         Task {

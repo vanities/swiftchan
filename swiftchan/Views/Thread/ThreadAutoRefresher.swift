@@ -3,16 +3,16 @@ import Combine
 import Defaults
 
 class ThreadAutoRefresher: ObservableObject {
-    @Published private var autoRefreshTimer: Double = 0
-    @Published private(set) var timer: Publishers.Autoconnect<Timer.TimerPublisher>
-    @Published private var pauseAutoRefresh: Bool = false
+    private(set) var autoRefreshTimer: Double = 0
+    private(set) var timer: Publishers.Autoconnect<Timer.TimerPublisher>
+    @Published var pauseAutoRefresh: Bool = false
 
     init() {
-        timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
+        timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     }
 
     func setTimer() {
-        timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
+        timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     }
 
     func cancelTimer() {
@@ -23,7 +23,10 @@ class ThreadAutoRefresher: ObservableObject {
     func incrementRefreshTimer() -> Bool {
         guard !pauseAutoRefresh, Defaults[.autoRefreshEnabled] else { return false }
         withAnimation {
-            autoRefreshTimer += Int(autoRefreshTimer) >= Defaults[.autoRefreshThreadTime] ? Double(-Defaults[.autoRefreshThreadTime]) : 1
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.autoRefreshTimer += Int(strongSelf.autoRefreshTimer) >= Defaults[.autoRefreshThreadTime] ? Double(-Defaults[.autoRefreshThreadTime]) : 1
+            }
         }
         if autoRefreshTimer == .zero {
             return true
