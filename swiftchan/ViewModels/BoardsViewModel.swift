@@ -17,8 +17,11 @@ final class BoardsViewModel: ObservableObject {
     }
 
     func load() {
-        FourchanService.getBoards { [weak self] result in
-            self?.boards = result
+        Task {
+            let boards = await FourchanService.getBoards()
+            DispatchQueue.main.async {
+                self.boards = boards
+            }
         }
     }
 

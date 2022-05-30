@@ -47,28 +47,30 @@ extension CatalogView {
             stopPrefetching()
         }
 
-        func load(_ complete: (() -> Void)? = nil) {
-            FourchanService.getCatalog(boardName: boardName) { [weak self] posts in
-                guard let self = self else {
-                    return
-                }
-                self.posts = posts
-                self.prefetch(boardName: self.boardName)
-                self.handleSorting(value: Defaults.sortFilesBy(boardName: self.boardName), attributeKey: "files")
-                self.handleSorting(value: Defaults.sortRepliesBy(boardName: self.boardName), attributeKey: "replies")
-                self.state = .loaded
-                complete?()
+        func load() async {
+            let posts = await FourchanService.getCatalog(boardName: boardName)
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.posts = posts
+                strongSelf.state = .loaded
+                strongSelf.handleSorting(value: Defaults.sortFilesBy(boardName: strongSelf.boardName), attributeKey: "files")
+                strongSelf.handleSorting(value: Defaults.sortRepliesBy(boardName: strongSelf.boardName), attributeKey: "replies")
             }
+            prefetch(boardName: boardName)
 
             Defaults.publisher(.sortFilesBy(boardName: boardName))
-                .sink { [weak self] change in
-                    self?.handleSorting(value: change.newValue, attributeKey: "files")
+                .sink { change in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.handleSorting(value: change.newValue, attributeKey: "files")
+                    }
                 }
                 .store(in: &cancellable)
 
             Defaults.publisher(.sortRepliesBy(boardName: boardName))
-                .sink { [weak self] change in
-                    self?.handleSorting(value: change.newValue, attributeKey: "replies")
+                .sink { change in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.handleSorting(value: change.newValue, attributeKey: "replies")
+                    }
                 }
                 .store(in: &cancellable)
 

@@ -22,15 +22,13 @@ struct ThreadView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var viewModel: ViewModel
 
-    @StateObject private var presentationState: PresentationState = PresentationState()
+    @StateObject private var presentationState = PresentationState()
+    @StateObject private var threadAutorefresher = ThreadAutoRefresher()
 
     @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
-    @State private var pauseAutoRefresh: Bool = false
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-    @State private var autoRefreshTimer: Double = 0
-    @State private var timer = createThreadUpdateTimer()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -39,7 +37,7 @@ struct ThreadView: View {
             replyNavigation
 
             ScrollViewReader { reader in
-                ScrollView(.vertical, showsIndicators: true) {
+                ScrollView {
                     LazyVGrid(
                         columns: columns,
                         alignment: .center,
@@ -59,10 +57,7 @@ struct ThreadView: View {
                     .opacity(opacity)
                     .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        viewModel.load {
-                            pullToRefreshShowing = false
-                            viewModel.prefetch()
-                        }
+                        update()
                     }
                 }
             }
@@ -82,10 +77,10 @@ struct ThreadView: View {
                 .environmentObject(presentationState)
                 .environmentObject(viewModel)
                 .onAppear {
-                    timer.upstream.connect().cancel()
+                    threadAutorefresher.cancelTimer()
                 }
                 .onDisappear {
-                    timer = createThreadUpdateTimer()
+                    threadAutorefresher.setTimer()
                 }
             }
         )
@@ -101,12 +96,18 @@ struct ThreadView: View {
         .onDisappear {
             viewModel.stopPrefetching()
         }
-        .onReceive(timer) { _ in incrementRefreshTimer() }
+        .onReceive(threadAutorefresher.timer) { _ in
+            if threadAutorefresher.incrementRefreshTimer() {
+                print("Thread auto refresh timer met, updating thread.")
+                update()
+            }
+
+        }
         .onChange(of: presentationState.presentingReplies) { presenting in
             if presenting {
-                timer.upstream.connect().cancel()
+                threadAutorefresher.cancelTimer()
             } else {
-                timer = createThreadUpdateTimer()
+                threadAutorefresher.setTimer()
             }
         }
         .environmentObject(presentationState)
@@ -142,10 +143,10 @@ struct ThreadView: View {
                     .environmentObject(viewModel)
                     .environmentObject(presentationState)
                     .onAppear {
-                        timer.upstream.connect().cancel()
+                        threadAutorefresher.cancelTimer()
                     }
                     .onDisappear {
-                        timer = createThreadUpdateTimer()
+                        threadAutorefresher.setTimer()
                     }
             },
             label: {}
@@ -176,23 +177,20 @@ struct ThreadView: View {
     }
      */
 
-    func scrollToPost(reader: ScrollViewProxy) {
-        if presentationState.presentingIndex != presentationState.galleryIndex,
-           let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-            reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
-        }
-    }
-
-    func incrementRefreshTimer() {
-        guard !pauseAutoRefresh, autoRefreshEnabled else { return }
-        withAnimation(.linear(duration: 1)) {
-            autoRefreshTimer += Int(autoRefreshTimer) >= autoRefreshThreadTime ? Double(-autoRefreshThreadTime) : 1
-        }
-        if autoRefreshTimer == 0 {
-            viewModel.load {
+    private func update() {
+        Task {
+            await viewModel.load()
+            DispatchQueue.main.async {
                 pullToRefreshShowing = false
                 viewModel.prefetch()
             }
+        }
+    }
+
+    private func scrollToPost(reader: ScrollViewProxy) {
+        if presentationState.presentingIndex != presentationState.galleryIndex,
+           let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
+            reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
         }
     }
 }

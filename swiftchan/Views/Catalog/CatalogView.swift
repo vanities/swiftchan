@@ -38,8 +38,8 @@ struct CatalogView: View {
         switch catalogViewModel.state {
         case .loading:
             ProgressView()
-                .onAppear {
-                    catalogViewModel.load()
+                .task {
+                    await catalogViewModel.load()
                 }
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
@@ -59,8 +59,11 @@ struct CatalogView: View {
                 }
                 .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    catalogViewModel.load {
-                        pullToRefreshShowing = false
+                    Task {
+                        await catalogViewModel.load()
+                        DispatchQueue.main.async {
+                            pullToRefreshShowing = false
+                        }
                     }
                 }
             }

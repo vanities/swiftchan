@@ -34,23 +34,29 @@ extension ThreadView {
             self.boardName = boardName
             self.id = id
             self.replies = replies
-            self.load()
+            Task {
+                await load()
+            }
         }
 
         deinit {
             prefetcher.stopPrefetching()
         }
 
-        func load(_ complete: (() -> Void)? = nil) {
-            FourchanService.getPosts(boardName: self.boardName,
-                                     id: self.id) { [weak self] ( result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) in
-                self?.posts = result
-                self?.postMediaMapping = postMediaMapping
-                self?.comments = comments
-                self?.replies = replies
-                self?.setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-                complete?()
+        func load() async {
+            let (result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) = await FourchanService.getPosts(
+                boardName: boardName,
+                id: id
+            )
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.posts = result
+                strongSelf.postMediaMapping = postMediaMapping
+                strongSelf.comments = comments
+                strongSelf.replies = replies
+                strongSelf.setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
             }
+            print("Thread /\(boardName)/-\(id) successfully got \(posts.count) posts.")
         }
 
         private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
