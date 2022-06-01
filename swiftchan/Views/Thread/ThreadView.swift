@@ -43,10 +43,10 @@ struct ThreadView: View {
                         alignment: .center,
                         spacing: 0
                     ) {
-                        ForEach(viewModel.posts) { post in
-                            if let index = viewModel.posts.firstIndex(of: post),
-                               !post.isHidden(boardName: viewModel.boardName) {
-                                PostView(index: index)
+                        ForEach(viewModel.posts.indices, id: \.self) { postIndex in
+                            let post = viewModel.posts[postIndex]
+                            if !post.isHidden(boardName: viewModel.boardName) {
+                                PostView(index: postIndex)
                             }
                         }
                     }
