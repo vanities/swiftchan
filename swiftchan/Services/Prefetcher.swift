@@ -56,7 +56,7 @@ class Prefetcher {
                     }
                 }
             })
-
+            guard !operation.isFinished, !operation.isCancelled else { return }
             videoPrefetcher.queue.addOperation(operation)
         }
     }

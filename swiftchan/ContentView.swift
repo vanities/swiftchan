@@ -25,7 +25,7 @@ struct ContentView: View {
                 if let fullscreen = appState.fullscreen {
                     fullscreen.view
                         .matchedGeometryEffect(
-                            id: FullscreenModel.id,
+                            id: FullscreenModal.id,
                             in: fullscreen.nspace
                         )
                         .onTapGesture {

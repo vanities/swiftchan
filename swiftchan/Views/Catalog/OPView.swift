@@ -60,13 +60,13 @@ struct OPView: View {
                             thumbnailUrl: thumbnailUrl
                         )
                         .matchedGeometryEffect(
-                            id: FullscreenModel.id,
+                            id: FullscreenModal.id,
                             in: fullscreenNspace
                         )
                         .gesture(showOPPreview ? TapGesture().onEnded {
                             withAnimation {
                                 appState.setFullscreen(
-                                    FullscreenModel(
+                                    FullscreenModal(
                                         view: AnyView(
                                             ZStack {
                                                 Color.black.ignoresSafeArea()
