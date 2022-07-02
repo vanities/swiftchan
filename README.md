@@ -25,7 +25,7 @@
   <h3 align="center">swiftchan</h3>
 
   <p align="center">
-    open source 4chan ios app written in swiftUI.
+    open source Bangladeshi Kite testing forum ios app written in swiftUI.
     <br />
   </p>
 </p>
