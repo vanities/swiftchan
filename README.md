@@ -62,7 +62,14 @@
 <img src="assets/webm.gif" alt="webm" width="300">
 
 
-Written completely in SwiftUI. Heavily inspired by TheChan. Plays webms and gifs natively in app by using MobileVLCKit.
+Written completely in SwiftUI using mostly MVVM. Heavily inspired by TheChan. Plays webms and gifs natively in app by using MobileVLCKit.
+
+
+Has many settings to change including:
+* replace thumbnails with high-res assets
+* auto-update thread timer
+* hiding threads/posts
+* biometrics unlock
 
 Here's why:
 * you don't want to download a shady app from 3rd party appstores and you're not jailbroken
