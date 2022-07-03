@@ -56,10 +56,13 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="assets/screenshot.png" alt="screenshot" width="300"> <img src="assets/board_screenshot.png" alt="screenshot" width="300"> <img src="assets/thread_screenshot.png" alt="screenshot" width="300">
+<img src="assets/screenshot.png" alt="screenshot" width="300">
+<img src="assets/board_screenshot.png" alt="board_screenshot" width="300">
+<img src="assets/thread_screenshot.png" alt="thread_screenshot" width="300">
+<img src="assets/webm.gif" alt="webm" width="300">
 
 
-Heavily inspired by TheChan. Plays webms and gifs natively in app.
+Written completely in SwiftUI. Heavily inspired by TheChan. Plays webms and gifs natively in app by using MobileVLCKit.
 
 Here's why:
 * you don't want to download a shady app from 3rd party appstores and you're not jailbroken
