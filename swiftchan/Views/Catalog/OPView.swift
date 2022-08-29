@@ -75,8 +75,7 @@ struct OPView: View {
                                                         index: 0,
                                                         url: url,
                                                         thumbnailUrl: thumbnailUrl
-                                                    ),
-                                                    playWebm: true
+                                                    )
                                                 )
                                             }
                                         ),

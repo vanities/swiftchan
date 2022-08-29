@@ -17,21 +17,19 @@ class CacheManager {
         return documentsUrl
     }()
 
-    func getFileWith(stringUrl: String, completionHandler: @escaping (Result<URL, Error>) -> Void ) {
+    func getFileWith(stringUrl: String, completionHandler: @escaping (URL?) -> Void ) {
         let cacheURL = cacheURL(URL(string: stringUrl)!)
 
         // return file path if already exists in cache directory
         guard !cacheHit(file: cacheURL)  else {
             // print("file exists in cache \(file.path)" )
-            completionHandler(.success(cacheURL))
+            completionHandler(cacheURL)
             return
         }
 
         URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { [weak self] urlOrNil, _, _ in
             guard let tempURL = urlOrNil else { return }
-            self?.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
-                completionHandler(result)
-            }
+            completionHandler(self?.cache(tempURL, cacheURL))
         }.resume()
     }
 
@@ -47,25 +45,15 @@ class CacheManager {
         return directoryFor(stringUrl: url.absoluteString)
     }
 
-    func cache(tempURL: URL, cacheURL: URL, complete: ((Result<URL, Error>) -> Void)? = nil) {
+    func cache(_ tempURL: URL, _ cacheURL: URL) -> URL? {
         do {
-            try self.fileManager.moveItem(at: tempURL, to: cacheURL)
+            try? fileManager.removeItem(at: cacheURL)
+            try fileManager.moveItem(at: tempURL, to: cacheURL)
             debugPrint("completed writing file to cache \(cacheURL.path)" )
-            complete?(.success(cacheURL))
+            return cacheURL
         } catch {
             debugPrint("failed writing file to cache \(cacheURL.path)" )
-            complete?(.failure(error))
-        }
-    }
-
-    func cache(tempURL: URL, cacheURL: URL) -> Result<URL, Error> {
-        do {
-            try self.fileManager.moveItem(at: tempURL, to: cacheURL)
-            debugPrint("completed writing file to cache \(cacheURL.path)" )
-            return .success(cacheURL)
-        } catch {
-            debugPrint("failed writing file to cache \(cacheURL.path)" )
-            return .failure(error)
+            return nil
         }
     }
 
@@ -103,7 +91,8 @@ class CacheManager {
     }
 
     func directoryFor(stringUrl: String) -> URL {
-        let fileURL = URL(string: stringUrl)!.lastPathComponent
+        let fileComponents = URL(string: stringUrl)!.lastPathComponent.components(separatedBy: ".")
+        let fileURL = "\(fileComponents[0])-cached.\(fileComponents[1])"
         let file = mainDirectoryUrl.appendingPathComponent(fileURL)
         return file
     }

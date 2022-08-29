@@ -9,7 +9,22 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideo: Equatable, Identifiable {
-    var id: URL?
+    let id: String
+    var url: URL
+    var mediaControlState: MediaControlState = .initialize
+    var mediaPlayerState: VLCMediaPlayerState = .buffering
+    var mediaState: VLCMediaState = .buffering
+    var currentTime: VLCTime = VLCTime(int: 0)
+    var remainingTime: VLCTime = VLCTime(int: 0)
+    var totalTime: VLCTime = VLCTime(int: 0)
+    var seeking: Bool = false
+    var initializing: Bool = true
+    var downloadProgress = Progress()
+
+    init(url: URL) {
+        self.url = url
+        self.id = url.lastPathComponent.components(separatedBy: ".")[0]
+    }
 
     enum MediaControlState: Equatable, Hashable {
         case play
@@ -27,15 +42,32 @@ struct VLCVideo: Equatable, Identifiable {
         case backward
     }
 
-    var url: URL?
-    var mediaControlState: MediaControlState = .initialize
-    var mediaPlayerState: VLCMediaPlayerState = .buffering
-    var mediaState: VLCMediaState = .buffering
-    var currentTime: VLCTime = VLCTime(int: 0)
-    var remainingTime: VLCTime = VLCTime(int: 0)
-    var totalTime: VLCTime = VLCTime(int: 0)
-    var seeking: Bool = false
-    var initializing: Bool = true
+    mutating func download() async throws -> URL? {
+        downloadProgress.completedUnitCount = 0
+        downloadProgress.totalUnitCount = 1
+
+        let cacheURL = CacheManager.shared.cacheURL(url)
+        guard !CacheManager.shared.cacheHit(file: cacheURL) else {
+            downloadProgress.completedUnitCount = 1
+            return cacheURL
+        }
+
+        if let existingOperation = Prefetcher.shared.videoPrefetcher.queue.operations.first(where: {
+            ($0 as? DownloadOperation)?.downloadTaskURL == url
+        }), let operation = existingOperation as? DownloadOperation {
+
+            if operation.isExecuting,
+               let data = await operation.task.cancelByProducingResumeData() {
+                let (tempURL, _) = try await URLSession.shared.download(resumeFrom: data)
+                return CacheManager.shared.cache(tempURL, cacheURL)
+            }
+        }
+
+        debugPrint("Downloading webm: \(cacheURL)")
+        let (tempURL, _) = try await URLSession.shared.download(from: url, progress: downloadProgress)
+        debugPrint("Completed Downloading webm: \(cacheURL)")
+        return CacheManager.shared.cache(tempURL, cacheURL)
+    }
 }
 
 extension VLCVideo: Hashable {

@@ -11,28 +11,39 @@ import ToastUI
 import Kingfisher
 
 struct VLCContainerView: View {
-    let url: URL
-    @Binding var play: Bool
+    var isSelected: Bool
 
-    @StateObject var vlcVideoViewModel = VLCVideoViewModel()
+    @StateObject var vlcVideoViewModel: VLCVideoViewModel
     @State private var presentingPlayerControl: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
+    @State private(set) var downloadProgress = Progress()
     @EnvironmentObject var threadViewModel: ThreadView.ViewModel
     @EnvironmentObject var appState: AppState
 
+    init(
+        url: URL,
+        isSelected: Bool
+    ) {
+        self._vlcVideoViewModel = StateObject(
+            wrappedValue: VLCVideoViewModel(url: url)
+        )
+        self.isSelected = isSelected
+    }
     var onSeekChanged: ((Bool) -> Void)?
 
     var body: some View {
         return ZStack {
-            VLCVideoView(url: url)
+            VLCVideoView()
 
-            if vlcVideoViewModel.vlcVideo.mediaState == .buffering {
-                ProgressView()
+            if !vlcVideoViewModel.video.downloadProgress.isFinished {
+                ProgressView(vlcVideoViewModel.video.downloadProgress)
+                    .frame(width: 50, height: 50)
+                    .progressViewStyle(GaugeProgressStyle())
             }
         }
         .playerControl(presenting: $presentingPlayerControl)
         .environmentObject(vlcVideoViewModel)
-        .onChange(of: vlcVideoViewModel.vlcVideo.mediaControlState) { state in
+        .onChange(of: vlcVideoViewModel.video.mediaControlState) { state in
             if state == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                     withAnimation(.linear(duration: 0.2)) {
@@ -41,21 +52,35 @@ struct VLCContainerView: View {
                 }
             }
         }
-        .onChange(of: play) {
-            if $0 {
-                vlcVideoViewModel.play()
+        .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) { value in
+            if value && isSelected {
+                DispatchQueue.main.async {
+                    vlcVideoViewModel.play()
+                }
+            }
+        }
+        .onChange(of: isSelected) { value in
+            if value && vlcVideoViewModel.video.downloadProgress.isFinished {
+                DispatchQueue.main.async {
+                    vlcVideoViewModel.play()
+                }
             } else {
-                vlcVideoViewModel.pause()
+                DispatchQueue.main.async {
+                    vlcVideoViewModel.pause()
+                }
             }
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
-            play = true
         }
         .onDisappear {
             vlcVideoViewModel.pause()
-            play = false
             appState.vlcPlayerControlModifier = nil
+        }
+        .task {
+            Task.detached(priority: .userInitiated) {
+                try? await vlcVideoViewModel.download()
+            }
         }
     }
 }
@@ -66,27 +91,34 @@ struct VLCContainerView_Previews: PreviewProvider {
         return Group {
             VLCContainerView(
                 url: URLExamples.webm,
-                play: .constant(false)
+                isSelected: false
             )
-                .background(Color.black)
-                .previewInterfaceOrientation(.portrait)
+            .background(Color.black)
+            .previewInterfaceOrientation(.portrait)
 
             VLCContainerView(
                 url: URLExamples.webm,
-                play: .constant(true),
-                presentingjumpToast: .forward
+                isSelected: true
             )
-                .background(Color.black)
-                .previewInterfaceOrientation(.portrait)
-
-            VLCContainerView(
-                url: URLExamples.webm,
-                play: .constant(true),
-                presentingjumpToast: .backward
-            )
-                .background(Color.black)
-                .previewInterfaceOrientation(.portrait)
+            .background(Color.black)
+            .previewInterfaceOrientation(.portrait)
         }
     }
 }
 #endif
+
+struct GaugeProgressStyle: ProgressViewStyle {
+    var strokeColor = Color.white
+    var strokeWidth = 2.0
+
+    func makeBody(configuration: Configuration) -> some View {
+        let fractionCompleted = configuration.fractionCompleted ?? 0
+
+        return ZStack {
+            Circle()
+                .trim(from: 0, to: fractionCompleted)
+                .stroke(strokeColor, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+    }
+}

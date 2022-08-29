@@ -33,9 +33,8 @@ struct MediaContextMenu: View {
             case .image, .gif:
                 Group {
                 Button(action: {
-                    CacheManager.shared.getFileWith(stringUrl: url.absoluteString) { result in
-                        switch result {
-                        case .success(let url):
+                    CacheManager.shared.getFileWith(stringUrl: url.absoluteString) { url in
+                        if let url = url {
                             let data = try? Data(contentsOf: url)
                             if let data = data {
                                 if url.isGif() {
@@ -48,8 +47,6 @@ struct MediaContextMenu: View {
                                 presentingToast = true
                                 return
                             }
-
-                        default: break
                         }
                         presentingToastResult = .failure("Could not copy image")
                         notificationGenerator.notificationOccurred(.error)

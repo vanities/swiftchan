@@ -10,9 +10,9 @@ import MobileVLCKit
 
 class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var _url: URL {
-        let cacheURL = CacheManager.shared.cacheURL(self.url)
+        let cacheURL = CacheManager.shared.cacheURL(url)
         guard CacheManager.shared.cacheHit(file: cacheURL) else {
-            return self.url
+            return url
         }
         return cacheURL
     }
@@ -20,6 +20,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
     weak var delegate: VLCMediaListPlayerUIViewDelegate?
+    private var buffering = false
 
     init(url: URL, frame: CGRect) {
         self.url = url
