@@ -9,12 +9,11 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
-    let url: URL
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
         let view = VLCMediaListPlayerUIView(
-            url: url,
+            url: vlcVideoViewModel.video.url,
             frame: .zero
         )
         view.mediaListPlayer.mediaPlayer.delegate = context.coordinator
@@ -27,8 +26,8 @@ struct VLCVideoView: UIViewRepresentable {
         context: UIViewRepresentableContext<VLCVideoView>
     ) {
         //debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
-        guard !vlcVideoViewModel.vlcVideo.initializing else { return }
-        switch vlcVideoViewModel.vlcVideo.mediaControlState {
+        guard !vlcVideoViewModel.video.initializing else { return }
+        switch vlcVideoViewModel.video.mediaControlState {
         case .initialize:
             return
         case .play:
@@ -75,8 +74,8 @@ struct VLCVideoView: UIViewRepresentable {
                     current: player.time,
                     remaining: remainingTime,
                     total: VLCTime(
-                        int: parent.vlcVideoViewModel.vlcVideo.currentTime.intValue +
-                        abs(parent.vlcVideoViewModel.vlcVideo.remainingTime.intValue )
+                        int: parent.vlcVideoViewModel.video.currentTime.intValue +
+                        abs(parent.vlcVideoViewModel.video.remainingTime.intValue )
                     )
                 )
                 parent.vlcVideoViewModel.setMediaState(media.state)
@@ -130,9 +129,10 @@ struct VLCVideoView: UIViewRepresentable {
 #if DEBUG
 struct VlcPlayerDemo_Previews: PreviewProvider {
     static var previews: some View {
+        let url = URL(string: "google.com")!
         return ZStack {
-            VLCVideoView(url: URLExamples.webm)
-                .environmentObject(VLCVideoViewModel())
+            VLCVideoView()
+                .environmentObject(VLCVideoViewModel(url: url))
         }
     }
 }

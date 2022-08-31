@@ -44,16 +44,9 @@ class Prefetcher {
                 continue
             }
             let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { (tempURL, _, _) in
-                if let tempURL = tempURL {
-                    CacheManager.shared.cache(tempURL: tempURL, cacheURL: cacheURL) { result in
-                        switch result {
-                        case .success(let cacheSuccessUrl):
-                            debugPrint("successfully cached video url \(cacheSuccessUrl)")
-                            return
-                        case .failure:
-                            return
-                        }
-                    }
+                if let tempURL = tempURL,
+                   let result = CacheManager.shared.cache(tempURL, cacheURL) {
+                    debugPrint("successfully cached video url \(result)")
                 }
             })
             guard !operation.isFinished, !operation.isCancelled else { return }

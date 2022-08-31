@@ -11,7 +11,7 @@ class VideoPrefetcher {
     let queue = OperationQueue()
 
     init() {
-        queue.maxConcurrentOperationCount = 3
-        queue.underlyingQueue = .main
+        queue.maxConcurrentOperationCount = 1
+        queue.underlyingQueue = .global()
     }
 }

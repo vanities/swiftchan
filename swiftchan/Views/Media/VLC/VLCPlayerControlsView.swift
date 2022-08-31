@@ -23,7 +23,7 @@ struct VLCPlayerControlModifier: ViewModifier {
                 Spacer()
                 VLCPlayerControlsView()
                     .padding(.bottom, 25)
-                    .onChange(of: vlcVideoViewModel.vlcVideo.seeking) { onSeekChanged?($0) }
+                    .onChange(of: vlcVideoViewModel.video.seeking) { onSeekChanged?($0) }
                     .environmentObject(vlcVideoViewModel)
                     .opacity(presenting ? 1 : 0)
             }
@@ -52,12 +52,12 @@ struct VLCPlayerControlsView: View {
     @State private var sliderPos: CGFloat = 0
 
     private var calcSliderPos: CGFloat {
-        guard vlcVideoViewModel.vlcVideo.totalTime.intValue != 0 else { return .zero }
-        return CGFloat(vlcVideoViewModel.vlcVideo.currentTime.intValue) / CGFloat(vlcVideoViewModel.vlcVideo.totalTime.intValue)
+        guard vlcVideoViewModel.video.totalTime.intValue != 0 else { return .zero }
+        return CGFloat(vlcVideoViewModel.video.currentTime.intValue) / CGFloat(vlcVideoViewModel.video.totalTime.intValue)
     }
 
     private var playbackImage: String {
-        switch vlcVideoViewModel.vlcVideo.mediaPlayerState {
+        switch vlcVideoViewModel.video.mediaPlayerState {
         case .ended, .stopped:
             return "stop"
         case .paused:
@@ -77,22 +77,22 @@ struct VLCPlayerControlsView: View {
                     .padding()
             }
 
-            Text(vlcVideoViewModel.vlcVideo.currentTime.description)
+            Text(vlcVideoViewModel.video.currentTime.description)
                 .fixedSize()
 
             Slider(value: $sliderPos,
                    in: 0...1,
                    onEditingChanged: sliderEditingChanged)
-                .onChange(of: vlcVideoViewModel.vlcVideo.currentTime, perform: { _ in
-                    if !vlcVideoViewModel.vlcVideo.seeking {
+                .onChange(of: vlcVideoViewModel.video.currentTime, perform: { _ in
+                    if !vlcVideoViewModel.video.seeking {
                         sliderPos = calcSliderPos
                     }
                 })
                 .onChange(of: sliderPos, perform: { _ in
-                    if vlcVideoViewModel.vlcVideo.seeking {
-                        let currentTime = Int32(CGFloat(vlcVideoViewModel.vlcVideo.totalTime.intValue) * sliderPos)
+                    if vlcVideoViewModel.video.seeking {
+                        let currentTime = Int32(CGFloat(vlcVideoViewModel.video.totalTime.intValue) * sliderPos)
                         let currentVLCTime = VLCTime(int: currentTime)
-                        let remainingVLCTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.vlcVideo.totalTime.intValue))
+                        let remainingVLCTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.video.totalTime.intValue))
                         vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
                         vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
                     }
@@ -102,7 +102,7 @@ struct VLCPlayerControlsView: View {
 
                 }
 
-            Text(vlcVideoViewModel.vlcVideo.remainingTime.description)
+            Text(vlcVideoViewModel.video.remainingTime.description)
                 .fixedSize()
         }
         .foregroundColor(.white)
@@ -127,7 +127,7 @@ struct VLCPlayerControlsView: View {
     }
 
     private func togglePlayer() {
-        switch vlcVideoViewModel.vlcVideo.mediaPlayerState {
+        switch vlcVideoViewModel.video.mediaPlayerState {
         case .ended, .stopped:
             break
         case .paused:
@@ -173,16 +173,17 @@ extension View {
 #if DEBUG
 struct VLCPlayerControlsView_Previews: PreviewProvider {
     static var previews: some View {
+        let url = URL(string: "google.com")!
         Group {
             Color.green
-                .environmentObject(VLCVideoViewModel())
+                .environmentObject(VLCVideoViewModel(url: url))
                 .playerControl(
                     presenting: .constant(true),
                     onSeekChanged: {_ in }
                 )
 
             VLCPlayerControlsView()
-                .environmentObject(VLCVideoViewModel())
+                .environmentObject(VLCVideoViewModel(url: url))
                 .background(Color.black)
         }
     }

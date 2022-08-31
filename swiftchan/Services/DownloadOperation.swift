@@ -9,8 +9,8 @@
 import Foundation
 
 class DownloadOperation: Operation {
-
-    private var task: URLSessionDownloadTask!
+    var task: URLSessionDownloadTask!
+    let downloadTaskURL: URL
 
     enum OperationState: Int {
         case ready
@@ -36,6 +36,7 @@ class DownloadOperation: Operation {
     override var isFinished: Bool { return state == .finished }
 
     init(session: URLSession, downloadTaskURL: URL, completionHandler: ((URL?, URLResponse?, Error?) -> Void)?) {
+        self.downloadTaskURL = downloadTaskURL
         super.init()
 
         task = session.downloadTask(with: downloadTaskURL, completionHandler: { [weak self] (localURL, response, error) in
