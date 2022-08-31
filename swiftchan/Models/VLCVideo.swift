@@ -59,6 +59,7 @@ struct VLCVideo: Equatable, Identifiable {
             if operation.isExecuting,
                let data = await operation.task.cancelByProducingResumeData() {
                 let (tempURL, _) = try await URLSession.shared.download(resumeFrom: data)
+                downloadProgress.completedUnitCount = 1
                 return CacheManager.shared.cache(tempURL, cacheURL)
             }
         }
