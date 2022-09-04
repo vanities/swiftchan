@@ -10,6 +10,7 @@ import MobileVLCKit
 
 struct VLCVideo: Equatable, Identifiable {
     let id: String
+    //weak var urlSessionDelegate: URLSessionDownloadDelegate?
     var url: URL
     var mediaControlState: MediaControlState = .initialize
     var mediaPlayerState: VLCMediaPlayerState = .buffering
@@ -19,11 +20,13 @@ struct VLCVideo: Equatable, Identifiable {
     var totalTime: VLCTime = VLCTime(int: 0)
     var seeking: Bool = false
     var initializing: Bool = true
-    var downloadProgress = Progress()
+    @MainActor var downloadProgress = Progress()
 
     init(url: URL) {
         self.url = url
         self.id = url.lastPathComponent.components(separatedBy: ".")[0]
+        self.downloadProgress.completedUnitCount = 0
+        self.downloadProgress.totalUnitCount = 1
     }
 
     enum MediaControlState: Equatable, Hashable {
@@ -43,15 +46,13 @@ struct VLCVideo: Equatable, Identifiable {
     }
 
     mutating func download() async throws -> URL? {
-        downloadProgress.completedUnitCount = 0
-        downloadProgress.totalUnitCount = 1
-
         let cacheURL = CacheManager.shared.cacheURL(url)
         guard !CacheManager.shared.cacheHit(file: cacheURL) else {
-            downloadProgress.completedUnitCount = 1
+            await setDownloadProgressFinished()
             return cacheURL
         }
 
+        //let urlSession = URLSession(configuration: .default, delegate: urlSessionDelegate, delegateQueue: nil)
         if let existingOperation = Prefetcher.shared.videoPrefetcher.queue.operations.first(where: {
             ($0 as? DownloadOperation)?.downloadTaskURL == url
         }), let operation = existingOperation as? DownloadOperation {
@@ -59,7 +60,7 @@ struct VLCVideo: Equatable, Identifiable {
             if operation.isExecuting,
                let data = await operation.task.cancelByProducingResumeData() {
                 let (tempURL, _) = try await URLSession.shared.download(resumeFrom: data)
-                downloadProgress.completedUnitCount = 1
+                await setDownloadProgressFinished()
                 return CacheManager.shared.cache(tempURL, cacheURL)
             }
         }
@@ -69,10 +70,18 @@ struct VLCVideo: Equatable, Identifiable {
         debugPrint("Completed Downloading webm: \(cacheURL)")
         return CacheManager.shared.cache(tempURL, cacheURL)
     }
+
+    @MainActor mutating func setDownloadProgressFinished() {
+        downloadProgress.completedUnitCount = 1
+    }
 }
 
 extension VLCVideo: Hashable {
     static func == (lhs: VLCVideo, rhs: VLCVideo) -> Bool {
         lhs.url == rhs.url
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
     }
 }

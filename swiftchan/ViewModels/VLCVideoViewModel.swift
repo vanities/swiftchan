@@ -14,10 +14,11 @@ class VLCVideoViewModel: ObservableObject {
         video = VLCVideo(url: url)
     }
 
+    @MainActor
     func download() async throws {
         if let url = try? await video.download() {
-            DispatchQueue.main.async {
-                self.video.url = url
+            DispatchQueue.main.async { [weak self] in
+                self?.video.url = url
             }
         }
     }
@@ -51,5 +52,16 @@ class VLCVideoViewModel: ObservableObject {
     }
     func pause() {
         setMediaControlState(.pause)
+    }
+
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        DispatchQueue.main.async { [weak self] in
+            self?.video.downloadProgress.completedUnitCount = totalBytesWritten
+            self?.video.downloadProgress.totalUnitCount = totalBytesExpectedToWrite
+        }
+    }
+
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        return
     }
 }

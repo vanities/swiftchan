@@ -36,9 +36,15 @@ struct VLCContainerView: View {
             VLCVideoView()
 
             if !vlcVideoViewModel.video.downloadProgress.isFinished {
+                ProgressView("Downloading")
+                /*
                 ProgressView(vlcVideoViewModel.video.downloadProgress)
                     .frame(width: 50, height: 50)
                     .progressViewStyle(GaugeProgressStyle())
+                 */
+            }
+            if vlcVideoViewModel.video.downloadProgress.isFinished && vlcVideoViewModel.video.mediaState == .buffering {
+                ProgressView("Buffering")
             }
         }
         .playerControl(presenting: $presentingPlayerControl)
@@ -78,9 +84,7 @@ struct VLCContainerView: View {
             appState.vlcPlayerControlModifier = nil
         }
         .task {
-            Task.detached(priority: .userInitiated) {
-                try? await vlcVideoViewModel.download()
-            }
+            try? await vlcVideoViewModel.download()
         }
     }
 }
