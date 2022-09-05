@@ -17,15 +17,21 @@ struct ImageView: View {
     @State var zoomed: Bool = false
     @GestureState private var dragOffset = CGSize.zero
     @State private var position = CGSize.zero
+    @State private var progress = Progress()
 
     var onZoomChanged: ((Bool) -> Void)?
 
     var body: some View {
         return KFImage(url)
             .placeholder {
-                ProgressView()
+                ProgressView(progress)
+                    .progressViewStyle(WhiteCircularProgressViewStyle())
             }
             .processingQueue(.mainAsync)
+            .onProgress { receivedSize, totalSize  in
+                progress.completedUnitCount = receivedSize
+                progress.totalUnitCount = totalSize
+            }
             // .onlyFromCache()
             // .waitForCache()
             .resizable()

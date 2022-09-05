@@ -34,11 +34,7 @@ struct MediaView: View {
                 )
             }
         case .gif:
-            KFAnimatedImage(media.url)
-                .configure { _ in
-                    // read current/max here or progress view
-                    //view.animator?.currentFrameIndex
-                }
+            GIFView(url: media.url)
                 .scaledToFit()
         case .none:
             EmptyView()

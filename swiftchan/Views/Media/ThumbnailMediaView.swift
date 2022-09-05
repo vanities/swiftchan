@@ -35,7 +35,7 @@ struct ThumbnailMediaView: View {
             }
         case .gif:
             if showGifThumbnails {
-                KFAnimatedImage(url)
+                GIFView(url: url)
                     .scaledToFit()
             } else {
                 ImageView(url: thumbnailUrl, canGesture: false)

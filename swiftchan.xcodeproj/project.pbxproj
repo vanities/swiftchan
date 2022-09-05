@@ -69,6 +69,8 @@
 		95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 95B31D4525E2E3B400C309D4 /* Introspect */; };
 		95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */; };
 		95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */; };
+		95BF206928C5A0F700DCB2D1 /* ProgressViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF206828C5A0F700DCB2D1 /* ProgressViews.swift */; };
+		95BF206B28C5A23D00DCB2D1 /* GIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF206A28C5A23D00DCB2D1 /* GIFView.swift */; };
 		95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */; };
 		95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE827386D2B000D64B1 /* SettingsView.swift */; };
 		95C01FEB27389037000D64B1 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FEA27389037000D64B1 /* Toast.swift */; };
@@ -184,6 +186,8 @@
 		95AFBF362735712E00F5B0CD /* VLCVideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoViewModel.swift; sourceTree = "<group>"; };
 		95B7BE50256CBC4A00F75BC9 /* FavoriteStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteStar.swift; sourceTree = "<group>"; };
 		95BEA02C2561816100F77A14 /* ThumbnailMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailMediaView.swift; sourceTree = "<group>"; };
+		95BF206828C5A0F700DCB2D1 /* ProgressViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViews.swift; sourceTree = "<group>"; };
+		95BF206A28C5A23D00DCB2D1 /* GIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFView.swift; sourceTree = "<group>"; };
 		95C01FE627382AD5000D64B1 /* VLCMediaListPlayerUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCMediaListPlayerUIView.swift; sourceTree = "<group>"; };
 		95C01FE827386D2B000D64B1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		95C01FEA27389037000D64B1 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -261,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				9599D62D2556661600BBC8B7 /* ImageView.swift */,
+				95BF206A28C5A23D00DCB2D1 /* GIFView.swift */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -478,6 +483,7 @@
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
+				95BF206828C5A0F700DCB2D1 /* ProgressViews.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -729,6 +735,7 @@
 				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
+				95BF206B28C5A23D00DCB2D1 /* GIFView.swift in Sources */,
 				9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */,
 				956295FE2826BF70008A775F /* FullscreenModal.swift in Sources */,
 				9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */,
@@ -740,6 +747,7 @@
 				95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */,
 				9589342B2558ED11000DEEDC /* VLCContainerView.swift in Sources */,
 				95D804E22568F9D8005A3128 /* View.swift in Sources */,
+				95BF206928C5A0F700DCB2D1 /* ProgressViews.swift in Sources */,
 				95CFC2FA2734B66E0053D62A /* Media.swift in Sources */,
 				950EB4DC256CBE08000703C0 /* PullToRefresh.swift in Sources */,
 				95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */,
