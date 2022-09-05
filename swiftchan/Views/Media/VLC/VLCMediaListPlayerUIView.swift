@@ -19,32 +19,26 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var url: URL
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
-    weak var delegate: VLCMediaListPlayerUIViewDelegate?
     private var buffering = false
 
     init(url: URL, frame: CGRect) {
         self.url = url
         super.init(frame: frame)
-        self.initialize(url: _url)
     }
 
     func initialize(url: URL) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.media = VLCMedia(url: url)
-            if let media = self.media {
-                media.addOption("-vv")
-                // media.addOption("—network-caching=10000")
-            }
-            self.mediaListPlayer.rootMedia = self.media
-            self.mediaListPlayer.mediaPlayer.media = self.media
-            self.mediaListPlayer.mediaPlayer.drawable = self
-            self.mediaListPlayer.repeatMode = .repeatCurrentItem
-#if DEBUG
-            self.mediaListPlayer.mediaPlayer.audio?.isMuted = true
-#endif
-            self.delegate?.isInitialized()
+        media = VLCMedia(url: url)
+        if let media = self.media {
+            media.addOption("-vv")
+            // media.addOption("—network-caching=10000")
         }
+        mediaListPlayer.rootMedia = self.media
+        mediaListPlayer.mediaPlayer.media = self.media
+        mediaListPlayer.mediaPlayer.drawable = self
+        mediaListPlayer.repeatMode = .repeatCurrentItem
+#if DEBUG
+        mediaListPlayer.mediaPlayer.audio?.isMuted = true
+#endif
     }
 
     func play() {
@@ -53,6 +47,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             return
         }
 
+        self.initialize(url: _url)
         guard let media = self.media else { return }
 
         if !mediaListPlayer.mediaPlayer.isPlaying {
@@ -126,10 +121,4 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     override func layoutSubviews() {
         super.layoutSubviews()
     }
-}
-
-extension VLCMediaListPlayerUIView: StreamDelegate { }
-
-protocol VLCMediaListPlayerUIViewDelegate: AnyObject {
-    func isInitialized()
 }

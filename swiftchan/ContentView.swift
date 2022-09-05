@@ -20,21 +20,21 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-                BoardsView()
+            BoardsView()
 
-                if let fullscreen = appState.fullscreen {
-                    fullscreen.view
-                        .matchedGeometryEffect(
-                            id: FullscreenModal.id,
-                            in: fullscreen.nspace
-                        )
-                        .onTapGesture {
-                            withAnimation {
-                                appState.setFullscreen(nil)
-                            }
+            if let fullscreen = appState.fullscreen {
+                fullscreen.view
+                    .matchedGeometryEffect(
+                        id: FullscreenModal.id,
+                        in: fullscreen.nspace
+                    )
+                    .onTapGesture {
+                        withAnimation {
+                            appState.setFullscreen(nil)
                         }
-                        .zIndex(1)
-                }
+                    }
+                    .zIndex(1)
+            }
         }
         .privacyView(enabled: $showPrivacyView)
         .environmentObject(appState)
@@ -50,6 +50,9 @@ struct ContentView: View {
                 showPrivacyView = true
                 appContext.requestBiometricUnlock()
             }
+#if DEBUG
+            CacheManager.shared.deleteAll { _ in }
+#endif
         }
         .onChange(of: scenePhase) { value in
             switch value {

@@ -17,7 +17,6 @@ struct VLCVideoView: UIViewRepresentable {
             frame: .zero
         )
         view.mediaListPlayer.mediaPlayer.delegate = context.coordinator
-        view.delegate = context.coordinator
         return view
     }
 
@@ -26,7 +25,6 @@ struct VLCVideoView: UIViewRepresentable {
         context: UIViewRepresentableContext<VLCVideoView>
     ) {
         //debugPrint("state change \(vlcVideoViewModel.vlcVideo.mediaControlState)")
-        guard !vlcVideoViewModel.video.initializing else { return }
         switch vlcVideoViewModel.video.mediaControlState {
         case .initialize:
             return
@@ -54,12 +52,7 @@ struct VLCVideoView: UIViewRepresentable {
 
     class Coordinator: NSObject,
                        UIGestureRecognizerDelegate,
-                       VLCMediaPlayerDelegate,
-                       VLCMediaListPlayerUIViewDelegate {
-        func isInitialized() {
-            self.parent.vlcVideoViewModel.setDoneInitializing()
-        }
-
+                       VLCMediaPlayerDelegate {
         var parent: VLCVideoView
 
         init(_ parent: VLCVideoView) {
