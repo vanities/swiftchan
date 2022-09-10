@@ -27,7 +27,6 @@ struct ImageView: View {
                 ProgressView(progress)
                     .progressViewStyle(WhiteCircularProgressViewStyle())
             }
-            .processingQueue(.mainAsync)
             .onProgress { receivedSize, totalSize  in
                 progress.completedUnitCount = receivedSize
                 progress.totalUnitCount = totalSize
