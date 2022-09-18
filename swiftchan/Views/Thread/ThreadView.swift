@@ -35,6 +35,10 @@ struct ThreadView: View {
     var body: some View {
         return ZStack {
             replyNavigation
+            if viewModel.posts.count == 0 {
+                Text("Thread contains no posts.")
+                    .foregroundColor(.red)
+            }
 
             ScrollViewReader { reader in
                 ScrollView {
