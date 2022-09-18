@@ -28,8 +28,10 @@ struct ImageView: View {
                     .progressViewStyle(WhiteCircularProgressViewStyle())
             }
             .onProgress { receivedSize, totalSize  in
-                progress.completedUnitCount = receivedSize
-                progress.totalUnitCount = totalSize
+                DispatchQueue.main.async {
+                    progress.completedUnitCount = receivedSize
+                    progress.totalUnitCount = totalSize
+                }
             }
             // .onlyFromCache()
             // .waitForCache()

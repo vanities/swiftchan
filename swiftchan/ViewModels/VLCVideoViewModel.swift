@@ -13,7 +13,6 @@ class VLCVideoViewModel: ObservableObject {
     init(url: URL) {
         video = VLCVideo(url: url)
     }
-
     @MainActor
     func download() async throws {
         if let url = try? await video.download() {
@@ -23,33 +22,43 @@ class VLCVideoViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func updateTime(current: VLCTime, remaining: VLCTime) {
         video.currentTime = current
         video.remainingTime = remaining
     }
+    @MainActor
     func updateTime(current: VLCTime, remaining: VLCTime, total: VLCTime) {
         video.currentTime = current
         video.remainingTime = remaining
         video.totalTime = total
     }
+
+    @MainActor
     func setSeeking(_ value: Bool) {
         video.seeking = value
     }
+    @MainActor
     func setDoneInitializing() {
         video.initializing = false
     }
+    @MainActor
     func setMediaControlState(_ state: VLCVideo.MediaControlState) {
         video.mediaControlState = state
     }
+    @MainActor
     func setMediaPlayerState(_ state: VLCMediaPlayerState) {
         video.mediaPlayerState = state
     }
+    @MainActor
     func setMediaState(_ state: VLCMediaState) {
         video.mediaState = state
     }
+    @MainActor
     func play() {
         setMediaControlState(.play)
     }
+    @MainActor
     func pause() {
         setMediaControlState(.pause)
     }

@@ -20,7 +20,7 @@ struct VLCVideo: Equatable, Identifiable {
     var totalTime: VLCTime = VLCTime(int: 0)
     var seeking: Bool = false
     var initializing: Bool = true
-    @MainActor var downloadProgress = Progress()
+    var downloadProgress = Progress()
 
     init(url: URL) {
         self.url = url

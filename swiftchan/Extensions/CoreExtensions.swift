@@ -306,7 +306,9 @@ extension URLSession {
 
         let (asyncBytes, response) = try await bytes(for: request, delegate: delegate)
         let expectedLength = response.expectedContentLength                             // note, if server cannot provide expectedContentLength, this will be -1
-        progress.totalUnitCount = expectedLength > 0 ? expectedLength : estimatedSize
+        await MainActor.run { [expectedLength, estimatedSize] in
+            progress.totalUnitCount = expectedLength > 0 ? expectedLength : estimatedSize
+        }
 
         let fileURL = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(UUID().uuidString)
@@ -334,9 +336,13 @@ extension URLSession {
                 buffer.removeAll(keepingCapacity: true)
 
                 if expectedLength < 0 || count > expectedLength {
-                    progress.totalUnitCount = count + estimatedSize
+                    await MainActor.run { [count, estimatedSize] in
+                        progress.totalUnitCount = count + estimatedSize
+                    }
                 }
-                progress.completedUnitCount = count
+                await MainActor.run { [count] in
+                    progress.completedUnitCount = count
+                }
             }
         }
 
@@ -346,8 +352,10 @@ extension URLSession {
 
         output.close()
 
-        progress.totalUnitCount = count
-        progress.completedUnitCount = count
+        await MainActor.run { [count] in
+            progress.totalUnitCount = count
+            progress.completedUnitCount = count
+        }
 
         return (fileURL, response)
     }
