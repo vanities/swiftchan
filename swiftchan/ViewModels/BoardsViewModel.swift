@@ -10,18 +10,21 @@ import FourChan
 import Defaults
 
 final class BoardsViewModel: ObservableObject {
-    @Published private(set) var boards = [Board]()
-
-    init() {
-        self.load()
+    enum State {
+        case initial, loading, loaded, error
     }
 
-    func load() {
-        Task {
-            let boards = await FourchanService.getBoards()
-            DispatchQueue.main.async {
-                self.boards = boards
-            }
+    @Published private(set) var boards = [Board]()
+    @Published private(set) var state = State.initial
+
+    @MainActor
+    func load() async {
+        state = .loading
+        boards = await FourchanService.getBoards()
+        if boards.count > 0 {
+            state = .loaded
+        } else {
+           state = .error
         }
     }
 

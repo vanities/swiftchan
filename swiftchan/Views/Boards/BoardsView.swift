@@ -20,41 +20,48 @@ struct BoardsView: View {
     @State private var searchText: String = ""
     @State private var showingSettings: Bool = false
 
+    @ViewBuilder
     var body: some View {
-        return NavigationView {
-            if boardsViewModel.boards.count == .zero {
+        ZStack {
+            switch boardsViewModel.state {
+            case .loading, .initial, .error:
                 ProgressView()
-            } else {
-                ZStack {
-                    navigation
-                        .hidden()
-                    ScrollView(.vertical, showsIndicators: true) {
-                        LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
-                            if searchText.isEmpty {
+            case .loaded:
+                NavigationView {
+                    ZStack {
+                        navigation
+                            .hidden()
+                        ScrollView(.vertical, showsIndicators: true) {
+                            LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
+                                if searchText.isEmpty {
+                                    BoardSection(
+                                        headerText: Constants.favoritesText,
+                                        list: boardsViewModel.getFavoriteBoards(),
+                                        selection: $navigationSelection
+                                    )
+                                }
                                 BoardSection(
-                                    headerText: Constants.favoritesText,
-                                    list: boardsViewModel.getFavoriteBoards(),
+                                    headerText: Constants.allText,
+                                    list: boardsViewModel.getFilteredBoards(searchText: searchText),
                                     selection: $navigationSelection
                                 )
                             }
-                            BoardSection(
-                                headerText: Constants.allText,
-                                list: boardsViewModel.getFilteredBoards(searchText: searchText),
-                                selection: $navigationSelection
-                            )
                         }
+                        .searchable(text: $searchText)
                     }
-                    .searchable(text: $searchText)
+                    .navigationBarTitle(Constants.title)
+                    .navigationBarItems(trailing: settingsButton)
                 }
-                .navigationBarTitle(Constants.title)
-                .navigationBarItems(trailing: settingsButton)
+                .navigationViewStyle(StackNavigationViewStyle())
+                .onOpenURL { url in
+                    if case .board(let name) = Deeplinker.getType(url: url) {
+                        navigationSelection = name
+                    }
+                }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .onOpenURL { url in
-            if case .board(let name) = Deeplinker.getType(url: url) {
-                navigationSelection = name
-            }
+        .task {
+            await boardsViewModel.load()
         }
     }
 
@@ -68,9 +75,9 @@ struct BoardsView: View {
                 Image(systemName: Constants.settingsIcon)
                     .foregroundColor(Color.primary)
             })
-            .onTapGesture {
-                showingSettings = true
-            }
+        .onTapGesture {
+            showingSettings = true
+        }
     }
 
     var navigation: some View {
