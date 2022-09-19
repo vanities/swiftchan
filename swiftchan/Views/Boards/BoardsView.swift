@@ -16,48 +16,62 @@ struct BoardsView: View {
 
     @StateObject var boardsViewModel = BoardsViewModel()
 
-    @State var navigationSelection: String?
     @State private var searchText: String = ""
-    @State private var showingSettings: Bool = false
+    @State private var presentedNavigation = NavigationPath()
+    let settingNavigation = "settings"
 
     @ViewBuilder
     var body: some View {
         ZStack {
             switch boardsViewModel.state {
-            case .loading, .initial, .error:
+            case .loading, .initial:
                 ProgressView()
             case .loaded:
-                NavigationView {
+                NavigationStack(path: $presentedNavigation) {
                     ZStack {
-                        navigation
-                            .hidden()
                         ScrollView(.vertical, showsIndicators: true) {
                             LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
                                 if searchText.isEmpty {
                                     BoardSection(
                                         headerText: Constants.favoritesText,
-                                        list: boardsViewModel.getFavoriteBoards(),
-                                        selection: $navigationSelection
+                                        list: boardsViewModel.getFavoriteBoards()
                                     )
                                 }
                                 BoardSection(
                                     headerText: Constants.allText,
-                                    list: boardsViewModel.getFilteredBoards(searchText: searchText),
-                                    selection: $navigationSelection
+                                    list: boardsViewModel.getFilteredBoards(searchText: searchText)
                                 )
                             }
                         }
                         .searchable(text: $searchText)
                     }
+                    .buttonStyle(.plain)
                     .navigationBarTitle(Constants.title)
                     .navigationBarItems(trailing: settingsButton)
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
-                .onOpenURL { url in
-                    if case .board(let name) = Deeplinker.getType(url: url) {
-                        navigationSelection = name
+                    .navigationDestination(for: String.self) { value in
+                        if value == settingNavigation {
+                            SettingsView()
+                        } else {
+                            CatalogView(boardName: value)
+                        }
                     }
                 }
+                .onOpenURL { url in
+                    if case .board(let name) = Deeplinker.getType(url: url) {
+                        presentedNavigation.append(name)
+                    }
+                }
+            case .error:
+                VStack {
+                    Image(systemName: Constants.refreshIcon)
+                        .frame(width: 25, height: 25)
+                    Text("Error loading boards, Tap to retry.")
+                }.onTapGesture {
+                    Task {
+                        await boardsViewModel.load()
+                    }
+                }
+                .foregroundColor(Color.red)
             }
         }
         .task {
@@ -66,28 +80,9 @@ struct BoardsView: View {
     }
 
     var settingsButton: some View {
-        NavigationLink(
-            isActive: $showingSettings,
-            destination: {
-                SettingsView()
-            },
-            label: {
-                Image(systemName: Constants.settingsIcon)
-                    .foregroundColor(Color.primary)
-            })
-        .onTapGesture {
-            showingSettings = true
-        }
-    }
-
-    var navigation: some View {
-        ForEach(boardsViewModel.getAllBoards(searchText: searchText)) { board in
-            NavigationLink(
-                tag: board.board,
-                selection: $navigationSelection,
-                destination: {CatalogView(boardName: board.board)},
-                label: { EmptyView() }
-            )
+        NavigationLink(value: settingNavigation) {
+            Image(systemName: Constants.settingsIcon)
+                .foregroundColor(Color.primary)
         }
     }
 
@@ -96,6 +91,7 @@ struct BoardsView: View {
         static let allText = "all"
         static let title = "4chan"
         static let settingsIcon = "gear"
+        static let refreshIcon = "arrow.clockwise"
         static let gridSpacing: CGFloat = 1
     }
 }

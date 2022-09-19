@@ -11,7 +11,6 @@ import FourChan
 struct BoardSection: View {
     let headerText: String
     let list: [Board]
-    @Binding var selection: String?
 
     var body: some View {
         Group {
@@ -22,18 +21,17 @@ struct BoardSection: View {
             ) {
 
                 ForEach(list) { board in
-                    BoardView(
-                        name: board.board,
-                        nsfw: board.isNSFW,
-                        title: board.title,
-                        description: board.meta_description.clean
-                    )
-                        .onTapGesture {
-                            selection = board.board
-                        }
+                    NavigationLink(value: board.board) {
+                        BoardView(
+                            name: board.board,
+                            nsfw: board.isNSFW,
+                            title: board.title,
+                            description: board.meta_description.clean
+                        )
                         .padding(.horizontal, 5)
                         .id("\(headerText)-\(board.board)")
                         .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
+                    }
                 }
             }
         }
