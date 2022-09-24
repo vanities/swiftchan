@@ -51,7 +51,7 @@ extension MediaView: Buildable {
 #if DEBUG
 struct MediaView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "pol", id: 0)
+        let viewModel = ThreadViewModel(boardName: "pol", id: 0)
         let urls = [
                 URLExamples.image,
                 URLExamples.gif,

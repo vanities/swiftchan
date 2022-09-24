@@ -16,7 +16,7 @@ struct RepliesView: View {
     @State private var replyId: Int = 0
 
     @EnvironmentObject private var presentationState: PresentationState
-    @EnvironmentObject private var viewModel: ThreadView.ViewModel
+    @EnvironmentObject private var viewModel: ThreadViewModel
 
     var body: some View {
         return ScrollView(.vertical, showsIndicators: true) {
@@ -46,7 +46,7 @@ struct RepliesView: View {
 struct RepliesView_Previews: PreviewProvider {
 
     static var previews: some View {
-        let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        let viewModel = ThreadViewModel(boardName: "g", id: 76759434)
         RepliesView(replies: [0, 1])
             .environmentObject(viewModel)
     }

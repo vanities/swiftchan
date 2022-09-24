@@ -20,9 +20,9 @@ struct ThreadView: View {
     @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
 
     @EnvironmentObject private var appState: AppState
-    @StateObject var viewModel: ThreadView.ViewModel
+    @StateObject var viewModel: ThreadViewModel
 
-    @StateObject private var presentationState = PresentationState()
+    @ateObject private var presentationState = PresentationState()
     @StateObject private var threadAutorefresher = ThreadAutoRefresher()
 
     @State private var pullToRefreshShowing: Bool = false
@@ -32,137 +32,147 @@ struct ThreadView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
-    init(boardName: String, id: PostNumber) {
+    init(boardName: String, postNumber: PostNumber) {
         self._viewModel = StateObject(
-            wrappedValue: ThreadView.ViewModel(
+            wrappedValue: ThreadViewModel(
                 boardName: boardName,
-                id: id
+                id: postNumber
             )
         )
     }
 
+    @ViewBuilder
     var body: some View {
-        return ZStack {
-            if viewModel.posts.count == 0 {
-                Text("Thread contains no posts.")
-                    .foregroundColor(.red)
-            }
-
-            ScrollViewReader { reader in
-                ScrollView {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .center,
-                        spacing: 0
-                    ) {
-                        ForEach(viewModel.posts.indices, id: \.self) { postIndex in
-                            let post = viewModel.posts[postIndex]
-                            if !post.isHidden(boardName: viewModel.boardName) {
-                                PostView(index: postIndex)
-                                    .environmentObject(viewModel)
+        switch viewModel.state {
+        case .initial:
+            ProgressView()
+                .task {
+                    await viewModel.getPosts()
+                }
+        case .loading:
+            ProgressView()
+        case .loaded:
+            ZStack {
+                ScrollViewReader { reader in
+                    ScrollView {
+                        LazyVGrid(
+                            columns: columns,
+                            alignment: .center,
+                            spacing: 0
+                        ) {
+                            ForEach(viewModel.posts.indices, id: \.self) { postIndex in
+                                let post = viewModel.posts[postIndex]
+                                if !post.isHidden(boardName: viewModel.boardName) {
+                                    PostView(index: postIndex)
+                                        .environmentObject(viewModel)
+                                }
+                            }
+                        }
+                        .padding(.all, 3)
+                        .onChange(of: presentationState.galleryIndex) { _ in
+                            scrollToPost(reader: reader)
+                        }
+                        .opacity(opacity)
+                        .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
+                            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                            Task {
+                                await fetchAndPrefetchMedia()
                             }
                         }
                     }
-                    .padding(.all, 3)
-                    .onChange(of: presentationState.galleryIndex) { _ in
-                        scrollToPost(reader: reader)
-                    }
-                    .opacity(opacity)
-                    .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        update()
-                    }
                 }
             }
-        }
-        .sheet(
-            isPresented: $presentationState.presentingGallery,
-            onDismiss: {
-                // reneable this if it got disabled
-                UIApplication.shared.isIdleTimerDisabled = false
+            .sheet(
+                isPresented: $presentationState.presentingGallery,
+                onDismiss: {
+                    // reneable this if it got disabled
+                    UIApplication.shared.isIdleTimerDisabled = false
 
-            },
-            content: {
-                GalleryView(
-                    index: presentationState.galleryIndex
-                )
-                .environmentObject(appState)
-                .environmentObject(presentationState)
-                .environmentObject(viewModel)
-                .onAppear {
-                    threadAutorefresher.cancelTimer()
+                },
+                content: {
+                    GalleryView(
+                        index: presentationState.galleryIndex
+                    )
+                    .environmentObject(appState)
+                    .environmentObject(presentationState)
+                    .environmentObject(viewModel)
+                    .onAppear {
+                        threadAutorefresher.cancelTimer()
+                    }
+                    .onDisappear {
+                        threadAutorefresher.setTimer()
+                    }
                 }
-                .onDisappear {
+            )
+            .onOpenURL { url in
+                if case .post(let id) = Deeplinker.getType(url: url) {
+                    showReply = true
+                    replyId = viewModel.getPostIndexFromId(id)
+                }
+            }
+            .onDisappear {
+                viewModel.stopPrefetching()
+            }
+            .onReceive(threadAutorefresher.timer) { _ in
+                if threadAutorefresher.incrementRefreshTimer() {
+                    print("Thread auto refresh timer met, updating thread.")
+                    Task {
+                        await fetchAndPrefetchMedia()
+                    }
+                }
+
+            }
+            .onChange(of: presentationState.presentingReplies) { presenting in
+                if presenting {
+                    threadAutorefresher.cancelTimer()
+                } else {
                     threadAutorefresher.setTimer()
                 }
             }
-        )
-        .onOpenURL { url in
-            if case .post(let id) = Deeplinker.getType(url: url) {
-                showReply = true
-                replyId = viewModel.getPostIndexFromId(id)
+            .environmentObject(presentationState)
+            .navigationTitle(viewModel.title)
+            .toolbar(id: "toolbar-1") {
+                ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
+                    HStack {
+                        // TODO: fix this from redrawing the whole posts in ThreadView,
+                        //autoRefreshButton
+                        Link(destination: viewModel.url) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
+                .defaultCustomization(.hidden)
             }
-        }
-        .task {
-            viewModel.prefetch()
-        }
-        .onDisappear {
-            viewModel.stopPrefetching()
-        }
-        .onReceive(threadAutorefresher.timer) { _ in
-            if threadAutorefresher.incrementRefreshTimer() {
-                print("Thread auto refresh timer met, updating thread.")
-                update()
+            .onChange(of: showReply) { value in
+                if value {
+                    threadAutorefresher.cancelTimer()
+                } else {
+                    threadAutorefresher.setTimer()
+                }
             }
-
-        }
-        .onChange(of: presentationState.presentingReplies) { presenting in
-            if presenting {
-                threadAutorefresher.cancelTimer()
-            } else {
-                threadAutorefresher.setTimer()
+            .navigationDestination(isPresented: $showReply) {
+                PostView(index: replyId)
+                    .environmentObject(viewModel)
+                    .environmentObject(presentationState)
             }
-        }
-        .environmentObject(presentationState)
-        .navigationTitle(viewModel.title)
-        .toolbar(id: "toolbar-1") {
-            ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
-                HStack {
-                    // TODO: fix this from redrawing the whole posts in ThreadView,
-                    //autoRefreshButton
-                    Link(destination: viewModel.url) {
-                        Image(systemName: "square.and.arrow.up")
+            .bottomSheet(
+                isPresented: $appState.showingBottomSheet,
+                height: 100
+            ) {
+                if let post = appState.selectedBottomSheetPost,
+                   let index = viewModel.posts.firstIndex(of: post) {
+                    Button("Hide \(index == 0 ? "Thread" : "Post")") {
+                        post.hide(boardName: viewModel.boardName)
                     }
                 }
             }
-            .defaultCustomization(.hidden)
-        }
-        .onChange(of: showReply) { value in
-            if value {
-                threadAutorefresher.cancelTimer()
-            } else {
-                threadAutorefresher.setTimer()
-            }
-        }
-        .navigationDestination(isPresented: $showReply) {
-            PostView(index: replyId)
-                .environmentObject(viewModel)
-                .environmentObject(presentationState)
-        }
-        .bottomSheet(
-            isPresented: $appState.showingBottomSheet,
-            height: 100
-        ) {
-            if let post = appState.selectedBottomSheetPost,
-               let index = viewModel.posts.firstIndex(of: post) {
-                Button("Hide \(index == 0 ? "Thread" : "Post")") {
-                    post.hide(boardName: viewModel.boardName)
-                }
-            }
+        case .error:
+            Text("Thread contains no posts.")
+                .foregroundColor(.red)
+
         }
     }
 
-    // Seems to be happening on every update from the timer
     @ViewBuilder
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
@@ -183,14 +193,12 @@ struct ThreadView: View {
         }
     }
 
-    private func update() {
-        Task {
-            await viewModel.load()
-            DispatchQueue.main.async {
-                pullToRefreshShowing = false
-                viewModel.prefetch()
-            }
+    private func fetchAndPrefetchMedia() async {
+        await viewModel.getPosts()
+        DispatchQueue.main.async {
+            pullToRefreshShowing = false
         }
+        viewModel.prefetch()
     }
 
     private func scrollToPost(reader: ScrollViewProxy) {
@@ -205,15 +213,15 @@ struct ThreadView: View {
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+        let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
 
         Group {
-            ThreadView(boardName: viewModel.boardName, id: viewModel.posts.first!.id)
+            ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
                 .environmentObject(viewModel)
                 .environmentObject(AppState())
 
             NavigationView {
-                ThreadView(boardName: viewModel.boardName, id: viewModel.posts.first!.id)
+                ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
                     .environmentObject(viewModel)
                     .environmentObject(AppState())
             }

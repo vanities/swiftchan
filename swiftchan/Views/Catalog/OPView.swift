@@ -12,7 +12,7 @@ import Defaults
 
 struct OPView: View {
     @Default(.showOPPreview) var showOPPreview
-    @StateObject var threadViewModel: ThreadView.ViewModel
+    @StateObject var threadViewModel: ThreadViewModel
     @EnvironmentObject var appState: AppState
     @Namespace var fullscreenNspace
 
@@ -29,7 +29,7 @@ struct OPView: View {
         self.comment = post.comment
         self.index = post.index
         self._threadViewModel = StateObject(
-            wrappedValue: ThreadView.ViewModel(
+            wrappedValue: ThreadViewModel(
                 boardName: boardName,
                 id: post.post.no
             )

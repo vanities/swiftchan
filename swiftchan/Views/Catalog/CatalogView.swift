@@ -58,7 +58,7 @@ struct CatalogView: View {
                                     post: post
                                 )
                             }
-        .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                 }
@@ -79,7 +79,7 @@ struct CatalogView: View {
 
             )
             .navigationDestination(for: SwiftchanPost.self) { post in
-                ThreadView(boardName: post.boardName, id: post.post.id)
+                ThreadView(boardName: post.boardName, postNumber: post.post.id)
             }
             .searchable(text: $searchText)
             .bottomSheet(

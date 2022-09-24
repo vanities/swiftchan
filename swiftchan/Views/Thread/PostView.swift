@@ -10,7 +10,7 @@ import FourChan
 import BottomSheet
 
 struct PostView: View {
-    @EnvironmentObject private var viewModel: ThreadView.ViewModel
+    @EnvironmentObject private var viewModel: ThreadViewModel
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var presentationState: PresentationState
 
@@ -169,7 +169,7 @@ struct PostView: View {
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+        let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
 
         return PostView(index: 0)
             .environmentObject(viewModel)
