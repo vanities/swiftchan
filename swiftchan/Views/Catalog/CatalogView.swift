@@ -52,10 +52,13 @@ struct CatalogView: View {
                 ) {
                     ForEach(filteredPosts) { post in
                         if !post.post.isHidden(boardName: boardName) {
-                            OPView(
-                                boardName: boardName,
-                                post: post
-                            )
+                            NavigationLink(value: post) {
+                                OPView(
+                                    boardName: boardName,
+                                    post: post
+                                )
+                            }
+        .buttonStyle(PlainButtonStyle())
                         }
                     }
                 }
@@ -76,7 +79,7 @@ struct CatalogView: View {
 
             )
             .navigationDestination(for: SwiftchanPost.self) { post in
-                ThreadView(post: post)
+                ThreadView(boardName: post.boardName, id: post.post.id)
             }
             .searchable(text: $searchText)
             .bottomSheet(

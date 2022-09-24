@@ -39,3 +39,19 @@ struct WhiteCircularProgressViewStyle: ProgressViewStyle {
         }
     }
 }
+
+struct ThreadRefreshProgressViewStyle: ProgressViewStyle {
+    var paused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            Circle()
+                .trim(from: 0.0, to: CGFloat(configuration.fractionCompleted ?? 0))
+                .stroke(paused ? .red : .blue, style: StrokeStyle(lineWidth: 2))
+                .rotationEffect(.degrees(-90))
+                .frame(width: 25)
+
+            configuration.label
+        }
+    }
+}

@@ -32,11 +32,11 @@ struct ThreadView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
-    init(post: SwiftchanPost) {
+    init(boardName: String, id: PostNumber) {
         self._viewModel = StateObject(
             wrappedValue: ThreadView.ViewModel(
-                boardName: post.boardName,
-                id: post.post.no
+                boardName: boardName,
+                id: id
             )
         )
     }
@@ -125,18 +125,29 @@ struct ThreadView: View {
         }
         .environmentObject(presentationState)
         .navigationTitle(viewModel.title)
-        .toolbar {
-            ToolbarItem(placement: ToolbarItemPlacement.navigationBarTrailing) {
+        .toolbar(id: "toolbar-1") {
+            ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
                 HStack {
-                    // autoRefreshButton
+                    // TODO: fix this from redrawing the whole posts in ThreadView,
+                    //autoRefreshButton
                     Link(destination: viewModel.url) {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
             }
+            .defaultCustomization(.hidden)
+        }
+        .onChange(of: showReply) { value in
+            if value {
+                threadAutorefresher.cancelTimer()
+            } else {
+                threadAutorefresher.setTimer()
+            }
         }
         .navigationDestination(isPresented: $showReply) {
             PostView(index: replyId)
+                .environmentObject(viewModel)
+                .environmentObject(presentationState)
         }
         .bottomSheet(
             isPresented: $appState.showingBottomSheet,
@@ -151,29 +162,26 @@ struct ThreadView: View {
         }
     }
 
-    /*
-     // TODO: fix this from redrawing the whole posts in ThreadView,
-     // Seems to be happening on every update from the timer
-     @ViewBuilder
-     var autoRefreshButton: some View {
-     if autoRefreshEnabled {
-     ProgressView(
-     value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
-     total: Double(autoRefreshThreadTime)
-     ) {
-     Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
-     .animation(nil)
-     }
-     .progressViewStyle(CustomCircularProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
-     .onTapGesture {
-     UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-     threadAutorefresher.pauseAutoRefresh.toggle()
-     }
-     } else {
-     EmptyView()
-     }
-     }
-     */
+    // Seems to be happening on every update from the timer
+    @ViewBuilder
+    var autoRefreshButton: some View {
+        if autoRefreshEnabled {
+            ProgressView(
+                value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
+                total: Double(autoRefreshThreadTime)
+            ) {
+                Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
+                    .animation(nil)
+            }
+            .onTapGesture {
+                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+                threadAutorefresher.pauseAutoRefresh.toggle()
+            }
+            .progressViewStyle(ThreadRefreshProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
+        } else {
+            EmptyView()
+        }
+    }
 
     private func update() {
         Task {
@@ -194,24 +202,22 @@ struct ThreadView: View {
 }
 
 #if DEBUG
-/*
- struct ThreadView_Previews: PreviewProvider {
- static var previews: some View {
- // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
- let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+struct ThreadView_Previews: PreviewProvider {
+    static var previews: some View {
+        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
- Group {
- ThreadView()
- .environmentObject(viewModel)
- .environmentObject(AppState())
+        Group {
+            ThreadView(boardName: viewModel.boardName, id: viewModel.posts.first!.id)
+                .environmentObject(viewModel)
+                .environmentObject(AppState())
 
- NavigationView {
- ThreadView()
- .environmentObject(viewModel)
- .environmentObject(AppState())
- }
- }
- }
- }
- */
+            NavigationView {
+                ThreadView(boardName: viewModel.boardName, id: viewModel.posts.first!.id)
+                    .environmentObject(viewModel)
+                    .environmentObject(AppState())
+            }
+        }
+    }
+}
 #endif

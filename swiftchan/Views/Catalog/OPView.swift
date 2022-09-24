@@ -43,90 +43,87 @@ struct OPView: View {
                 .cornerRadius(Constants.backgroundCornerRadius)
                 .border(Colors.Op.border)
 
-            NavigationLink(value: swiftchanPost) {
-                VStack(alignment: .leading, spacing: Constants.vstackSpacing) {
-                    // image
-                    if let url = post.getMediaUrl(boardId: boardName),
-                       let thumbnailUrl = post.getMediaUrl(
-                        boardId: boardName,
-                        thumbnail: true
-                       ) {
+            VStack(alignment: .leading, spacing: Constants.vstackSpacing) {
+                // image
+                if let url = post.getMediaUrl(boardId: boardName),
+                   let thumbnailUrl = post.getMediaUrl(
+                    boardId: boardName,
+                    thumbnail: true
+                   ) {
 
-                        ThumbnailMediaView(
-                            url: url,
-                            thumbnailUrl: thumbnailUrl
-                        )
-                        .matchedGeometryEffect(
-                            id: FullscreenModal.id,
-                            in: fullscreenNspace
-                        )
-                        .gesture(showOPPreview ? TapGesture().onEnded {
-                            withAnimation {
-                                appState.setFullscreen(
-                                    FullscreenModal(
-                                        view: AnyView(
-                                            ZStack {
-                                                Color.black.ignoresSafeArea()
-                                                MediaView(
-                                                    media: Media(
-                                                        index: 0,
-                                                        url: url,
-                                                        thumbnailUrl: thumbnailUrl
-                                                    )
-                                                )
-                                            }
-                                        ),
-                                        nspace: fullscreenNspace
-                                    )
-                                )
-                            }
-                        } : nil)
-                        .zIndex(1)
-                    }
-                    // sticky, closed, image count, thread count
-                    HStack(alignment: .center) {
-                        if let replyCount = post.replies {
-                            Text("R: \(replyCount)")
-                                .italic()
-                        }
-                        if let imageCount = post.images {
-                            Text("F: \(imageCount)")
-                                .italic()
-                        }
-                        if let sticky = post.sticky,
-                           sticky == 1 {
-                            Image(systemName: "pin")
-                                .rotationEffect(.degrees(Constants.stickyPinRotation))
-                                .foregroundColor(Colors.Op.pinColor)
-                        }
-                        if let closed = post.closed,
-                           closed == 1 {
-                            Image(systemName: "lock")
-                                .foregroundColor(Colors.Op.lockColor)
-                        }
-                    }
-                    Group {
-                        // subject
-                        Text(post.sub?.clean ?? "")
-                            .font(Constants.subjectFont)
-                            .bold()
-                            .lineLimit(nil)
-                            .padding(.bottom, Constants.subjectPadding)
-
-                        // comment
-                        Text(comment)
-                            .textSelection(.enabled)
-                            .lineLimit(Constants.commentLineLimit)
-                    }
-                    .accessibilityIdentifier(
-                        AccessibilityIdentifiers.opButton(index)
+                    ThumbnailMediaView(
+                        url: url,
+                        thumbnailUrl: thumbnailUrl
                     )
+                    .matchedGeometryEffect(
+                        id: FullscreenModal.id,
+                        in: fullscreenNspace
+                    )
+                    .gesture(showOPPreview ? TapGesture().onEnded {
+                        withAnimation {
+                            appState.setFullscreen(
+                                FullscreenModal(
+                                    view: AnyView(
+                                        ZStack {
+                                            Color.black.ignoresSafeArea()
+                                            MediaView(
+                                                media: Media(
+                                                    index: 0,
+                                                    url: url,
+                                                    thumbnailUrl: thumbnailUrl
+                                                )
+                                            )
+                                        }
+                                    ),
+                                    nspace: fullscreenNspace
+                                )
+                            )
+                        }
+                    } : nil)
+                    .zIndex(1)
                 }
-                .padding(.all, Constants.padding)
+                // sticky, closed, image count, thread count
+                HStack(alignment: .center) {
+                    if let replyCount = post.replies {
+                        Text("R: \(replyCount)")
+                            .italic()
+                    }
+                    if let imageCount = post.images {
+                        Text("F: \(imageCount)")
+                            .italic()
+                    }
+                    if let sticky = post.sticky,
+                       sticky == 1 {
+                        Image(systemName: "pin")
+                            .rotationEffect(.degrees(Constants.stickyPinRotation))
+                            .foregroundColor(Colors.Op.pinColor)
+                    }
+                    if let closed = post.closed,
+                       closed == 1 {
+                        Image(systemName: "lock")
+                            .foregroundColor(Colors.Op.lockColor)
+                    }
+                }
+                Group {
+                    // subject
+                    Text(post.sub?.clean ?? "")
+                        .font(Constants.subjectFont)
+                        .bold()
+                        .lineLimit(nil)
+                        .padding(.bottom, Constants.subjectPadding)
+
+                    // comment
+                    Text(comment)
+                        .textSelection(.enabled)
+                        .lineLimit(Constants.commentLineLimit)
+                }
+                .accessibilityIdentifier(
+                    AccessibilityIdentifiers.opButton(index)
+                )
             }
+            .padding(.all, Constants.padding)
         }
         .environmentObject(threadViewModel)
-        .buttonStyle(PlainButtonStyle())
         .allowsHitTesting(!appState.showingCatalogMenu)
     }
 

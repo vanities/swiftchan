@@ -13,8 +13,6 @@ struct PostView: View {
     @EnvironmentObject private var viewModel: ThreadView.ViewModel
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var presentationState: PresentationState
-    @State private var showReply: Bool = false
-    @State private var replyId: Int = 0
 
     let index: Int
 

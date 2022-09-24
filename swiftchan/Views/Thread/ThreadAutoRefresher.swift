@@ -3,6 +3,7 @@ import Combine
 import Defaults
 
 class ThreadAutoRefresher: ObservableObject {
+    // TODO: fix this from redrawing the whole posts in ThreadView, make this Published
     private(set) var autoRefreshTimer: Double = 0
     private(set) var timer: Publishers.Autoconnect<Timer.TimerPublisher>
     @Published var pauseAutoRefresh: Bool = false
@@ -20,13 +21,11 @@ class ThreadAutoRefresher: ObservableObject {
     }
 
     // Returns true if hit reset limit
+    @MainActor
     func incrementRefreshTimer() -> Bool {
         guard !pauseAutoRefresh, Defaults[.autoRefreshEnabled] else { return false }
-        withAnimation {
-            DispatchQueue.main.async { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.autoRefreshTimer += Int(strongSelf.autoRefreshTimer) >= Defaults[.autoRefreshThreadTime] ? Double(-Defaults[.autoRefreshThreadTime]) : 1
-            }
+        withAnimation(.linear(duration: 1)) {
+            autoRefreshTimer += Int(autoRefreshTimer) >= Defaults[.autoRefreshThreadTime] ? Double(-Defaults[.autoRefreshThreadTime]) : 1
         }
         if autoRefreshTimer == .zero {
             return true
