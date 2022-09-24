@@ -12,6 +12,12 @@ struct RepliesView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
+    @State private var showReply: Bool = false
+    @State private var replyId: Int = 0
+
+    @EnvironmentObject private var presentationState: PresentationState
+    @EnvironmentObject private var viewModel: ThreadView.ViewModel
+
     var body: some View {
         return ScrollView(.vertical, showsIndicators: true) {
             LazyVGrid(columns: columns,
@@ -21,6 +27,17 @@ struct RepliesView: View {
                     PostView(index: index)
                 }
             }
+        }
+        .onOpenURL { url in
+            if case .post(let id) = Deeplinker.getType(url: url) {
+                showReply = true
+                replyId = viewModel.getPostIndexFromId(id)
+            }
+        }
+        .navigationDestination(isPresented: $showReply) {
+            PostView(index: replyId)
+                .environmentObject(viewModel)
+                .environmentObject(presentationState)
         }
     }
 }
