@@ -76,7 +76,6 @@ struct VLCPlayerControlsView: View {
                     .font(Font.system(size: 25))
                     .padding()
             }
-
             Text(vlcVideoViewModel.video.currentTime.description)
                 .fixedSize()
 
@@ -93,8 +92,10 @@ struct VLCPlayerControlsView: View {
                         let currentTime = Int32(CGFloat(vlcVideoViewModel.video.totalTime.intValue) * sliderPos)
                         let currentVLCTime = VLCTime(int: currentTime)
                         let remainingVLCTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.video.totalTime.intValue))
-                        vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
-                        vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
+                        if let currentVLCTime, let remainingVLCTime {
+                            vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
+                            vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
+                        }
                     }
                 })
                 .introspectSlider { slider in

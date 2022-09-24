@@ -86,7 +86,7 @@ class FourchanService {
                             } else {
                                 comment = AttributedString()
                             }
-                            posts.append(SwiftchanPost(post: thread, comment: comment, index: index))
+                            posts.append(SwiftchanPost(post: thread, boardName: boardName, comment: comment, index: index))
                             index += 1
                         }
                     }

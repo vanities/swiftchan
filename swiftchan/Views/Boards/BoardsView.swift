@@ -22,60 +22,60 @@ struct BoardsView: View {
 
     @ViewBuilder
     var body: some View {
-        ZStack {
-            switch boardsViewModel.state {
-            case .loading, .initial:
-                ProgressView()
-            case .loaded:
-                NavigationStack(path: $presentedNavigation) {
-                    ZStack {
-                        ScrollView(.vertical, showsIndicators: true) {
-                            LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
-                                if searchText.isEmpty {
-                                    BoardSection(
-                                        headerText: Constants.favoritesText,
-                                        list: boardsViewModel.getFavoriteBoards()
-                                    )
-                                }
+        switch boardsViewModel.state {
+        case .initial:
+            ProgressView()
+                .task {
+                    await boardsViewModel.load()
+                }
+        case .loading:
+            ProgressView()
+        case .loaded:
+            NavigationStack(path: $presentedNavigation) {
+                ZStack {
+                    ScrollView(.vertical, showsIndicators: true) {
+                        LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
+                            if searchText.isEmpty {
                                 BoardSection(
-                                    headerText: Constants.allText,
-                                    list: boardsViewModel.getFilteredBoards(searchText: searchText)
+                                    headerText: Constants.favoritesText,
+                                    list: boardsViewModel.getFavoriteBoards()
                                 )
                             }
-                        }
-                        .searchable(text: $searchText)
-                    }
-                    .buttonStyle(.plain)
-                    .navigationBarTitle(Constants.title)
-                    .navigationBarItems(trailing: settingsButton)
-                    .navigationDestination(for: String.self) { value in
-                        if value == settingNavigation {
-                            SettingsView()
-                        } else {
-                            CatalogView(boardName: value)
+                            BoardSection(
+                                headerText: Constants.allText,
+                                list: boardsViewModel.getFilteredBoards(searchText: searchText)
+                            )
                         }
                     }
+                    .searchable(text: $searchText)
                 }
-                .onOpenURL { url in
-                    if case .board(let name) = Deeplinker.getType(url: url) {
-                        presentedNavigation.append(name)
+                .buttonStyle(.plain)
+                .navigationBarTitle(Constants.title)
+                .navigationBarItems(trailing: settingsButton)
+                .navigationDestination(for: String.self) { value in
+                    if value == settingNavigation {
+                        SettingsView()
+                    } else {
+                        CatalogView(boardName: value)
                     }
                 }
-            case .error:
-                VStack {
-                    Image(systemName: Constants.refreshIcon)
-                        .frame(width: 25, height: 25)
-                    Text("Error loading boards, Tap to retry.")
-                }.onTapGesture {
-                    Task {
-                        await boardsViewModel.load()
-                    }
-                }
-                .foregroundColor(Color.red)
             }
-        }
-        .task {
-            await boardsViewModel.load()
+            .onOpenURL { url in
+                if case .board(let name) = Deeplinker.getType(url: url) {
+                    presentedNavigation.append(name)
+                }
+            }
+        case .error:
+            VStack {
+                Image(systemName: Constants.refreshIcon)
+                    .frame(width: 25, height: 25)
+                Text("Error loading boards, Tap to retry.")
+            }.onTapGesture {
+                Task {
+                    await boardsViewModel.load()
+                }
+            }
+            .foregroundColor(Color.red)
         }
     }
 

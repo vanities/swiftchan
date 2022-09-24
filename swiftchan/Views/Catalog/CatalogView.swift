@@ -36,11 +36,13 @@ struct CatalogView: View {
     var body: some View {
         let filteredPosts = catalogViewModel.getFilteredPosts(searchText: searchText)
         switch catalogViewModel.state {
-        case .loading:
+        case .initial:
             ProgressView()
                 .task {
                     await catalogViewModel.load()
                 }
+        case .loading:
+            ProgressView()
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
                 LazyVGrid(
@@ -73,6 +75,9 @@ struct CatalogView: View {
                 trailing: settingsButton
 
             )
+            .navigationDestination(for: SwiftchanPost.self) { post in
+                ThreadView(post: post)
+            }
             .searchable(text: $searchText)
             .bottomSheet(
                 isPresented: $appState.showingCatalogMenu,
@@ -84,6 +89,17 @@ struct CatalogView: View {
                     RepliesSortRow(viewModel: catalogViewModel)
                 }
             }
+        case .error:
+            VStack {
+                Image(systemName: Constants.refreshIcon)
+                    .frame(width: 25, height: 25)
+                Text("Error loading catalog, Tap to retry.")
+            }.onTapGesture {
+                Task {
+                    await catalogViewModel.load()
+                }
+            }
+            .foregroundColor(Color.red)
         }
     }
 
@@ -97,6 +113,10 @@ struct CatalogView: View {
         }, label: {
             Image(systemName: "ellipsis")
         })
+    }
+
+    struct Constants {
+        static let refreshIcon = "arrow.clockwise"
     }
 }
 

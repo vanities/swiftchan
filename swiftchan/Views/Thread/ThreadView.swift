@@ -20,7 +20,7 @@ struct ThreadView: View {
     @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
 
     @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var viewModel: ViewModel
+    @StateObject var viewModel: ThreadView.ViewModel
 
     @StateObject private var presentationState = PresentationState()
     @StateObject private var threadAutorefresher = ThreadAutoRefresher()
@@ -32,9 +32,17 @@ struct ThreadView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
+    init(post: SwiftchanPost) {
+        self._viewModel = StateObject(
+            wrappedValue: ThreadView.ViewModel(
+                boardName: post.boardName,
+                id: post.post.no
+            )
+        )
+    }
+
     var body: some View {
         return ZStack {
-            replyNavigation
             if viewModel.posts.count == 0 {
                 Text("Thread contains no posts.")
                     .foregroundColor(.red)
@@ -51,6 +59,7 @@ struct ThreadView: View {
                             let post = viewModel.posts[postIndex]
                             if !post.isHidden(boardName: viewModel.boardName) {
                                 PostView(index: postIndex)
+                                    .environmentObject(viewModel)
                             }
                         }
                     }
@@ -126,6 +135,9 @@ struct ThreadView: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $showReply) {
+            PostView(index: replyId)
+        }
         .bottomSheet(
             isPresented: $appState.showingBottomSheet,
             height: 100
@@ -139,47 +151,29 @@ struct ThreadView: View {
         }
     }
 
-    var replyNavigation: some View {
-        NavigationLink(
-            isActive: $showReply,
-            destination: {
-                PostView(index: replyId)
-                    .environmentObject(viewModel)
-                    .environmentObject(presentationState)
-                    .onAppear {
-                        threadAutorefresher.cancelTimer()
-                    }
-                    .onDisappear {
-                        threadAutorefresher.setTimer()
-                    }
-            },
-            label: {}
-        )
-    }
-
     /*
-    // TODO: fix this from redrawing the whole posts in ThreadView,
-    // Seems to be happening on every update from the timer
-    @ViewBuilder
-    var autoRefreshButton: some View {
-        if autoRefreshEnabled {
-            ProgressView(
-                value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
-                total: Double(autoRefreshThreadTime)
-            ) {
-                Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
-                    .animation(nil)
-            }
-            .progressViewStyle(CustomCircularProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
-            .onTapGesture {
-                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                threadAutorefresher.pauseAutoRefresh.toggle()
-            }
-        } else {
-            EmptyView()
-        }
-    }
-    */
+     // TODO: fix this from redrawing the whole posts in ThreadView,
+     // Seems to be happening on every update from the timer
+     @ViewBuilder
+     var autoRefreshButton: some View {
+     if autoRefreshEnabled {
+     ProgressView(
+     value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
+     total: Double(autoRefreshThreadTime)
+     ) {
+     Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
+     .animation(nil)
+     }
+     .progressViewStyle(CustomCircularProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
+     .onTapGesture {
+     UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+     threadAutorefresher.pauseAutoRefresh.toggle()
+     }
+     } else {
+     EmptyView()
+     }
+     }
+     */
 
     private func update() {
         Task {
@@ -200,22 +194,24 @@ struct ThreadView: View {
 }
 
 #if DEBUG
-struct ThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
+/*
+ struct ThreadView_Previews: PreviewProvider {
+ static var previews: some View {
+ // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+ let viewModel = ThreadView.ViewModel(boardName: "biz", id: 21374000)
 
-        Group {
-            ThreadView()
-                .environmentObject(viewModel)
-                .environmentObject(AppState())
+ Group {
+ ThreadView()
+ .environmentObject(viewModel)
+ .environmentObject(AppState())
 
-            NavigationView {
-                ThreadView()
-                    .environmentObject(viewModel)
-                    .environmentObject(AppState())
-            }
-        }
-    }
-}
+ NavigationView {
+ ThreadView()
+ .environmentObject(viewModel)
+ .environmentObject(AppState())
+ }
+ }
+ }
+ }
+ */
 #endif

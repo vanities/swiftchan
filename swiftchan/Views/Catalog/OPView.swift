@@ -19,11 +19,13 @@ struct OPView: View {
     let index: Int
     let boardName: String
     let post: Post
+    let swiftchanPost: SwiftchanPost
     let comment: AttributedString
 
     init(boardName: String, post: SwiftchanPost) {
         self.boardName = boardName
         self.post = post.post
+        self.swiftchanPost = post
         self.comment = post.comment
         self.index = post.index
         self._threadViewModel = StateObject(
@@ -41,12 +43,7 @@ struct OPView: View {
                 .cornerRadius(Constants.backgroundCornerRadius)
                 .border(Colors.Op.border)
 
-            NavigationLink(
-                destination:
-                    ThreadView()
-                    .environmentObject(threadViewModel)
-            ) {
-
+            NavigationLink(value: swiftchanPost) {
                 VStack(alignment: .leading, spacing: Constants.vstackSpacing) {
                     // image
                     if let url = post.getMediaUrl(boardId: boardName),
@@ -128,6 +125,7 @@ struct OPView: View {
                 .padding(.all, Constants.padding)
             }
         }
+        .environmentObject(threadViewModel)
         .buttonStyle(PlainButtonStyle())
         .allowsHitTesting(!appState.showingCatalogMenu)
     }
@@ -154,6 +152,7 @@ struct OPView_Previews: PreviewProvider {
         if let example = Post.example() {
             let swiftchanPost = SwiftchanPost(
                 post: example,
+                boardName: "fit",
                 comment: AttributedString("hello"),
                 index: 0
             )

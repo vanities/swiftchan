@@ -10,7 +10,8 @@ import FourChan
 import Defaults
 
 struct SwiftchanPost: Identifiable, Hashable {
-    var post: Post
+    let post: Post
+    let boardName: String
     var comment: AttributedString
     var id: Int {
         post.id

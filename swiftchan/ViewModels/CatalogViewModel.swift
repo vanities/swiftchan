@@ -15,8 +15,8 @@ extension CatalogView {
     final class CatalogViewModel: ObservableObject {
         // swiftlint:disable nesting
         enum LoadingState {
-            case loading
-            case loaded
+            case initial, loading, loaded, error
+
         }
         // swiftlint:enable nesting
 
@@ -24,7 +24,7 @@ extension CatalogView {
         let prefetcher = Prefetcher()
 
         @Published private(set) var posts = [SwiftchanPost]()
-        @Published var state: LoadingState = .loading
+        @Published var state = LoadingState.initial
 
         private var cancellable = Set<AnyCancellable>()
 
@@ -47,32 +47,35 @@ extension CatalogView {
             stopPrefetching()
         }
 
+        @MainActor
         func load() async {
-            let posts = await FourchanService.getCatalog(boardName: boardName)
-            DispatchQueue.main.async { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.posts = posts
-                strongSelf.state = .loaded
-                strongSelf.handleSorting(value: Defaults.sortFilesBy(boardName: strongSelf.boardName), attributeKey: "files")
-                strongSelf.handleSorting(value: Defaults.sortRepliesBy(boardName: strongSelf.boardName), attributeKey: "replies")
+            state = .loading
+            posts = await FourchanService.getCatalog(boardName: boardName)
+
+            if posts.count > 0 {
+                state = .loaded
+                handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
+                handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
+                prefetch(boardName: boardName)
+
+                Defaults.publisher(.sortFilesBy(boardName: boardName))
+                    .sink { change in
+                        DispatchQueue.main.async { [weak self] in
+                            self?.handleSorting(value: change.newValue, attributeKey: "files")
+                        }
+                    }
+                    .store(in: &cancellable)
+
+                Defaults.publisher(.sortRepliesBy(boardName: boardName))
+                    .sink { change in
+                        DispatchQueue.main.async { [weak self] in
+                            self?.handleSorting(value: change.newValue, attributeKey: "replies")
+                        }
+                    }
+                    .store(in: &cancellable)
+            } else {
+                state = .error
             }
-            prefetch(boardName: boardName)
-
-            Defaults.publisher(.sortFilesBy(boardName: boardName))
-                .sink { change in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.handleSorting(value: change.newValue, attributeKey: "files")
-                    }
-                }
-                .store(in: &cancellable)
-
-            Defaults.publisher(.sortRepliesBy(boardName: boardName))
-                .sink { change in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.handleSorting(value: change.newValue, attributeKey: "replies")
-                    }
-                }
-                .store(in: &cancellable)
 
         }
 
