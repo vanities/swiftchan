@@ -45,7 +45,9 @@ final class ThreadViewModel: ObservableObject {
 
     @MainActor
     func getPosts() async {
-        state = .loading
+        if state != .loaded {
+            state = .loading
+        }
         let (result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) = await FourchanService.getPosts(
             boardName: boardName,
             id: id

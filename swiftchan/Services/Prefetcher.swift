@@ -25,7 +25,6 @@ class Prefetcher {
             urls: urls,
             options: [
                 .alsoPrefetchToMemory,
-                .progressiveJPEG(.default),
                 .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1)))
             ]
         ) { completedResources, skippedResources, failedResources in

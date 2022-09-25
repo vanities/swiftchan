@@ -11,7 +11,7 @@ import Defaults
 
 struct FavoriteStar: View {
     @Default(.favoriteBoards) var favoriteBoardsDefault
-    let viewModel: CatalogView.CatalogViewModel
+    let viewModel: CatalogViewModel
     @State var counter: Int = 0
 
     var favorited: Bool {
@@ -49,7 +49,7 @@ struct FavoriteStar: View {
 #if DEBUG
 struct FavoriteStar_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = CatalogView.CatalogViewModel(boardName: "fit")
+        let viewModel = CatalogViewModel(boardName: "fit")
         FavoriteStar(viewModel: viewModel)
     }
 }

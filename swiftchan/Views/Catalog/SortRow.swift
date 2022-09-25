@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 
 struct RepliesSortRow: View {
-    let viewModel: CatalogView.CatalogViewModel
+    let viewModel: CatalogViewModel
 
     var body: some View {
         SortRow(
@@ -23,7 +23,7 @@ struct RepliesSortRow: View {
 }
 
 struct FilesSortRow: View {
-    let viewModel: CatalogView.CatalogViewModel
+    let viewModel: CatalogViewModel
 
     var body: some View {
         SortRow(
@@ -37,7 +37,7 @@ struct FilesSortRow: View {
 }
 
 struct SortRow: View {
-    let viewModel: CatalogView.CatalogViewModel
+    let viewModel: CatalogViewModel
     let enabledImageName: String
     let disabledImageName: String
     let text: String
@@ -52,7 +52,7 @@ struct SortRow: View {
         case none
     }
 
-    init(viewModel: CatalogView.CatalogViewModel,
+    init(viewModel: CatalogViewModel,
          enabledImageName: String,
          disabledImageName: String,
          text: String,
@@ -106,7 +106,7 @@ struct SortRow: View {
 struct SortRow_Previews: PreviewProvider {
     static var previews: some View {
         let boardName = "fit"
-        let viewModel = CatalogView.CatalogViewModel(boardName: boardName)
+        let viewModel = CatalogViewModel(boardName: boardName)
         Group {
             RepliesSortRow(viewModel: viewModel)
                 .background(Color.white)
