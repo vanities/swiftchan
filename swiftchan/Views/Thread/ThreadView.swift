@@ -22,7 +22,7 @@ struct ThreadView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject var viewModel: ThreadViewModel
 
-    @ateObject private var presentationState = PresentationState()
+    @StateObject private var presentationState = PresentationState()
     @StateObject private var threadAutorefresher = ThreadAutoRefresher()
 
     @State private var pullToRefreshShowing: Bool = false

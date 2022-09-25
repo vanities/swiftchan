@@ -23,16 +23,10 @@ struct ImageView: View {
 
     var body: some View {
         return KFImage(url)
-            .placeholder {
+            .placeholder { progress in
                 ProgressView(progress)
                     .progressViewStyle(WhiteCircularProgressViewStyle())
             }
-            .onProgress { receivedSize, totalSize  in
-                progress.completedUnitCount = receivedSize
-                progress.totalUnitCount = totalSize
-            }
-            // .onlyFromCache()
-            // .waitForCache()
             .resizable()
             .aspectRatio(contentMode: .fit)
             .offset(x: position.width + dragOffset.width, y: position.height + dragOffset.height)
