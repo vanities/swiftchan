@@ -52,14 +52,15 @@ final class ThreadViewModel: ObservableObject {
             boardName: boardName,
             id: id
         )
-        posts = result
-        self.postMediaMapping = postMediaMapping
-        self.comments = comments
-        self.replies = replies
-        setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-        if posts.count > 1 {
+        let posts = result
+        if posts.count > 0 {
+            self.posts = posts
+            self.postMediaMapping = postMediaMapping
+            self.comments = comments
+            self.replies = replies
+            setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
             state = .loaded
-        } else {
+        } else if posts.count == 0, self.posts.count == 0 {
             state = .error
         }
         print("Thread /\(boardName)/-\(id) successfully got \(posts.count) posts.")
