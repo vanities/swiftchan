@@ -53,7 +53,6 @@ class CatalogViewModel: ObservableObject {
             state = .loaded
             handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
             handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
-            prefetch(boardName: boardName)
 
             Defaults.publisher(.sortFilesBy(boardName: boardName))
                 .sink { change in
@@ -90,7 +89,7 @@ class CatalogViewModel: ObservableObject {
         }
     }
 
-    func prefetch(boardName: String) {
+    func prefetch() {
         let urls = posts.compactMap { post in
             return post.post.getMediaUrl(boardId: boardName, thumbnail: !Defaults[.fullImagesForThumbanails])
         }

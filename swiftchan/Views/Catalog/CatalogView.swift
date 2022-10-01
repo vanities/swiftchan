@@ -66,11 +66,18 @@ struct CatalogView: View {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Task {
                         await catalogViewModel.load()
+                        catalogViewModel.prefetch()
                         DispatchQueue.main.async {
                             pullToRefreshShowing = false
                         }
                     }
                 }
+            }
+            .onAppear {
+                catalogViewModel.prefetch()
+            }
+            .onDisappear {
+                catalogViewModel.stopPrefetching()
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(boardName)
@@ -100,6 +107,7 @@ struct CatalogView: View {
             }.onTapGesture {
                 Task {
                     await catalogViewModel.load()
+                    catalogViewModel.prefetch()
                 }
             }
             .foregroundColor(Color.red)

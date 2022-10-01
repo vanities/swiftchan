@@ -110,6 +110,9 @@ struct ThreadView: View {
                     replyId = viewModel.getPostIndexFromId(id)
                 }
             }
+            .onAppear {
+                viewModel.prefetch()
+            }
             .onDisappear {
                 viewModel.stopPrefetching()
             }
