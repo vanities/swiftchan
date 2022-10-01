@@ -51,36 +51,45 @@ struct OPView: View {
                     thumbnail: true
                    ) {
 
-                    ThumbnailMediaView(
-                        url: url,
-                        thumbnailUrl: thumbnailUrl
-                    )
-                    .matchedGeometryEffect(
-                        id: FullscreenModal.id,
-                        in: fullscreenNspace
-                    )
-                    .gesture(showOPPreview ? TapGesture().onEnded {
-                        withAnimation {
-                            appState.setFullscreen(
-                                FullscreenModal(
-                                    view: AnyView(
-                                        ZStack {
-                                            Color.black.ignoresSafeArea()
-                                            MediaView(
-                                                media: Media(
-                                                    index: 0,
-                                                    url: url,
-                                                    thumbnailUrl: thumbnailUrl
+                        ThumbnailMediaView(
+                            url: url,
+                            thumbnailUrl: thumbnailUrl
+                        )
+                        .matchedGeometryEffect(
+                            id: FullscreenModal.id,
+                            in: fullscreenNspace
+                        )
+                        .gesture(showOPPreview ? TapGesture().onEnded {
+                            withAnimation {
+                                appState.setFullscreen(
+                                    FullscreenModal(
+                                        view: AnyView(
+                                            ZStack {
+                                                Color.black.ignoresSafeArea()
+                                                MediaView(
+                                                    media: Media(
+                                                        index: 0,
+                                                        url: url,
+                                                        thumbnailUrl: thumbnailUrl
+                                                    )
                                                 )
-                                            )
-                                        }
-                                    ),
-                                    nspace: fullscreenNspace
+                                            }
+                                        ),
+                                        nspace: fullscreenNspace
+                                    )
                                 )
-                            )
+                            }
+                        } : nil)
+                        .zIndex(1)
+                        .overlay {
+                            if Date.isFourchanBday() {
+                                Image("PartyHat")
+                                    .resizable()
+                                    .frame(width: 125, height: 125)
+                                    .position(x: 45, y: -25)
+                            }
                         }
-                    } : nil)
-                    .zIndex(1)
+
                 }
                 // sticky, closed, image count, thread count
                 HStack(alignment: .center) {

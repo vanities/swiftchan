@@ -393,3 +393,16 @@ extension OutputStream {
         }
     }
 }
+
+extension Date {
+    static func isFourchanBday() -> Bool {
+        var day = DateComponents()
+        day.month = 10
+        day.day = 1
+        day.year = Calendar.current.component(.year, from: Date())
+        if let date = Calendar.current.date(from: day) {
+            return Calendar.current.isDateInToday(date)
+        }
+        return false
+    }
+}

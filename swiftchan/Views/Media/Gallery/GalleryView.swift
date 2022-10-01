@@ -82,7 +82,7 @@ struct GalleryView: View {
             }
             .allowsDragging(canPage)
             .pagingPriority(.simultaneous)
-            .swipeInteractionArea(.page)
+            .swipeInteractionArea(.allAvailable)
             .onChange(of: state.galleryIndex) { index in
                 page.update(.new(index: index))
             }
