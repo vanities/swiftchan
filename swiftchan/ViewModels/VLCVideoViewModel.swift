@@ -62,6 +62,10 @@ class VLCVideoViewModel: ObservableObject {
     func pause() {
         setMediaControlState(.pause)
     }
+    @MainActor
+    func resume() {
+        setMediaControlState(.resume)
+    }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         DispatchQueue.main.async { [weak self] in

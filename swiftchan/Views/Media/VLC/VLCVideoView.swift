@@ -29,14 +29,15 @@ struct VLCVideoView: UIViewRepresentable {
         case .initialize:
             return
         case .play:
-            uiView.play()
+            uiView.initializeAndPlay()
+        case .resume:
+            uiView.resume()
         case .pause:
             uiView.pause()
         case .seek(let time):
             uiView.seek(time: time)
         case .jump(let direction, let time):
             uiView.jump(direction: direction, time: time)
-            vlcVideoViewModel.play()
         }
     }
 

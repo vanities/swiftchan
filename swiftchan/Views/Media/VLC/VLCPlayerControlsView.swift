@@ -132,7 +132,7 @@ struct VLCPlayerControlsView: View {
         case .ended, .stopped:
             break
         case .paused:
-            vlcVideoViewModel.play()
+            vlcVideoViewModel.resume()
         case .playing, .buffering:
             vlcVideoViewModel.pause()
         default:
@@ -148,7 +148,7 @@ struct VLCPlayerControlsView: View {
 
         if !editingStarted {
             vlcVideoViewModel.setSeeking(false)
-            vlcVideoViewModel.play()
+            vlcVideoViewModel.resume()
         }
     }
 }

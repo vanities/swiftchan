@@ -31,6 +31,7 @@ struct VLCVideo: Equatable, Identifiable {
 
     enum MediaControlState: Equatable, Hashable {
         case play
+        case resume
         case pause
         case seek(VLCTime)
         case jump(MediaControlDirection, Int32)
