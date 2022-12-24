@@ -405,4 +405,20 @@ extension Date {
         }
         return false
     }
+
+    static func isChristmas() -> Bool {
+        var christmasEve = DateComponents()
+        christmasEve.month = 12
+        christmasEve.day = 24
+        christmasEve.year = Calendar.current.component(.year, from: Date())
+
+        var christmas = DateComponents()
+        christmas.month = 12
+        christmas.day = 24
+        christmas.year = Calendar.current.component(.year, from: Date())
+        if let christmasEveDate = Calendar.current.date(from: christmasEve), let christmasDate = Calendar.current.date(from: christmas) {
+            return Calendar.current.isDateInToday(christmasEveDate) || Calendar.current.isDateInToday(christmasDate)
+        }
+        return false
+    }
 }

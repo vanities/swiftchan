@@ -946,6 +946,7 @@
 				CURRENT_PROJECT_VERSION = 176;
 				DEVELOPMENT_ASSET_PATHS = "\"swiftchan/Preview Content\"";
 				DEVELOPMENT_TEAM = 8Q3RG3ULSU;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 8Q3RG3ULSU;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = swiftchan/Info.plist;
@@ -957,6 +958,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = vanities.swiftchan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development vanities.swiftchan";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development vanities.swiftchan";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

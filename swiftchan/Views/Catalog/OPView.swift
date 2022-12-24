@@ -88,6 +88,12 @@ struct OPView: View {
                                     .frame(width: 125, height: 125)
                                     .position(x: 45, y: -25)
                             }
+                            if Date.isChristmas() {
+                                Image("SantaHat")
+                                    .resizable()
+                                    .frame(width: 125, height: 125)
+                                    .position(x: 45, y: -25)
+                            }
                         }
 
                 }
