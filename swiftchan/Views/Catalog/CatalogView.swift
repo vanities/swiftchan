@@ -10,6 +10,7 @@ import FourChan
 import Defaults
 import MapKit
 import BottomSheet
+import SpriteKit
 
 struct CatalogView: View {
     var boardName: String
@@ -24,6 +25,13 @@ struct CatalogView: View {
         GridItem(.flexible(), spacing: 0, alignment: .top),
         GridItem(.flexible(), spacing: 0, alignment: .top)
     ]
+
+    var scene: SKScene {
+        let scene = SnowScene()
+        scene.scaleMode = .resizeFill
+        scene.backgroundColor = .clear
+        return scene
+    }
 
     init(boardName: String) {
         self.boardName = boardName
@@ -71,6 +79,14 @@ struct CatalogView: View {
                             pullToRefreshShowing = false
                         }
                     }
+                }
+            }
+            .overlay {
+                if Date.isChristmas() {
+                    SpriteView(scene: scene, options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .disabled(true)
                 }
             }
             .onAppear {

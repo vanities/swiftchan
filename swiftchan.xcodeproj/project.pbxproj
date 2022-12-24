@@ -84,6 +84,9 @@
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
 		95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */; };
+		95F5D75F295760DD00DD561B /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 95F5D75D295760DD00DD561B /* Snow.sks */; };
+		95F5D760295760DD00DD561B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95F5D75E295760DD00DD561B /* Assets.xcassets */; };
+		95F5D7622957610600DD561B /* SnowScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F5D7612957610600DD561B /* SnowScene.swift */; };
 		95F62460255CE64400E9147B /* URLExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6245F255CE64400E9147B /* URLExamples.swift */; };
 		95F76D8026D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
 		95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */; };
@@ -199,6 +202,9 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95DBF2072712550C00356D8F /* AnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImage.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
+		95F5D75D295760DD00DD561B /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
+		95F5D75E295760DD00DD561B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		95F5D7612957610600DD561B /* SnowScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnowScene.swift; sourceTree = "<group>"; };
 		95F6245F255CE64400E9147B /* URLExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExamples.swift; sourceTree = "<group>"; };
 		95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentifiers.swift; sourceTree = "<group>"; };
 		95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Identifiers.swift"; sourceTree = "<group>"; };
@@ -309,6 +315,7 @@
 		9518178F254CFB600032616E /* swiftchan */ = {
 			isa = PBXGroup;
 			children = (
+				95F5D75C295760A600DD561B /* Sprites */,
 				95C73101256C9D8B00F18257 /* Environment */,
 				95D804E02568F9BA005A3128 /* Extensions */,
 				9510536725660071002E4051 /* Models */,
@@ -488,6 +495,16 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
+		95F5D75C295760A600DD561B /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				95F5D75D295760DD00DD561B /* Snow.sks */,
+				95F5D75E295760DD00DD561B /* Assets.xcassets */,
+				95F5D7612957610600DD561B /* SnowScene.swift */,
+			);
+			path = Sprites;
+			sourceTree = "<group>";
+		};
 		FF4A11C5390644ACDA29A498 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -624,7 +641,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F5D75F295760DD00DD561B /* Snow.sks in Resources */,
 				95181798254CFB620032616E /* Preview Assets.xcassets in Resources */,
+				95F5D760295760DD00DD561B /* Assets.xcassets in Resources */,
 				95181795254CFB620032616E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -775,6 +794,7 @@
 				956D9052256B18270000D84C /* Buildable.swift in Sources */,
 				950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */,
 				9579F9F1263D1A1E007C70FC /* VLCVideo.swift in Sources */,
+				95F5D7622957610600DD561B /* SnowScene.swift in Sources */,
 				950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
