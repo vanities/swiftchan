@@ -155,16 +155,16 @@ public extension UIFont {
 
 }
 extension String {
-  /*
-   Truncates the string to the specified length number of characters and appends an optional trailing string if longer.
-   - Parameter length: Desired maximum lengths of a string
-   - Parameter trailing: A 'String' that will be appended after the truncation.
-    
-   - Returns: 'String' object.
-  */
-  func trunc(length: Int, trailing: String = "…") -> String {
-    return (self.count > length) ? self.prefix(length) + trailing : self
-  }
+    /*
+     Truncates the string to the specified length number of characters and appends an optional trailing string if longer.
+     - Parameter length: Desired maximum lengths of a string
+     - Parameter trailing: A 'String' that will be appended after the truncation.
+
+     - Returns: 'String' object.
+     */
+    func trunc(length: Int, trailing: String = "…") -> String {
+        return (self.count > length) ? self.prefix(length) + trailing : self
+    }
 }
 
 extension Color {
@@ -414,10 +414,18 @@ extension Date {
 
         var christmas = DateComponents()
         christmas.month = 12
-        christmas.day = 24
+        christmas.day = 25
         christmas.year = Calendar.current.component(.year, from: Date())
-        if let christmasEveDate = Calendar.current.date(from: christmasEve), let christmasDate = Calendar.current.date(from: christmas) {
-            return Calendar.current.isDateInToday(christmasEveDate) || Calendar.current.isDateInToday(christmasDate)
+
+        var christmasAfter = DateComponents()
+        christmasAfter.month = 12
+        christmasAfter.day = 25
+        christmasAfter.year = Calendar.current.component(.year, from: Date())
+
+        if let christmasEveDate = Calendar.current.date(from: christmasEve),
+           let christmasDate = Calendar.current.date(from: christmas),
+           let christmasAfter=Calendar.current.date(from: christmas) {
+            return Calendar.current.isDateInToday(christmasEveDate) || Calendar.current.isDateInToday(christmasDate) || Calendar.current.isDateInToday(christmasAfter)
         }
         return false
     }
