@@ -419,12 +419,12 @@ extension Date {
 
         var christmasAfter = DateComponents()
         christmasAfter.month = 12
-        christmasAfter.day = 25
+        christmasAfter.day = 26
         christmasAfter.year = Calendar.current.component(.year, from: Date())
 
         if let christmasEveDate = Calendar.current.date(from: christmasEve),
            let christmasDate = Calendar.current.date(from: christmas),
-           let christmasAfter=Calendar.current.date(from: christmas) {
+           let christmasAfter=Calendar.current.date(from: christmas)  {
             return Calendar.current.isDateInToday(christmasEveDate) || Calendar.current.isDateInToday(christmasDate) || Calendar.current.isDateInToday(christmasAfter)
         }
         return false
