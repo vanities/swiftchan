@@ -44,10 +44,11 @@ struct PostView: View {
                     if let url = post.getMediaUrl(boardId: boardName),
                        let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
 
-                        ThumbnailMediaView(
-                            url: url,
-                            thumbnailUrl: thumbnailUrl
-                        )
+                        VStack {
+                            ThumbnailMediaView(
+                                url: url,
+                                thumbnailUrl: thumbnailUrl
+                            )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.halfWidth)
                             .scaledToFill() // VStack
@@ -59,60 +60,68 @@ struct PostView: View {
                                     presentationState.presentingGallery = true
                                 }
                             }
-                            .padding(.leading, -5)
-                    }
-                    HStack(alignment: .top, spacing: 0) {
-                    // index, postnumber, date
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text(String(index))
-                            Text("•")
-                            Text("#" + String(post.no))
-                        }
-                        Text(post.getDatePosted())
-                        HStack {
-                            if let capcode = post.capcode {
-                                Text(capcode)
-                                    .foregroundColor(Colors.Post.capcode)
-                                    .bold()
+                            if let filename = post.filename,
+                               let fileExtension = post.ext {
+                                Text(filename + fileExtension)
+                                    .font(Font.system(size: 8))
                             }
-                        }
-                        HStack {
-                            if let country = post.country {
-                                Text(getFlag(from: country))
-                            }
-                            if let countryName = post.country_name {
-                                Text(countryName)
-                                    .bold()
-                            }
-                        }
-                        if let id = post.pid {
-                            let color = Color.randomColor(seed: id)
-                            Text(id.description)
-                                .foregroundColor(color.isLight() ? .black : .white)
-                                .background(
-                                    Rectangle()
-                                        .fill(color)
-                                        .cornerRadius(5)
-                                        .padding(.horizontal, -5)
-                                )
-                                .offset(x: 5)
+
 
                         }
-                        // Anonymous
-                        if let name = post.name {
-                            Text(name)
-                                .bold()
-                                .foregroundColor(Colors.Post.name)
-                        }
-                        // trip
-                        if let trip = post.trip {
-                            Text(trip)
-                                .italic()
-                                .foregroundColor(Colors.Post.trip)
-                        }
+                        .padding(.leading, -5)
                     }
-                    .padding(.leading, 1)
+                    HStack(alignment: .top, spacing: 0) {
+                        // index, postnumber, date
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(String(index))
+                                Text("•")
+                                Text("#" + String(post.no))
+                            }
+                            Text(post.getDatePosted())
+                            HStack {
+                                if let capcode = post.capcode {
+                                    Text(capcode)
+                                        .foregroundColor(Colors.Post.capcode)
+                                        .bold()
+                                }
+                            }
+                            HStack {
+                                if let country = post.country {
+                                    Text(getFlag(from: country))
+                                }
+                                if let countryName = post.country_name {
+                                    Text(countryName)
+                                        .bold()
+                                }
+                            }
+                            if let id = post.pid {
+                                let color = Color.randomColor(seed: id)
+                                Text(id.description)
+                                    .foregroundColor(color.isLight() ? .black : .white)
+                                    .background(
+                                        Rectangle()
+                                            .fill(color)
+                                            .cornerRadius(5)
+                                            .padding(.horizontal, -5)
+                                    )
+                                    .offset(x: 5)
+
+                            }
+                            // Anonymous
+                            if let name = post.name {
+                                Text(name)
+                                    .bold()
+                                    .foregroundColor(Colors.Post.name)
+                            }
+                            // trip
+                            if let trip = post.trip {
+                                Text(trip)
+                                    .italic()
+                                    .foregroundColor(Colors.Post.trip)
+                            }
+                        }
+                        .padding(.leading, 1)
 
                         Spacer()
 
