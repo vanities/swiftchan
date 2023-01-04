@@ -30,7 +30,7 @@ struct AnimatedImage: View, Identifiable {
         loop: Bool = false,
         loopIndex: Int = 0,
         iterations: Int = Int.max,
-        finished:  (() -> Void)? = nil
+        finished: (() -> Void)? = nil
     ) {
         self.images = images
         self.interval = interval

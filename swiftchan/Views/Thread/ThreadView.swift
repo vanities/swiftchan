@@ -138,7 +138,7 @@ struct ThreadView: View {
                 ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
                     HStack {
                         // TODO: fix this from redrawing the whole posts in ThreadView,
-                        //autoRefreshButton
+                        // autoRefreshButton
                         Link(destination: viewModel.url) {
                             Image(systemName: "square.and.arrow.up")
                         }

@@ -66,7 +66,6 @@ struct PostView: View {
                                     .font(Font.system(size: 8))
                             }
 
-
                         }
                         .padding(.leading, -5)
                     }

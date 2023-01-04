@@ -10,7 +10,7 @@ import MobileVLCKit
 
 struct VLCVideo: Equatable, Identifiable {
     let id: String
-    //weak var urlSessionDelegate: URLSessionDownloadDelegate?
+    // weak var urlSessionDelegate: URLSessionDownloadDelegate?
     var url: URL
     var mediaControlState: MediaControlState = .initialize
     var mediaPlayerState: VLCMediaPlayerState = .buffering
@@ -53,7 +53,7 @@ struct VLCVideo: Equatable, Identifiable {
             return cacheURL
         }
 
-        //let urlSession = URLSession(configuration: .default, delegate: urlSessionDelegate, delegateQueue: nil)
+        // let urlSession = URLSession(configuration: .default, delegate: urlSessionDelegate, delegateQueue: nil)
         if let existingOperation = Prefetcher.shared.videoPrefetcher.queue.operations.first(where: {
             ($0 as? DownloadOperation)?.downloadTaskURL == url
         }), let operation = existingOperation as? DownloadOperation {
