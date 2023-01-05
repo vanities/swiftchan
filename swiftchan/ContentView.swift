@@ -57,12 +57,12 @@ struct ContentView: View {
         .onChange(of: scenePhase) { value in
             switch value {
             case .background:
-                withAnimation {
+                withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = true
                 }
                 didUnlockBiometrics = false
             case .inactive:
-                withAnimation {
+                withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = true
                 }
             case .active:
@@ -72,11 +72,11 @@ struct ContentView: View {
                         showPrivacyView = success
                     }
                 }
-                withAnimation {
+                withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = false
                 }
             @unknown default:
-                withAnimation {
+                withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = true
                 }
             }
