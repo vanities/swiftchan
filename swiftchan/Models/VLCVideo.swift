@@ -73,7 +73,9 @@ struct VLCVideo: Equatable, Identifiable {
     }
 
     @MainActor mutating func setDownloadProgressFinished() {
-        downloadProgress.completedUnitCount = 1
+        DispatchQueue.main.async { [self] in
+            self.downloadProgress.completedUnitCount = 1
+        }
     }
 }
 
