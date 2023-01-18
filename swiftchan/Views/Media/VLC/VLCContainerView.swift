@@ -60,20 +60,14 @@ struct VLCContainerView: View {
         }
         .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) { value in
             if value && isSelected {
-                DispatchQueue.main.async {
-                    vlcVideoViewModel.play()
-                }
+                vlcVideoViewModel.play()
             }
         }
         .onChange(of: isSelected) { value in
             if value && vlcVideoViewModel.video.downloadProgress.isFinished {
-                DispatchQueue.main.async {
-                    vlcVideoViewModel.play()
-                }
+                vlcVideoViewModel.play()
             } else {
-                DispatchQueue.main.async {
-                    vlcVideoViewModel.pause()
-                }
+                vlcVideoViewModel.pause()
             }
         }
         .onAppear {

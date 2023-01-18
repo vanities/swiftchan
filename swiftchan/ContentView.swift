@@ -50,9 +50,6 @@ struct ContentView: View {
                 showPrivacyView = true
                 appContext.requestBiometricUnlock()
             }
-#if DEBUG
-            CacheManager.shared.deleteAll { _ in }
-#endif
         }
         .onChange(of: scenePhase) { value in
             switch value {

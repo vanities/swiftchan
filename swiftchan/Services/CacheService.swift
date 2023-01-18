@@ -81,12 +81,12 @@ class CacheManager {
                     try fileManager.removeItem(at: file)
                     print("removed \(file) from cache")
                 } catch {
-                    complete(.failure("could not delete files form cache"))
+                    complete(.failure("could not delete files from cache"))
                 }
             }
             complete(.success(()))
         } catch {
-            complete(.failure("could not delete files form cache"))
+            complete(.failure("could not delete files from cache"))
         }
     }
 
