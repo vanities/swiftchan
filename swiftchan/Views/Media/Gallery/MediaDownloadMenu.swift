@@ -42,6 +42,6 @@ struct MediaDownloadMenuModifier: ViewModifier {
                     presentingToastResult: $presentingToastResult
                 )
             }
-            .toast(isPresented: $presentingToast, dismissAfter: 1.0, content: { Toast(presentingToastResult: presentingToastResult) })
+            .toast(isPresented: $presentingToast, dismissAfter: 0.2, content: { Toast(presentingToastResult: presentingToastResult) })
     }
 }

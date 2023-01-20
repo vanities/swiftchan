@@ -70,7 +70,9 @@ struct ThreadView: View {
                         }
                         .padding(.all, 3)
                         .onChange(of: presentationState.galleryIndex) { _ in
-                            scrollToPost(reader: reader)
+                            if (!presentationState.presentingReplies && !showReply) {
+                                scrollToPost(reader: reader)
+                            }
                         }
                         .opacity(opacity)
                         .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
