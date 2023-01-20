@@ -70,7 +70,7 @@ struct ThreadView: View {
                         }
                         .padding(.all, 3)
                         .onChange(of: presentationState.galleryIndex) { _ in
-                            if (!presentationState.presentingReplies && !showReply) {
+                            if !presentationState.presentingReplies && !showReply {
                                 scrollToPost(reader: reader)
                             }
                         }
