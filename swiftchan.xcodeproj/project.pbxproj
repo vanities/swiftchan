@@ -1142,7 +1142,7 @@
 			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.5.0;
 			};
 		};
 		95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
@@ -1150,15 +1150,15 @@
 			repositoryURL = "git@github.com:onevcat/Kingfisher.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 7.3.2;
+				minimumVersion = 7.6.2;
 			};
 		};
 		9537082127F7F9BE00A4DF8F /* XCRemoteSwiftPackageReference "bottom-sheet" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:weitieda/bottom-sheet.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 		9559F78B2841C88900F5803F /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {

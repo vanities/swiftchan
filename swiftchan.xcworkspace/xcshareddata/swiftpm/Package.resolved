@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:weitieda/bottom-sheet.git",
       "state" : {
-        "revision" : "b924a83dbd37f418f284791229cb50567cb11a6a",
-        "version" : "1.0.7"
+        "branch" : "master",
+        "revision" : "b924a83dbd37f418f284791229cb50567cb11a6a"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "be1a1acb283a702b99b630f586877ba02234b4cb",
-        "version" : "7.3.2"
+        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
+        "version" : "7.6.2"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:fermoya/SwiftUIPager.git",
       "state" : {
-        "revision" : "6e4170ef7cafd04b3d8ab8dc5b0469036b2bcd6a",
-        "version" : "2.4.0"
+        "revision" : "4ddc04c801aac143090bb14cf26603a3bf9c74cb",
+        "version" : "2.5.0"
       }
     },
     {
