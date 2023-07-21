@@ -22,7 +22,7 @@ platform :ios do
       use_system_scm: true,
       workspace: "swiftchan.xcworkspace",
       scheme: "swiftchan",
-      device: "iPhone 13",
+      device: "iPhone 14",
       skip_testing: ["swiftchanUITests/SwiftchanPerformanceTests"]
     )
   end
