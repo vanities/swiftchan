@@ -29,6 +29,7 @@ struct ThreadView: View {
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
+    @State private var scrollViewPosition: Int?
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -81,7 +82,9 @@ struct ThreadView: View {
                                 await fetchAndPrefetchMedia()
                             }
                         }
+                        //.scrollTargetLayout()
                     }
+                    //.scrollPosition(id: $scrollViewPosition)
                 }
             }
             .sheet(

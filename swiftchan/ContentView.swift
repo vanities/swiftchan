@@ -17,6 +17,7 @@ struct ContentView: View {
     @StateObject private var appState = AppState()
     @StateObject private var appContext = AppContext()
     @State var showPrivacyView = false
+    @State private var lastBackgroundTimestamp: Date? = nil
 
     var body: some View {
         ZStack {
@@ -58,16 +59,24 @@ struct ContentView: View {
                     showPrivacyView = true
                 }
                 didUnlockBiometrics = false
+                lastBackgroundTimestamp = Date()
             case .inactive:
                 withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = true
                 }
             case .active:
-                if biometricsEnabled, !didUnlockBiometrics {
-                    appContext.requestBiometricUnlock { success in
-                        didUnlockBiometrics = success
-                        showPrivacyView = success
+                if let lastBackgroundTimestamp = lastBackgroundTimestamp {
+                    let timeInBackground = Date().timeIntervalSince(lastBackgroundTimestamp)
+                    if timeInBackground >= 60 {
+                        if biometricsEnabled, !didUnlockBiometrics {
+                            appContext.requestBiometricUnlock { success in
+                                didUnlockBiometrics = success
+                                showPrivacyView = success
+                            }
+                        }
                     }
+                } else {
+                    didUnlockBiometrics = true
                 }
                 withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = false
