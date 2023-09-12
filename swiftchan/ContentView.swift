@@ -17,7 +17,7 @@ struct ContentView: View {
     @StateObject private var appState = AppState()
     @StateObject private var appContext = AppContext()
     @State var showPrivacyView = false
-    @State private var lastBackgroundTimestamp: Date? = nil
+    @State private var lastBackgroundTimestamp: Date?
 
     var body: some View {
         ZStack {

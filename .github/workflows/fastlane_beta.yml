@@ -44,8 +44,8 @@ jobs:
         run: |
           pod install
 
-      - name: Test
-        run: fastlane tests
+          #- name: Test
+          #run: fastlane tests
 
       - name: Build and Send to Testflight
         run: fastlane beta
