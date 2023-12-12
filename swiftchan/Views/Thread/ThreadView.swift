@@ -70,7 +70,7 @@ struct ThreadView: View {
                             }
                         }
                         .padding(.all, 3)
-                        .onChange(of: presentationState.galleryIndex) { _ in
+                        .onChange(of: presentationState.galleryIndex, initial: true) { oldValue,newValue  in
                             if !presentationState.presentingReplies && !showReply {
                                 scrollToPost(reader: reader)
                             }
@@ -82,9 +82,12 @@ struct ThreadView: View {
                                 await fetchAndPrefetchMedia()
                             }
                         }
-                        //.scrollTargetLayout()
+                        .scrollTargetLayout()
                     }
-                    //.scrollPosition(id: $scrollViewPosition)
+                    .scrollPosition(id: $scrollViewPosition)
+                    .onDisappear {
+                        //scrollViewPosition = reader
+                    }
                 }
             }
             .sheet(
