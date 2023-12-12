@@ -82,12 +82,8 @@ struct ThreadView: View {
                                 await fetchAndPrefetchMedia()
                             }
                         }
-                        .scrollTargetLayout()
                     }
                     .scrollPosition(id: $scrollViewPosition)
-                    .onDisappear {
-                        //scrollViewPosition = reader
-                    }
                 }
             }
             .sheet(
