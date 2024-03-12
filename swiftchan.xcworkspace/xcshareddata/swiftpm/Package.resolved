@@ -7,7 +7,7 @@
       "location" : "git@github.com:weitieda/bottom-sheet.git",
       "state" : {
         "branch" : "master",
-        "revision" : "b924a83dbd37f418f284791229cb50567cb11a6a"
+        "revision" : "6b21007153365235418f3943a960a1f9546592e0"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
       "state" : {
         "branch" : "master",
-        "revision" : "97fa443e5c054ca3162826b556315ca442bedb39"
+        "revision" : "469de4e43949815dc92570cc786922d8d1385b06"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:sindresorhus/Defaults.git",
       "state" : {
-        "revision" : "119f654d44f7b90f00dc11f7dd1c94a36f12576b",
-        "version" : "6.2.1"
+        "revision" : "981ccb0a01c54abbe3c12ccb8226108527bbf115",
+        "version" : "6.3.0"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:siteline/SwiftUI-Introspect.git",
       "state" : {
-        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
-        "version" : "0.1.4"
+        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a",
+        "version" : "0.12.0"
       }
     },
     {
