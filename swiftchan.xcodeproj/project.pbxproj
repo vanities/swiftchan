@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */; };
 		950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FB2751E3DA0098DF73 /* DeepLinker.swift */; };
 		950846FE2752CA260098DF73 /* BoardSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FD2752CA260098DF73 /* BoardSection.swift */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
@@ -93,6 +92,7 @@
 		95F76D8426D8830F00F6A92F /* XCUIApplication+Identifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */; };
 		95F76D8626D888BB00F6A92F /* swiftchanPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
+		E2A7401FE9DE253776491C36 /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,8 +126,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
+		1A59B34C1967E26AD552D40A /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
+		76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		950846FB2751E3DA0098DF73 /* DeepLinker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinker.swift; sourceTree = "<group>"; };
 		950846FD2752CA260098DF73 /* BoardSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSection.swift; sourceTree = "<group>"; };
 		950E393F255CDA3B00A00A74 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 		95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Identifiers.swift"; sourceTree = "<group>"; };
 		95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanPerformanceTests.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
-		B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
+		CDD89983D4A69413FD4202F0 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,7 +226,7 @@
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				95B31D4625E2E3B400C309D4 /* Introspect in Frameworks */,
 				9576495F2841BFB800F08103 /* ConfettiSwiftUI in Frameworks */,
-				48BDEF0A6290826CC41EEABD /* libPods-swiftchan.a in Frameworks */,
+				E2A7401FE9DE253776491C36 /* libPods-swiftchan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,10 +247,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		89C8B29EB296DC535D464904 /* Frameworks */ = {
+		23A1515D0040BD7D522776C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5FF6C47CE9F89A17580FC1D3 /* libPods-swiftchan.a */,
+				76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -298,7 +298,7 @@
 				951817AC254CFB620032616E /* swiftchanUITests */,
 				9518178E254CFB600032616E /* Products */,
 				FF4A11C5390644ACDA29A498 /* Pods */,
-				89C8B29EB296DC535D464904 /* Frameworks */,
+				23A1515D0040BD7D522776C4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -508,8 +508,8 @@
 		FF4A11C5390644ACDA29A498 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */,
-				B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */,
+				CDD89983D4A69413FD4202F0 /* Pods-swiftchan.debug.xcconfig */,
+				1A59B34C1967E26AD552D40A /* Pods-swiftchan.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -521,13 +521,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 951817B2254CFB620032616E /* Build configuration list for PBXNativeTarget "swiftchan" */;
 			buildPhases = (
-				C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */,
+				9E1999584B31EB7EB85129D1 /* [CP] Check Pods Manifest.lock */,
 				9544236025C776A50019010B /* Run Swiftlint */,
 				95181789254CFB600032616E /* Sources */,
 				9518178A254CFB600032616E /* Frameworks */,
 				9518178B254CFB600032616E /* Resources */,
 				95D86F5E25EA2131005A7EBC /* Embed Frameworks */,
-				B3A38E2CA3B07D2089F8A9DD /* [CP] Embed Pods Frameworks */,
+				7AF2C124DE71573A5EC1C349 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -665,6 +665,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7AF2C124DE71573A5EC1C349 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9544236025C776A50019010B /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -683,24 +700,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint autocorrect && ${PODS_ROOT}/SwiftLint/swiftlint \nelse\n  echo \"warning: SwiftLint not installed, run pod install\"\nfi\n";
 		};
-		B3A38E2CA3B07D2089F8A9DD /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C2F625C2D45ACB3DBABACE10 /* [CP] Check Pods Manifest.lock */ = {
+		9E1999584B31EB7EB85129D1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -957,7 +957,7 @@
 		};
 		951817B3254CFB620032616E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7BAFA14BF91D84A2CB55CB29 /* Pods-swiftchan.debug.xcconfig */;
+			baseConfigurationReference = CDD89983D4A69413FD4202F0 /* Pods-swiftchan.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -986,7 +986,7 @@
 		};
 		951817B4254CFB620032616E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B1D6877C1883757C4378F554 /* Pods-swiftchan.release.xcconfig */;
+			baseConfigurationReference = 1A59B34C1967E26AD552D40A /* Pods-swiftchan.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
