@@ -18,7 +18,6 @@ struct CatalogView: View {
     @StateObject var catalogViewModel: CatalogViewModel
 
     @State var searchText: String = ""
-    @State var pullToRefreshShowing: Bool = false
     @State var isShowingMenu: Bool = false
 
     let columns = [
@@ -70,16 +69,6 @@ struct CatalogView: View {
                         }
                     }
                 }
-                .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    Task {
-                        await catalogViewModel.load()
-                        catalogViewModel.prefetch()
-                        DispatchQueue.main.async {
-                            pullToRefreshShowing = false
-                        }
-                    }
-                }
             }
             .overlay {
                 if Date.isChristmas() {
@@ -105,6 +94,13 @@ struct CatalogView: View {
                 ThreadView(boardName: post.boardName, postNumber: post.post.id)
             }
             .searchable(text: $searchText)
+            .refreshable {
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                Task {
+                    await catalogViewModel.load()
+                    catalogViewModel.prefetch()
+                }
+            }
             .bottomSheet(
                 isPresented: $appState.showingCatalogMenu,
                 height: 400

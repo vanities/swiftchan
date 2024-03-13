@@ -40,8 +40,8 @@ struct ContentView: View {
         .privacyView(enabled: $showPrivacyView)
         .environmentObject(appState)
         .environmentObject(appContext)
-        .onChange(of: biometricsEnabled) { enabled in
-            if enabled {
+        .onChange(of: biometricsEnabled) {
+            if biometricsEnabled {
                 showPrivacyView = true
                 appContext.requestBiometricUnlock()
             }
@@ -52,8 +52,8 @@ struct ContentView: View {
                 appContext.requestBiometricUnlock()
             }
         }
-        .onChange(of: scenePhase) { value in
-            switch value {
+        .onChange(of: scenePhase) {
+            switch scenePhase {
             case .background:
                 withAnimation(.linear(duration: 0.05)) {
                     showPrivacyView = true

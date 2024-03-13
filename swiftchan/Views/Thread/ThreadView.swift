@@ -25,7 +25,6 @@ struct ThreadView: View {
     @StateObject private var presentationState = PresentationState()
     @StateObject private var threadAutorefresher = ThreadAutoRefresher()
 
-    @State private var pullToRefreshShowing: Bool = false
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
@@ -76,12 +75,6 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
-                        .pullToRefresh(isRefreshing: $pullToRefreshShowing) {
-                            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                            Task {
-                                await fetchAndPrefetchMedia()
-                            }
-                        }
                     }
                     .scrollPosition(id: $scrollViewPosition)
                 }
@@ -129,11 +122,17 @@ struct ThreadView: View {
                 }
 
             }
-            .onChange(of: presentationState.presentingReplies) { presenting in
-                if presenting {
+            .onChange(of: presentationState.presentingReplies) {
+                if presentationState.presentingReplies {
                     threadAutorefresher.cancelTimer()
                 } else {
                     threadAutorefresher.setTimer()
+                }
+            }
+            .refreshable {
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                Task {
+                    await fetchAndPrefetchMedia()
                 }
             }
             .environmentObject(presentationState)
@@ -150,8 +149,8 @@ struct ThreadView: View {
                 }
                 .defaultCustomization(.hidden)
             }
-            .onChange(of: showReply) { value in
-                if value {
+            .onChange(of: showReply) {
+                if showReply {
                     threadAutorefresher.cancelTimer()
                 } else {
                     threadAutorefresher.setTimer()
@@ -202,9 +201,6 @@ struct ThreadView: View {
 
     private func fetchAndPrefetchMedia() async {
         await viewModel.getPosts()
-        DispatchQueue.main.async {
-            pullToRefreshShowing = false
-        }
         viewModel.prefetch()
     }
 

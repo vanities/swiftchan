@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MobileVLCKit
+import SwiftUIIntrospect
 
 struct VLCPlayerControlModifier: ViewModifier {
     @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
@@ -23,7 +24,7 @@ struct VLCPlayerControlModifier: ViewModifier {
                 Spacer()
                 VLCPlayerControlsView()
                     .padding(.bottom, 25)
-                    .onChange(of: vlcVideoViewModel.video.seeking) { onSeekChanged?($0) }
+                    .onChange(of: vlcVideoViewModel.video.seeking) { onSeekChanged?(vlcVideoViewModel.video.seeking) }
                     .environmentObject(vlcVideoViewModel)
                     .opacity(presenting ? 1 : 0)
             }
@@ -82,12 +83,12 @@ struct VLCPlayerControlsView: View {
             Slider(value: $sliderPos,
                    in: 0...1,
                    onEditingChanged: sliderEditingChanged)
-                .onChange(of: vlcVideoViewModel.video.currentTime, perform: { _ in
+                .onChange(of: vlcVideoViewModel.video.currentTime) {
                     if !vlcVideoViewModel.video.seeking {
                         sliderPos = calcSliderPos
                     }
-                })
-                .onChange(of: sliderPos, perform: { _ in
+                }
+                .onChange(of: sliderPos) {
                     if vlcVideoViewModel.video.seeking {
                         let currentTime = Int32(CGFloat(vlcVideoViewModel.video.totalTime.intValue) * sliderPos)
                         let currentVLCTime = VLCTime(int: currentTime)
@@ -97,10 +98,9 @@ struct VLCPlayerControlsView: View {
                             vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
                         }
                     }
-                })
-                .introspectSlider { slider in
+                }
+                .introspect(.slider, on: .iOS(.v17)) { slider in
                     slider.setThumbImage(getBiggerSliderButton(), for: .normal)
-
                 }
 
             Text(vlcVideoViewModel.video.remainingTime.description)

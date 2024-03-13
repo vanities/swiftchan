@@ -25,17 +25,17 @@ struct GalleryPreviewView: View {
                             url: url,
                             thumbnailUrl: thumbnailUrl
                         )
-                            .onTapGesture {
-                                selection = index
-                            }
-                            .id(index)
-                            .border(selection == index ? Color.green : Color.clear, width: 2)
-                            .frame(width: UIScreen.width/5)
+                        .onTapGesture {
+                            selection = index
+                        }
+                        .id(index)
+                        .border(selection == index ? Color.green : Color.clear, width: 2)
+                        .frame(width: UIScreen.width/5)
                     }
                 }
-                       .onChange(of: selection) { index in
+                       .onChange(of: selection) {
                            withAnimation(.linear(duration: 0.2)) {
-                               value.scrollTo(index)
+                               value.scrollTo(selection)
                            }
                        }
             }

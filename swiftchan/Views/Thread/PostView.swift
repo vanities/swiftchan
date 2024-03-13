@@ -69,7 +69,7 @@ struct PostView: View {
                         }
                         .padding(.leading, -5)
                     }
-                    
+
                     HStack(alignment: .top, spacing: 0) {
                         // index, postnumber, date
                         VStack(alignment: .leading) {

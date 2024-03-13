@@ -49,8 +49,8 @@ struct VLCContainerView: View {
         }
         .playerControl(presenting: $presentingPlayerControl)
         .environmentObject(vlcVideoViewModel)
-        .onChange(of: vlcVideoViewModel.video.mediaControlState) { state in
-            if state == .play {
+        .onChange(of: vlcVideoViewModel.video.mediaControlState) {
+            if vlcVideoViewModel.video.mediaControlState == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                     withAnimation(.linear(duration: 0.2)) {
                         presentingPlayerControl = false
@@ -58,13 +58,13 @@ struct VLCContainerView: View {
                 }
             }
         }
-        .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) { value in
-            if value && isSelected {
+        .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) {
+            if vlcVideoViewModel.video.downloadProgress.isFinished && isSelected {
                 vlcVideoViewModel.play()
             }
         }
-        .onChange(of: isSelected) { value in
-            if value && vlcVideoViewModel.video.downloadProgress.isFinished {
+        .onChange(of: isSelected) {
+            if isSelected && vlcVideoViewModel.video.downloadProgress.isFinished {
                 vlcVideoViewModel.play()
             } else {
                 vlcVideoViewModel.pause()

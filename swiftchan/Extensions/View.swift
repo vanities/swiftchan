@@ -6,22 +6,10 @@
 //
 
 import SwiftUI
-import Introspect
+import SwiftUIIntrospect
 
 // not used
 extension View {
-    public func introspectTabBarScrollView(customize: @escaping (UIScrollView) -> Void) -> some View {
-        return inject(UIKitIntrospectionView(
-            selector: { introspectionView in
-                guard let viewHost = Introspect.findViewHost(from: introspectionView) else {
-                    return nil
-                }
-                return Introspect.previousSibling(containing: UIScrollView.self, from: viewHost)
-            },
-            customize: customize
-        ))
-    }
-
     @ViewBuilder func `if`<Content: View>(_ conditional: Bool, @ViewBuilder _ content: (Self) -> Content) -> some View {
         if conditional {
             content(self)

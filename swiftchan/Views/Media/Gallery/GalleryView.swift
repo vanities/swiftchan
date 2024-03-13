@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Introspect
 import SwiftUIPager
 import ToastUI
 import Defaults
@@ -83,8 +82,8 @@ struct GalleryView: View {
             .allowsDragging(canPage)
             .pagingPriority(.simultaneous)
             .swipeInteractionArea(.allAvailable)
-            .onChange(of: state.galleryIndex) { index in
-                page.update(.new(index: index))
+            .onChange(of: state.galleryIndex) {
+                page.update(.new(index: state.galleryIndex))
             }
             .onAppear {
                 page.update(.new(index: index))

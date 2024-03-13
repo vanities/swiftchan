@@ -96,8 +96,8 @@ struct SortRow: View {
                 }
             }
         }
-        .onChange(of: sortState) { value in
-            imageName = value == .none ? disabledImageName : enabledImageName
+        .onChange(of: sortState) {
+            imageName = sortState == .none ? disabledImageName : enabledImageName
         }
     }
 }
