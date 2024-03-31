@@ -16,7 +16,7 @@ struct RepliesView: View {
     @State private var replyId: Int = 0
 
     @EnvironmentObject private var presentationState: PresentationState
-    @EnvironmentObject private var viewModel: ThreadViewModel
+    @Environment(ThreadViewModel.self) private var viewModel
 
     var body: some View {
         return ScrollView(.vertical, showsIndicators: true) {
@@ -36,19 +36,16 @@ struct RepliesView: View {
         }
         .navigationDestination(isPresented: $showReply) {
             PostView(index: replyId)
-                .environmentObject(viewModel)
+                .environment(viewModel)
                 .environmentObject(presentationState)
         }
     }
 }
 
 #if DEBUG
-struct RepliesView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        let viewModel = ThreadViewModel(boardName: "g", id: 76759434)
-        RepliesView(replies: [0, 1])
-            .environmentObject(viewModel)
-    }
+#Preview {
+    let viewModel = ThreadViewModel(boardName: "g", id: 76759434)
+    return RepliesView(replies: [0, 1])
+        .environment(viewModel)
 }
 #endif

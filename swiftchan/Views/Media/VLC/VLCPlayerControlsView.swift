@@ -160,7 +160,7 @@ extension VLCPlayerControlModifier: Buildable {
 }
 
 extension View {
-    func playerControl(
+    @MainActor func playerControl(
         presenting: Binding<Bool>,
         onSeekChanged: ((Bool) -> Void)? = nil
     ) -> some View {

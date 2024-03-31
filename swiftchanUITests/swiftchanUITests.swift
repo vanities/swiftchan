@@ -26,7 +26,7 @@ class SwiftchanUITests: XCTestCase {
         app.terminate()
     }
 
-    func testAppLoadsBoards() throws {
+    @MainActor func testAppLoadsBoards() throws {
         XCTAssertGreaterThan(app.staticTexts.count, 10)
         app.assertBoardButton("3")
         app.assertBoardButton("a")
@@ -42,7 +42,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertBoardButton("diy")
     }
 
-    func testAppLoadsOPPosts() throws {
+    @MainActor func testAppLoadsOPPosts() throws {
         app.goToBoard("a")
         app.assertOpButton(0)
         app.assertOpButton(1)
@@ -55,7 +55,7 @@ class SwiftchanUITests: XCTestCase {
     // TODO: Fix tests below in CI
     // Failed to synthesize event: Failed to scroll to visible (by AX action)
 
-    func x_testAppLoadsPosts() throws {
+    @MainActor func x_testAppLoadsPosts() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
 
@@ -63,7 +63,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertPost(1)
     }
 
-    func x_testImageDownloaderSavesFiles() throws {
+    @MainActor func x_testImageDownloaderSavesFiles() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)
@@ -73,7 +73,7 @@ class SwiftchanUITests: XCTestCase {
         // app.assertSuccessToastImage()
     }
 
-    func x_testImageCopierCopiesUrlToPasteboard() throws {
+    @MainActor func x_testImageCopierCopiesUrlToPasteboard() throws {
         app.goToBoard("a")
         app.goToOPThread(0)
         app.assertPost(0)

@@ -20,7 +20,7 @@ struct ThreadView: View {
     @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
 
     @EnvironmentObject private var appState: AppState
-    @StateObject var viewModel: ThreadViewModel
+    @State var viewModel: ThreadViewModel
 
     @StateObject private var presentationState = PresentationState()
     @StateObject private var threadAutorefresher = ThreadAutoRefresher()
@@ -33,7 +33,7 @@ struct ThreadView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     init(boardName: String, postNumber: PostNumber) {
-        self._viewModel = StateObject(
+        self._viewModel = State(
             wrappedValue: ThreadViewModel(
                 boardName: boardName,
                 id: postNumber
@@ -64,7 +64,7 @@ struct ThreadView: View {
                                 let post = viewModel.posts[postIndex]
                                 if !post.isHidden(boardName: viewModel.boardName) {
                                     PostView(index: postIndex)
-                                        .environmentObject(viewModel)
+                                        .environment(viewModel)
                                 }
                             }
                         }
@@ -92,7 +92,7 @@ struct ThreadView: View {
                     )
                     .environmentObject(appState)
                     .environmentObject(presentationState)
-                    .environmentObject(viewModel)
+                    .environment(viewModel)
                     .onAppear {
                         threadAutorefresher.cancelTimer()
                     }
@@ -158,7 +158,7 @@ struct ThreadView: View {
             }
             .navigationDestination(isPresented: $showReply) {
                 PostView(index: replyId)
-                    .environmentObject(viewModel)
+                    .environment(viewModel)
                     .environmentObject(presentationState)
             }
             .bottomSheet(
@@ -213,21 +213,19 @@ struct ThreadView: View {
 }
 
 #if DEBUG
-struct ThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
+#Preview {
+    // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+    let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
 
-        Group {
+    return Group {
+        ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
+            .environment(viewModel)
+            .environmentObject(AppState())
+
+        NavigationView {
             ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
-                .environmentObject(viewModel)
+                .environment(viewModel)
                 .environmentObject(AppState())
-
-            NavigationView {
-                ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
-                    .environmentObject(viewModel)
-                    .environmentObject(AppState())
-            }
         }
     }
 }

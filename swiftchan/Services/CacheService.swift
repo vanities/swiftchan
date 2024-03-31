@@ -8,7 +8,7 @@
 import Foundation
 import Kingfisher
 
-class CacheManager {
+final class CacheManager {
 
     static let shared = CacheManager()
     private let fileManager = FileManager.default

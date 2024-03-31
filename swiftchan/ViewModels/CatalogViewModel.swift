@@ -11,7 +11,8 @@ import FourChan
 import Defaults
 import Combine
 
-class CatalogViewModel: ObservableObject {
+@Observable
+class CatalogViewModel {
     enum LoadingState {
         case initial, loading, loaded, error
 
@@ -20,8 +21,8 @@ class CatalogViewModel: ObservableObject {
     var boardName: String
     let prefetcher = Prefetcher()
 
-    @Published private(set) var posts = [SwiftchanPost]()
-    @Published var state = LoadingState.initial
+    private(set) var posts = [SwiftchanPost]()
+    var state = LoadingState.initial
 
     private var cancellable = Set<AnyCancellable>()
 

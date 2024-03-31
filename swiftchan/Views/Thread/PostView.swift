@@ -10,7 +10,7 @@ import FourChan
 import BottomSheet
 
 struct PostView: View {
-    @EnvironmentObject private var viewModel: ThreadViewModel
+    @Environment(ThreadViewModel.self) private var viewModel
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var presentationState: PresentationState
 
@@ -150,7 +150,7 @@ struct PostView: View {
                         destination: {
                             if let replies = viewModel.replies[index] {
                                 RepliesView(replies: replies)
-                                    .environmentObject(viewModel)
+                                    .environment(viewModel)
                                     .environmentObject(presentationState)
                                     .onAppear {
                                         presentationState.presentingReplies = true
@@ -175,16 +175,14 @@ struct PostView: View {
 }
 
 #if DEBUG
-struct PostView_Previews: PreviewProvider {
-    static var previews: some View {
-        // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
-        let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
+#Preview {
+    // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
+    let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
 
-        return PostView(index: 0)
-            .environmentObject(viewModel)
-            .environmentObject(AppState())
-            .environmentObject(DismissGesture())
-            .environmentObject(PresentationState())
-    }
+    return PostView(index: 0)
+        .environment(viewModel)
+        .environmentObject(AppState())
+        .environmentObject(DismissGesture())
+        .environmentObject(PresentationState())
 }
 #endif

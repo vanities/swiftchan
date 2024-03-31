@@ -9,13 +9,14 @@ import Foundation
 import FourChan
 import Defaults
 
-final class BoardsViewModel: ObservableObject {
+@Observable
+final class BoardsViewModel {
     enum State {
         case initial, loading, loaded, error
     }
 
-    @Published private(set) var boards = [Board]()
-    @Published private(set) var state = State.initial
+    private(set) var boards = [Board]()
+    private(set) var state = State.initial
 
     @MainActor
     func load() async {

@@ -1,5 +1,5 @@
 {
-  "originHash" : "1d67af8d86c7b42d6fff4e350f91c577068a6b833674193588f958fac45d0899",
+  "originHash" : "97e74d6b13c5006b411a9b3ef2f14ec4b8eaa165ab363e934bd47b14861cad2a",
   "pins" : [
     {
       "identity" : "bottom-sheet",
@@ -24,17 +24,17 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:sindresorhus/Defaults.git",
       "state" : {
-        "revision" : "981ccb0a01c54abbe3c12ccb8226108527bbf115",
-        "version" : "6.3.0"
+        "revision" : "38925e3cfacf3fb89a81a35b1cd44fd5a5b7e0fa",
+        "version" : "8.2.0"
       }
     },
     {
       "identity" : "fourchanapi",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:vanities/FourChanAPI.git",
+      "location" : "https://github.com/vanities/FourChanAPI.git",
       "state" : {
-        "revision" : "424923670f05a560abf3336898edb850634a5323",
-        "version" : "1.2.11"
+        "revision" : "59fa1689bb2858c1c974d0708a637681c887628b",
+        "version" : "1.2.12"
       }
     },
     {

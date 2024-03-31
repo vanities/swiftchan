@@ -14,7 +14,7 @@ struct GalleryView: View {
     @Default(.showGalleryPreview) var showGalleryPreview
 
     @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var viewModel: ThreadViewModel
+    @Environment(ThreadViewModel.self) private var viewModel
     @EnvironmentObject private var state: PresentationState
 
     let index: Int
@@ -126,33 +126,31 @@ extension GalleryView: Buildable {
 }
 
 #if DEBUG
-struct GalleryView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewModel = ThreadViewModel(boardName: "pol", id: 0)
-        let urls = [
-            URLExamples.image,
-            URLExamples.gif,
-            URLExamples.webm
-        ]
-        viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
+#Preview {
+    let viewModel = ThreadViewModel(boardName: "pol", id: 0)
+    let urls = [
+        URLExamples.image,
+        URLExamples.gif,
+        URLExamples.webm
+    ]
+    viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
 
-        return Group {
-            GalleryView(index: 0)
-                .environmentObject(viewModel)
-                .environmentObject(DismissGesture())
-                .environmentObject(PresentationState())
-                .environmentObject(AppState())
-            GalleryView(index: 1)
-                .environmentObject(viewModel)
-                .environmentObject(DismissGesture())
-                .environmentObject(PresentationState())
-                .environmentObject(AppState())
-            GalleryView(index: 2)
-                .environmentObject(viewModel)
-                .environmentObject(DismissGesture())
-                .environmentObject(PresentationState())
-                .environmentObject(AppState())
-        }
+    return Group {
+        GalleryView(index: 0)
+            .environment(viewModel)
+            .environmentObject(DismissGesture())
+            .environmentObject(PresentationState())
+            .environmentObject(AppState())
+        GalleryView(index: 1)
+            .environment(viewModel)
+            .environmentObject(DismissGesture())
+            .environmentObject(PresentationState())
+            .environmentObject(AppState())
+        GalleryView(index: 2)
+            .environment(viewModel)
+            .environmentObject(DismissGesture())
+            .environmentObject(PresentationState())
+            .environmentObject(AppState())
     }
 }
 #endif

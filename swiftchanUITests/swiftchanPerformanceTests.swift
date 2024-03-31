@@ -44,7 +44,7 @@ class SwiftchanPerformanceTests: XCTestCase {
         }
     }
 
-    func testCatalogScrollPerformance() throws {
+    @MainActor func testCatalogScrollPerformance() throws {
         let measureOptions = XCTMeasureOptions()
         measureOptions.invocationOptions = [.manuallyStop]
 
@@ -57,7 +57,7 @@ class SwiftchanPerformanceTests: XCTestCase {
         }
     }
 
-    func testPostScrollPerformance() throws {
+    @MainActor func testPostScrollPerformance() throws {
         let measureOptions = XCTMeasureOptions()
         measureOptions.invocationOptions = [.manuallyStop]
 

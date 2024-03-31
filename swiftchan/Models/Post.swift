@@ -9,7 +9,7 @@ import Foundation
 import FourChan
 import Defaults
 
-struct SwiftchanPost: Identifiable, Hashable {
+struct SwiftchanPost: Identifiable, Hashable, Sendable {
     let post: Post
     let boardName: String
     var comment: AttributedString

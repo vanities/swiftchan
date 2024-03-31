@@ -20,7 +20,6 @@
 		951817A3254CFB620032616E /* swiftchanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817A2254CFB620032616E /* swiftchanTests.swift */; };
 		951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951817AD254CFB620032616E /* swiftchanUITests.swift */; };
 		95193386274AC54F00AD3894 /* MediaDownloadMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95193385274AC54F00AD3894 /* MediaDownloadMenu.swift */; };
-		951A29E827EF8ABF00FC49B5 /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951A29E727EF8ABF00FC49B5 /* Defaults+Workaround.swift */; };
 		9520FDC52640FB4700F98FE9 /* VideoPrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */; };
 		9524E19F256F272200D08075 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E19E256F272200D08075 /* AppState.swift */; };
 		9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524E1A9256F87EA00D08075 /* CoreExtensions.swift */; };
@@ -35,10 +34,10 @@
 		9537082327F7F9BE00A4DF8F /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 9537082227F7F9BE00A4DF8F /* BottomSheet */; };
 		9537082527F801FA00A4DF8F /* MultiActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9537082427F801FA00A4DF8F /* MultiActionItem.swift */; };
 		95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */; };
+		954D09402BB63D18004079B6 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 954D093F2BB63D18004079B6 /* FourChan */; };
 		954FB581272CF257009CC52F /* MediaContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB580272CF257009CC52F /* MediaContextMenu.swift */; };
 		954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB5822730BDF0009CC52F /* RoundedCorners.swift */; };
 		955814B8254D24B900A966BA /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955814B7254D24B900A966BA /* BoardView.swift */; };
-		9559F78D2841C88900F5803F /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 9559F78C2841C88900F5803F /* FourChan */; };
 		9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F78E2843B07D00F5803F /* NSFWTagView.swift */; };
 		9559F7912843F1E900F5803F /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F7902843F1E900F5803F /* PrivacyView.swift */; };
 		9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */; };
@@ -146,7 +145,6 @@
 		951817AD254CFB620032616E /* swiftchanUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanUITests.swift; sourceTree = "<group>"; };
 		951817AF254CFB620032616E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95193385274AC54F00AD3894 /* MediaDownloadMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDownloadMenu.swift; sourceTree = "<group>"; };
-		951A29E727EF8ABF00FC49B5 /* Defaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Defaults+Workaround.swift"; sourceTree = "<group>"; };
 		9520FDC42640FB4700F98FE9 /* VideoPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPrefetcher.swift; sourceTree = "<group>"; };
 		9524E19E256F272200D08075 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		9524E1A9256F87EA00D08075 /* CoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreExtensions.swift; sourceTree = "<group>"; };
@@ -216,8 +214,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954D09402BB63D18004079B6 /* FourChan in Frameworks */,
 				95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */,
-				9559F78D2841C88900F5803F /* FourChan in Frameworks */,
 				95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */,
 				9537082327F7F9BE00A4DF8F /* BottomSheet in Frameworks */,
 				95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */,
@@ -402,7 +400,6 @@
 				95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */,
 				95DBF2072712550C00356D8F /* AnimatedImage.swift */,
 				950846FB2751E3DA0098DF73 /* DeepLinker.swift */,
-				951A29E727EF8ABF00FC49B5 /* Defaults+Workaround.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -537,9 +534,9 @@
 				95CEE15C271ABFCD0016EAC1 /* Defaults */,
 				9537082227F7F9BE00A4DF8F /* BottomSheet */,
 				9576495E2841BFB800F08103 /* ConfettiSwiftUI */,
-				9559F78C2841C88900F5803F /* FourChan */,
 				95322F9E286BE76D0067C268 /* Kingfisher */,
 				95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */,
+				954D093F2BB63D18004079B6 /* FourChan */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -619,9 +616,9 @@
 				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
 				9537082127F7F9BE00A4DF8F /* XCRemoteSwiftPackageReference "bottom-sheet" */,
 				9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
-				9559F78B2841C88900F5803F /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 				95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
+				954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -742,7 +739,6 @@
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */,
-				951A29E827EF8ABF00FC49B5 /* Defaults+Workaround.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
 				950846FE2752CA260098DF73 /* BoardSection.swift in Sources */,
 				958D09A0254D444F00AD4849 /* OPView.swift in Sources */,
@@ -893,6 +889,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -950,6 +947,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1168,12 +1166,12 @@
 				minimumVersion = 1.1.3;
 			};
 		};
-		9559F78B2841C88900F5803F /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
+		954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:vanities/FourChanAPI.git";
+			repositoryURL = "https://github.com/vanities/FourChanAPI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.2.12;
 			};
 		};
 		9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
@@ -1189,7 +1187,7 @@
 			repositoryURL = "git@github.com:sindresorhus/Defaults.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
+				minimumVersion = 8.0.0;
 			};
 		};
 		95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */ = {
@@ -1223,9 +1221,9 @@
 			package = 95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
 			productName = SwiftUIIntrospect;
 		};
-		9559F78C2841C88900F5803F /* FourChan */ = {
+		954D093F2BB63D18004079B6 /* FourChan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9559F78B2841C88900F5803F /* XCRemoteSwiftPackageReference "FourChanAPI" */;
+			package = 954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
 		};
 		9576495E2841BFB800F08103 /* ConfettiSwiftUI */ = {

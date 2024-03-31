@@ -238,7 +238,7 @@ extension URL {
     func isGif() -> Bool {
         return Media.detect(url: self) == .gif
     }
-    static var appScheme: String = "swiftchan"
+    static let appScheme: String = "swiftchan"
 
     enum DetailType: String {
         case reply = "/reply"

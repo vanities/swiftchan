@@ -17,7 +17,7 @@ struct VLCContainerView: View {
     @State private var presentingPlayerControl: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @State private(set) var downloadProgress = Progress()
-    @EnvironmentObject var threadViewModel: ThreadViewModel
+    @Environment(ThreadViewModel.self) private var viewModel
     @EnvironmentObject var appState: AppState
 
     init(
@@ -38,9 +38,9 @@ struct VLCContainerView: View {
             if !vlcVideoViewModel.video.downloadProgress.isFinished {
                 ProgressView("Downloading")
                 /*
-                ProgressView(vlcVideoViewModel.video.downloadProgress)
-                    .frame(width: 50, height: 50)
-                    .progressViewStyle(GaugeProgressStyle())
+                 ProgressView(vlcVideoViewModel.video.downloadProgress)
+                 .frame(width: 50, height: 50)
+                 .progressViewStyle(GaugeProgressStyle())
                  */
             }
             if vlcVideoViewModel.video.downloadProgress.isFinished && vlcVideoViewModel.video.mediaState == .buffering {
@@ -84,23 +84,21 @@ struct VLCContainerView: View {
 }
 
 #if DEBUG
-struct VLCContainerView_Previews: PreviewProvider {
-    static var previews: some View {
-        return Group {
-            VLCContainerView(
-                url: URLExamples.webm,
-                isSelected: false
-            )
-            .background(Color.black)
-            .previewInterfaceOrientation(.portrait)
+#Preview {
+    return Group {
+        VLCContainerView(
+            url: URLExamples.webm,
+            isSelected: false
+        )
+        .background(Color.black)
+        .previewInterfaceOrientation(.portrait)
 
-            VLCContainerView(
-                url: URLExamples.webm,
-                isSelected: true
-            )
-            .background(Color.black)
-            .previewInterfaceOrientation(.portrait)
-        }
+        VLCContainerView(
+            url: URLExamples.webm,
+            isSelected: true
+        )
+        .background(Color.black)
+        .previewInterfaceOrientation(.portrait)
     }
 }
 #endif

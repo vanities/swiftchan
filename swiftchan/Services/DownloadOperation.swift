@@ -80,7 +80,7 @@ class DownloadOperation: Operation {
   }
 
   override func cancel() {
-      super.cancel()
+      // super.cancel()
 
       // cancel the downloading
       task.cancel()

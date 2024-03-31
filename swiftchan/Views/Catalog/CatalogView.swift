@@ -15,7 +15,7 @@ import SpriteKit
 struct CatalogView: View {
     var boardName: String
     @EnvironmentObject var appState: AppState
-    @StateObject var catalogViewModel: CatalogViewModel
+    @State var catalogViewModel: CatalogViewModel
 
     @State var searchText: String = ""
     @State var isShowingMenu: Bool = false
@@ -34,7 +34,7 @@ struct CatalogView: View {
 
     init(boardName: String) {
         self.boardName = boardName
-        self._catalogViewModel = StateObject(
+        self._catalogViewModel = State(
             wrappedValue: CatalogViewModel(boardName: boardName)
         )
     }

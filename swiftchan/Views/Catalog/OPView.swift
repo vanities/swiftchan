@@ -12,7 +12,7 @@ import Defaults
 
 struct OPView: View {
     @Default(.showOPPreview) var showOPPreview
-    @StateObject var threadViewModel: ThreadViewModel
+    @State var threadViewModel: ThreadViewModel
     @EnvironmentObject var appState: AppState
     @Namespace var fullscreenNspace
 
@@ -28,7 +28,7 @@ struct OPView: View {
         self.swiftchanPost = post
         self.comment = post.comment
         self.index = post.index
-        self._threadViewModel = StateObject(
+        self._threadViewModel = State(
             wrappedValue: ThreadViewModel(
                 boardName: boardName,
                 id: post.post.no
@@ -138,7 +138,7 @@ struct OPView: View {
             }
             .padding(.all, Constants.padding)
         }
-        .environmentObject(threadViewModel)
+        .environment(threadViewModel)
         .allowsHitTesting(!appState.showingCatalogMenu)
     }
 

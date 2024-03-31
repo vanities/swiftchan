@@ -12,8 +12,8 @@ struct FileExport: FileDocument {
 
     let url: String
 
-    static var readableContentTypes = [UTType.video, UTType.movie, UTType.image]
-    static var writableContentTypes = [UTType.video, UTType.movie, UTType.image]
+    static let readableContentTypes = [UTType.video, UTType.movie, UTType.image]
+    static let writableContentTypes = [UTType.video, UTType.movie, UTType.image]
 
     init(url: String) {
         self.url = url

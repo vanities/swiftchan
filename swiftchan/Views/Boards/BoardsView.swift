@@ -14,7 +14,7 @@ struct BoardsView: View {
     @Default(.showNSFWBoards) private var showNSFWBoards
     @EnvironmentObject private var appState: AppState
 
-    @StateObject var boardsViewModel = BoardsViewModel()
+    @State var boardsViewModel = BoardsViewModel()
 
     @State private var searchText: String = ""
     @State private var presentedNavigation = NavigationPath()
@@ -97,10 +97,8 @@ struct BoardsView: View {
 }
 
 #if DEBUG
-struct BoardsView_Previews: PreviewProvider {
-    static var previews: some View {
-        BoardsView()
-            .previewInterfaceOrientation(.portrait)
-    }
+#Preview {
+    BoardsView()
+        .previewInterfaceOrientation(.portrait)
 }
 #endif

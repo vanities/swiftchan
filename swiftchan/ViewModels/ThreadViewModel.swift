@@ -9,7 +9,8 @@ import Foundation
 import SwiftUI
 import FourChan
 
-final class ThreadViewModel: ObservableObject {
+@Observable
+final class ThreadViewModel {
     enum State {
         case initial, loading, loaded, error
     }
@@ -17,12 +18,12 @@ final class ThreadViewModel: ObservableObject {
     let boardName: String
     let id: Int
 
-    @Published private(set) var posts = [Post]()
-    @Published var media = [Media]()
-    @Published private(set) var postMediaMapping = [Int: Int]()
-    @Published private(set) var comments = [AttributedString]()
-    @Published private(set) var replies = [Int: [Int]]()
-    @Published private(set) var state = State.initial
+    private(set) var posts = [Post]()
+    var media = [Media]()
+    private(set) var postMediaMapping = [Int: Int]()
+    private(set) var comments = [AttributedString]()
+    private(set) var replies = [Int: [Int]]()
+    private(set) var state = State.initial
 
     var url: URL {
         return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!

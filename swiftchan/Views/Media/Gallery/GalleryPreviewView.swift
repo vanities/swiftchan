@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GalleryPreviewView: View {
-    @EnvironmentObject var viewModel: ThreadViewModel
+    @Environment(ThreadViewModel.self) private var viewModel
     @Binding var selection: Int
 
     var body: some View {
@@ -45,24 +45,22 @@ struct GalleryPreviewView: View {
 }
 
 #if DEBUG
-struct GalleryPreviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewModel = ThreadViewModel(boardName: "pol", id: 0)
-        let urls = [
-            URLExamples.image,
-            URLExamples.gif,
-            URLExamples.webm
-        ]
-        viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
+#Preview {
+    let viewModel = ThreadViewModel(boardName: "pol", id: 0)
+    let urls = [
+        URLExamples.image,
+        URLExamples.gif,
+        URLExamples.webm
+    ]
+    viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
 
-        return Group {
-            GalleryPreviewView(selection: .constant(0))
-                .environmentObject(viewModel)
-            GalleryPreviewView(selection: .constant(1))
-                .environmentObject(viewModel)
-            GalleryPreviewView(selection: .constant(2))
-                .environmentObject(viewModel)
-        }
+    return Group {
+        GalleryPreviewView(selection: .constant(0))
+            .environment(viewModel)
+        GalleryPreviewView(selection: .constant(1))
+            .environment(viewModel)
+        GalleryPreviewView(selection: .constant(2))
+            .environment(viewModel)
     }
 }
 #endif
