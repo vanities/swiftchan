@@ -9,7 +9,7 @@ import SwiftUI
 import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
-    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+    @Environment(VLCVideoViewModel.self) var vlcVideoViewModel: VLCVideoViewModel
 
     func makeUIView(context: UIViewRepresentableContext<VLCVideoView>) -> VLCMediaListPlayerUIView {
         let view = VLCMediaListPlayerUIView(
@@ -126,7 +126,7 @@ struct VlcPlayerDemo_Previews: PreviewProvider {
         let url = URL(string: "google.com")!
         return ZStack {
             VLCVideoView()
-                .environmentObject(VLCVideoViewModel(url: url))
+                .environment(VLCVideoViewModel(url: url))
         }
     }
 }

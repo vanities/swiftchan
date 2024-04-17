@@ -10,7 +10,7 @@ import MobileVLCKit
 import SwiftUIIntrospect
 
 struct VLCPlayerControlModifier: ViewModifier {
-    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+    @Environment(VLCVideoViewModel.self) var vlcVideoViewModel: VLCVideoViewModel
 
     @Binding var presenting: Bool
     var onSeekChanged: ((Bool) -> Void)?
@@ -25,7 +25,7 @@ struct VLCPlayerControlModifier: ViewModifier {
                 VLCPlayerControlsView()
                     .padding(.bottom, 25)
                     .onChange(of: vlcVideoViewModel.video.seeking) { onSeekChanged?(vlcVideoViewModel.video.seeking) }
-                    .environmentObject(vlcVideoViewModel)
+                    .environment(vlcVideoViewModel)
                     .opacity(presenting ? 1 : 0)
             }
         }
@@ -47,7 +47,7 @@ struct VLCPlayerControlModifier: ViewModifier {
 }
 
 struct VLCPlayerControlsView: View {
-    @EnvironmentObject var vlcVideoViewModel: VLCVideoViewModel
+    @Environment(VLCVideoViewModel.self) var vlcVideoViewModel: VLCVideoViewModel
 
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
@@ -177,14 +177,14 @@ struct VLCPlayerControlsView_Previews: PreviewProvider {
         let url = URL(string: "google.com")!
         Group {
             Color.green
-                .environmentObject(VLCVideoViewModel(url: url))
+                .environment(VLCVideoViewModel(url: url))
                 .playerControl(
                     presenting: .constant(true),
                     onSeekChanged: {_ in }
                 )
 
             VLCPlayerControlsView()
-                .environmentObject(VLCVideoViewModel(url: url))
+                .environment(VLCVideoViewModel(url: url))
                 .background(Color.black)
         }
     }

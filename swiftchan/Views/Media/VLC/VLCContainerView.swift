@@ -13,7 +13,7 @@ import Kingfisher
 struct VLCContainerView: View {
     var isSelected: Bool
 
-    @StateObject var vlcVideoViewModel: VLCVideoViewModel
+    @State var vlcVideoViewModel: VLCVideoViewModel
     @State private var presentingPlayerControl: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @State private(set) var downloadProgress = Progress()
@@ -24,7 +24,7 @@ struct VLCContainerView: View {
         url: URL,
         isSelected: Bool
     ) {
-        self._vlcVideoViewModel = StateObject(
+        self._vlcVideoViewModel = State(
             wrappedValue: VLCVideoViewModel(url: url)
         )
         self.isSelected = isSelected
@@ -48,7 +48,7 @@ struct VLCContainerView: View {
             }
         }
         .playerControl(presenting: $presentingPlayerControl)
-        .environmentObject(vlcVideoViewModel)
+        .environment(vlcVideoViewModel)
         .onChange(of: vlcVideoViewModel.video.mediaControlState) {
             if vlcVideoViewModel.video.mediaControlState == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
