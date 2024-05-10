@@ -31,7 +31,6 @@
 		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 95322F9E286BE76D0067C268 /* Kingfisher */; };
 		953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953508F1263F557D00C7FE83 /* Prefetcher.swift */; };
-		9537082327F7F9BE00A4DF8F /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 9537082227F7F9BE00A4DF8F /* BottomSheet */; };
 		9537082527F801FA00A4DF8F /* MultiActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9537082427F801FA00A4DF8F /* MultiActionItem.swift */; };
 		95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */; };
 		954D09402BB63D18004079B6 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 954D093F2BB63D18004079B6 /* FourChan */; };
@@ -217,7 +216,6 @@
 				954D09402BB63D18004079B6 /* FourChan in Frameworks */,
 				95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */,
 				95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */,
-				9537082327F7F9BE00A4DF8F /* BottomSheet in Frameworks */,
 				95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */,
 				95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */,
 				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
@@ -532,7 +530,6 @@
 				952F72EB25D0608200762154 /* SwiftUIPager */,
 				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95CEE15C271ABFCD0016EAC1 /* Defaults */,
-				9537082227F7F9BE00A4DF8F /* BottomSheet */,
 				9576495E2841BFB800F08103 /* ConfettiSwiftUI */,
 				95322F9E286BE76D0067C268 /* Kingfisher */,
 				95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */,
@@ -614,7 +611,6 @@
 				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
 				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
-				9537082127F7F9BE00A4DF8F /* XCRemoteSwiftPackageReference "bottom-sheet" */,
 				9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
@@ -1150,14 +1146,6 @@
 				minimumVersion = 7.6.2;
 			};
 		};
-		9537082127F7F9BE00A4DF8F /* XCRemoteSwiftPackageReference "bottom-sheet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:weitieda/bottom-sheet.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:siteline/swiftui-introspect.git";
@@ -1210,11 +1198,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
-		};
-		9537082227F7F9BE00A4DF8F /* BottomSheet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9537082127F7F9BE00A4DF8F /* XCRemoteSwiftPackageReference "bottom-sheet" */;
-			productName = BottomSheet;
 		};
 		95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;

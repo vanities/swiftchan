@@ -7,7 +7,6 @@
 
 import SwiftUI
 import FourChan
-import BottomSheet
 import Defaults
 
 struct OPView: View {

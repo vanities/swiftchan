@@ -9,7 +9,6 @@ import SwiftUI
 import FourChan
 import Defaults
 import Combine
-import BottomSheet
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
@@ -161,15 +160,13 @@ struct ThreadView: View {
                     .environment(viewModel)
                     .environmentObject(presentationState)
             }
-            .bottomSheet(
-                isPresented: $appState.showingBottomSheet,
-                height: 100
-            ) {
+            .sheet(isPresented: $appState.showingBottomSheet) {
                 if let post = appState.selectedBottomSheetPost,
                    let index = viewModel.posts.firstIndex(of: post) {
                     Button("Hide \(index == 0 ? "Thread" : "Post")") {
                         post.hide(boardName: viewModel.boardName)
                     }
+                    .presentationDetents([.fraction(0.1)])
                 }
             }
         case .error:

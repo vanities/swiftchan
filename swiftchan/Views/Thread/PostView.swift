@@ -7,7 +7,6 @@
 
 import SwiftUI
 import FourChan
-import BottomSheet
 
 struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel

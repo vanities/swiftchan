@@ -1,15 +1,6 @@
 {
-  "originHash" : "97e74d6b13c5006b411a9b3ef2f14ec4b8eaa165ab363e934bd47b14861cad2a",
+  "originHash" : "e6e6c04dcafb56788b0e90cee41e6b44b5a6400c2195bffc3889b9accb136bec",
   "pins" : [
-    {
-      "identity" : "bottom-sheet",
-      "kind" : "remoteSourceControl",
-      "location" : "git@github.com:weitieda/bottom-sheet.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "6b21007153365235418f3943a960a1f9546592e0"
-      }
-    },
     {
       "identity" : "confettiswiftui",
       "kind" : "remoteSourceControl",

@@ -9,7 +9,6 @@ import SwiftUI
 import FourChan
 import Defaults
 import MapKit
-import BottomSheet
 import SpriteKit
 
 struct CatalogView: View {
@@ -101,15 +100,13 @@ struct CatalogView: View {
                     catalogViewModel.prefetch()
                 }
             }
-            .bottomSheet(
-                isPresented: $appState.showingCatalogMenu,
-                height: 400
-            ) {
+            .sheet(isPresented: $appState.showingCatalogMenu) {
                 Group {
                     FavoriteStar(viewModel: catalogViewModel)
                     FilesSortRow(viewModel: catalogViewModel)
                     RepliesSortRow(viewModel: catalogViewModel)
                 }
+                .presentationDetents([.fraction(0.4)])
             }
         case .error:
             VStack {
