@@ -9,12 +9,14 @@ import SwiftUI
 import Kingfisher
 import FourChan
 
-class AppState: ObservableObject {
-    @Published private(set) var fullscreen: FullscreenModal?
-    @Published var showingCatalogMenu: Bool = false
-    @Published var vlcPlayerControlModifier: VLCPlayerControlModifier?
-    @Published var showingBottomSheet = false
-    @Published var selectedBottomSheetPost: Post?
+@Observable @MainActor
+class AppState {
+    private(set) var fullscreen: FullscreenModal?
+    var showingCatalogMenu: Bool = false
+    var vlcPlayerControlModifier: VLCPlayerControlModifier?
+    var showingBottomSheet = false
+    var selectedBottomSheetPost: Post?
+    var scrollViewPositions: [Int: Int] = [:]
 
     func setFullscreen(_ fullscreen: FullscreenModal?) {
         self.fullscreen = fullscreen

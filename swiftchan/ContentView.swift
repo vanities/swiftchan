@@ -7,15 +7,14 @@
 
 import SwiftUI
 import FourChan
-import Defaults
 
 struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
-    @Default(.biometricsEnabled) var biometricsEnabled
-    @Default(.didUnlockBiometrics) var didUnlockBiometrics
+    @AppStorage("biometricsEnabled") var biometricsEnabled = false
+    @AppStorage("didUnlockBiometrics") var didUnlockBiometrics = true
 
-    @StateObject private var appState = AppState()
-    @StateObject private var appContext = AppContext()
+    @State private var appState = AppState()
+    @State private var appContext = AppContext()
     @State var showPrivacyView = false
     @State private var lastBackgroundTimestamp: Date?
 
@@ -38,8 +37,8 @@ struct ContentView: View {
             }
         }
         .privacyView(enabled: $showPrivacyView)
-        .environmentObject(appState)
-        .environmentObject(appContext)
+        .environment(appState)
+        .environment(appContext)
         .onChange(of: biometricsEnabled) {
             if biometricsEnabled {
                 showPrivacyView = true

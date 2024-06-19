@@ -5,10 +5,8 @@
 //  Created by vanities on 11/12/20.
 //
 
-import Foundation
 import SwiftUI
 import FourChan
-import Defaults
 import Combine
 
 @Observable
@@ -23,8 +21,7 @@ class CatalogViewModel {
 
     private(set) var posts = [SwiftchanPost]()
     var state = LoadingState.initial
-
-    private var cancellable = Set<AnyCancellable>()
+    private var cancellables: Set<AnyCancellable> = []
 
     func getFilteredPosts(searchText: String) -> [SwiftchanPost] {
         if searchText.isEmpty {
@@ -52,24 +49,24 @@ class CatalogViewModel {
 
         if posts.count > 0 {
             state = .loaded
-            handleSorting(value: Defaults.sortFilesBy(boardName: boardName), attributeKey: "files")
-            handleSorting(value: Defaults.sortRepliesBy(boardName: boardName), attributeKey: "replies")
+            handleSorting(value: UserDefaults.getSortFilesBy(boardName: boardName), attributeKey: "files")
+            handleSorting(value: UserDefaults.getSortRepliesBy(boardName: boardName), attributeKey: "replies")
 
-            Defaults.publisher(.sortFilesBy(boardName: boardName))
-                .sink { change in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.handleSorting(value: change.newValue, attributeKey: "files")
+            NotificationCenter.default.publisher(for: .sortingRepliesDidChange)
+                .sink { [weak self] newValue in
+                    DispatchQueue.main.async {
+                        self?.handleSorting(value: UserDefaults.getSortRepliesBy(boardName: self!.boardName), attributeKey: "replies")
                     }
                 }
-                .store(in: &cancellable)
+                .store(in: &cancellables)
 
-            Defaults.publisher(.sortRepliesBy(boardName: boardName))
-                .sink { change in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.handleSorting(value: change.newValue, attributeKey: "replies")
+            NotificationCenter.default.publisher(for: .sortingFilesDidChange)
+                .sink { [weak self] newValue in
+                    DispatchQueue.main.async {
+                        self?.handleSorting(value: UserDefaults.getSortFilesBy(boardName: self!.boardName), attributeKey: "files")
                     }
                 }
-                .store(in: &cancellable)
+                .store(in: &cancellables)
         } else {
             state = .error
         }
@@ -92,7 +89,7 @@ class CatalogViewModel {
 
     func prefetch() {
         let urls = posts.compactMap { post in
-            return post.post.getMediaUrl(boardId: boardName, thumbnail: !Defaults[.fullImagesForThumbanails])
+            return post.post.getMediaUrl(boardId: boardName, thumbnail: !UserDefaults.getFullImagesForThumbanails())
         }
         prefetcher.prefetchImages(urls: urls)
     }

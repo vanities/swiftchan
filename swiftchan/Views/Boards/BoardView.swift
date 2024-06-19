@@ -56,35 +56,33 @@ struct BoardView: View {
 }
 
 #if DEBUG
-struct BoardView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            VStack(alignment: .leading) {
-                ForEach(Board.examples(), id: \.self.id) { board in
-                    BoardView(
-                        name: board.board,
-                        nsfw: board.isNSFW,
-                        title: board.title,
-                        description: board.descriptionText
-                    )
-                    .frame(height: 200)
-                }
+#Preview {
+    Group {
+        VStack(alignment: .leading) {
+            ForEach(Board.examples(), id: \.self.id) { board in
+                BoardView(
+                    name: board.board,
+                    nsfw: board.isNSFW,
+                    title: board.title,
+                    description: board.descriptionText
+                )
+                .frame(height: 200)
             }
-            .padding(.horizontal, 10)
-
-            VStack(alignment: .leading) {
-                ForEach(Board.examples(), id: \.self.id) { board in
-                    BoardView(
-                        name: board.board,
-                        nsfw: true,
-                        title: board.title,
-                        description: board.descriptionText
-                    )
-                    .frame(height: 200)
-                }
-            }
-            .padding(.horizontal, 10)
         }
+        .padding(.horizontal, 10)
+
+        VStack(alignment: .leading) {
+            ForEach(Board.examples(), id: \.self.id) { board in
+                BoardView(
+                    name: board.board,
+                    nsfw: true,
+                    title: board.title,
+                    description: board.descriptionText
+                )
+                .frame(height: 200)
+            }
+        }
+        .padding(.horizontal, 10)
     }
 }
 #endif

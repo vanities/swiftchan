@@ -7,10 +7,9 @@
 
 import SwiftUI
 import ConfettiSwiftUI
-import Defaults
 
 struct FavoriteStar: View {
-    @Default(.favoriteBoards) var favoriteBoardsDefault
+    @AppStorage("favoriteBoards") var favoriteBoardsDefault: [String] = []
     let viewModel: CatalogViewModel
     @State var counter: Int = 0
 

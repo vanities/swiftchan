@@ -7,13 +7,11 @@
 
 import SwiftUI
 import FourChan
-import Defaults
-import MapKit
 import SpriteKit
 
 struct CatalogView: View {
     var boardName: String
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) var appState
     @State var catalogViewModel: CatalogViewModel
 
     @State var searchText: String = ""
@@ -40,7 +38,9 @@ struct CatalogView: View {
 
     @ViewBuilder
     var body: some View {
+        @Bindable var appState = appState
         let filteredPosts = catalogViewModel.getFilteredPosts(searchText: searchText)
+
         switch catalogViewModel.state {
         case .initial:
             ProgressView()
@@ -90,7 +90,10 @@ struct CatalogView: View {
 
             )
             .navigationDestination(for: SwiftchanPost.self) { post in
-                ThreadView(boardName: post.boardName, postNumber: post.post.id)
+                ThreadView(
+                    boardName: post.boardName,
+                    postNumber: post.post.id
+                )
             }
             .searchable(text: $searchText)
             .refreshable {
@@ -141,10 +144,8 @@ struct CatalogView: View {
 }
 
 #if DEBUG
-struct CatalogView_Previews: PreviewProvider {
-    static var previews: some View {
-        CatalogView(boardName: "fit")
-            .environmentObject(AppState())
-    }
+#Preview {
+    CatalogView(boardName: "fit")
+        .environment(AppState())
 }
 #endif

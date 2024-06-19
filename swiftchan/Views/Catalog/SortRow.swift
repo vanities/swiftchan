@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Defaults
 
 struct RepliesSortRow: View {
     let viewModel: CatalogViewModel
@@ -17,7 +16,7 @@ struct RepliesSortRow: View {
             enabledImageName: "arrowshape.turn.up.left.fill",
             disabledImageName: "arrowshape.turn.up.left",
             text: "Replies",
-            defaultsKeyType: Defaults.Keys.sortRepliesBy
+            defaultsKeyType: "sortRepliesBy"
         )
     }
 }
@@ -31,7 +30,7 @@ struct FilesSortRow: View {
             enabledImageName: "photo.fill",
             disabledImageName: "photo",
             text: "Files",
-            defaultsKeyType: Defaults.Keys.sortFilesBy
+            defaultsKeyType: "sortFilesBy"
         )
     }
 }
@@ -41,22 +40,36 @@ struct SortRow: View {
     let enabledImageName: String
     let disabledImageName: String
     let text: String
-    let defaultsKeyType: ((String) -> Defaults.Key<SortRow.SortType>)
+    let defaultsKeyType: String
 
     @State var imageName: String
     @State var sortState: SortType
 
-    enum SortType: String, Equatable, CaseIterable, Defaults.Serializable {
+    enum SortType: String, Equatable, CaseIterable, Codable {
         case descending
         case ascending
         case none
+
+        func nextState() -> Self {
+            // Get all cases in the enum
+            let allCases = Self.allCases
+            // Find the current index
+            if let currentIndex = allCases.firstIndex(of: self) {
+                // Calculate the next index (wrap around using modulo)
+                let nextIndex = (currentIndex + 1) % allCases.count
+                // Return the next state
+                return allCases[nextIndex]
+            }
+            // Return the current state if something goes wrong (though it shouldn't)
+            return self
+        }
     }
 
     init(viewModel: CatalogViewModel,
          enabledImageName: String,
          disabledImageName: String,
          text: String,
-         defaultsKeyType: @escaping ((String) -> Defaults.Key<SortRow.SortType>)
+         defaultsKeyType: String
     ) {
         self.viewModel = viewModel
         self.enabledImageName = enabledImageName
@@ -64,8 +77,22 @@ struct SortRow: View {
         self.text = text
         self.defaultsKeyType = defaultsKeyType
 
-        self.imageName = Defaults[defaultsKeyType(viewModel.boardName)] == .none ? disabledImageName : enabledImageName
-        self.sortState = Defaults[defaultsKeyType(viewModel.boardName)]
+        switch defaultsKeyType {
+        case "sortRepliesBy":
+            let type = UserDefaults.getSortRepliesBy(boardName: viewModel.boardName)
+            self.imageName = type == .none ? disabledImageName : enabledImageName
+            self.sortState = type
+            break
+        case "sortFilesBy":
+            let type = UserDefaults.getSortFilesBy(boardName: viewModel.boardName)
+            self.imageName = type == .none ? disabledImageName : enabledImageName
+            self.sortState = type
+            break
+        default:
+            self.imageName = "none"
+            self.sortState = .none
+            break
+        }
     }
 
     @ViewBuilder
@@ -80,16 +107,25 @@ struct SortRow: View {
 
                 iconAnimation:
                     Image(systemName: "arrowtriangle.up.fill")
-                        .foregroundColor(sortState == .ascending ? .green : .red)
-                        .rotationEffect(Angle(degrees: sortState == .ascending ? 0 : 180))
-                        .opacity(sortState == .none ? 0 : 1)
+                    .foregroundColor(sortState == .ascending ? .green : .red)
+                    .rotationEffect(Angle(degrees: sortState == .ascending ? 0 : 180))
+                    .opacity(sortState == .none ? 0 : 1)
                     .scaleEffect(sortState == .none ? 0 : 1)
                     .offset(y: -10),
                 text: Text("Sort by \(text)")
             ) {
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                Defaults[defaultsKeyType(viewModel
-                                            .boardName)].next()
+
+                switch defaultsKeyType {
+                case "sortRepliesBy":
+                    UserDefaults.setSortRepliesBy(boardName: viewModel.boardName, type: UserDefaults.getSortRepliesBy(boardName: viewModel.boardName).nextState())
+                    break
+                case "sortFilesBy":
+                    UserDefaults.setSortFilesBy(boardName: viewModel.boardName, type: UserDefaults.getSortFilesBy(boardName: viewModel.boardName).nextState())
+                    break
+                default:
+                    break
+                }
 
                 withAnimation(.linear) {
                     sortState.next()
@@ -99,18 +135,19 @@ struct SortRow: View {
         .onChange(of: sortState) {
             imageName = sortState == .none ? disabledImageName : enabledImageName
         }
+        .onAppear {
+            print(UserDefaults.getSortRepliesBy(boardName: viewModel.boardName))
+        }
     }
 }
 
 #if DEBUG
-struct SortRow_Previews: PreviewProvider {
-    static var previews: some View {
-        let boardName = "fit"
-        let viewModel = CatalogViewModel(boardName: boardName)
-        Group {
-            RepliesSortRow(viewModel: viewModel)
-                .background(Color.white)
-        }
+#Preview {
+    let boardName = "fit"
+    let viewModel = CatalogViewModel(boardName: boardName)
+    Group {
+        RepliesSortRow(viewModel: viewModel)
+            .background(Color.white)
     }
 }
 #endif

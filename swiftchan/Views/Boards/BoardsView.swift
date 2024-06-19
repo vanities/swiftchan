@@ -7,12 +7,11 @@
 
 import SwiftUI
 import FourChan
-import Defaults
 
 struct BoardsView: View {
-    @Default(.favoriteBoards) private var favoriteBoardsDefault
-    @Default(.showNSFWBoards) private var showNSFWBoards
-    @EnvironmentObject private var appState: AppState
+    @AppStorage("showNSFWBoards") private var showNSFWBoards: Bool = false
+    @AppStorage("favoriteBoards") private var favoriteBoards: [String] = []
+    @Environment(AppState.self) private var appState
 
     @State var boardsViewModel = BoardsViewModel()
 
@@ -38,7 +37,7 @@ struct BoardsView: View {
                             if searchText.isEmpty {
                                 BoardSection(
                                     headerText: Constants.favoritesText,
-                                    list: boardsViewModel.getFavoriteBoards()
+                                    list: boardsViewModel.getFavoriteBoards(favoriteBoards)
                                 )
                             }
                             BoardSection(
@@ -100,5 +99,6 @@ struct BoardsView: View {
 #Preview {
     BoardsView()
         .previewInterfaceOrientation(.portrait)
+        .environment(AppState())
 }
 #endif

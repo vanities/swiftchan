@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
-import Defaults
 import Kingfisher
 
 struct ThumbnailMediaView: View {
     let url: URL
     let thumbnailUrl: URL
-    @Default(.fullImagesForThumbanails) var fullImageForThumbnails
-    @Default(.showGifThumbnails) var showGifThumbnails
+    @AppStorage("fullImagesForThumbanails") var fullImageForThumbnails = true
+    @AppStorage("showGifThumbnails") var showGifThumbnails = true
 
     @ViewBuilder
     var body: some View {

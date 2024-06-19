@@ -7,19 +7,19 @@
 
 import SwiftUI
 import ToastUI
-import Defaults
 
 struct SettingsView: View {
-    @Default(.fullImagesForThumbanails) var fullImageForThumbnails
-    @Default(.showGifThumbnails) var showGifThumbnails
-    @Default(.showGalleryPreview) var showGalleryPreview
-    @Default(.showOPPreview) var showOPPreview
-    @Default(.autoRefreshEnabled) var autoRefreshEnabled
-    @Default(.autoRefreshThreadTime) var autoRefreshThreadTime
-    @Default(.biometricsEnabled) var biometricsEnabled
-    @Default(.showNSFWBoards) var showNSFWBoards
+    @AppStorage("fullImageForThumbnails") var fullImageForThumbnails  = true
+    @AppStorage("showGifThumbnails") var showGifThumbnails = true
+    @AppStorage("showGalleryPreview") var showGalleryPreview = false
+    @AppStorage("showOPPreview") var showOPPreview = true
+    @AppStorage("autoRefreshEnabled") var autoRefreshEnabled = true
+    @AppStorage("autoRefreshThreadTime") var autoRefreshThreadTime = 10
+    @AppStorage("biometricsEnabled") var biometricsEnabled = false
+    @AppStorage("showNSFWBoards") var showNSFWBoards = false
+    @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
 
-    @EnvironmentObject private var appContext: AppContext
+    @Environment(AppContext.self) private var appContext
     @State var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
 
@@ -98,9 +98,9 @@ struct SettingsView: View {
                 Text("Auto Refresh Time")
                 Spacer()
                 TextField("Auto Refresh Time", value: $autoRefreshThreadTime, formatter: NumberFormatter())
-                .frame(width: 50)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .keyboardType(.decimalPad)
+                    .frame(width: 50)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.decimalPad)
             }
         }, header: {
             Text(header).font(.title)
@@ -118,9 +118,7 @@ struct SettingsView: View {
 }
 
 #if DEBUG
-    struct SettingsView_Previews: PreviewProvider {
-        static var previews: some View {
-            return SettingsView()
-        }
-    }
+#Preview {
+    SettingsView()
+}
 #endif

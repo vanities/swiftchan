@@ -5,9 +5,8 @@
 //  Created by vanities on 11/18/20.
 //
 
-import Foundation
+import SwiftUI
 import FourChan
-import Defaults
 
 struct SwiftchanPost: Identifiable, Hashable, Sendable {
     let post: Post
@@ -83,15 +82,9 @@ extension Post {
 
 extension Post {
     func isHidden(boardName: String) -> Bool {
-        return Defaults[.hiddenPosts(
-            boardName: boardName,
-            postId: id
-        )] == true
+        return UserDefaults.hiddenPosts(boardName: boardName, postId: id) == true
     }
     func hide(boardName: String) {
-        Defaults[.hiddenPosts(
-            boardName: boardName,
-            postId: id
-        )] = true
+        UserDefaults.hidePost(boardName: boardName, postId: id)
     }
 }

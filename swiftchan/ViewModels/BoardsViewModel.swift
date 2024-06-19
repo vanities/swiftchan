@@ -7,9 +7,8 @@
 
 import Foundation
 import FourChan
-import Defaults
 
-@Observable
+@Observable @MainActor
 final class BoardsViewModel {
     enum State {
         case initial, loading, loaded, error
@@ -29,25 +28,25 @@ final class BoardsViewModel {
         }
     }
 
-    func getAllBoards(searchText: String) -> [Board] {
-        return getFavoriteBoards() + getFilteredBoards(searchText: searchText)
+    func getAllBoards(favorites: [String], searchText: String) -> [Board] {
+        return getFavoriteBoards(favorites) + getFilteredBoards(searchText: searchText)
     }
 
     func getFilteredBoards(searchText: String) -> [Board] {
         boards
             .filter { board in
-                board.board.starts(with: searchText.lowercased()) && !Defaults[.favoriteBoards].contains(board.board)
+                return board.board.starts(with: searchText.lowercased()) && !UserDefaults.getFavoriteBoards().contains(board.board)
             }
             .filter { board in
-                guard !Defaults[.showNSFWBoards] else { return true }
+                guard !UserDefaults.getShowNSFWBoards() else { return true }
                 return !board.isNSFW
             }
     }
 
-    func getFavoriteBoards() -> [Board] {
+    func getFavoriteBoards(_ favorites: [String]) -> [Board] {
         boards
             .filter { board in
-                Defaults[.favoriteBoards].contains(board.board)
+                favorites.contains(board.board)
             }
     }
 }

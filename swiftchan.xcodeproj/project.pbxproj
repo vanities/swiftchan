@@ -439,9 +439,9 @@
 			isa = PBXGroup;
 			children = (
 				95181792254CFB600032616E /* BoardsView.swift */,
+				950846FD2752CA260098DF73 /* BoardSection.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
-				950846FD2752CA260098DF73 /* BoardSection.swift */,
 				9559F78E2843B07D00F5803F /* NSFWTagView.swift */,
 			);
 			path = Boards;
@@ -689,7 +689,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint autocorrect && ${PODS_ROOT}/SwiftLint/swiftlint \nelse\n  echo \"warning: SwiftLint not installed, run pod install\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  #${PODS_ROOT}/SwiftLint/swiftlint autocorrect && ${PODS_ROOT}/SwiftLint/swiftlint \n    echo \"warning: SwiftLint not installed, run pod install\"\nelse\n  echo \"warning: SwiftLint not installed, run pod install\"\nfi\n";
 		};
 		9E1999584B31EB7EB85129D1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -962,7 +962,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = swiftchan/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -990,7 +990,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = swiftchan/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

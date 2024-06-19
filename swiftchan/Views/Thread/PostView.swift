@@ -10,8 +10,9 @@ import FourChan
 
 struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
     @EnvironmentObject private var presentationState: PresentationState
+    @Namespace var hero
 
     let index: Int
 
@@ -180,7 +181,7 @@ struct PostView: View {
 
     return PostView(index: 0)
         .environment(viewModel)
-        .environmentObject(AppState())
+        .environment(AppState())
         .environmentObject(DismissGesture())
         .environmentObject(PresentationState())
 }

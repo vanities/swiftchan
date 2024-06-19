@@ -8,12 +8,11 @@
 import SwiftUI
 import SwiftUIPager
 import ToastUI
-import Defaults
 
 struct GalleryView: View {
-    @Default(.showGalleryPreview) var showGalleryPreview
+    @AppStorage("showGalleryPreview") var showGalleryPreview = false
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
     @Environment(ThreadViewModel.self) private var viewModel
     @EnvironmentObject private var state: PresentationState
 
@@ -140,17 +139,17 @@ extension GalleryView: Buildable {
             .environment(viewModel)
             .environmentObject(DismissGesture())
             .environmentObject(PresentationState())
-            .environmentObject(AppState())
+            .environment(AppState())
         GalleryView(index: 1)
             .environment(viewModel)
             .environmentObject(DismissGesture())
             .environmentObject(PresentationState())
-            .environmentObject(AppState())
+            .environment(AppState())
         GalleryView(index: 2)
             .environment(viewModel)
             .environmentObject(DismissGesture())
             .environmentObject(PresentationState())
-            .environmentObject(AppState())
+            .environment(AppState())
     }
 }
 #endif

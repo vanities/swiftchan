@@ -13,11 +13,11 @@ struct BoardSection: View {
     let list: [Board]
 
     var body: some View {
-        Group {
+        return Group {
             Section(header: Text(headerText)
-                        .font(Font.system(size: 24, weight: .bold, design: .rounded))
-                        .padding(.leading, 5)
-                        .padding(.bottom, 5)
+                .font(Font.system(size: 24, weight: .bold, design: .rounded))
+                .padding(.leading, 5)
+                .padding(.bottom, 5)
             ) {
 
                 ForEach(list) { board in
@@ -30,10 +30,14 @@ struct BoardSection: View {
                         )
                         .padding(.horizontal, 5)
                         .id("\(headerText)-\(board.board)")
-                        .accessibilityIdentifier(AccessibilityIdentifiers.boardButton( board.board))
+                        .accessibilityIdentifier(AccessibilityIdentifiers.boardButton(board.board))
                     }
                 }
             }
         }
     }
+}
+
+#Preview {
+    BoardSection(headerText: "b", list: [])
 }

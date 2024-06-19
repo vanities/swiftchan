@@ -5,50 +5,73 @@
 //  Created by vanities on 11/23/20.
 //
 
-import Defaults
 import FourChan
+import SwiftUI
 
-extension Defaults.Keys {
-    static let favoriteBoards = Key<[String]>("favoriteBoards", default: [])
-    static let deletedBoards = Key<[String]>("deletedBoards", default: [])
-    static let fullImagesForThumbanails = Key<Bool>("fullImagesForThumbnails", default: false)
-    static let showGifThumbnails = Key<Bool>("showGifThumbnails", default: false)
-    static let showGalleryPreview = Key<Bool>("showGalleryPreview", default: false)
-    static let showOPPreview = Key<Bool>("showOPPreview", default: false)
-    static let autoRefreshThreadTime = Key<Int>("autoRefreshThreadTime", default: 10)
-    static let autoRefreshEnabled = Key<Bool>("autoRefreshEnabled", default: false)
-    static let biometricsEnabled = Key<Bool>("biometricsEnabled", default: false)
-    static let didUnlockBiometrics = Key<Bool>("didUnlokcBiometrics", default: false)
-    static let showNSFWBoards = Key<Bool>("showNSFWBoards", default: false)
+extension UserDefaults {
+    // MARK: Getters
+    static func getFavoriteBoards() -> [String] {
+        return Array(rawValue: UserDefaults.standard.string(forKey: "favoriteBoards") ?? "[]") ?? []
+    }
+    static func getDeletedBoards() -> [String] {
+        return Array(rawValue: UserDefaults.standard.string(forKey: "deletedBoards") ?? "[]") ?? []
+    }
+    static func getFullImagesForThumbanails() -> Bool {
+        return UserDefaults.standard.bool(forKey: "fullImagesForThumbnails")
+    }
+    static func getShowGifThumbnails() -> Bool {
+        return UserDefaults.standard.bool(forKey: "showGifThumbnails")
+    }
+    static func getShowGalleryPreview() -> Bool {
+        return UserDefaults.standard.bool(forKey: "showGalleryPreview")
+    }
+    static func getShowOPPreview() -> Bool {
+        return UserDefaults.standard.bool(forKey: "showOPPreview")
+    }
+    static func getAutoRefreshThreadTime() -> Int {
+        return UserDefaults.standard.integer(forKey: "autoRefreshThreadTime")
+    }
+    static func getAutoRefreshEnabled() -> Bool {
+        return UserDefaults.standard.bool(forKey: "autoRefreshEnabled")
+    }
+    static func getBiometricsEnabled() -> Bool {
+        return UserDefaults.standard.bool(forKey: "biometricsEnabled")
+    }
+    static func getDidUnlokcBiometrics() -> Bool {
+        return UserDefaults.standard.bool(forKey: "didUnlokcBiometrics")
+    }
+    static func getShowNSFWBoards() -> Bool {
+        return UserDefaults.standard.bool(forKey: "showNSFWBoards")
+    }
 
-    static func sortRepliesBy(boardName: String) -> Key<SortRow.SortType> {
-        return Key<SortRow.SortType>(
-            "sortRepliesBy\(boardName)",
-            default: .none
-        )
+    static func getSortRepliesBy(boardName: String) -> SortRow.SortType {
+        return SortRow.SortType(rawValue: UserDefaults.standard.string(forKey: "sortRepliesBy\(boardName)") ?? "none") ?? .none
     }
-    static func sortFilesBy(boardName: String) -> Key<SortRow.SortType> {
-        return Key<SortRow.SortType>(
-            "sortFilesBoard\(boardName)",
-            default: .none
-        )
+    static func getSortFilesBy(boardName: String) -> SortRow.SortType {
+        return SortRow.SortType(rawValue: UserDefaults.standard.string(forKey: "sortFilesBy\(boardName)") ?? "none") ?? .none
     }
-    static func hiddenPosts(boardName: String, postId: Int) -> Key<Bool?> {
-        return Key<Bool?>(
-            "hiddenPosts board=\(boardName) postId=\(postId)",
-            default: nil
-        )
+    static func hiddenPosts(boardName: String, postId: Int) -> Bool {
+        return UserDefaults.standard.bool(forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
+    }
+
+    // MARK: Setters
+    static func setDidUnlokcBiometrics(value: Bool) {
+        UserDefaults.standard.set(value, forKey: "didUnlokcBiometrics")
+    }
+    static func hidePost(boardName: String, postId: Int) {
+        UserDefaults.standard.set(true, forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
+    }
+    static func setSortRepliesBy(boardName: String, type: SortRow.SortType) {
+        UserDefaults.standard.set(type.rawValue, forKey: "sortRepliesBy\(boardName)")
+        NotificationCenter.default.post(name: .sortingRepliesDidChange, object: nil, userInfo: [:])
+    }
+    static func setSortFilesBy(boardName: String, type: SortRow.SortType) {
+        UserDefaults.standard.set(type.rawValue, forKey: "sortFilesBy\(boardName)")
+        NotificationCenter.default.post(name: .sortingFilesDidChange, object: nil, userInfo: [:])
     }
 }
 
-extension Defaults {
-    static func sortRepliesBy(boardName: String) -> SortRow.SortType {
-        return Defaults[.sortRepliesBy(boardName: boardName)]
-    }
-    static func sortFilesBy(boardName: String) -> SortRow.SortType {
-        return Defaults[.sortFilesBy(boardName: boardName)]
-    }
-    static func hiddenPosts(boardName: String, postId: Int) -> Bool? {
-        return Defaults[.hiddenPosts(boardName: boardName, postId: postId)]
-    }
+extension Notification.Name {
+    static let sortingRepliesDidChange = Notification.Name("sortingRepliesDidChange")
+    static let sortingFilesDidChange = Notification.Name("sortingFilesDidChange")
 }

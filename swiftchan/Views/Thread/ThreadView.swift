@@ -7,7 +7,6 @@
 
 import SwiftUI
 import FourChan
-import Defaults
 import Combine
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
@@ -15,19 +14,20 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 }
 
 struct ThreadView: View {
-    @Default(.autoRefreshEnabled) private var autoRefreshEnabled
-    @Default(.autoRefreshThreadTime) private var autoRefreshThreadTime
+    @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
+    @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
+    @Namespace var hero
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
     @State var viewModel: ThreadViewModel
 
     @StateObject private var presentationState = PresentationState()
-    @StateObject private var threadAutorefresher = ThreadAutoRefresher()
+    @State private var threadAutorefresher = ThreadAutoRefresher()
 
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-    @State private var scrollViewPosition: Int?
+    @State private var scrollViewPosition: ScrollPosition = .init(id: 0)
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -42,6 +42,8 @@ struct ThreadView: View {
 
     @ViewBuilder
     var body: some View {
+        @Bindable var appState = appState
+
         switch viewModel.state {
         case .initial:
             ProgressView()
@@ -67,6 +69,7 @@ struct ThreadView: View {
                                 }
                             }
                         }
+                        .scrollTargetLayout()
                         .padding(.all, 3)
                         .onChange(of: presentationState.galleryIndex, initial: true) { _, _  in
                             if !presentationState.presentingReplies && !showReply {
@@ -75,8 +78,8 @@ struct ThreadView: View {
                         }
                         .opacity(opacity)
                     }
-                    .scrollPosition(id: $scrollViewPosition)
                 }
+                .scrollPosition($scrollViewPosition)
             }
             .sheet(
                 isPresented: $presentationState.presentingGallery,
@@ -89,7 +92,7 @@ struct ThreadView: View {
                     GalleryView(
                         index: presentationState.galleryIndex
                     )
-                    .environmentObject(appState)
+                    .environment(appState)
                     .environmentObject(presentationState)
                     .environment(viewModel)
                     .onAppear {
@@ -108,9 +111,11 @@ struct ThreadView: View {
             }
             .onAppear {
                 viewModel.prefetch()
+                scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
                 viewModel.stopPrefetching()
+                appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
@@ -217,12 +222,12 @@ struct ThreadView: View {
     return Group {
         ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
             .environment(viewModel)
-            .environmentObject(AppState())
+            .environment(AppState())
 
         NavigationView {
             ThreadView(boardName: viewModel.boardName, postNumber: viewModel.posts.first!.id)
                 .environment(viewModel)
-                .environmentObject(AppState())
+                .environment(AppState())
         }
     }
 }

@@ -18,7 +18,7 @@ struct VLCContainerView: View {
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @State private(set) var downloadProgress = Progress()
     @Environment(ThreadViewModel.self) private var viewModel
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) private var appState
 
     init(
         url: URL,

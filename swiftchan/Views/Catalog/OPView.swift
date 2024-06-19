@@ -7,12 +7,11 @@
 
 import SwiftUI
 import FourChan
-import Defaults
 
 struct OPView: View {
-    @Default(.showOPPreview) var showOPPreview
+    @AppStorage("showOPPreview") var showOPPreview: Bool = false
     @State var threadViewModel: ThreadViewModel
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) var appState
     @Namespace var fullscreenNspace
 
     let index: Int
@@ -50,50 +49,50 @@ struct OPView: View {
                     thumbnail: true
                    ) {
 
-                        ThumbnailMediaView(
-                            url: url,
-                            thumbnailUrl: thumbnailUrl
-                        )
-                        .matchedGeometryEffect(
-                            id: FullscreenModal.id,
-                            in: fullscreenNspace
-                        )
-                        .gesture(showOPPreview ? TapGesture().onEnded {
-                            withAnimation {
-                                appState.setFullscreen(
-                                    FullscreenModal(
-                                        view: AnyView(
-                                            ZStack {
-                                                Color.black.ignoresSafeArea()
-                                                MediaView(
-                                                    media: Media(
-                                                        index: 0,
-                                                        url: url,
-                                                        thumbnailUrl: thumbnailUrl
-                                                    )
+                    ThumbnailMediaView(
+                        url: url,
+                        thumbnailUrl: thumbnailUrl
+                    )
+                    .matchedGeometryEffect(
+                        id: FullscreenModal.id,
+                        in: fullscreenNspace
+                    )
+                    .gesture(showOPPreview ? TapGesture().onEnded {
+                        withAnimation {
+                            appState.setFullscreen(
+                                FullscreenModal(
+                                    view: AnyView(
+                                        ZStack {
+                                            Color.black.ignoresSafeArea()
+                                            MediaView(
+                                                media: Media(
+                                                    index: 0,
+                                                    url: url,
+                                                    thumbnailUrl: thumbnailUrl
                                                 )
-                                            }
-                                        ),
-                                        nspace: fullscreenNspace
-                                    )
+                                            )
+                                        }
+                                    ),
+                                    nspace: fullscreenNspace
                                 )
-                            }
-                        } : nil)
-                        .zIndex(1)
-                        .overlay {
-                            if Date.isFourchanBday() {
-                                Image("PartyHat")
-                                    .resizable()
-                                    .frame(width: 125, height: 125)
-                                    .position(x: 45, y: -25)
-                            }
-                            if Date.isChristmas() {
-                                Image("SantaHat")
-                                    .resizable()
-                                    .frame(width: 125, height: 125)
-                                    .position(x: 45, y: -25)
-                            }
+                            )
                         }
+                    } : nil)
+                    .zIndex(1)
+                    .overlay {
+                        if Date.isFourchanBday() {
+                            Image("PartyHat")
+                                .resizable()
+                                .frame(width: 125, height: 125)
+                                .position(x: 45, y: -25)
+                        }
+                        if Date.isChristmas() {
+                            Image("SantaHat")
+                                .resizable()
+                                .frame(width: 125, height: 125)
+                                .position(x: 45, y: -25)
+                        }
+                    }
 
                 }
                 // sticky, closed, image count, thread count
@@ -158,20 +157,18 @@ struct OPView: View {
 }
 
 #if DEBUG
-struct OPView_Previews: PreviewProvider {
-    static var previews: some View {
-        if let example = Post.example() {
-            let swiftchanPost = SwiftchanPost(
-                post: example,
-                boardName: "fit",
-                comment: AttributedString("hello"),
-                index: 0
-            )
-            OPView(
-                boardName: "fit",
-                post: swiftchanPost
-            )
-        }
+#Preview {
+    if let example = Post.example() {
+        let swiftchanPost = SwiftchanPost(
+            post: example,
+            boardName: "fit",
+            comment: AttributedString("hello"),
+            index: 0
+        )
+        OPView(
+            boardName: "fit",
+            post: swiftchanPost
+        )
     }
 }
 #endif
