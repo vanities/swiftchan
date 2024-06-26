@@ -16,8 +16,8 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
-    @Namespace var hero
-
+    @Namespace var heroo
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
     @State var viewModel: ThreadViewModel
 
@@ -80,6 +80,7 @@ struct ThreadView: View {
                     }
                 }
                 .scrollPosition($scrollViewPosition)
+                .defaultScrollAnchor(.bottom, for: .alignment)
             }
             .sheet(
                 isPresented: $presentationState.presentingGallery,
@@ -116,6 +117,11 @@ struct ThreadView: View {
             .onDisappear {
                 viewModel.stopPrefetching()
                 appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
+            }
+            .onChange(of: scenePhase) {
+                if scenePhase == .inactive {
+                    appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
+                }
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
