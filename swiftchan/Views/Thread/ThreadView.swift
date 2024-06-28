@@ -112,7 +112,8 @@ struct ThreadView: View {
             }
             .onAppear {
                 viewModel.prefetch()
-                scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
+                //MARK: NOT WORKINGg
+                //scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
                 viewModel.stopPrefetching()
