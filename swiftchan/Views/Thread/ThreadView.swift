@@ -112,7 +112,7 @@ struct ThreadView: View {
             }
             .onAppear {
                 viewModel.prefetch()
-                //MARK: NOT WORKINGg
+                // MARK: NOT WORKINGg
                 //scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
@@ -121,7 +121,8 @@ struct ThreadView: View {
             }
             .onChange(of: scenePhase) {
                 if scenePhase == .inactive {
-                    appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
+                    // MARK: NOT WORKINGg
+                    //appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in

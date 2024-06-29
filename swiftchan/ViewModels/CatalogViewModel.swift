@@ -53,7 +53,7 @@ class CatalogViewModel {
             handleSorting(value: UserDefaults.getSortRepliesBy(boardName: boardName), attributeKey: "replies")
 
             NotificationCenter.default.publisher(for: .sortingRepliesDidChange)
-                .sink { [weak self] newValue in
+                .sink { [weak self] _ in
                     DispatchQueue.main.async {
                         self?.handleSorting(value: UserDefaults.getSortRepliesBy(boardName: self!.boardName), attributeKey: "replies")
                     }
@@ -61,7 +61,7 @@ class CatalogViewModel {
                 .store(in: &cancellables)
 
             NotificationCenter.default.publisher(for: .sortingFilesDidChange)
-                .sink { [weak self] newValue in
+                .sink { [weak self] _ in
                     DispatchQueue.main.async {
                         self?.handleSorting(value: UserDefaults.getSortFilesBy(boardName: self!.boardName), attributeKey: "files")
                     }

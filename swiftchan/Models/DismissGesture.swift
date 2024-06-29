@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-class DismissGesture: ObservableObject {
-    @Published var dismiss: Bool = false
-    @Published var presenting: Bool = false
-    @Published var canDrag: Bool = true
-    @Published var dragging: Bool = false
-    @Published var draggingOffset: CGFloat = UIScreen.height
-    @Published var lastDraggingValue: DragGesture.Value?
-    @Published var draggingVelocity: Double = 0
+@Observable
+class DismissGesture {
+    var dismiss: Bool = false
+    var presenting: Bool = false
+    var canDrag: Bool = true
+    var dragging: Bool = false
+    var draggingOffset: CGFloat = UIScreen.height
+    var lastDraggingValue: DragGesture.Value?
+    var draggingVelocity: Double = 0
 }

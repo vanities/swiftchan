@@ -8,7 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 
-struct VLCVideo: Equatable, Identifiable {
+struct VLCVideo: Equatable, Identifiable, Sendable {
     let id: String
     // weak var urlSessionDelegate: URLSessionDownloadDelegate?
     var url: URL
@@ -72,7 +72,7 @@ struct VLCVideo: Equatable, Identifiable {
         return CacheManager.shared.cache(tempURL, cacheURL)
     }
 
-    @MainActor mutating func setDownloadProgressFinished() {
+    mutating func setDownloadProgressFinished() async {
         DispatchQueue.main.async { [self] in
             self.downloadProgress.completedUnitCount = 1
         }

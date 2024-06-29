@@ -106,9 +106,7 @@ extension ImageView: Buildable {
 }
 
 #if DEBUG
-struct ImageView_Previews: PreviewProvider {
-    static var previews: some View {
-        ImageView(url: URLExamples.image, canGesture: true)
-    }
+#Preview {
+    ImageView(url: URLExamples.image, canGesture: true)
 }
 #endif

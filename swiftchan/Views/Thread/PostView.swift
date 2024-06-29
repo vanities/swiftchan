@@ -179,10 +179,10 @@ struct PostView: View {
     // let viewModel = ThreadView.ViewModel(boardName: "g", id: 76759434)
     let viewModel = ThreadViewModel(boardName: "biz", id: 21374000)
 
-    return PostView(index: 0)
+    PostView(index: 0)
         .environment(viewModel)
         .environment(AppState())
-        .environmentObject(DismissGesture())
+        .environment(DismissGesture())
         .environmentObject(PresentationState())
 }
 #endif
