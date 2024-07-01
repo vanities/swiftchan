@@ -39,10 +39,6 @@ final class ThreadViewModel {
         self.replies = replies
     }
 
-    deinit {
-        prefetcher.stopPrefetching()
-    }
-
     @MainActor
     func getPosts() async {
         if state != .loaded {
@@ -88,6 +84,7 @@ final class ThreadViewModel {
         media = getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
     }
 
+    @MainActor
     func prefetch() {
         let urls = media.flatMap { media in
             return [media.thumbnailUrl, media.url]
@@ -95,6 +92,7 @@ final class ThreadViewModel {
         prefetcher.prefetch(urls: urls)
     }
 
+    @MainActor
     func stopPrefetching() {
         prefetcher.stopPrefetching()
     }

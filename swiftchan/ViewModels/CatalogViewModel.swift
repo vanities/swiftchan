@@ -17,7 +17,7 @@ class CatalogViewModel {
     }
 
     var boardName: String
-    let prefetcher = Prefetcher()
+    let prefetcher = Prefetcher.shared
 
     private(set) var posts = [SwiftchanPost]()
     var state = LoadingState.initial
@@ -36,10 +36,6 @@ class CatalogViewModel {
 
     init(boardName: String) {
         self.boardName = boardName
-    }
-
-    deinit {
-        stopPrefetching()
     }
 
     @MainActor
@@ -87,6 +83,7 @@ class CatalogViewModel {
         }
     }
 
+    @MainActor
     func prefetch() {
         let urls = posts.compactMap { post in
             return post.post.getMediaUrl(boardId: boardName, thumbnail: !UserDefaults.getFullImagesForThumbanails())
@@ -94,6 +91,7 @@ class CatalogViewModel {
         prefetcher.prefetchImages(urls: urls)
     }
 
+    @MainActor
     func stopPrefetching() {
         prefetcher.stopPrefetching()
     }

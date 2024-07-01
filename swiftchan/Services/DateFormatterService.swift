@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class DateFormatterService {
     static let shared = DateFormatterService()
     let dateFormatter = DateFormatter()

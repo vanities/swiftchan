@@ -8,7 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 
-struct VLCVideo: Equatable, Identifiable {
+struct VLCVideo: Equatable, Identifiable, Sendable {
     let id: String
     // weak var urlSessionDelegate: URLSessionDownloadDelegate?
     var url: URL

@@ -8,6 +8,7 @@
 import Foundation
 import Kingfisher
 
+@MainActor
 class Prefetcher {
     static let shared: Prefetcher = Prefetcher()
     var imagePrefetcher = ImagePrefetcher(urls: [])

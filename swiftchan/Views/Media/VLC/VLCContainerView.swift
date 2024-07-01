@@ -72,6 +72,7 @@ struct VLCContainerView: View {
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
+            vlcVideoViewModel.play()
         }
         .onDisappear {
             vlcVideoViewModel.pause()

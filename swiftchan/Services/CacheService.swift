@@ -8,6 +8,7 @@
 import Foundation
 import Kingfisher
 
+//@MainActor
 final class CacheManager {
 
     static let shared = CacheManager()
