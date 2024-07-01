@@ -31,7 +31,7 @@ struct GalleryView: View {
     var body: some View {
         return ZStack {
             Color.black.ignoresSafeArea()
-
+            
             // gallery
             Pager(
                 page: page,
