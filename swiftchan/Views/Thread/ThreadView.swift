@@ -80,7 +80,6 @@ struct ThreadView: View {
                     }
                 }
                 .scrollPosition($scrollViewPosition)
-                .defaultScrollAnchor(.bottom, for: .alignment)
             }
             .sheet(
                 isPresented: $presentationState.presentingGallery,
