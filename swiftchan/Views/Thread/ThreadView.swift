@@ -111,17 +111,17 @@ struct ThreadView: View {
             }
             .onAppear {
                 viewModel.prefetch()
-                // MARK: NOT WORKINGg
-                //scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
+                // MARK: NOT WORKING
+                scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
                 viewModel.stopPrefetching()
                 appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
             }
             .onChange(of: scenePhase) {
-                if scenePhase == .inactive {
-                    // MARK: NOT WORKINGg
-                    //appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
+                if scenePhase == .background {
+                    // MARK: NOT WORKING
+                    appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in
