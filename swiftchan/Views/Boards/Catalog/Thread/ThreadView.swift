@@ -26,7 +26,6 @@ struct ThreadView: View {
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-    @State private var scrollViewPosition: ScrollPosition = .init(id: 0)
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -87,7 +86,6 @@ struct ThreadView: View {
                         .opacity(opacity)
                     }
                 }
-                .scrollPosition($scrollViewPosition)
             }
             .sheet(
                 isPresented: $presentationState.presentingGallery,
@@ -122,20 +120,15 @@ struct ThreadView: View {
                     appState.showNavAndTab = true
                 }
                 viewModel.prefetch()
-                // MARK: NOT WORKING
-                scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
                 withAnimation(.easeIn) {
                     appState.showNavAndTab = true
                 }
                 viewModel.stopPrefetching()
-                appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
             }
             .onChange(of: scenePhase) {
                 if scenePhase == .background {
-                    // MARK: NOT WORKING
-                    appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in

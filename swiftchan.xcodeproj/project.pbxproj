@@ -27,7 +27,6 @@
 		9524F4B62580545C0006395F /* FileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4B52580545C0006395F /* FileExport.swift */; };
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D8C25EF2804003E0A59 /* PresentationState.swift */; };
-		95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D9025EF37F3003E0A59 /* DismissGesture.swift */; };
 		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 95322F9E286BE76D0067C268 /* Kingfisher */; };
 		953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953508F1263F557D00C7FE83 /* Prefetcher.swift */; };
@@ -152,7 +151,6 @@
 		9524F4B52580545C0006395F /* FileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExport.swift; sourceTree = "<group>"; };
 		9524F4BA258054A60006395F /* MediaSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSaver.swift; sourceTree = "<group>"; };
 		95257D8C25EF2804003E0A59 /* PresentationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationState.swift; sourceTree = "<group>"; };
-		95257D9025EF37F3003E0A59 /* DismissGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissGesture.swift; sourceTree = "<group>"; };
 		953508F1263F557D00C7FE83 /* Prefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prefetcher.swift; sourceTree = "<group>"; };
 		9537082427F801FA00A4DF8F /* MultiActionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiActionItem.swift; sourceTree = "<group>"; };
 		954FB580272CF257009CC52F /* MediaContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaContextMenu.swift; sourceTree = "<group>"; };
@@ -279,7 +277,6 @@
 				95105368256600C9002E4051 /* Post.swift */,
 				951053702566018D002E4051 /* Board.swift */,
 				95257D8C25EF2804003E0A59 /* PresentationState.swift */,
-				95257D9025EF37F3003E0A59 /* DismissGesture.swift */,
 				9579F9F0263D1A1E007C70FC /* VLCVideo.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
 			);
@@ -736,7 +733,6 @@
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
-				95257D9125EF37F3003E0A59 /* DismissGesture.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
 				950846FE2752CA260098DF73 /* BoardSection.swift in Sources */,
 				95978F182CA7A43200C520EF /* OnScrollingChangeViewModifier.swift in Sources */,

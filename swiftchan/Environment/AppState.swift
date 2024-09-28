@@ -16,7 +16,6 @@ class AppState {
     var vlcPlayerControlModifier: VLCPlayerControlModifier?
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
-    var scrollViewPositions: [Int: Int] = [:]
     var selectedTab: Tabs = .boards
     var showNavAndTab: Bool = true
 

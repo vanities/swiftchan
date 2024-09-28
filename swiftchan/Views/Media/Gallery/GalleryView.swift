@@ -137,17 +137,14 @@ extension GalleryView: Buildable {
     return Group {
         GalleryView(index: 0)
             .environment(viewModel)
-            .environment(DismissGesture())
             .environmentObject(PresentationState())
             .environment(AppState())
         GalleryView(index: 1)
             .environment(viewModel)
-            .environment(DismissGesture())
             .environmentObject(PresentationState())
             .environment(AppState())
         GalleryView(index: 2)
             .environment(viewModel)
-            .environment(DismissGesture())
             .environmentObject(PresentationState())
             .environment(AppState())
     }

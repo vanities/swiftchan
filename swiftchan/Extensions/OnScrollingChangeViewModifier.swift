@@ -5,15 +5,23 @@
 //  Created by Adam Mischke on 9/27/24.
 //
 
+
 import SwiftUI
 
 extension View {
     public func onScrollingChange(
         scrollingChangeThreshold: Double = 100.0,
         onScrollingDown: @escaping () -> Void,
-        onScrollingUp: @escaping () -> Void) -> some View {
-            self.modifier(OnScrollingChangeViewModifier(scrollingChangeThreshold: scrollingChangeThreshold, onScrollingDown: onScrollingDown, onScrollingUp: onScrollingUp))
-        }
+        onScrollingUp: @escaping () -> Void
+    ) -> some View {
+        self.modifier(
+            OnScrollingChangeViewModifier(
+                scrollingChangeThreshold: scrollingChangeThreshold,
+                onScrollingDown: onScrollingDown,
+                onScrollingUp: onScrollingUp
+            )
+        )
+    }
 }
 
 private struct OnScrollingChangeViewModifier: ViewModifier {
@@ -23,38 +31,54 @@ private struct OnScrollingChangeViewModifier: ViewModifier {
 
     @State private var offsetHolder = 0.0
     @State private var initialOffset: CGFloat?
+    @State private var debounceWorkItem: DispatchWorkItem?
 
     func body(content: Content) -> some View {
-        content.background {
+        content.background(
             GeometryReader { proxy in
                 Color.clear
-                    .onChange(of: proxy.frame(in: .global).minY, initial: true) { oldValue, newValue in
+                    .onChange(of: proxy.frame(in: .global).minY) {
+                        // Cancel any previous debounce work item
+                        debounceWorkItem?.cancel()
 
-                        // prevent triggering callback when boucing top edge to avoid jumpy animation
-                        if initialOffset == nil {
-                            initialOffset = oldValue
-                        } else if newValue >= initialOffset! {
-                            return
+                        // Create a new debounce work item
+                        debounceWorkItem = DispatchWorkItem {
+                            handleScrollChange(newValue: proxy.frame(in: .global).minY)
                         }
 
-                        let newValue = abs(newValue)
-
-                        if newValue > offsetHolder + scrollingChangeThreshold {
-                            // We set thresh hold to current offset so we can remember on next iterations.
-                            offsetHolder = newValue
-
-                            // is scrolling down
-                            onScrollingDown()
-
-                        } else if newValue < offsetHolder - scrollingChangeThreshold {
-
-                            // Save current offset to threshold
-                            offsetHolder = newValue
-                            // is scrolling up
-                            onScrollingUp()
+                        // Execute the work item after a delay (e.g., 0.1 seconds)
+                        if let workItem = debounceWorkItem {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01, execute: workItem)
                         }
                     }
             }
+        )
+    }
+
+    private func handleScrollChange(newValue: CGFloat) {
+        // Prevent triggering callback when bouncing top edge to avoid jumpy animation
+        if initialOffset == nil {
+            initialOffset = newValue
+            return
+        } else if newValue >= initialOffset! {
+            return
+        }
+
+        let absoluteNewValue = abs(newValue)
+
+        if absoluteNewValue > offsetHolder + scrollingChangeThreshold {
+            // Set threshold to current offset for the next iteration
+            offsetHolder = absoluteNewValue
+
+            // Scrolling down
+            onScrollingDown()
+
+        } else if absoluteNewValue < offsetHolder - scrollingChangeThreshold {
+            // Set threshold to current offset for the next iteration
+            offsetHolder = absoluteNewValue
+
+            // Scrolling up
+            onScrollingUp()
         }
     }
 }

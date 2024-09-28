@@ -181,7 +181,6 @@ struct PostView: View {
     PostView(index: 0)
         .environment(viewModel)
         .environment(AppState())
-        .environment(DismissGesture())
         .environmentObject(PresentationState())
 }
 #endif
