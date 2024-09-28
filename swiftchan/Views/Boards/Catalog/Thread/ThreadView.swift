@@ -118,14 +118,17 @@ struct ThreadView: View {
                 }
             }
             .onAppear {
-                withAnimation {
-                    appState.showNavAndTab = false
+                withAnimation(.easeIn) {
+                    appState.showNavAndTab = true
                 }
                 viewModel.prefetch()
                 // MARK: NOT WORKING
                 scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
             }
             .onDisappear {
+                withAnimation(.easeIn) {
+                    appState.showNavAndTab = true
+                }
                 viewModel.stopPrefetching()
                 appState.scrollViewPositions[viewModel.id] = scrollViewPosition.viewID as? Int ?? 0
             }
