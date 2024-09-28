@@ -11,14 +11,9 @@ import FourChan
 
 @Observable @MainActor
 class AppState {
-    private(set) var fullscreen: FullscreenModal?
     var showingCatalogMenu: Bool = false
     var vlcPlayerControlModifier: VLCPlayerControlModifier?
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
     var scrollViewPositions: [Int: Int] = [:]
-
-    func setFullscreen(_ fullscreen: FullscreenModal?) {
-        self.fullscreen = fullscreen
-    }
 }

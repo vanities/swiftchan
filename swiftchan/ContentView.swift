@@ -21,20 +21,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             BoardsView()
-
-            if let fullscreen = appState.fullscreen {
-                fullscreen.view
-                    .matchedGeometryEffect(
-                        id: FullscreenModal.id,
-                        in: fullscreen.nspace
-                    )
-                    .onTapGesture {
-                        withAnimation {
-                            appState.setFullscreen(nil)
-                        }
-                    }
-                    .zIndex(1)
-            }
         }
         .privacyView(enabled: $showPrivacyView)
         .environment(appState)

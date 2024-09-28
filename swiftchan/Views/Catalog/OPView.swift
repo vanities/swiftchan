@@ -53,31 +53,6 @@ struct OPView: View {
                         url: url,
                         thumbnailUrl: thumbnailUrl
                     )
-                    .matchedGeometryEffect(
-                        id: FullscreenModal.id,
-                        in: fullscreenNspace
-                    )
-                    .gesture(showOPPreview ? TapGesture().onEnded {
-                        withAnimation {
-                            appState.setFullscreen(
-                                FullscreenModal(
-                                    view: AnyView(
-                                        ZStack {
-                                            Color.black.ignoresSafeArea()
-                                            MediaView(
-                                                media: Media(
-                                                    index: 0,
-                                                    url: url,
-                                                    thumbnailUrl: thumbnailUrl
-                                                )
-                                            )
-                                        }
-                                    ),
-                                    nspace: fullscreenNspace
-                                )
-                            )
-                        }
-                    } : nil)
                     .zIndex(1)
                     .overlay {
                         if Date.isFourchanBday() {

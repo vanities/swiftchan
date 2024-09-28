@@ -16,7 +16,6 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
-    @Namespace var heroo
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
     @State var viewModel: ThreadViewModel

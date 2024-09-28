@@ -12,7 +12,6 @@ struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
     @EnvironmentObject private var presentationState: PresentationState
-    @Namespace var hero
 
     let index: Int
 

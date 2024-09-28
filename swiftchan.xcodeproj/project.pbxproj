@@ -40,7 +40,6 @@
 		9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F78E2843B07D00F5803F /* NSFWTagView.swift */; };
 		9559F7912843F1E900F5803F /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F7902843F1E900F5803F /* PrivacyView.swift */; };
 		9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */; };
-		956295FE2826BF70008A775F /* FullscreenModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956295FD2826BF70008A775F /* FullscreenModal.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
@@ -160,7 +159,6 @@
 		9559F78E2843B07D00F5803F /* NSFWTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSFWTagView.swift; sourceTree = "<group>"; };
 		9559F7902843F1E900F5803F /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadAutoRefresher.swift; sourceTree = "<group>"; };
-		956295FD2826BF70008A775F /* FullscreenModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenModal.swift; sourceTree = "<group>"; };
 		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
 		9574CDF5255E254F000C99B6 /* FourchanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourchanService.swift; sourceTree = "<group>"; };
@@ -279,7 +277,6 @@
 				95257D9025EF37F3003E0A59 /* DismissGesture.swift */,
 				9579F9F0263D1A1E007C70FC /* VLCVideo.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
-				956295FD2826BF70008A775F /* FullscreenModal.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -441,7 +438,6 @@
 				95181792254CFB600032616E /* BoardsView.swift */,
 				950846FD2752CA260098DF73 /* BoardSection.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
-				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
 				9559F78E2843B07D00F5803F /* NSFWTagView.swift */,
 			);
 			path = Boards;
@@ -479,6 +475,7 @@
 		95D86F6F25EA301A005A7EBC /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
@@ -746,7 +743,6 @@
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
 				95BF206B28C5A23D00DCB2D1 /* GIFView.swift in Sources */,
 				9524E1AA256F87EA00D08075 /* CoreExtensions.swift in Sources */,
-				956295FE2826BF70008A775F /* FullscreenModal.swift in Sources */,
 				9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */,
 				9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */,
 				9582CB99255631B9008B235D /* VLCVideoView.swift in Sources */,
