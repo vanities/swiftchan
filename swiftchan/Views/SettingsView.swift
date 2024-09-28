@@ -18,7 +18,6 @@ struct SettingsView: View {
     @AppStorage("showNSFWBoards") var showNSFWBoards = false
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
 
-    @Environment(AppContext.self) private var appContext
     @State private var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
 
@@ -87,7 +86,6 @@ struct SettingsView: View {
 #if DEBUG
 #Preview {
     SettingsView()
-        .environment(AppContext())
 }
 #endif
 

@@ -43,14 +43,17 @@ class Prefetcher {
             guard !CacheManager.shared.cacheHit(file: cacheURL) else {
                 continue
             }
-            let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { (tempURL, _, _) in
+            let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { [weak self] (tempURL, _, _) in
+                guard let self = self else { return }
                 if let tempURL = tempURL,
                    let result = CacheManager.shared.cache(tempURL, cacheURL) {
                     debugPrint("successfully cached video url \(result)")
                 }
             })
             guard !operation.isFinished, !operation.isCancelled else { return }
-            videoPrefetcher.queue.addOperation(operation)
+            DispatchQueue.main.async { [weak self] in
+                self?.videoPrefetcher.queue.addOperation(operation)
+            }
         }
     }
 

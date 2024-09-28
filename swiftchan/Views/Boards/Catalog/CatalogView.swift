@@ -68,6 +68,15 @@ struct CatalogView: View {
                         }
                     }
                 }
+                .onScrollingChange(onScrollingDown: {
+                    withAnimation(.easeIn) {
+                        appState.showNavAndTab = false
+                    }
+                }, onScrollingUp: {
+                    withAnimation(.easeIn) {
+                        appState.showNavAndTab = true
+                    }
+                })
             }
             .overlay {
                 if Date.isChristmas() {
@@ -83,7 +92,6 @@ struct CatalogView: View {
             .onDisappear {
                 catalogViewModel.stopPrefetching()
             }
-            .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(boardName)
             .navigationBarItems(
                 trailing: settingsButton
@@ -111,6 +119,8 @@ struct CatalogView: View {
                 }
                 .presentationDetents([.fraction(0.4)])
             }
+            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .navigationBar)
+            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .tabBar)
         case .error:
             VStack {
                 Image(systemName: Constants.refreshIcon)

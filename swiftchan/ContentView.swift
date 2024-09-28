@@ -8,33 +8,40 @@
 import SwiftUI
 import FourChan
 
+
 struct ContentView: View {
-    @Environment(\.scenePhase) var scenePhase
-    @AppStorage("biometricsEnabled") var biometricsEnabled = false
-    @AppStorage("didUnlockBiometrics") var didUnlockBiometrics = true
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("biometricsEnabled") private var biometricsEnabled = false
+    @AppStorage("didUnlockBiometrics") private var didUnlockBiometrics = true
 
     @State private var appState = AppState()
-    @State private var appContext = AppContext()
-    @State var showPrivacyView = false
+    @State private var showPrivacyView = false
     @State private var lastBackgroundTimestamp: Date?
 
     var body: some View {
-        ZStack {
-            BoardsView()
+        @Bindable var appState = appState
+
+        TabView(selection: $appState.selectedTab) {
+            Tab("Boards", systemImage: "list.bullet", value: .boards) {
+                BoardsView()
+            }
+
+            Tab("Settings", systemImage: "gearshape", value: .settings) {
+                SettingsView()
+            }
         }
         .privacyView(enabled: $showPrivacyView)
         .environment(appState)
-        .environment(appContext)
         .onChange(of: biometricsEnabled) {
             if biometricsEnabled {
                 showPrivacyView = true
-                appContext.requestBiometricUnlock()
+                appState.requestBiometricUnlock()
             }
         }
         .onAppear {
             if biometricsEnabled {
                 showPrivacyView = true
-                appContext.requestBiometricUnlock()
+                appState.requestBiometricUnlock()
             }
         }
         .onChange(of: scenePhase) {
@@ -52,19 +59,21 @@ struct ContentView: View {
             case .active:
                 if let lastBackgroundTimestamp = lastBackgroundTimestamp {
                     let timeInBackground = Date().timeIntervalSince(lastBackgroundTimestamp)
-                    if timeInBackground >= 60 {
-                        if biometricsEnabled, !didUnlockBiometrics {
-                            appContext.requestBiometricUnlock { success in
-                                didUnlockBiometrics = success
-                                showPrivacyView = success
-                            }
+                    if timeInBackground >= 60, biometricsEnabled, !didUnlockBiometrics {
+                        appState.requestBiometricUnlock { success in
+                            didUnlockBiometrics = success
+                            showPrivacyView = !success
+                        }
+                    } else {
+                        withAnimation(.linear(duration: 0.05)) {
+                            showPrivacyView = false
                         }
                     }
                 } else {
                     didUnlockBiometrics = true
-                }
-                withAnimation(.linear(duration: 0.05)) {
-                    showPrivacyView = false
+                    withAnimation(.linear(duration: 0.05)) {
+                        showPrivacyView = false
+                    }
                 }
             @unknown default:
                 withAnimation(.linear(duration: 0.05)) {
@@ -76,9 +85,7 @@ struct ContentView: View {
 }
 
 #if DEBUG
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    ContentView()
 }
 #endif

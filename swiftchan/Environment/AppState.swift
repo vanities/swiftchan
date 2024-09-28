@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 import FourChan
+import LocalAuthentication
 
 @Observable @MainActor
 class AppState {
@@ -16,4 +17,23 @@ class AppState {
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
     var scrollViewPositions: [Int: Int] = [:]
+    var selectedTab: Tabs = .boards
+    var showNavAndTab: Bool = true
+
+    func requestBiometricUnlock(complete: ((Bool) -> Void)? = nil) {
+        let context = LAContext()
+
+        var error: NSError?
+
+        let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+
+        if canEvaluate {
+            if context.biometryType != .none {
+                context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "To access your data") { (success, _) in
+                    complete?(success)
+                    UserDefaults.setDidUnlokcBiometrics(value: success)
+                }
+            }
+        }
+    }
 }

@@ -17,7 +17,6 @@ struct BoardsView: View {
 
     @State private var searchText: String = ""
     @State private var presentedNavigation = NavigationPath()
-    let settingNavigation = "settings"
 
     @ViewBuilder
     var body: some View {
@@ -50,13 +49,8 @@ struct BoardsView: View {
                 }
                 .buttonStyle(.plain)
                 .navigationBarTitle(Constants.title)
-                .navigationBarItems(trailing: settingsButton)
                 .navigationDestination(for: String.self) { value in
-                    if value == settingNavigation {
-                        SettingsView()
-                    } else {
-                        CatalogView(boardName: value)
-                    }
+                    CatalogView(boardName: value)
                 }
             }
             .onOpenURL { url in
@@ -78,18 +72,10 @@ struct BoardsView: View {
         }
     }
 
-    var settingsButton: some View {
-        NavigationLink(value: settingNavigation) {
-            Image(systemName: Constants.settingsIcon)
-                .foregroundColor(Color.primary)
-        }
-    }
-
     struct Constants {
         static let favoritesText = "favorites"
         static let allText = "all"
         static let title = "4chan"
-        static let settingsIcon = "gear"
         static let refreshIcon = "arrow.clockwise"
         static let gridSpacing: CGFloat = 1
     }
@@ -98,7 +84,6 @@ struct BoardsView: View {
 #if DEBUG
 #Preview {
     BoardsView()
-        .previewInterfaceOrientation(.portrait)
         .environment(AppState())
 }
 #endif

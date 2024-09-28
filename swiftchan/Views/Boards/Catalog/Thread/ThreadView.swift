@@ -68,6 +68,15 @@ struct ThreadView: View {
                                 }
                             }
                         }
+                        .onScrollingChange(onScrollingDown: {
+                            withAnimation(.easeIn) {
+                                appState.showNavAndTab = false
+                            }
+                        }, onScrollingUp: {
+                            withAnimation(.easeIn) {
+                                appState.showNavAndTab = true
+                            }
+                        })
                         .scrollTargetLayout()
                         .padding(.all, 3)
                         .onChange(of: presentationState.galleryIndex, initial: true) { _, _  in
@@ -109,6 +118,9 @@ struct ThreadView: View {
                 }
             }
             .onAppear {
+                withAnimation {
+                    appState.showNavAndTab = false
+                }
                 viewModel.prefetch()
                 // MARK: NOT WORKING
                 scrollViewPosition.scrollTo(id: appState.scrollViewPositions[viewModel.id] ?? 0)
@@ -180,6 +192,8 @@ struct ThreadView: View {
                     .presentationDetents([.fraction(0.1)])
                 }
             }
+            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .navigationBar)
+            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .tabBar)
         case .error:
             Text("Thread contains no posts.")
                 .foregroundColor(.red)
