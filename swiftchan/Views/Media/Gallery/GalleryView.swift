@@ -14,7 +14,7 @@ struct GalleryView: View {
 
     @Environment(AppState.self) private var appState
     @Environment(ThreadViewModel.self) private var viewModel
-    @EnvironmentObject private var state: PresentationState
+    @Environment(PresentationState.self) private var state
 
     let index: Int
 
@@ -29,6 +29,8 @@ struct GalleryView: View {
     var onPageDragChanged: ((CGFloat) -> Void)?
 
     var body: some View {
+        @Bindable var state = state
+
         return ZStack {
             Color.black.ignoresSafeArea()
             
@@ -137,15 +139,15 @@ extension GalleryView: Buildable {
     return Group {
         GalleryView(index: 0)
             .environment(viewModel)
-            .environmentObject(PresentationState())
+            .environment(PresentationState())
             .environment(AppState())
         GalleryView(index: 1)
             .environment(viewModel)
-            .environmentObject(PresentationState())
+            .environment(PresentationState())
             .environment(AppState())
         GalleryView(index: 2)
             .environment(viewModel)
-            .environmentObject(PresentationState())
+            .environment(PresentationState())
             .environment(AppState())
     }
 }

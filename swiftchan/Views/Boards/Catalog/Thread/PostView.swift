@@ -11,7 +11,7 @@ import FourChan
 struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
-    @EnvironmentObject private var presentationState: PresentationState
+    @Environment(PresentationState.self) private var presentationState: PresentationState
 
     let index: Int
 
@@ -150,7 +150,7 @@ struct PostView: View {
                             if let replies = viewModel.replies[index] {
                                 RepliesView(replies: replies)
                                     .environment(viewModel)
-                                    .environmentObject(presentationState)
+                                    .environment(presentationState)
                                     .onAppear {
                                         presentationState.presentingReplies = true
                                     }
@@ -181,6 +181,6 @@ struct PostView: View {
     PostView(index: 0)
         .environment(viewModel)
         .environment(AppState())
-        .environmentObject(PresentationState())
+        .environment(PresentationState())
 }
 #endif

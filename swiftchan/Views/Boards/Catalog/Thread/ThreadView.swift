@@ -16,13 +16,13 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
+    @AppStorage("hideNavAndTabOnScroll") var hideNavAndTabOnScroll = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
-    @State var viewModel: ThreadViewModel
 
-    @StateObject private var presentationState = PresentationState()
+    @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
-
+    @State var viewModel: ThreadViewModel
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
@@ -68,12 +68,17 @@ struct ThreadView: View {
                             }
                         }
                         .onScrollingChange(onScrollingDown: {
-                            withAnimation(.easeIn) {
-                                appState.showNavAndTab = false
+                            if hideNavAndTabOnScroll {
+                                withAnimation(.easeIn) {
+                                    appState.showNavAndTab = false
+                                }
                             }
+
                         }, onScrollingUp: {
-                            withAnimation(.easeIn) {
-                                appState.showNavAndTab = true
+                            if hideNavAndTabOnScroll {
+                                withAnimation(.easeIn) {
+                                    appState.showNavAndTab = true
+                                }
                             }
                         })
                         .scrollTargetLayout()
@@ -99,7 +104,7 @@ struct ThreadView: View {
                         index: presentationState.galleryIndex
                     )
                     .environment(appState)
-                    .environmentObject(presentationState)
+                    .environment(presentationState)
                     .environment(viewModel)
                     .onAppear {
                         threadAutorefresher.cancelTimer()
@@ -116,15 +121,9 @@ struct ThreadView: View {
                 }
             }
             .onAppear {
-                withAnimation(.easeIn) {
-                    appState.showNavAndTab = true
-                }
                 viewModel.prefetch()
             }
             .onDisappear {
-                withAnimation(.easeIn) {
-                    appState.showNavAndTab = true
-                }
                 viewModel.stopPrefetching()
             }
             .onChange(of: scenePhase) {
@@ -153,7 +152,7 @@ struct ThreadView: View {
                     await fetchAndPrefetchMedia()
                 }
             }
-            .environmentObject(presentationState)
+            .environment(presentationState)
             .navigationTitle(viewModel.title)
             .toolbar(id: "toolbar-1") {
                 ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
@@ -177,7 +176,7 @@ struct ThreadView: View {
             .navigationDestination(isPresented: $showReply) {
                 PostView(index: replyId)
                     .environment(viewModel)
-                    .environmentObject(presentationState)
+                    .environment(presentationState)
             }
             .sheet(isPresented: $appState.showingBottomSheet) {
                 if let post = appState.selectedBottomSheetPost,

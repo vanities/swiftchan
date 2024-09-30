@@ -10,10 +10,12 @@ import FourChan
 import SpriteKit
 
 struct CatalogView: View {
-    var boardName: String
-    @Environment(AppState.self) var appState
-    @State var catalogViewModel: CatalogViewModel
+    @AppStorage("hideNavAndTabOnScroll") var hideNavAndTabOnScroll = false
 
+    @Environment(AppState.self) var appState
+
+    var boardName: String
+    @State var catalogViewModel: CatalogViewModel
     @State var searchText: String = ""
     @State var isShowingMenu: Bool = false
 
@@ -69,12 +71,16 @@ struct CatalogView: View {
                     }
                 }
                 .onScrollingChange(onScrollingDown: {
-                    withAnimation(.easeIn) {
-                        appState.showNavAndTab = false
+                    if hideNavAndTabOnScroll {
+                        withAnimation(.easeIn) {
+                            appState.showNavAndTab = false
+                        }
                     }
                 }, onScrollingUp: {
-                    withAnimation(.easeIn) {
-                        appState.showNavAndTab = true
+                    if hideNavAndTabOnScroll {
+                        withAnimation(.easeIn) {
+                            appState.showNavAndTab = true
+                        }
                     }
                 })
             }

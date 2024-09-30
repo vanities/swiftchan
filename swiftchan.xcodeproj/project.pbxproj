@@ -316,7 +316,6 @@
 				9580614A255263DB0003FFF3 /* Services */,
 				955814B6254D249B00A966BA /* Views */,
 				95181790254CFB600032616E /* swiftchanApp.swift */,
-				958D2C98254D2DF200E54C41 /* ContentView.swift */,
 				95181794254CFB620032616E /* Assets.xcassets */,
 				95181799254CFB620032616E /* Info.plist */,
 				95181796254CFB620032616E /* Preview Content */,
@@ -356,6 +355,7 @@
 		955814B6254D249B00A966BA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				958D2C98254D2DF200E54C41 /* ContentView.swift */,
 				95B7BE43256CBBCA00F75BC9 /* Boards */,
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
 				950E3933255CD9BB00A00A74 /* Media */,

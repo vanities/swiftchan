@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-class PresentationState: ObservableObject {
-    @Published var presentingGallery: Bool = false
-    @Published var galleryIndex: Int = 0
-    @Published var presentingIndex: Int = 0
-    @Published var presentingReplies: Bool = false
+@Observable
+class PresentationState {
+    var presentingGallery: Bool = false
+    var galleryIndex: Int = 0
+    var presentingIndex: Int = 0
+    var presentingReplies: Bool = false
 }

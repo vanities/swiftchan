@@ -15,7 +15,7 @@ struct RepliesView: View {
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
 
-    @EnvironmentObject private var presentationState: PresentationState
+    @Environment(PresentationState.self) private var presentationState: PresentationState
     @Environment(ThreadViewModel.self) private var viewModel
 
     var body: some View {
@@ -37,7 +37,7 @@ struct RepliesView: View {
         .navigationDestination(isPresented: $showReply) {
             PostView(index: replyId)
                 .environment(viewModel)
-                .environmentObject(presentationState)
+                .environment(presentationState)
         }
     }
 }
