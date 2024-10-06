@@ -17,7 +17,6 @@ class AppState {
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
     var selectedTab: Tabs = .boards
-    var showNavAndTab: Bool = true
 
     func requestBiometricUnlock(complete: ((Bool) -> Void)? = nil) {
         let context = LAContext()

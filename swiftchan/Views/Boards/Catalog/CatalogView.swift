@@ -10,7 +10,7 @@ import FourChan
 import SpriteKit
 
 struct CatalogView: View {
-    @AppStorage("hideNavAndTabOnScroll") var hideNavAndTabOnScroll = false
+    @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
 
     @Environment(AppState.self) var appState
 
@@ -70,19 +70,6 @@ struct CatalogView: View {
                         }
                     }
                 }
-                .onScrollingChange(onScrollingDown: {
-                    if hideNavAndTabOnScroll {
-                        withAnimation(.easeIn) {
-                            appState.showNavAndTab = false
-                        }
-                    }
-                }, onScrollingUp: {
-                    if hideNavAndTabOnScroll {
-                        withAnimation(.easeIn) {
-                            appState.showNavAndTab = true
-                        }
-                    }
-                })
             }
             .overlay {
                 if Date.isChristmas() {
@@ -125,8 +112,7 @@ struct CatalogView: View {
                 }
                 .presentationDetents([.fraction(0.4)])
             }
-            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .navigationBar)
-            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .tabBar)
+            .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
         case .error:
             VStack {
                 Image(systemName: Constants.refreshIcon)

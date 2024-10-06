@@ -17,7 +17,7 @@ struct SettingsView: View {
     @AppStorage("biometricsEnabled") var biometricsEnabled = false
     @AppStorage("showNSFWBoards") var showNSFWBoards = false
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
-    @AppStorage("hideNavAndTabOnScroll") var hideNavAndTabOnScroll = false
+    @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
 
     @State private var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
@@ -51,7 +51,7 @@ struct SettingsView: View {
 
     var boardSection: some View {
         Section(header: Text("Board").font(.title)) {
-            Toggle("Hide Navigation and Tab Bar on Scroll", isOn: $hideNavAndTabOnScroll)
+            Toggle("Hide Tab Bar on Boards", isOn: $hideTabOnBoards)
             Toggle("Show NSFW Boards", isOn: $showNSFWBoards)
         }
     }

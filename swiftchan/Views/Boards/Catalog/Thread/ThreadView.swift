@@ -16,7 +16,7 @@ func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
-    @AppStorage("hideNavAndTabOnScroll") var hideNavAndTabOnScroll = false
+    @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
 
@@ -67,20 +67,6 @@ struct ThreadView: View {
                                 }
                             }
                         }
-                        .onScrollingChange(onScrollingDown: {
-                            if hideNavAndTabOnScroll {
-                                withAnimation(.easeIn) {
-                                    appState.showNavAndTab = false
-                                }
-                            }
-
-                        }, onScrollingUp: {
-                            if hideNavAndTabOnScroll {
-                                withAnimation(.easeIn) {
-                                    appState.showNavAndTab = true
-                                }
-                            }
-                        })
                         .scrollTargetLayout()
                         .padding(.all, 3)
                         .onChange(of: presentationState.galleryIndex, initial: true) { _, _  in
@@ -125,10 +111,6 @@ struct ThreadView: View {
             }
             .onDisappear {
                 viewModel.stopPrefetching()
-            }
-            .onChange(of: scenePhase) {
-                if scenePhase == .background {
-                }
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
@@ -187,8 +169,7 @@ struct ThreadView: View {
                     .presentationDetents([.fraction(0.1)])
                 }
             }
-            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .navigationBar)
-            .toolbar(appState.showNavAndTab ? .visible : .hidden, for: .tabBar)
+            .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
         case .error:
             Text("Thread contains no posts.")
                 .foregroundColor(.red)
