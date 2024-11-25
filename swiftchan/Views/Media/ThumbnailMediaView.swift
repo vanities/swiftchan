@@ -32,6 +32,13 @@ struct ThumbnailMediaView: View {
                     .imageScale(.large)
                     .foregroundColor(.white)
             }
+        case .mp4:
+            ZStack {
+                ImageView(url: thumbnailUrl, canGesture: false)
+                Image(systemName: "play.circle")
+                    .imageScale(.large)
+                    .foregroundColor(.white)
+            }
         case .gif:
             if showGifThumbnails {
                 GIFView(url: url)

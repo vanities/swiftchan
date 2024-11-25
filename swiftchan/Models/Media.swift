@@ -12,7 +12,7 @@ struct Media {
     let id: URL
 
     enum Format {
-        case image, gif, webm, none
+        case image, gif, webm, mp4, none
     }
 
     let format: Format
@@ -37,6 +37,8 @@ struct Media {
             return .gif
         } else if url.absoluteString.hasSuffix("webm") {
             return .webm
+        } else if url.absoluteString.hasSuffix("mp4") {
+            return .mp4
         } else {
             debugPrint("Error! cannot detect media extension", url)
             return .none

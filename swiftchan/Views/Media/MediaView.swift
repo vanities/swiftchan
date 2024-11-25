@@ -33,6 +33,18 @@ struct MediaView: View {
                     isSelected: media.isSelected
                 )
             }
+        case .mp4:
+            ZStack {
+                ImageView(
+                    url: media.thumbnailUrl,
+                    canGesture: false
+                )
+
+                VLCContainerView(
+                    url: media.url,
+                    isSelected: media.isSelected
+                )
+            }
         case .gif:
             GIFView(url: media.url)
                 .scaledToFit()

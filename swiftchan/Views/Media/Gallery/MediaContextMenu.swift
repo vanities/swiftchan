@@ -77,7 +77,7 @@ struct MediaContextMenu: View {
                 })
                     .accessibilityIdentifier(AccessibilityIdentifiers.saveToPhotosButton)
             }
-            case .webm, .none:
+            case .webm, .mp4, .none:
                 Button(action: {
                     isExportingDocument.toggle()
                 }, label: {
