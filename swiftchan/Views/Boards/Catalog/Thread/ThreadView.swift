@@ -8,6 +8,7 @@
 import SwiftUI
 import FourChan
 import Combine
+import SpriteKit
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
@@ -26,6 +27,14 @@ struct ThreadView: View {
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
+
+    var scene: SKScene {
+        let scene = SnowScene()
+        scene.scaleMode = .resizeFill
+        scene.backgroundColor = .clear
+        return scene
+    }
+
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
@@ -76,6 +85,14 @@ struct ThreadView: View {
                         }
                         .opacity(opacity)
                     }
+                }
+            }
+            .overlay {
+                if Date.isChristmas() {
+                    SpriteView(scene: scene, options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .disabled(true)
                 }
             }
             .sheet(

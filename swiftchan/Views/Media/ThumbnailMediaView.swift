@@ -16,52 +16,58 @@ struct ThumbnailMediaView: View {
 
     @ViewBuilder
     var body: some View {
-        switch Media.detect(url: url) {
-        case .image:
-            ZStack {
+        Group {
+            // Main Media Content
+            switch Media.detect(url: url) {
+            case .image:
                 if fullImageForThumbnails {
                     ImageView(url: url, canGesture: false)
                 } else {
                     ImageView(url: thumbnailUrl, canGesture: false)
                 }
+            case .webm, .mp4:
+                ZStack {
+                    ImageView(url: thumbnailUrl, canGesture: false)
+                    Image(systemName: "play.circle")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                }
+            case .gif:
+                if showGifThumbnails {
+                    GIFView(url: url)
+                        .scaledToFit()
+                } else {
+                    ImageView(url: thumbnailUrl, canGesture: false)
+                }
+            case .none:
+                EmptyView()
             }
-        case .webm:
-            ZStack {
-                ImageView(url: thumbnailUrl, canGesture: false)
-                Image(systemName: "play.circle")
-                    .imageScale(.large)
-                    .foregroundColor(.white)
-            }
-        case .mp4:
-            ZStack {
-                ImageView(url: thumbnailUrl, canGesture: false)
-                Image(systemName: "play.circle")
-                    .imageScale(.large)
-                    .foregroundColor(.white)
-            }
-        case .gif:
-            if showGifThumbnails {
-                GIFView(url: url)
-                    .scaledToFit()
-            } else {
-                ImageView(url: thumbnailUrl, canGesture: false)
-            }
-        case .none:
-            EmptyView()
         }
+        .overlay (
+                ZStack {
+                    if Date.isFourchanBday() {
+                        Image("PartyHat")
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .offset(x: -25, y: -80)
+                    }
+                    if Date.isChristmas() {
+                        Image("SantaHat")
+                            .frame(width: 100, height: 100)
+                            .offset(x: -25, y: -80)
+                    }
+            }, alignment: .topLeading
+            )
     }
 }
 
 #if DEBUG
-struct ThumbnailMediaView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ThumbnailMediaView(url: URLExamples.image,
-                               thumbnailUrl: URLExamples.image)
-            ThumbnailMediaView(url: URLExamples.gif,
-                               thumbnailUrl: URLExamples.gif)
-        }
-
+#Preview {
+    Group {
+        ThumbnailMediaView(url: URLExamples.image,
+                           thumbnailUrl: URLExamples.image)
+        ThumbnailMediaView(url: URLExamples.gif,
+                           thumbnailUrl: URLExamples.gif)
     }
 }
 #endif

@@ -54,21 +54,6 @@ struct OPView: View {
                         thumbnailUrl: thumbnailUrl
                     )
                     .zIndex(1)
-                    .overlay {
-                        if Date.isFourchanBday() {
-                            Image("PartyHat")
-                                .resizable()
-                                .frame(width: 125, height: 125)
-                                .position(x: 45, y: -25)
-                        }
-                        if Date.isChristmas() {
-                            Image("SantaHat")
-                                .resizable()
-                                .frame(width: 125, height: 125)
-                                .position(x: 45, y: -25)
-                        }
-                    }
-
                 }
                 // sticky, closed, image count, thread count
                 HStack(alignment: .center) {
