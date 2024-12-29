@@ -78,7 +78,7 @@ struct ThreadView: View {
                         }
                         .scrollTargetLayout()
                         .padding(.all, 3)
-                        .onChange(of: presentationState.galleryIndex, initial: true) { _, _  in
+                        .onChange(of: presentationState.galleryIndex) { _, _  in
                             if !presentationState.presentingReplies && !showReply {
                                 scrollToPost(reader: reader)
                             }
