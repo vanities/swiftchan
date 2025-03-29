@@ -50,12 +50,15 @@ class Prefetcher {
                     debugPrint("successfully cached video url \(result)")
                 }
             })
-            guard !operation.isFinished, !operation.isCancelled else { return }
+            if operation.isFinished || operation.isCancelled {
+                continue // Skip this operation but continue the loop
+            }
             DispatchQueue.main.async { [weak self] in
                 self?.videoPrefetcher.queue.addOperation(operation)
             }
         }
     }
+
 
     func stopPrefetching() {
         imagePrefetcher.stop()

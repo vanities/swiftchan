@@ -1,11 +1,10 @@
+
 //
 //  VLCMediaListPlayerUIView.swift
-//  swiftchan
-//
-//  Created by Adam Mischke on 11/7/21.
+//  Updated for Safe Cleanup and Playback Retry
 //
 
-import Foundation
+import UIKit
 import MobileVLCKit
 
 class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
@@ -19,64 +18,58 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var url: URL
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
-    private var buffering = false
 
-    init(url: URL, frame: CGRect) {
+    init(url: URL, frame: CGRect = .zero) {
         self.url = url
         super.init(frame: frame)
     }
 
+    /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
         media = VLCMedia(url: url)
-        if let media = self.media {
+        if let media = media {
             media.addOption("-vv")
-            // media.addOption("—network-caching=10000")
         }
-        mediaListPlayer.rootMedia = self.media
-        mediaListPlayer.mediaPlayer.media = self.media
+        mediaListPlayer.rootMedia = media
+        mediaListPlayer.mediaPlayer.media = media
         mediaListPlayer.mediaPlayer.drawable = self
         mediaListPlayer.repeatMode = .repeatCurrentItem
-#if DEBUG
+        #if DEBUG
         mediaListPlayer.mediaPlayer.audio?.isMuted = true
-#endif
+        #endif
     }
 
+    /// Start playback with a fallback retry if buffering.
     func initializeAndPlay() {
-        printState(mediaPlayerState: mediaListPlayer.mediaPlayer.state)
         if mediaListPlayer.mediaPlayer.state == .buffering {
+            // If buffering, schedule a retry after a short delay.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if !self.mediaListPlayer.mediaPlayer.isPlaying, let media = self.media {
+                    self.mediaListPlayer.play(media)
+                }
+            }
             return
         }
-
         self.initialize(url: _url)
-
-        guard let media = self.media else { return }
-
         if !mediaListPlayer.mediaPlayer.isPlaying {
-            debugPrint("will play webm \(_url)")
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.play(media)
-                debugPrint("playing \(String(describing: self?._url))")
+                if let media = self?.media {
+                    self?.mediaListPlayer.play(media)
+                }
             }
-        } else {
-            debugPrint("will not play webm \(_url)")
         }
     }
 
     func resume() {
         if !mediaListPlayer.mediaPlayer.isPlaying {
-            debugPrint("will play webm \(_url)")
             DispatchQueue.main.async { [weak self] in
                 self?.mediaListPlayer.play()
-                debugPrint("playing \(String(describing: self?._url))")
             }
-        } else {
-            debugPrint("will not play webm \(_url)")
         }
     }
 
     func pause() {
         if mediaListPlayer.mediaPlayer.canPause {
-            debugPrint("will pause webm \(_url)")
             DispatchQueue.main.async { [weak self] in
                 self?.mediaListPlayer.pause()
             }
@@ -85,7 +78,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     func seek(time: VLCTime) {
         if mediaListPlayer.mediaPlayer.isSeekable {
-            debugPrint("will seek webm \(_url)")
             DispatchQueue.main.async { [weak self] in
                 self?.mediaListPlayer.mediaPlayer.time = time
             }
@@ -93,7 +85,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     }
 
     func jump(direction: VLCVideo.MediaControlDirection, time: Int32) {
-        debugPrint("will jump webm \(_url)")
         DispatchQueue.main.async { [weak self] in
             switch direction {
             case .forward:
@@ -104,34 +95,17 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         }
     }
 
-    func printState(mediaPlayerState: VLCMediaPlayerState) {
-        switch mediaPlayerState {
-        case .esAdded:
-            debugPrint("added webm \(_url)")
-        case .playing:
-            debugPrint("playing webm \(_url)")
-        case .buffering:
-            debugPrint("buffering webm \(_url)")
-        case .ended:
-            debugPrint("ended webm \(_url)")
-        case .opening:
-            debugPrint("opening webm \(_url)")
-        case .paused:
-            debugPrint("paused webm \(_url)")
-        case .error:
-            debugPrint("error webm \(_url)")
-        case .stopped:
-            debugPrint("stopped webm \(_url)")
-        @unknown default:
-            debugPrint("unknown state webm \(_url)")
+    /// Clean up the media player to prevent callbacks on deallocated objects.
+    public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
+        DispatchQueue.main.async {
+            uiView.mediaListPlayer.mediaPlayer.delegate = nil
+            uiView.mediaListPlayer.mediaPlayer.drawable = nil
+            uiView.mediaListPlayer.stop()
+            uiView.mediaListPlayer.rootMedia = nil
         }
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
     }
 }

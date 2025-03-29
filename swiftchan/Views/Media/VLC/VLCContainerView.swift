@@ -105,3 +105,25 @@ struct VLCContainerView: View {
     }
 }
 #endif
+
+
+#if DEBUG
+#Preview {
+    return Group {
+        VLCContainerView(
+            url: URLExamples.webm,
+            isSelected: false
+        )
+        .background(Color.black)
+        .previewInterfaceOrientation(.portrait)
+
+        VLCContainerView(
+            url: URLExamples.webm,
+            isSelected: true
+        )
+        .background(Color.black)
+        .previewInterfaceOrientation(.portrait)
+    }
+}
+#endif
+
