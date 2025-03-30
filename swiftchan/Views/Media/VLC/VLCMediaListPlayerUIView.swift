@@ -16,6 +16,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         return cacheURL
     }
     private var url: URL
+    private weak var delegate: VLCMediaPlayerDelegate?
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
 
@@ -26,14 +27,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
-        // ⚠️ Clean up old media (detach listeners + reset)
-        mediaListPlayer.stop()
-        mediaListPlayer.mediaPlayer.delegate = nil
-        mediaListPlayer.mediaPlayer.drawable = nil
-        mediaListPlayer.mediaPlayer.media = nil
-        mediaListPlayer.rootMedia = nil
-
-        // ✅ Now safely set new media
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
@@ -41,11 +34,14 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             mediaListPlayer.mediaPlayer.media = media
             mediaListPlayer.mediaPlayer.drawable = self
             mediaListPlayer.repeatMode = .repeatCurrentItem
+            //mediaListPlayer.mediaPlayer.delegate = self.delegate
+
             #if DEBUG
             mediaListPlayer.mediaPlayer.audio?.isMuted = true
             #endif
         }
     }
+
 
     /// Start playback with a fallback retry if buffering.
     func initializeAndPlay() {
@@ -135,5 +131,10 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         mediaListPlayer.mediaPlayer.drawable = nil
         mediaListPlayer.rootMedia = nil
         mediaListPlayer.mediaPlayer.media = nil
+    }
+    
+    func setDelegate(_ delegate: VLCMediaPlayerDelegate) {
+        self.delegate = delegate
+        mediaListPlayer.mediaPlayer.delegate = delegate
     }
 }

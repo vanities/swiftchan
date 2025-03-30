@@ -16,7 +16,8 @@ struct VLCVideoView: UIViewRepresentable {
             url: vlcVideoViewModel.video.url,
             frame: .zero
         )
-        view.mediaListPlayer.mediaPlayer.delegate = context.coordinator
+        view.initialize(url: vlcVideoViewModel.video.url)
+        view.setDelegate(context.coordinator)
         return view
     }
 
@@ -55,70 +56,67 @@ struct VLCVideoView: UIViewRepresentable {
 
     // MARK: Coordinator
     func makeCoordinator() -> Coordinator {
-        return Coordinator(self)
+        Coordinator(viewModel: vlcVideoViewModel)
     }
 
     class Coordinator: NSObject,
                        UIGestureRecognizerDelegate,
                        VLCMediaPlayerDelegate {
-        var parent: VLCVideoView
+        private weak var viewModel: VLCVideoViewModel?
 
-        init(_ parent: VLCVideoView) {
-            self.parent = parent
+        init(viewModel: VLCVideoViewModel) {
+            self.viewModel = viewModel
         }
 
-        func mediaPlayerTimeChanged(_ aNotification: Notification) {
-            if let player = aNotification.object as? VLCMediaPlayer,
-               let remainingTime = player.remainingTime,
-               let media = player.media {
-                parent.vlcVideoViewModel.updateTime(
-                    current: player.time,
-                    remaining: remainingTime,
-                    total: VLCTime(
-                        int: parent.vlcVideoViewModel.video.currentTime.intValue +
-                        abs(parent.vlcVideoViewModel.video.remainingTime.intValue )
-                    )
-                )
-                parent.vlcVideoViewModel.setMediaState(media.state)
-                /*
-                 debugPrint(
-                """
-                updating webm time \
-                \(self.parent.vlcVideoViewModel.vlcVideo.currentTime) \
-                \(self.parent.vlcVideoViewModel.vlcVideo.remainingTime) \
-                \(self.parent.vlcVideoViewModel.vlcVideo.totalTime)
-                """
-                )
-                 */
+        nonisolated func mediaPlayerTimeChanged(_ aNotification: Notification) {
+            //print("🕒 Time changed")
+            guard let player = aNotification.object as? VLCMediaPlayer else { return }
+
+            Task { @MainActor in
+                guard let viewModel = viewModel else { return }
+
+                // These must be accessed on the main actor
+                guard let remainingTime = player.remainingTime,
+                      let media = player.media else { return }
+
+                let currentTime = player.time
+                let totalTime = VLCTime(int: currentTime.intValue + abs(remainingTime.intValue))
+                let mediaState = media.state
+
+                viewModel.updateTime(current: currentTime, remaining: remainingTime, total: totalTime)
+                viewModel.setMediaState(mediaState)
+            }
+
+            /*
+             debugPrint(
+             """
+             updating webm time \
+             \(self.parent.vlcVideoViewModel.vlcVideo.currentTime) \
+             \(self.parent.vlcVideoViewModel.vlcVideo.remainingTime) \
+             \(self.parent.vlcVideoViewModel.vlcVideo.totalTime)
+             """
+             )
+             */
+        }
+
+        nonisolated func mediaPlayerStateChanged(_ aNotification: Notification) {
+            guard let player = aNotification.object as? VLCMediaPlayer else {
+                print("Wrong object in notification")
+                return }
+
+            // Extract value(s) in nonisolated/task context
+            let state = player.state
+            print("Player state changed to: \(state.rawValue)")
+
+            // Hop to MainActor only with safe data
+            Task { @MainActor in
+                self.viewModel?.setMediaPlayerState(state)
             }
         }
 
-        func mediaPlayerStateChanged(_ aNotification: Notification) {
-            if let player = aNotification.object as? VLCMediaPlayer {
-                self.parent.vlcVideoViewModel.setMediaPlayerState(player.state)
-                /*
-                switch parent.vlcVideoViewModel.vlcVideo.mediaPlayerState {
-                case .esAdded:
-                    debugPrint("added webm \(parent.url)")
-                case .playing:
-                    debugPrint("playing webm \(parent.url)")
-                case .buffering:
-                    debugPrint("buffering webm \(parent.url)")
-                case .ended:
-                    debugPrint("ended webm \(parent.url)")
-                case .opening:
-                    debugPrint("opening webm \(parent.url)")
-                case .paused:
-                    debugPrint("paused webm \(parent.url)")
-                case .error:
-                    debugPrint("error webm \(parent.url)")
-                case .stopped:
-                    debugPrint("stopped webm \(parent.url)")
-                @unknown default:
-                    debugPrint("unknown state webm \(parent.url)")
-                }
-                 */
-            }
+        @MainActor
+        func handleStateChange(from player: VLCMediaPlayer) {
+            self.viewModel?.setMediaPlayerState(player.state)
         }
 
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
