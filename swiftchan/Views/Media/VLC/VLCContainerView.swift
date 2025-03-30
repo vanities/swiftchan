@@ -60,6 +60,7 @@ struct VLCContainerView: View {
         }
         .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) {
             if vlcVideoViewModel.video.downloadProgress.isFinished && isSelected {
+                print("PLaying video: \(vlcVideoViewModel.video.url)")
                 vlcVideoViewModel.play()
             }
         }

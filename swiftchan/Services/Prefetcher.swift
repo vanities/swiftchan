@@ -17,8 +17,8 @@ class Prefetcher {
     func prefetch(urls: [URL]) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
         prefetchImages(urls: imageUrls)
-        let videoUrls = urls.filter { url in url.isWebm() }
-        prefetchVideos(urls: videoUrls)
+        //let videoUrls = urls.filter { url in url.isWebm() }
+        //prefetchVideos(urls: videoUrls)
     }
 
     func prefetchImages(urls: [URL]) {
@@ -44,7 +44,7 @@ class Prefetcher {
                 continue
             }
             let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { [weak self] (tempURL, _, _) in
-                guard let self = self else { return }
+                guard let _ = self else { return }
                 if let tempURL = tempURL,
                    let result = CacheManager.shared.cache(tempURL, cacheURL) {
                     debugPrint("successfully cached video url \(result)")
@@ -62,6 +62,6 @@ class Prefetcher {
 
     func stopPrefetching() {
         imagePrefetcher.stop()
-        videoPrefetcher.queue.cancelAllOperations()
+        //videoPrefetcher.queue.cancelAllOperations()
     }
 }

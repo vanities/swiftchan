@@ -53,28 +53,19 @@ struct VLCVideo: Equatable, Identifiable, Sendable {
             return cacheURL
         }
 
-        // let urlSession = URLSession(configuration: .default, delegate: urlSessionDelegate, delegateQueue: nil)
-        if let existingOperation = Prefetcher.shared.videoPrefetcher.queue.operations.first(where: {
-            ($0 as? DownloadOperation)?.downloadTaskURL == url
-        }), let operation = existingOperation as? DownloadOperation {
-
-            if operation.isExecuting,
-               let data = await operation.task.cancelByProducingResumeData() {
-                let (tempURL, _) = try await URLSession.shared.download(resumeFrom: data)
-                await setDownloadProgressFinished()
-                return CacheManager.shared.cache(tempURL, cacheURL)
-            }
-        }
-
         debugPrint("Downloading webm: \(cacheURL)")
         let (tempURL, _) = try await URLSession.shared.download(from: url, progress: downloadProgress)
         debugPrint("Completed Downloading webm: \(cacheURL)")
-        return CacheManager.shared.cache(tempURL, cacheURL)
+        let cached = CacheManager.shared.cache(tempURL, cacheURL)
+        await setDownloadProgressFinished()
+        return cached
     }
+
 
     mutating func setDownloadProgressFinished() async {
         DispatchQueue.main.async { [self] in
             self.downloadProgress.completedUnitCount = 1
+            self.downloadProgress.totalUnitCount = 1
         }
     }
 }
@@ -88,3 +79,4 @@ extension VLCVideo: Hashable {
         hasher.combine(url)
     }
 }
+

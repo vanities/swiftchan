@@ -48,6 +48,7 @@ struct VLCVideoView: UIViewRepresentable {
             uiView.mediaListPlayer.mediaPlayer.drawable = nil
             // Stop and clear the media to ensure proper cleanup
             uiView.mediaListPlayer.stop()
+            uiView.mediaListPlayer.mediaPlayer.media = nil
             uiView.mediaListPlayer.rootMedia = nil
         }
     }

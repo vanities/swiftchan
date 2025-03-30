@@ -26,23 +26,39 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
+        // ⚠️ Clean up old media (detach listeners + reset)
+        mediaListPlayer.stop()
+        mediaListPlayer.mediaPlayer.delegate = nil
+        mediaListPlayer.mediaPlayer.drawable = nil
+        mediaListPlayer.mediaPlayer.media = nil
+        mediaListPlayer.rootMedia = nil
+
+        // ✅ Now safely set new media
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
+            mediaListPlayer.rootMedia = media
+            mediaListPlayer.mediaPlayer.media = media
+            mediaListPlayer.mediaPlayer.drawable = self
+            mediaListPlayer.repeatMode = .repeatCurrentItem
+            #if DEBUG
+            mediaListPlayer.mediaPlayer.audio?.isMuted = true
+            #endif
         }
-        mediaListPlayer.rootMedia = media
-        mediaListPlayer.mediaPlayer.media = media
-        mediaListPlayer.mediaPlayer.drawable = self
-        mediaListPlayer.repeatMode = .repeatCurrentItem
-        #if DEBUG
-        mediaListPlayer.mediaPlayer.audio?.isMuted = true
-        #endif
     }
 
     /// Start playback with a fallback retry if buffering.
     func initializeAndPlay() {
+        let fileURL = _url
+        let fileExists = FileManager.default.fileExists(atPath: fileURL.path)
+        let fileSizeValid = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? Int64 ?? 0) ?? 0 > 0
+
+        guard fileExists, fileSizeValid else {
+            debugPrint("⚠️ Cannot play video: file does not exist or is empty \(fileURL)")
+            return
+        }
+
         if mediaListPlayer.mediaPlayer.state == .buffering {
-            // If buffering, schedule a retry after a short delay.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 if !self.mediaListPlayer.mediaPlayer.isPlaying, let media = self.media {
                     self.mediaListPlayer.play(media)
@@ -50,7 +66,9 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
             return
         }
-        self.initialize(url: _url)
+
+        self.initialize(url: fileURL)
+
         if !mediaListPlayer.mediaPlayer.isPlaying {
             DispatchQueue.main.async { [weak self] in
                 if let media = self?.media {
@@ -59,6 +77,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
         }
     }
+
 
     func resume() {
         if !mediaListPlayer.mediaPlayer.isPlaying {
@@ -107,5 +126,14 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        debugPrint("🧹 VLCMediaListPlayerUIView deinit")
+        mediaListPlayer.stop()
+        mediaListPlayer.mediaPlayer.delegate = nil
+        mediaListPlayer.mediaPlayer.drawable = nil
+        mediaListPlayer.rootMedia = nil
+        mediaListPlayer.mediaPlayer.media = nil
     }
 }
