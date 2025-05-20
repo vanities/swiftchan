@@ -2,7 +2,7 @@
 //  MediaContextMenu.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 11/21/21.
+//  Created on 11/21/21.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  DeepLinker.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 11/26/21.
+//  Created on 11/26/21.
 //
 
 import Foundation

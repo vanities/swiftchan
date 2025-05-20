@@ -2,7 +2,7 @@
 //  RoundedCorners.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 11/1/21.
+//  Created on 11/1/21.
 //
 
 import SwiftUI

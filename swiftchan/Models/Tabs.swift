@@ -2,7 +2,7 @@
 //  Tabs.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 9/27/24.
+//  Created on 9/27/24.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  PrivacyView.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 5/29/22.
+//  Created on 5/29/22.
 //
 
 import SwiftUI

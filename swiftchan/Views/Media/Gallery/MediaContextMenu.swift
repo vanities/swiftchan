@@ -2,7 +2,7 @@
 //  GalleryContextMenu.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 10/29/21.
+//  Created on 10/29/21.
 //
 
 import SwiftUI

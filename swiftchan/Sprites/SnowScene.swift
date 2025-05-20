@@ -2,7 +2,7 @@
 //  SnowScene.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 12/24/22.
+//  Created on 12/24/22.
 //
 
 import SpriteKit

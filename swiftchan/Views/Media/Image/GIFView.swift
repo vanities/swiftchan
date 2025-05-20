@@ -2,7 +2,7 @@
 //  GIFView.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 9/4/22.
+//  Created on 9/4/22.
 //
 
 import SwiftUI

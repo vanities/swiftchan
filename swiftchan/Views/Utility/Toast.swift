@@ -2,7 +2,7 @@
 //  Toast.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 11/7/21.
+//  Created on 11/7/21.
 //
 
 import SwiftUI

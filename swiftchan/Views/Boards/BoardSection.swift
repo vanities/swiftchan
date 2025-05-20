@@ -2,7 +2,7 @@
 //  BoardSection.swift
 //  swiftchan
 //
-//  Created by Adam Mischke on 11/27/21.
+//  Created on 11/27/21.
 //
 
 import SwiftUI
