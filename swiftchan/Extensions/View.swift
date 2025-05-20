@@ -2,7 +2,7 @@
 //  View.swift
 //  swiftchan
 //
-//  Created by vanities on 11/21/20.
+//  Created on 11/21/20.
 //
 
 import SwiftUI

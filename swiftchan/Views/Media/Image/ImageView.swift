@@ -2,7 +2,7 @@
 //  ImageView.swift
 //  swiftchan
 //
-//  Created by vanities on 11/6/20.
+//  Created on 11/6/20.
 //
 
 import SwiftUI

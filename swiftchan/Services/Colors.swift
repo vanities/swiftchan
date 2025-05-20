@@ -2,7 +2,7 @@
 //  Colors.swift
 //  Colors
 //
-//  Created by vanities on 7/23/21.
+//  Created on 7/23/21.
 //
 
 import SwiftUI

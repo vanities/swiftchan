@@ -2,7 +2,7 @@
 //  UserSettings.swift
 //  swiftchan
 //
-//  Created by vanities on 11/23/20.
+//  Created on 11/23/20.
 //
 
 import FourChan

@@ -2,7 +2,7 @@
 //  CacheService.swift
 //  swiftchan
 //
-//  Created by vanities on 11/7/20.
+//  Created on 11/7/20.
 //
 
 import Foundation

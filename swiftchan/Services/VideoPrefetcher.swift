@@ -2,7 +2,7 @@
 //  DownloadQueue.swift
 //  swiftchan
 //
-//  Created by vanities on 5/3/21.
+//  Created on 5/3/21.
 //
 
 import Foundation

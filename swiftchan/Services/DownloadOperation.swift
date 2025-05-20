@@ -2,7 +2,7 @@
 //  DownloadOperation.swift
 //  swiftchan
 //
-//  Created by vanities on 5/9/21.
+//  Created on 5/9/21.
 //
 // https://fluffy.es/download-files-sequentially/
 

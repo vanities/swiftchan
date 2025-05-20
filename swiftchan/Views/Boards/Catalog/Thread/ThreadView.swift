@@ -2,7 +2,7 @@
 //  ThreadView.swift
 //  swiftchan
 //
-//  Created by vanities on 10/31/20.
+//  Created on 10/31/20.
 //
 
 import SwiftUI

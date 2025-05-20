@@ -2,7 +2,7 @@
 //  VLCVideoViewModel.swift
 //  swiftchan
 //
-//  Created by vanities on 2/1/21.
+//  Created on 2/1/21.
 //
 import SwiftUI
 import MobileVLCKit

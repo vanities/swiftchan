@@ -2,7 +2,7 @@
 //  AccessibilityIdentifiers.swift
 //  AccessibilityIdentifiers
 //
-//  Created by vanities on 8/26/21.
+//  Created on 8/26/21.
 //
 
 import Foundation

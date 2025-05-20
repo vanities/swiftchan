@@ -2,7 +2,7 @@
 //  AnimatedImage.swift
 //  swiftchan
 //
-//  Created by vanities on 10/9/21.
+//  Created on 10/9/21.
 //
 
 import SwiftUI

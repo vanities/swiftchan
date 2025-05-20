@@ -2,7 +2,7 @@
 //  VLCContainerView.swift
 //  swiftchan
 //
-//  Created by vanities on 11/8/20.
+//  Created on 11/8/20.
 //
 
 import SwiftUI

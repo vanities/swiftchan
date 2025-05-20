@@ -2,7 +2,7 @@
 //  MediaSaver.swift
 //  swiftchan
 //
-//  Created by vanities on 12/8/20.
+//  Created on 12/8/20.
 //
 
 import SwiftUI

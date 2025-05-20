@@ -2,7 +2,7 @@
 //  CommentParser.swift
 //  swiftchan
 //
-//  Created by vanities on 11/3/20.
+//  Created on 11/3/20.
 //
 
 import SwiftUI

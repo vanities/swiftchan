@@ -2,7 +2,7 @@
 //  MultiActionItem.swift
 //  swiftchan
 //
-//  Created by vanities on 10/15/21.
+//  Created on 10/15/21.
 //
 
 import SwiftUI

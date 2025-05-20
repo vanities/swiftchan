@@ -2,7 +2,7 @@
 //  DateFormatterService.swift
 //  swiftchan
 //
-//  Created by vanities on 11/16/20.
+//  Created on 11/16/20.
 //
 
 import Foundation

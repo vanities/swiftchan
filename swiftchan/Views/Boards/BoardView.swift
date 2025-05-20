@@ -2,7 +2,7 @@
 //  BoardView.swift
 //  swiftchan
 //
-//  Created by vanities on 10/30/20.
+//  Created on 10/30/20.
 //
 
 import SwiftUI

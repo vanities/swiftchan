@@ -2,7 +2,7 @@
 //  VLCVideo.swift
 //  swiftchan
 //
-//  Created by vanities on 5/1/21.
+//  Created on 5/1/21.
 //
 
 import SwiftUI

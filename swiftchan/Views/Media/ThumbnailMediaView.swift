@@ -2,7 +2,7 @@
 //  ThumbnailMediaView.swift
 //  swiftchan
 //
-//  Created by vanities on 11/15/20.
+//  Created on 11/15/20.
 //
 
 import SwiftUI

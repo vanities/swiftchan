@@ -2,7 +2,7 @@
 //  URLExamples.swift
 //  swiftchan
 //
-//  Created by vanities on 11/11/20.
+//  Created on 11/11/20.
 //
 
 import Foundation

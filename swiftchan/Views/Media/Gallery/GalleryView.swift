@@ -2,7 +2,7 @@
 //  GalleryView.swift
 //  swiftchan
 //
-//  Created by vanities on 11/5/20.
+//  Created on 11/5/20.
 //
 
 import SwiftUI

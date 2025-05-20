@@ -2,7 +2,7 @@
 //  PresentationState.swift
 //  swiftchan
 //
-//  Created by vanities on 3/2/21.
+//  Created on 3/2/21.
 //
 
 import SwiftUI

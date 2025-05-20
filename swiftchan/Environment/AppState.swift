@@ -2,7 +2,7 @@
 //  AppState.swift
 //  swiftchan
 //
-//  Created by vanities on 11/25/20.
+//  Created on 11/25/20.
 //
 
 import SwiftUI

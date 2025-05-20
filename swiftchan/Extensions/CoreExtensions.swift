@@ -2,7 +2,7 @@
 //  CoreExtensions.swift
 //  swiftchan
 //
-//  Created by vanities on 11/26/20.
+//  Created on 11/26/20.
 //
 
 import SwiftUI
