@@ -27,6 +27,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
+        resetPlayer()
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
@@ -40,6 +41,15 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             mediaListPlayer.mediaPlayer.audio?.isMuted = true
             #endif
         }
+    }
+
+    /// Safely stop playback and release current media.
+    private func resetPlayer() {
+        mediaListPlayer.stop()
+        mediaListPlayer.mediaPlayer.delegate = nil
+        mediaListPlayer.mediaPlayer.drawable = nil
+        mediaListPlayer.mediaPlayer.media = nil
+        mediaListPlayer.rootMedia = nil
     }
 
 
@@ -113,10 +123,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     /// Clean up the media player to prevent callbacks on deallocated objects.
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         DispatchQueue.main.async {
-            uiView.mediaListPlayer.mediaPlayer.delegate = nil
-            uiView.mediaListPlayer.mediaPlayer.drawable = nil
-            uiView.mediaListPlayer.stop()
-            uiView.mediaListPlayer.rootMedia = nil
+            uiView.resetPlayer()
         }
     }
 
@@ -126,11 +133,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     deinit {
         debugPrint("🧹 VLCMediaListPlayerUIView deinit")
-        mediaListPlayer.stop()
-        mediaListPlayer.mediaPlayer.delegate = nil
-        mediaListPlayer.mediaPlayer.drawable = nil
-        mediaListPlayer.rootMedia = nil
-        mediaListPlayer.mediaPlayer.media = nil
+        resetPlayer()
     }
     
     func setDelegate(_ delegate: VLCMediaPlayerDelegate) {
