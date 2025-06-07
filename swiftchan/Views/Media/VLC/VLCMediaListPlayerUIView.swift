@@ -46,6 +46,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     /// Safely stop playback and release current media.
     private func resetPlayer() {
         mediaListPlayer.stop()
+        mediaListPlayer.mediaPlayer.stop()
         mediaListPlayer.mediaPlayer.delegate = nil
         mediaListPlayer.mediaPlayer.drawable = nil
         mediaListPlayer.mediaPlayer.media = nil
