@@ -27,5 +27,6 @@ class AccessibilityIdentifiers {
     static let saveToFilesButton: String = "Save to Files Button"
     static let copyToPasteboardButton: String = "Copy to Pasteboard Button"
     static let successToastText: String = "Success Toast Text"
+    static let randomBoardButton: String = "Random Board Button"
 
 }
