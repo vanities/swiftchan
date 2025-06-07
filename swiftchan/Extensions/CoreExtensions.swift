@@ -424,8 +424,10 @@ extension Date {
 
         if let christmasEveDate = Calendar.current.date(from: christmasEve),
            let christmasDate = Calendar.current.date(from: christmas),
-           let christmasAfter=Calendar.current.date(from: christmas) {
-            return Calendar.current.isDateInToday(christmasEveDate) || Calendar.current.isDateInToday(christmasDate) || Calendar.current.isDateInToday(christmasAfter)
+           let christmasAfterDate = Calendar.current.date(from: christmasAfter) {
+            return Calendar.current.isDateInToday(christmasEveDate) ||
+                Calendar.current.isDateInToday(christmasDate) ||
+                Calendar.current.isDateInToday(christmasAfterDate)
         }
         return false
     }
