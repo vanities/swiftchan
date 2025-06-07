@@ -52,10 +52,18 @@ struct BoardsView: View {
                 .navigationDestination(for: String.self) { value in
                     CatalogView(boardName: value)
                 }
+                .navigationDestination(for: ThreadDestination.self) { dest in
+                    ThreadView(boardName: dest.board, postNumber: dest.id)
+                }
             }
             .onOpenURL { url in
-                if case .board(let name) = Deeplinker.getType(url: url) {
+                switch Deeplinker.getType(url: url) {
+                case .board(let name):
                     presentedNavigation.append(name)
+                case .thread(let board, let id):
+                    presentedNavigation.append(ThreadDestination(board: board, id: Int(id) ?? 0))
+                default:
+                    break
                 }
             }
         case .error:

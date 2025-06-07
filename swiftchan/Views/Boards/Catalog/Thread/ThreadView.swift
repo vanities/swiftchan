@@ -27,6 +27,8 @@ struct ThreadView: View {
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
+    @State private var showThread: Bool = false
+    @State private var threadDestination = ThreadDestination(board: "", id: 0)
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -118,9 +120,15 @@ struct ThreadView: View {
                 }
             )
             .onOpenURL { url in
-                if case .post(let id) = Deeplinker.getType(url: url) {
+                switch Deeplinker.getType(url: url) {
+                case .post(let id):
                     showReply = true
                     replyId = viewModel.getPostIndexFromId(id)
+                case .thread(let board, let id):
+                    threadDestination = ThreadDestination(board: board, id: Int(id) ?? 0)
+                    showThread = true
+                default:
+                    break
                 }
             }
             .onAppear {
@@ -172,10 +180,20 @@ struct ThreadView: View {
                     threadAutorefresher.setTimer()
                 }
             }
+            .onChange(of: showThread) {
+                if showThread {
+                    threadAutorefresher.cancelTimer()
+                } else {
+                    threadAutorefresher.setTimer()
+                }
+            }
             .navigationDestination(isPresented: $showReply) {
                 PostView(index: replyId)
                     .environment(viewModel)
                     .environment(presentationState)
+            }
+            .navigationDestination(isPresented: $showThread) {
+                ThreadView(boardName: threadDestination.board, postNumber: threadDestination.id)
             }
             .sheet(isPresented: $appState.showingBottomSheet) {
                 if let post = appState.selectedBottomSheetPost,

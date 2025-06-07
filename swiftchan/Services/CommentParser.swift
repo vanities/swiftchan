@@ -57,23 +57,39 @@ class CommentParser {
                 else {
                     part.foregroundColor = Colors.Text.crossThreadReply
                     part.font = font
-                    
-                    // text: >>>/pol/
-                    // href: //boards.4chan.org/pol/
+
+                    // text: >>>/pol/ or >>>/g/123456
                     if text.starts(with: ">>>") {
-                        part.link = URL.board(name: text.replacingOccurrences(of: ">>>", with: "").replacingOccurrences(of: "/", with: ""))
+                        let trimmed = text.replacingOccurrences(of: ">>>/", with: "")
+                        let components = trimmed.split(separator: "/")
+                        if components.count >= 2 {
+                            let board = String(components[0])
+                            let id = String(components[1])
+                            part.link = URL.thread(board: board, id: id)
+                        } else {
+                            part.link = URL.board(name: trimmed.replacingOccurrences(of: "/", with: ""))
+                        }
                     }
-                    // text: >>794515
-                    // href: /3/thread/794515#p794515
-                    // TODO: get cross thread replies
+                    // text: >>794515 with cross thread href
                     else if text.starts(with: ">>") {
-                        part.link = URL(string: "swiftchan:Post?id=\(text.replacingOccurrences(of: ">>", with: ""))")
+                        if href.contains("/thread/") {
+                            let components = href.split(separator: "/")
+                            if components.count >= 3 {
+                                let board = String(components[1])
+                                let idComponent = components.last ?? ""
+                                let id = idComponent.split(separator: "#").first.map(String.init) ?? ""
+                                part.link = URL.thread(board: board, id: id)
+                            } else {
+                                part.link = URL(string: href)
+                            }
+                        } else {
+                            part.link = URL(string: "swiftchan:Post?id=\(text.replacingOccurrences(of: ">>", with: ""))")
+                        }
                     }
                     // link without protocol
                     else {
                         part.link = URL(string: href)
                     }
-                    //part.link = URL(string: "swiftchan://\(part)")!
                 }
 
             case .plain(text: let text):

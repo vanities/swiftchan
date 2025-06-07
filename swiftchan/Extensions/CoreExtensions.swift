@@ -243,6 +243,7 @@ extension URL {
     enum DetailType: String {
         case reply = "/reply"
         case board = "/board"
+        case thread = "/thread"
         case none
     }
 
@@ -256,6 +257,10 @@ extension URL {
 
     static func board(name: String) -> Self {
         Self(string: "swiftchan:\(URL.DetailType.board.rawValue)?name=\(name)")!
+    }
+
+    static func thread(board: String, id: String) -> Self {
+        Self(string: "swiftchan:\(URL.DetailType.thread.rawValue)?board=\(board)&id=\(id)")!
     }
 
 }
