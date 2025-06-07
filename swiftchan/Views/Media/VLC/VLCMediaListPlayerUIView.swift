@@ -19,6 +19,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private weak var delegate: VLCMediaPlayerDelegate?
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
+    private var currentMediaURL: URL?
 
     init(url: URL, frame: CGRect = .zero) {
         self.url = url
@@ -27,6 +28,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
+        guard currentMediaURL != url || mediaListPlayer.mediaPlayer.media == nil else { return }
         resetPlayer()
         media = VLCMedia(url: url)
         if let media = media {
@@ -40,17 +42,27 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             #if DEBUG
             mediaListPlayer.mediaPlayer.audio?.isMuted = true
             #endif
+            currentMediaURL = url
         }
     }
 
     /// Safely stop playback and release current media.
     private func resetPlayer() {
-        mediaListPlayer.stop()
-        mediaListPlayer.mediaPlayer.stop()
-        mediaListPlayer.mediaPlayer.delegate = nil
-        mediaListPlayer.mediaPlayer.drawable = nil
-        mediaListPlayer.mediaPlayer.media = nil
-        mediaListPlayer.rootMedia = nil
+        let cleanup = {
+            self.mediaListPlayer.stop()
+            self.mediaListPlayer.mediaPlayer.stop()
+            self.mediaListPlayer.mediaPlayer.delegate = nil
+            self.mediaListPlayer.mediaPlayer.drawable = nil
+            self.mediaListPlayer.mediaPlayer.media = nil
+            self.mediaListPlayer.rootMedia = nil
+            self.currentMediaURL = nil
+        }
+
+        if Thread.isMainThread {
+            cleanup()
+        } else {
+            DispatchQueue.main.async(execute: cleanup)
+        }
     }
 
 
