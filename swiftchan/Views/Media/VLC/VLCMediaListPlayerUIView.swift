@@ -19,6 +19,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private weak var delegate: VLCMediaPlayerDelegate?
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
+    private var currentMediaURL: URL?
 
     init(url: URL, frame: CGRect = .zero) {
         self.url = url
@@ -27,18 +28,40 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
+        guard currentMediaURL != url || mediaListPlayer.mediaPlayer.media == nil else { return }
+        resetPlayer()
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
             mediaListPlayer.rootMedia = media
             mediaListPlayer.mediaPlayer.media = media
             mediaListPlayer.mediaPlayer.drawable = self
+            mediaListPlayer.mediaPlayer.delegate = delegate
             mediaListPlayer.repeatMode = .repeatCurrentItem
-            //mediaListPlayer.mediaPlayer.delegate = self.delegate
 
             #if DEBUG
             mediaListPlayer.mediaPlayer.audio?.isMuted = true
             #endif
+            currentMediaURL = url
+        }
+    }
+
+    /// Safely stop playback and release current media.
+    private func resetPlayer() {
+        let cleanup = {
+            self.mediaListPlayer.stop()
+            self.mediaListPlayer.mediaPlayer.stop()
+            self.mediaListPlayer.mediaPlayer.delegate = nil
+            self.mediaListPlayer.mediaPlayer.drawable = nil
+            self.mediaListPlayer.mediaPlayer.media = nil
+            self.mediaListPlayer.rootMedia = nil
+            self.currentMediaURL = nil
+        }
+
+        if Thread.isMainThread {
+            cleanup()
+        } else {
+            DispatchQueue.main.async(execute: cleanup)
         }
     }
 
@@ -113,10 +136,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     /// Clean up the media player to prevent callbacks on deallocated objects.
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         DispatchQueue.main.async {
-            uiView.mediaListPlayer.mediaPlayer.delegate = nil
-            uiView.mediaListPlayer.mediaPlayer.drawable = nil
-            uiView.mediaListPlayer.stop()
-            uiView.mediaListPlayer.rootMedia = nil
+            uiView.resetPlayer()
         }
     }
 
@@ -126,11 +146,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     deinit {
         debugPrint("🧹 VLCMediaListPlayerUIView deinit")
-        mediaListPlayer.stop()
-        mediaListPlayer.mediaPlayer.delegate = nil
-        mediaListPlayer.mediaPlayer.drawable = nil
-        mediaListPlayer.rootMedia = nil
-        mediaListPlayer.mediaPlayer.media = nil
+        resetPlayer()
     }
     
     func setDelegate(_ delegate: VLCMediaPlayerDelegate) {

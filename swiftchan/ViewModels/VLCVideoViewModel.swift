@@ -18,16 +18,22 @@ class VLCVideoViewModel {
 
     func download() async throws {
         let cacheURL = CacheManager.shared.cacheURL(video.url)
-        guard !CacheManager.shared.cacheHit(file: cacheURL) else {
-            markDownloadFinished()
-            return
+        if CacheManager.shared.cacheHit(file: cacheURL) {
+            if CacheManager.shared.isValidWebm(file: cacheURL) {
+                video = video.with(url: cacheURL)
+                markDownloadFinished()
+                return
+            } else {
+                try? FileManager.default.removeItem(at: cacheURL)
+            }
         }
 
         debugPrint("Downloading webm: \(cacheURL)")
         let (tempURL, _) = try await URLSession.shared.download(from: video.url, progress: video.downloadProgress)
         debugPrint("Completed Downloading webm: \(cacheURL)")
 
-        guard let cached = CacheManager.shared.cache(tempURL, cacheURL) else { return }
+        guard let cached = CacheManager.shared.cache(tempURL, cacheURL),
+              CacheManager.shared.isValidWebm(file: cached) else { return }
 
         // Update URL and mark download complete
         video = video.with(url: cached)

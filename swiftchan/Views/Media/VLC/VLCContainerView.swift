@@ -58,26 +58,15 @@ struct VLCContainerView: View {
                 }
             }
         }
-        .onChange(of: vlcVideoViewModel.video.downloadProgress.isFinished) {
-            if vlcVideoViewModel.video.downloadProgress.isFinished && isSelected {
-                print("PLaying video 1: \(vlcVideoViewModel.video.url)")
-                vlcVideoViewModel.play()
-            }
-        }
         .onChange(of: isSelected) {
             if isSelected && vlcVideoViewModel.video.downloadProgress.isFinished {
-                print("PLaying video 2: \(vlcVideoViewModel.video.url)")
                 vlcVideoViewModel.play()
-            } else {
+            } else if !isSelected {
                 vlcVideoViewModel.pause()
             }
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
-            if isSelected {
-                print("PLaying video 3: \(vlcVideoViewModel.video.url)")
-                vlcVideoViewModel.play()
-            }
         }
         .onDisappear {
             vlcVideoViewModel.pause()
@@ -85,6 +74,9 @@ struct VLCContainerView: View {
         }
         .task {
             try? await vlcVideoViewModel.download()
+            if isSelected {
+                vlcVideoViewModel.play()
+            }
         }
     }
 }

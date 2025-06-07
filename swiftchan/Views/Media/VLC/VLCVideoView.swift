@@ -43,15 +43,7 @@ struct VLCVideoView: UIViewRepresentable {
     }
 
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
-        DispatchQueue.main.async {
-            // Detach delegate and clear drawable to avoid callbacks on deallocated objects
-            uiView.mediaListPlayer.mediaPlayer.delegate = nil
-            uiView.mediaListPlayer.mediaPlayer.drawable = nil
-            // Stop and clear the media to ensure proper cleanup
-            uiView.mediaListPlayer.stop()
-            uiView.mediaListPlayer.mediaPlayer.media = nil
-            uiView.mediaListPlayer.rootMedia = nil
-        }
+        VLCMediaListPlayerUIView.dismantleUIView(uiView, coordinator: coordinator)
     }
 
     // MARK: Coordinator

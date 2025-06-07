@@ -109,4 +109,14 @@ final class CacheManager {
         }
     }
 
+    /// Basic validation to ensure cached WebM files are not corrupted.
+    func isValidWebm(file: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: file) else { return false }
+        let header = handle.readData(ofLength: 4)
+        handle.closeFile()
+        let bytes = [UInt8](header)
+        // EBML header 0x1A45DFA3
+        return bytes.count == 4 && bytes[0] == 0x1A && bytes[1] == 0x45 && bytes[2] == 0xDF && bytes[3] == 0xA3
+    }
+
 }
