@@ -48,14 +48,6 @@ struct BoardsView: View {
                     .searchable(text: $searchText)
                 }
                 .buttonStyle(.plain)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: openRandomBoard) {
-                            Image(systemName: Constants.diceIcon)
-                        }
-                        .accessibilityIdentifier(AccessibilityIdentifiers.randomBoardButton)
-                    }
-                }
                 .navigationBarTitle(Constants.title)
                 .navigationDestination(for: String.self) { value in
                     CatalogView(boardName: value)
@@ -88,19 +80,11 @@ struct BoardsView: View {
         }
     }
 
-    private func openRandomBoard() {
-        let availableBoards = boardsViewModel.boards.filter { showNSFWBoards || !$0.isNSFW }
-        if let randomBoard = availableBoards.randomElement() {
-            presentedNavigation.append(randomBoard.board)
-        }
-    }
-
     struct Constants {
         static let favoritesText = "favorites"
         static let allText = "all"
         static let title = "4chan"
         static let refreshIcon = "arrow.clockwise"
-        static let diceIcon = "shuffle"
         static let gridSpacing: CGFloat = 1
     }
 }
