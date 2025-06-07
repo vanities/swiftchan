@@ -10,7 +10,7 @@ import Foundation
 class Deeplinker {
     enum Deeplink: Equatable {
         case board(name: String)
-        case thread(id: String)
+        case thread(board: String, id: String)
         case post(id: String)
         case gallery(id: String)
         case none
@@ -22,6 +22,11 @@ class Deeplinker {
         case .board:
             let name = String(url.query?.split(separator: "=").last ?? "")
             return .board(name: name)
+        case .thread:
+            let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+            let board = queryItems?.first(where: { $0.name == "board" })?.value ?? ""
+            let id = queryItems?.first(where: { $0.name == "id" })?.value ?? ""
+            return .thread(board: board, id: id)
         case .reply:
             let id = String(url.query?.split(separator: "=").last ?? "")
             return .post(id: id)
