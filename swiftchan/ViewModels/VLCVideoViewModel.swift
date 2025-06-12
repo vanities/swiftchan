@@ -5,15 +5,25 @@
 //  Created on 2/1/21.
 //
 import SwiftUI
+import Combine
 import MobileVLCKit
 
 @MainActor
 @Observable
 class VLCVideoViewModel {
     private(set) var video: VLCVideo
+    private var cancellables: Set<AnyCancellable> = []
 
     init(url: URL) {
         video = VLCVideo(url: url)
+        video.downloadProgress
+            .publisher(for: \.fractionCompleted)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.video = self.video.with(downloadProgress: self.video.downloadProgress)
+            }
+            .store(in: &cancellables)
     }
 
     func download() async throws {
