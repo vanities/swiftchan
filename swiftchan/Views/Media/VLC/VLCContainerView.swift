@@ -36,12 +36,14 @@ struct VLCContainerView: View {
             VLCVideoView()
 
             if !vlcVideoViewModel.video.downloadProgress.isFinished {
-                ProgressView("Downloading")
-                /*
-                 ProgressView(vlcVideoViewModel.video.downloadProgress)
-                 .frame(width: 50, height: 50)
-                 .progressViewStyle(GaugeProgressStyle())
-                 */
+                VStack {
+                    ProgressView(value: vlcVideoViewModel.video.downloadProgress.fractionCompleted)
+                        .progressViewStyle(.linear)
+                        .padding()
+
+                    Text("\(Int(vlcVideoViewModel.video.downloadProgress.fractionCompleted * 100))%")
+                        .foregroundColor(.white)
+                }
             }
             if vlcVideoViewModel.video.downloadProgress.isFinished && vlcVideoViewModel.video.mediaState == .buffering {
                 ProgressView("Buffering")
