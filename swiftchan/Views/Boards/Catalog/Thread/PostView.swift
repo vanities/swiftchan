@@ -54,7 +54,9 @@ struct PostView: View {
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     let mediaIndex = viewModel.postMediaMapping[index] ?? 0
-                                    viewModel.media[mediaIndex].isSelected = true
+                                    var item = viewModel.media[mediaIndex]
+                                    item.isSelected = true
+                                    viewModel.media[mediaIndex] = item
                                     presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingGallery = true
                                 }
