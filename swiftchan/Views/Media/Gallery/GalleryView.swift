@@ -73,12 +73,18 @@ struct GalleryView: View {
                 onPageDragChanged?(.zero)
                 state.galleryIndex = index
                 if index - 1 >= 0 {
-                    viewModel.media[index - 1].isSelected = false
+                    var item = viewModel.media[index - 1]
+                    item.isSelected = false
+                    viewModel.media[index - 1] = item
                 }
                 if index + 1 <= viewModel.media.count - 1 {
-                    viewModel.media[index + 1].isSelected = false
+                    var item = viewModel.media[index + 1]
+                    item.isSelected = false
+                    viewModel.media[index + 1] = item
                 }
-                viewModel.media[index].isSelected = true
+                var currentItem = viewModel.media[index]
+                currentItem.isSelected = true
+                viewModel.media[index] = currentItem
             }
             .allowsDragging(canPage)
             .pagingPriority(.simultaneous)
