@@ -70,6 +70,7 @@
 		95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FE827386D2B000D64B1 /* SettingsView.swift */; };
 		95C01FEB27389037000D64B1 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C01FEA27389037000D64B1 /* Toast.swift */; };
 		95C73106256CA1F700F18257 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C73105256CA1F700F18257 /* UserSettings.swift */; };
+		95C8B7662DFB0F930005CB93 /* ThreadDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C8B7652DFB0F930005CB93 /* ThreadDestination.swift */; };
 		95CE4FAA26ABD42500622F7E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CE4FA926ABD42500622F7E /* Colors.swift */; };
 		95CEE159271A67590016EAC1 /* SortRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CEE158271A67590016EAC1 /* SortRow.swift */; };
 		95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 95CEE15C271ABFCD0016EAC1 /* Defaults */; };
@@ -188,6 +189,7 @@
 		95C01FE827386D2B000D64B1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		95C01FEA27389037000D64B1 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		95C73105256CA1F700F18257 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		95C8B7652DFB0F930005CB93 /* ThreadDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadDestination.swift; sourceTree = "<group>"; };
 		95CE4FA926ABD42500622F7E /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		95CEE158271A67590016EAC1 /* SortRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortRow.swift; sourceTree = "<group>"; };
 		95CFC2F92734B66E0053D62A /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				95C8B7652DFB0F930005CB93 /* ThreadDestination.swift */,
 				95978F112CA795E000C520EF /* Tabs.swift */,
 				95105368256600C9002E4051 /* Post.swift */,
 				951053702566018D002E4051 /* Board.swift */,
@@ -661,9 +664,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -755,6 +762,7 @@
 				95CFC2FA2734B66E0053D62A /* Media.swift in Sources */,
 				95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
+				95C8B7662DFB0F930005CB93 /* ThreadDestination.swift in Sources */,
 				9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */,
 				958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */,
 				95B7BE51256CBC4A00F75BC9 /* FavoriteStar.swift in Sources */,
