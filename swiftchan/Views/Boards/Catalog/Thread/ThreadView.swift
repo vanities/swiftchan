@@ -55,12 +55,12 @@ struct ThreadView: View {
 
         switch viewModel.state {
         case .initial:
-            ProgressView()
+            Text(viewModel.progressText)
                 .task {
                     await viewModel.getPosts()
                 }
         case .loading:
-            ProgressView()
+            Text(viewModel.progressText)
         case .loaded:
             ZStack {
                 ScrollViewReader { reader in

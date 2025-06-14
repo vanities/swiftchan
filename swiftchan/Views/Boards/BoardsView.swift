@@ -22,12 +22,12 @@ struct BoardsView: View {
     var body: some View {
         switch boardsViewModel.state {
         case .initial:
-            ProgressView()
+            Text(boardsViewModel.progressText)
                 .task {
                     await boardsViewModel.load()
                 }
         case .loading:
-            ProgressView()
+            Text(boardsViewModel.progressText)
         case .loaded:
             NavigationStack(path: $presentedNavigation) {
                 ZStack {
