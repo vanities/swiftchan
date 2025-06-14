@@ -16,17 +16,26 @@ final class BoardsViewModel {
 
     private(set) var boards = [Board]()
     private(set) var state = State.initial
+    private(set) var progressText = ""
 
     @MainActor
     func load() async {
         state = .loading
-        boards = await FourchanService.getBoards()
-        if boards.count > 0 {
-            state = .loaded
-        } else {
-           state = .error
+        progressText = "Loading boards 0%"
+        do {
+            let result = try await FourChanAsyncService.shared.getBoards { [weak self] progress in
+                await MainActor.run {
+                    self?.progressText = "Loading boards \(Int(progress * 100))%"
+                }
+            }
+            boards = result.boards
+            state = boards.isEmpty ? .error : .loaded
+        } catch {
+            boards = []
+            state = .error
         }
     }
+
 
     func getAllBoards(favorites: [String], searchText: String) -> [Board] {
         return getFavoriteBoards(favorites) + getFilteredBoards(searchText: searchText)

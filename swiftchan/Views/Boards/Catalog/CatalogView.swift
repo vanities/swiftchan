@@ -45,12 +45,12 @@ struct CatalogView: View {
 
         switch catalogViewModel.state {
         case .initial:
-            ProgressView()
+            Text(catalogViewModel.progressText)
                 .task {
                     await catalogViewModel.load()
                 }
         case .loading:
-            ProgressView()
+            Text(catalogViewModel.progressText)
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
                 LazyVGrid(

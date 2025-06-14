@@ -24,6 +24,7 @@ final class ThreadViewModel {
     private(set) var comments = [AttributedString]()
     private(set) var replies = [Int: [Int]]()
     private(set) var state = State.initial
+    private(set) var progressText = ""
 
     var url: URL {
         return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
@@ -43,23 +44,58 @@ final class ThreadViewModel {
     func getPosts() async {
         if state != .loaded {
             state = .loading
+            progressText = "Loading thread 0%"
         }
-        let (result, mediaUrls, thumbnailMediaUrls, postMediaMapping, comments, replies) = await FourchanService.getPosts(
-            boardName: boardName,
-            id: id
-        )
-        let posts = result
-        if posts.count > 0 {
-            self.posts = posts
-            self.postMediaMapping = postMediaMapping
-            self.comments = comments
-            self.replies = replies
-            setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-            state = .loaded
-        } else if posts.count == 0, self.posts.count == 0 {
+
+        do {
+            let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { [weak self] progress in
+                await MainActor.run {
+                    self?.progressText = "Loading thread \(Int(progress * 100))%"
+                }
+            }
+            let posts = thread.posts
+
+            if posts.count > 0 {
+                var mediaUrls: [URL] = []
+                var thumbnailMediaUrls: [URL] = []
+                var mapping: [Int: Int] = [:]
+                var comments: [AttributedString] = []
+                var postReplies: [Int: [String]] = [:]
+                var postIndex = 0
+                var mediaIndex = 0
+
+                for post in posts {
+                    if let mediaUrl = post.getMediaUrl(boardId: boardName), let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
+                        mapping[postIndex] = mediaIndex
+                        mediaUrls.append(mediaUrl)
+                        thumbnailMediaUrls.append(thumbnailUrl)
+                        mediaIndex += 1
+                    }
+                    if let comment = post.com {
+                        let parser = CommentParser(comment: comment)
+                        comments.append(parser.getComment())
+                        postReplies[postIndex] = parser.replies
+                    } else {
+                        comments.append(AttributedString())
+                    }
+                    postIndex += 1
+                }
+
+                let replies = FourchanService.getReplies(postReplies: postReplies, posts: posts)
+
+                self.posts = posts
+                self.postMediaMapping = mapping
+                self.comments = comments
+                self.replies = replies
+                setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
+                state = .loaded
+            } else if self.posts.isEmpty {
+                state = .error
+            }
+        } catch {
             state = .error
         }
-        print("Thread /\(boardName)/-\(id) successfully got \(posts.count) posts.")
+        print("Thread /\(boardName)/-\(id) successfully got \(self.posts.count) posts.")
     }
 
     private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {
@@ -107,4 +143,5 @@ final class ThreadViewModel {
         }
         return 0
     }
+
 }
