@@ -7,7 +7,7 @@
       "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
       "state" : {
         "branch" : "master",
-        "revision" : "469de4e43949815dc92570cc786922d8d1385b06"
+        "revision" : "79666d42b882bf7921b1941fa7c636d681d77980"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vanities/FourChanAPI.git",
       "state" : {
-        "revision" : "59fa1689bb2858c1c974d0708a637681c887628b",
-        "version" : "1.2.12"
+        "revision" : "fbc942c4a23fec2801b2d498350a30e19f5fd9b4",
+        "version" : "1.3.0"
       }
     },
     {
@@ -33,17 +33,17 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "5b92f029fab2cce44386d28588098b5be0824ef5",
-        "version" : "7.11.0"
+        "revision" : "2ef543ee21d63734e1c004ad6c870255e8716c50",
+        "version" : "7.12.0"
       }
     },
     {
       "identity" : "swiftui-introspect",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:siteline/SwiftUI-Introspect.git",
+      "location" : "git@github.com:siteline/swiftui-introspect.git",
       "state" : {
-        "revision" : "0cd2a5a5895306bc21d54a2254302d24a9a571e4",
-        "version" : "1.1.3"
+        "revision" : "807f73ce09a9b9723f12385e592b4e0aaebd3336",
+        "version" : "1.3.0"
       }
     },
     {
