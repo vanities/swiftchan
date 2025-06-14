@@ -23,10 +23,8 @@ final class BoardsViewModel {
         state = .loading
         progressText = "Loading boards 0%"
         do {
-            let result = try await FourChanAsyncService.shared.getBoards { [weak self] progress in
-                await MainActor.run {
-                    self?.progressText = "Loading boards \(Int(progress * 100))%"
-                }
+            let result = try await FourChanAsyncService.shared.getBoards { progress in
+                self.progressText = "Loading boards \(Int(progress * 100))%"
             }
             boards = result.boards
             state = boards.isEmpty ? .error : .loaded
@@ -59,3 +57,4 @@ final class BoardsViewModel {
             }
     }
 }
+
