@@ -49,9 +49,7 @@ final class ThreadViewModel {
 
         do {
             let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { [weak self] progress in
-                await MainActor.run {
-                    self?.progressText = "Loading thread \(Int(progress * 100))%"
-                }
+                self?.progressText = "Loading thread \(Int(progress * 100))%"
             }
             let posts = thread.posts
 

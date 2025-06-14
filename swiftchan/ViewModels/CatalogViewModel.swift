@@ -45,7 +45,7 @@ class CatalogViewModel {
         progressText = "Loading /\(boardName)/ 0%"
         do {
             let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: boardName) { [weak self] progress in
-                await MainActor.run {
+                DispatchQueue.main.async {
                     self?.progressText = "Loading /\(self?.boardName ?? "")/ \(Int(progress * 100))%"
                 }
             }
