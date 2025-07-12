@@ -54,6 +54,19 @@ extension UserDefaults {
         return UserDefaults.standard.bool(forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
     }
 
+    static func getThreadPosition(boardName: String, threadId: Int) -> Int? {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        if UserDefaults.standard.object(forKey: key) == nil {
+            return nil
+        }
+        return UserDefaults.standard.integer(forKey: key)
+    }
+
+    static func setThreadPosition(boardName: String, threadId: Int, index: Int) {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        UserDefaults.standard.set(index, forKey: key)
+    }
+
     // MARK: Setters
     static func setDidUnlokcBiometrics(value: Bool) {
         UserDefaults.standard.set(value, forKey: "didUnlokcBiometrics")

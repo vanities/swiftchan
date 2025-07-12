@@ -18,6 +18,7 @@ struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
+    @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
 
@@ -29,6 +30,9 @@ struct ThreadView: View {
     @State private var replyId: Int = 0
     @State private var showThread: Bool = false
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
+    @State private var savedIndex: Int?
+    @State private var lastVisibleIndex: Int?
+    @State private var didScrollInitially = false
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -47,6 +51,7 @@ struct ThreadView: View {
                 id: postNumber
             )
         )
+        self._savedIndex = State(wrappedValue: UserDefaults.getThreadPosition(boardName: boardName, threadId: Int(postNumber)))
     }
 
     @ViewBuilder
@@ -75,6 +80,9 @@ struct ThreadView: View {
                                 if !post.isHidden(boardName: viewModel.boardName) {
                                     PostView(index: postIndex)
                                         .environment(viewModel)
+                                        .onAppear {
+                                            lastVisibleIndex = postIndex
+                                        }
                                 }
                             }
                         }
@@ -86,6 +94,15 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
+                    }
+                    .onAppear {
+                        if rememberThreadPositions,
+                           !didScrollInitially,
+                           let index = savedIndex,
+                           index < viewModel.posts.count {
+                            reader.scrollTo(index, anchor: .top)
+                            didScrollInitially = true
+                        }
                     }
                 }
             }
@@ -136,6 +153,14 @@ struct ThreadView: View {
             }
             .onDisappear {
                 viewModel.stopPrefetching()
+                if rememberThreadPositions,
+                   let index = lastVisibleIndex {
+                    UserDefaults.setThreadPosition(
+                        boardName: viewModel.boardName,
+                        threadId: viewModel.id,
+                        index: index
+                    )
+                }
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
