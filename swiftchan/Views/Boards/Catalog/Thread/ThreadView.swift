@@ -111,6 +111,10 @@ struct ThreadView: View {
                             print("Got scroll view reference")
                             restoreSavedPosition(reader: reader)
                         }
+                        .onDisappear {
+                            print("ScrollView onDisappear - saving position")
+                            savePosition()
+                        }
                     }
                     .onAppear {
                         print("ScrollView onAppear")
@@ -316,6 +320,8 @@ struct ThreadView: View {
                     threadId: viewModel.id,
                     offset: Double(offset)
                 )
+            } else {
+                print("No scrollView reference to save offset")
             }
         } else {
             print("Removing saved position and offset")
