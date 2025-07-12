@@ -37,6 +37,8 @@ struct ThreadView: View {
     @State private var savedOffset: CGFloat?
     @State private var scrollViewRef: UIScrollView?
     @State private var didRestoreOffset = false
+    @State private var showAutoRefreshToast: Bool = false
+    @State private var autoRefreshToastMessage: String = ""
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -67,7 +69,8 @@ struct ThreadView: View {
     var body: some View {
         @Bindable var appState = appState
 
-        switch viewModel.state {
+        Group {
+            switch viewModel.state {
         case .initial:
             Text(viewModel.progressText)
                 .task {
@@ -197,7 +200,7 @@ struct ThreadView: View {
                 if threadAutorefresher.incrementRefreshTimer() {
                     print("Thread auto refresh timer met, updating thread.")
                     Task {
-                        await fetchAndPrefetchMedia()
+                        await fetchAndPrefetchMedia(auto: true)
                     }
                 }
 
@@ -264,7 +267,11 @@ struct ThreadView: View {
         case .error:
             Text("Thread contains no posts.")
                 .foregroundColor(.red)
-
+        }
+        }
+        .toast(isPresented: $showAutoRefreshToast, dismissAfter: 0.5) {
+            ToastView(autoRefreshToastMessage, content: {}, background: { Color.clear })
+                .toastViewStyle(ErrorToastViewStyle())
         }
     }
 
@@ -288,9 +295,15 @@ struct ThreadView: View {
         }
     }
 
-    private func fetchAndPrefetchMedia() async {
+    private func fetchAndPrefetchMedia(auto: Bool = false) async {
+        let hadPosts = !viewModel.posts.isEmpty
         await viewModel.getPosts()
-        viewModel.prefetch()
+        if viewModel.state == .loaded {
+            viewModel.prefetch()
+        } else if auto {
+            autoRefreshToastMessage = hadPosts ? "Could not auto refresh" : "Thread not found"
+            showAutoRefreshToast = true
+        }
     }
 
     private func scrollToPost(reader: ScrollViewProxy) {
