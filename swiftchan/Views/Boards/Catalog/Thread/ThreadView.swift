@@ -106,7 +106,10 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
-                        .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
+                        .introspect(
+                            .scrollView,
+                            on: .iOS(.v15, .v16, .v17)
+                        ) { scrollView in
                             scrollViewRef = scrollView
                             print("Got scroll view reference")
                             restoreSavedPosition(reader: reader)
