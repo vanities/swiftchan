@@ -172,28 +172,11 @@ struct ThreadView: View {
             }
             .onDisappear {
                 viewModel.stopPrefetching()
-                if rememberThreadPositions {
-                    if let index = lastVisibleIndex {
-                        print("Saving index \(index)")
-                        UserDefaults.setThreadPosition(
-                            boardName: viewModel.boardName,
-                            threadId: viewModel.id,
-                            index: index
-                        )
-                    }
-                    if let scrollView = scrollViewRef {
-                        let offset = scrollView.contentOffset.y
-                        print("Saving offset \(offset)")
-                        UserDefaults.setThreadOffset(
-                            boardName: viewModel.boardName,
-                            threadId: viewModel.id,
-                            offset: Double(offset)
-                        )
-                    }
-                } else {
-                    print("Removing saved position and offset")
-                    UserDefaults.removeThreadPosition(boardName: viewModel.boardName, threadId: viewModel.id)
-                    UserDefaults.removeThreadOffset(boardName: viewModel.boardName, threadId: viewModel.id)
+                savePosition()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase != .active {
+                    savePosition()
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in
@@ -315,8 +298,34 @@ struct ThreadView: View {
         }
     }
 
+    private func savePosition() {
+        if rememberThreadPositions {
+            if let index = lastVisibleIndex {
+                print("Saving index \(index)")
+                UserDefaults.setThreadPosition(
+                    boardName: viewModel.boardName,
+                    threadId: viewModel.id,
+                    index: index
+                )
+            }
+            if let scrollView = scrollViewRef {
+                let offset = scrollView.contentOffset.y
+                print("Saving offset \(offset)")
+                UserDefaults.setThreadOffset(
+                    boardName: viewModel.boardName,
+                    threadId: viewModel.id,
+                    offset: Double(offset)
+                )
+            }
+        } else {
+            print("Removing saved position and offset")
+            UserDefaults.removeThreadPosition(boardName: viewModel.boardName, threadId: viewModel.id)
+            UserDefaults.removeThreadOffset(boardName: viewModel.boardName, threadId: viewModel.id)
+        }
+    }
+
     private func applyOffset(_ offset: CGFloat, to scrollView: UIScrollView) {
-        let delays = [0.0, 0.1, 0.4]
+        let delays: [Double] = [0.0, 0.1, 0.4, 0.8, 1.2]
         for delay in delays {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 print("Applying offset \(offset) after delay \(delay)")
