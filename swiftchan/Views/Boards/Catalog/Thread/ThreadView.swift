@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
+import UIKit
 import ToastUI
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
@@ -19,6 +20,7 @@ struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
+    @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
 
@@ -30,6 +32,11 @@ struct ThreadView: View {
     @State private var replyId: Int = 0
     @State private var showThread: Bool = false
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
+    @State private var savedIndex: Int?
+    @State private var lastVisibleIndex: Int?
+    @State private var savedOffset: CGFloat?
+    @State private var scrollViewRef: UIScrollView?
+    @State private var didRestoreOffset = false
     @State private var showAutoRefreshToast: Bool = false
     @State private var autoRefreshToastMessage: String = ""
 
@@ -50,6 +57,12 @@ struct ThreadView: View {
                 id: postNumber
             )
         )
+        self._savedIndex = State(wrappedValue: UserDefaults.getThreadPosition(boardName: boardName, threadId: Int(postNumber)))
+        if let offset = UserDefaults.getThreadOffset(boardName: boardName, threadId: Int(postNumber)) {
+            self._savedOffset = State(wrappedValue: CGFloat(offset))
+        } else {
+            self._savedOffset = State(initialValue: nil)
+        }
     }
 
     @ViewBuilder
@@ -79,6 +92,9 @@ struct ThreadView: View {
                                 if !post.isHidden(boardName: viewModel.boardName) {
                                     PostView(index: postIndex)
                                         .environment(viewModel)
+                                        .onAppear {
+                                            lastVisibleIndex = postIndex
+                                        }
                                 }
                             }
                         }
@@ -90,6 +106,16 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
+                        .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
+                            scrollViewRef = scrollView
+                            restoreSavedPosition(reader: reader)
+                        }
+                    }
+                    .onAppear {
+                        restoreSavedPosition(reader: reader)
+                    }
+                    .onChange(of: viewModel.posts.count) { _, _ in
+                        restoreSavedPosition(reader: reader)
                     }
                 }
             }
@@ -140,6 +166,25 @@ struct ThreadView: View {
             }
             .onDisappear {
                 viewModel.stopPrefetching()
+                if rememberThreadPositions {
+                    if let index = lastVisibleIndex {
+                        UserDefaults.setThreadPosition(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            index: index
+                        )
+                    }
+                    if let scrollView = scrollViewRef {
+                        UserDefaults.setThreadOffset(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            offset: Double(scrollView.contentOffset.y)
+                        )
+                    }
+                } else {
+                    UserDefaults.removeThreadPosition(boardName: viewModel.boardName, threadId: viewModel.id)
+                    UserDefaults.removeThreadOffset(boardName: viewModel.boardName, threadId: viewModel.id)
+                }
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
@@ -248,6 +293,30 @@ struct ThreadView: View {
         } else if auto {
             autoRefreshToastMessage = hadPosts ? "Could not auto refresh" : "Thread not found"
             showAutoRefreshToast = true
+        }
+    }
+
+    private func restoreSavedPosition(reader: ScrollViewProxy) {
+        guard rememberThreadPositions, let scrollView = scrollViewRef else { return }
+        guard !didRestoreOffset else { return }
+
+        if let offset = savedOffset {
+            applyOffset(offset, to: scrollView)
+            didRestoreOffset = true
+        } else if let index = savedIndex, index < viewModel.posts.count {
+            DispatchQueue.main.async {
+                reader.scrollTo(index, anchor: .top)
+                didRestoreOffset = true
+            }
+        }
+    }
+
+    private func applyOffset(_ offset: CGFloat, to scrollView: UIScrollView) {
+        let delays = [0.0, 0.1, 0.4]
+        for delay in delays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
+            }
         }
     }
 
