@@ -33,7 +33,6 @@ struct ThreadView: View {
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
     @State private var savedIndex: Int?
     @State private var lastVisibleIndex: Int?
-    @State private var didScrollInitially = false
     @State private var savedOffset: CGFloat?
     @State private var scrollViewRef: UIScrollView?
     @State private var didRestoreOffset = false
@@ -105,27 +104,14 @@ struct ThreadView: View {
                         .opacity(opacity)
                         .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                             scrollViewRef = scrollView
-                            if rememberThreadPositions,
-                               !didRestoreOffset {
-                                if let offset = savedOffset {
-                                    scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
-                                    didRestoreOffset = true
-                                } else if let index = savedIndex,
-                                          index < viewModel.posts.count {
-                                    reader.scrollTo(index, anchor: .top)
-                                    didRestoreOffset = true
-                                }
-                            }
+                            restoreSavedPosition(reader: reader)
                         }
                     }
                     .onAppear {
-                        if rememberThreadPositions,
-                           !didScrollInitially,
-                           let index = savedIndex,
-                           index < viewModel.posts.count {
-                            reader.scrollTo(index, anchor: .top)
-                            didScrollInitially = true
-                        }
+                        restoreSavedPosition(reader: reader)
+                    }
+                    .onChange(of: viewModel.posts.count) { _, _ in
+                        restoreSavedPosition(reader: reader)
                     }
                 }
             }
@@ -191,6 +177,9 @@ struct ThreadView: View {
                             offset: Double(scrollView.contentOffset.y)
                         )
                     }
+                } else {
+                    UserDefaults.removeThreadPosition(boardName: viewModel.boardName, threadId: viewModel.id)
+                    UserDefaults.removeThreadOffset(boardName: viewModel.boardName, threadId: viewModel.id)
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in
@@ -291,6 +280,30 @@ struct ThreadView: View {
     private func fetchAndPrefetchMedia() async {
         await viewModel.getPosts()
         viewModel.prefetch()
+    }
+
+    private func restoreSavedPosition(reader: ScrollViewProxy) {
+        guard rememberThreadPositions, let scrollView = scrollViewRef else { return }
+        guard !didRestoreOffset else { return }
+
+        if let offset = savedOffset {
+            applyOffset(offset, to: scrollView)
+            didRestoreOffset = true
+        } else if let index = savedIndex, index < viewModel.posts.count {
+            DispatchQueue.main.async {
+                reader.scrollTo(index, anchor: .top)
+                didRestoreOffset = true
+            }
+        }
+    }
+
+    private func applyOffset(_ offset: CGFloat, to scrollView: UIScrollView) {
+        let delays = [0.0, 0.1, 0.4]
+        for delay in delays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
+            }
+        }
     }
 
     private func scrollToPost(reader: ScrollViewProxy) {

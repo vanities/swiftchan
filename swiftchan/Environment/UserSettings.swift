@@ -80,6 +80,16 @@ extension UserDefaults {
         UserDefaults.standard.set(offset, forKey: key)
     }
 
+    static func removeThreadPosition(boardName: String, threadId: Int) {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
+    static func removeThreadOffset(boardName: String, threadId: Int) {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
     // MARK: Setters
     static func setDidUnlokcBiometrics(value: Bool) {
         UserDefaults.standard.set(value, forKey: "didUnlokcBiometrics")
