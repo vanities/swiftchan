@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
+import UIKit
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
@@ -18,6 +19,7 @@ struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
+    @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
 
@@ -29,6 +31,11 @@ struct ThreadView: View {
     @State private var replyId: Int = 0
     @State private var showThread: Bool = false
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
+    @State private var savedIndex: Int?
+    @State private var lastVisibleIndex: Int?
+    @State private var savedOffset: CGFloat?
+    @State private var scrollViewRef: UIScrollView?
+    @State private var didRestoreOffset = false
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -47,6 +54,15 @@ struct ThreadView: View {
                 id: postNumber
             )
         )
+        let savedIndex = UserDefaults.getThreadPosition(boardName: boardName, threadId: Int(postNumber))
+        self._savedIndex = State(wrappedValue: savedIndex)
+
+        if let offset = UserDefaults.getThreadOffset(boardName: boardName, threadId: Int(postNumber)) {
+            self._savedOffset = State(wrappedValue: CGFloat(offset))
+        } else {
+            self._savedOffset = State(initialValue: nil)
+        }
+        print("ThreadView init: board=\(boardName), threadId=\(postNumber), savedIndex=\(String(describing: savedIndex)), savedOffset=\(String(describing: _savedOffset.wrappedValue))")
     }
 
     @ViewBuilder
@@ -75,6 +91,10 @@ struct ThreadView: View {
                                 if !post.isHidden(boardName: viewModel.boardName) {
                                     PostView(index: postIndex)
                                         .environment(viewModel)
+                                        .onAppear {
+                                            lastVisibleIndex = postIndex
+                                            print("Last visible index updated to \(postIndex)")
+                                        }
                                 }
                             }
                         }
@@ -86,6 +106,19 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
+                        .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
+                            scrollViewRef = scrollView
+                            print("Got scroll view reference")
+                            restoreSavedPosition(reader: reader)
+                        }
+                    }
+                    .onAppear {
+                        print("ScrollView onAppear")
+                        restoreSavedPosition(reader: reader)
+                    }
+                    .onChange(of: viewModel.posts.count) { _, _ in
+                        print("Posts count changed, attempting to restore")
+                        restoreSavedPosition(reader: reader)
                     }
                 }
             }
@@ -112,9 +145,11 @@ struct ThreadView: View {
                     .environment(presentationState)
                     .environment(viewModel)
                     .onAppear {
+                        print("Gallery onAppear - canceling autorefresh")
                         threadAutorefresher.cancelTimer()
                     }
                     .onDisappear {
+                        print("Gallery onDisappear - starting autorefresh")
                         threadAutorefresher.setTimer()
                     }
                 }
@@ -132,10 +167,34 @@ struct ThreadView: View {
                 }
             }
             .onAppear {
+                print("ThreadView onAppear - prefetching")
                 viewModel.prefetch()
             }
             .onDisappear {
                 viewModel.stopPrefetching()
+                if rememberThreadPositions {
+                    if let index = lastVisibleIndex {
+                        print("Saving index \(index)")
+                        UserDefaults.setThreadPosition(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            index: index
+                        )
+                    }
+                    if let scrollView = scrollViewRef {
+                        let offset = scrollView.contentOffset.y
+                        print("Saving offset \(offset)")
+                        UserDefaults.setThreadOffset(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            offset: Double(offset)
+                        )
+                    }
+                } else {
+                    print("Removing saved position and offset")
+                    UserDefaults.removeThreadPosition(boardName: viewModel.boardName, threadId: viewModel.id)
+                    UserDefaults.removeThreadOffset(boardName: viewModel.boardName, threadId: viewModel.id)
+                }
             }
             .onReceive(threadAutorefresher.timer) { _ in
                 if threadAutorefresher.incrementRefreshTimer() {
@@ -235,6 +294,35 @@ struct ThreadView: View {
     private func fetchAndPrefetchMedia() async {
         await viewModel.getPosts()
         viewModel.prefetch()
+    }
+
+    private func restoreSavedPosition(reader: ScrollViewProxy) {
+        guard rememberThreadPositions, let scrollView = scrollViewRef else { return }
+        guard !didRestoreOffset else { return }
+
+        print("Attempting restore: savedOffset=\(String(describing: savedOffset)), savedIndex=\(String(describing: savedIndex))")
+
+        if let offset = savedOffset {
+            print("Restoring using offset \(offset)")
+            applyOffset(offset, to: scrollView)
+            didRestoreOffset = true
+        } else if let index = savedIndex, index < viewModel.posts.count {
+            print("Restoring using index \(index)")
+            DispatchQueue.main.async {
+                reader.scrollTo(index, anchor: .top)
+                didRestoreOffset = true
+            }
+        }
+    }
+
+    private func applyOffset(_ offset: CGFloat, to scrollView: UIScrollView) {
+        let delays = [0.0, 0.1, 0.4]
+        for delay in delays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                print("Applying offset \(offset) after delay \(delay)")
+                scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
+            }
+        }
     }
 
     private func scrollToPost(reader: ScrollViewProxy) {

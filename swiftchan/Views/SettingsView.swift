@@ -67,6 +67,7 @@ struct SettingsView: View {
     var threadSection: some View {
         Section(header: Text("Thread").font(.title)) {
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
+            Toggle("Remember Thread Position", isOn: $rememberThreadPositions)
             HStack {
                 Text("Auto Refresh Time")
                 Spacer()
