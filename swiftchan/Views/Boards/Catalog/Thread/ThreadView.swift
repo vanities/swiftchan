@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
+import ToastUI
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
