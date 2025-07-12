@@ -54,6 +54,52 @@ extension UserDefaults {
         return UserDefaults.standard.bool(forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
     }
 
+    static func getThreadPosition(boardName: String, threadId: Int) -> Int? {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        if UserDefaults.standard.object(forKey: key) == nil {
+            print("No saved thread position for \(key)")
+            return nil
+        }
+        let value = UserDefaults.standard.integer(forKey: key)
+        print("Retrieved thread position \(value) for \(key)")
+        return value
+    }
+
+    static func getThreadOffset(boardName: String, threadId: Int) -> Double? {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        if UserDefaults.standard.object(forKey: key) == nil {
+            print("No saved thread offset for \(key)")
+            return nil
+        }
+        let value = UserDefaults.standard.double(forKey: key)
+        print("Retrieved thread offset \(value) for \(key)")
+        return value
+    }
+
+    static func setThreadPosition(boardName: String, threadId: Int, index: Int) {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        print("Saving thread position \(index) for \(key)")
+        UserDefaults.standard.set(index, forKey: key)
+    }
+
+    static func setThreadOffset(boardName: String, threadId: Int, offset: Double) {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        print("Saving thread offset \(offset) for \(key)")
+        UserDefaults.standard.set(offset, forKey: key)
+    }
+
+    static func removeThreadPosition(boardName: String, threadId: Int) {
+        let key = "threadPosition board=\(boardName) thread=\(threadId)"
+        print("Removing thread position for \(key)")
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
+    static func removeThreadOffset(boardName: String, threadId: Int) {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        print("Removing thread offset for \(key)")
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
     // MARK: Setters
     static func setDidUnlokcBiometrics(value: Bool) {
         UserDefaults.standard.set(value, forKey: "didUnlokcBiometrics")
