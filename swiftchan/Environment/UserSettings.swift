@@ -62,9 +62,22 @@ extension UserDefaults {
         return UserDefaults.standard.integer(forKey: key)
     }
 
+    static func getThreadOffset(boardName: String, threadId: Int) -> Double? {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        if UserDefaults.standard.object(forKey: key) == nil {
+            return nil
+        }
+        return UserDefaults.standard.double(forKey: key)
+    }
+
     static func setThreadPosition(boardName: String, threadId: Int, index: Int) {
         let key = "threadPosition board=\(boardName) thread=\(threadId)"
         UserDefaults.standard.set(index, forKey: key)
+    }
+
+    static func setThreadOffset(boardName: String, threadId: Int, offset: Double) {
+        let key = "threadOffset board=\(boardName) thread=\(threadId)"
+        UserDefaults.standard.set(offset, forKey: key)
     }
 
     // MARK: Setters

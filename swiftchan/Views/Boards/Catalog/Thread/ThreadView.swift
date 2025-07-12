@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
+import UIKit
 
 func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
     return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
@@ -33,6 +34,9 @@ struct ThreadView: View {
     @State private var savedIndex: Int?
     @State private var lastVisibleIndex: Int?
     @State private var didScrollInitially = false
+    @State private var savedOffset: CGFloat?
+    @State private var scrollViewRef: UIScrollView?
+    @State private var didRestoreOffset = false
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -52,6 +56,11 @@ struct ThreadView: View {
             )
         )
         self._savedIndex = State(wrappedValue: UserDefaults.getThreadPosition(boardName: boardName, threadId: Int(postNumber)))
+        if let offset = UserDefaults.getThreadOffset(boardName: boardName, threadId: Int(postNumber)) {
+            self._savedOffset = State(wrappedValue: CGFloat(offset))
+        } else {
+            self._savedOffset = State(initialValue: nil)
+        }
     }
 
     @ViewBuilder
@@ -94,6 +103,20 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
+                        .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
+                            scrollViewRef = scrollView
+                            if rememberThreadPositions,
+                               !didRestoreOffset {
+                                if let offset = savedOffset {
+                                    scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
+                                    didRestoreOffset = true
+                                } else if let index = savedIndex,
+                                          index < viewModel.posts.count {
+                                    reader.scrollTo(index, anchor: .top)
+                                    didRestoreOffset = true
+                                }
+                            }
+                        }
                     }
                     .onAppear {
                         if rememberThreadPositions,
@@ -153,13 +176,21 @@ struct ThreadView: View {
             }
             .onDisappear {
                 viewModel.stopPrefetching()
-                if rememberThreadPositions,
-                   let index = lastVisibleIndex {
-                    UserDefaults.setThreadPosition(
-                        boardName: viewModel.boardName,
-                        threadId: viewModel.id,
-                        index: index
-                    )
+                if rememberThreadPositions {
+                    if let index = lastVisibleIndex {
+                        UserDefaults.setThreadPosition(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            index: index
+                        )
+                    }
+                    if let scrollView = scrollViewRef {
+                        UserDefaults.setThreadOffset(
+                            boardName: viewModel.boardName,
+                            threadId: viewModel.id,
+                            offset: Double(scrollView.contentOffset.y)
+                        )
+                    }
                 }
             }
             .onReceive(threadAutorefresher.timer) { _ in
