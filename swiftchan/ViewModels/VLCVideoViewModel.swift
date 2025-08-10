@@ -120,7 +120,18 @@ class VLCVideoViewModel {
     }
 
     func setSeeking(_ value: Bool) {
+        let oldValue = video.seeking
         video = video.with(seeking: value)
+        
+        // Log state changes for debugging pager lock issues
+        if oldValue != value {
+            debugPrint("🎯 Seeking state changed: \(oldValue) → \(value)")
+            if !value {
+                debugPrint("🔓 Pager should now be unlocked")
+            } else {
+                debugPrint("🔒 Pager should now be locked")
+            }
+        }
     }
 
     func seek(to time: VLCTime) {
@@ -200,6 +211,13 @@ class VLCVideoViewModel {
         if let vlcUIView = vlcUIView {
             debugPrint("🎮 Calling resume directly")
             vlcUIView.resume()
+            
+            // Check if resume was successful after a brief delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if !self.video.seeking && self.video.mediaPlayerState != .playing {
+                    debugPrint("⚠️ Resume may have failed, media state: \(self.video.mediaPlayerState.rawValue)")
+                }
+            }
         } else {
             debugPrint("🎮 Using state-based resume")
             setMediaControlState(.resume)

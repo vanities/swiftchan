@@ -22,7 +22,7 @@ struct VLCPlayerControlModifier: ViewModifier {
                 .simultaneousGesture(showControlGesture)
             VStack {
                 Spacer()
-                VLCPlayerControlsView()
+                VLCPlayerControlsView(onSeekChanged: onSeekChanged)
                     .padding(.bottom, 25)
                     .onChange(of: vlcVideoViewModel.video.seeking) { onSeekChanged?(vlcVideoViewModel.video.seeking) }
                     .environment(vlcVideoViewModel)
@@ -51,6 +51,8 @@ struct VLCPlayerControlsView: View {
 
     @State private var seekingTime: VLCTime = VLCTime(int: 0)
     @State private var sliderPos: CGFloat = 0
+    
+    var onSeekChanged: ((Bool) -> Void)?
 
     private var calcSliderPos: CGFloat {
         guard vlcVideoViewModel.video.totalTime.intValue != 0 else { return .zero }
@@ -142,11 +144,31 @@ struct VLCPlayerControlsView: View {
         if editingStarted {
             vlcVideoViewModel.setSeeking(true)
             vlcVideoViewModel.pause()
+            // Explicitly notify that seeking started
+            onSeekChanged?(true)
         }
 
         if !editingStarted {
+            // Always clear seeking state first to unlock pager immediately
             vlcVideoViewModel.setSeeking(false)
+            // Explicitly notify that seeking ended to unlock pager
+            onSeekChanged?(false)
+            
+            // Try to resume video playback
             vlcVideoViewModel.resume()
+            
+            // Add timeout safety mechanism to ensure seeking is cleared even if resume fails
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // Double-check that seeking is still false after resume attempt
+                if !vlcVideoViewModel.video.seeking {
+                    debugPrint("🔓 Seeking timeout safety check - pager should be unlocked")
+                } else {
+                    debugPrint("⚠️ Seeking state stuck, force clearing")
+                    vlcVideoViewModel.setSeeking(false)
+                    // Force unlock pager if seeking is stuck
+                    onSeekChanged?(false)
+                }
+            }
         }
     }
 }
