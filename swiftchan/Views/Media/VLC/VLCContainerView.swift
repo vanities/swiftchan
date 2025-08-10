@@ -17,6 +17,7 @@ struct VLCContainerView: View {
     @State private var presentingPlayerControl: Bool = false
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @State private(set) var downloadProgress = Progress()
+    @State private var downloadPercentage: Int = 0
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
 
@@ -39,7 +40,7 @@ struct VLCContainerView: View {
                 VStack {
                     Text("Downloading")
                         .foregroundColor(.white)
-                    Text("\(Int(vlcVideoViewModel.video.downloadProgress.fractionCompleted * 100))%")
+                    Text("\(downloadPercentage)%")
                         .foregroundColor(.white)
                         .font(.title)
                 }
@@ -47,6 +48,10 @@ struct VLCContainerView: View {
         }
         .playerControl(presenting: $presentingPlayerControl)
         .environment(vlcVideoViewModel)
+        .onReceive(Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()) { _ in
+            // Update download percentage without circular dependency
+            downloadPercentage = Int(vlcVideoViewModel.video.downloadProgress.fractionCompleted * 100)
+        }
         .onChange(of: vlcVideoViewModel.video.mediaControlState) {
             if vlcVideoViewModel.video.mediaControlState == .play {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {

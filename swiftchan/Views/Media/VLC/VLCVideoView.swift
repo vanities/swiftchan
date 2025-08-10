@@ -108,12 +108,13 @@ struct VLCVideoView: UIViewRepresentable {
 
             let totalTime = VLCTime(int: currentTime.intValue + abs(remainingTime.intValue))
             
-            // Debug every few seconds
-            if currentTime.intValue % 5000 == 0 {
-                debugPrint("🕒 Time: \(currentTime.description) / \(totalTime.description)")
+            // Debug every few seconds to see if callbacks are working
+            if currentTime.intValue % 3000 == 0 && currentTime.intValue > 0 {
+                debugPrint("🕒 Time callback working: \(currentTime.description)")
             }
 
-            Task { @MainActor [weak viewModel] in
+            // Force immediate main thread execution
+            DispatchQueue.main.async { [weak viewModel] in
                 guard let viewModel = viewModel else { return }
                 viewModel.updateTime(current: currentTime, remaining: remainingTime, total: totalTime)
                 viewModel.setMediaState(mediaState)
@@ -142,8 +143,8 @@ struct VLCVideoView: UIViewRepresentable {
             let stateDescription = stateToString(state)
             print("🎮 Player state changed to: \(state.rawValue) (\(stateDescription))")
 
-            // Hop to MainActor with weak reference
-            Task { @MainActor [weak viewModel] in
+            // Force immediate main thread execution
+            DispatchQueue.main.async { [weak viewModel] in
                 viewModel?.setMediaPlayerState(state)
             }
         }

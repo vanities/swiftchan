@@ -105,20 +105,18 @@ class VLCVideoViewModel {
     }
 
     func updateTime(current: VLCTime, remaining: VLCTime) {
-        // Throttle time updates to prevent excessive UI refreshes
-        let now = Date()
-        guard now.timeIntervalSince(lastUpdateTime) >= updateThrottle else { return }
-        lastUpdateTime = now
+        // Remove throttling to ensure UI updates consistently  
         video = video.with(currentTime: current, remainingTime: remaining)
     }
 
     func updateTime(current: VLCTime, remaining: VLCTime, total: VLCTime) {
-        // Only throttle if we're getting excessive updates (more than 10Hz)
-        let now = Date()
-        if now.timeIntervalSince(lastUpdateTime) >= 0.1 {
-            lastUpdateTime = now
-            video = video.with(currentTime: current, remainingTime: remaining, totalTime: total)
+        // Debug every few updates to verify this is being called
+        if current.intValue % 2000 == 0 && current.intValue > 0 {
+            debugPrint("⏰ ViewModel updateTime called: \(current.description)")
         }
+        
+        // Remove throttling to ensure UI updates consistently
+        video = video.with(currentTime: current, remainingTime: remaining, totalTime: total)
     }
 
     func setSeeking(_ value: Bool) {

@@ -83,7 +83,7 @@ struct VLCPlayerControlsView: View {
             Slider(value: $sliderPos,
                    in: 0...1,
                    onEditingChanged: sliderEditingChanged)
-                .onChange(of: vlcVideoViewModel.video.currentTime) {
+                .onReceive(Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()) { _ in
                     if !vlcVideoViewModel.video.seeking {
                         sliderPos = calcSliderPos
                     }
