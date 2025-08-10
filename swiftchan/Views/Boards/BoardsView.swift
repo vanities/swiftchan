@@ -22,12 +22,12 @@ struct BoardsView: View {
     var body: some View {
         switch boardsViewModel.state {
         case .initial:
-            Text(boardsViewModel.progressText)
+            BoardsLoadingView(viewModel: boardsViewModel)
                 .task {
                     await boardsViewModel.load()
                 }
         case .loading:
-            Text(boardsViewModel.progressText)
+            BoardsLoadingView(viewModel: boardsViewModel)
         case .loaded:
             NavigationStack(path: $presentedNavigation) {
                 ZStack {
@@ -86,6 +86,39 @@ struct BoardsView: View {
         static let title = "4chan"
         static let refreshIcon = "arrow.clockwise"
         static let gridSpacing: CGFloat = 1
+    }
+}
+
+struct BoardsLoadingView: View {
+    let viewModel: BoardsViewModel
+    @State private var downloadPercentage: Int = 0
+
+    var body: some View {
+        VStack(spacing: 15) {
+            Text("Loading Boards")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+
+            Text(viewModel.progressText.isEmpty ? "Preparing..." : viewModel.progressText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            Text("\(downloadPercentage)%")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.accentColor)
+
+            ProgressView(value: Double(downloadPercentage), total: 100.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
+                .scaleEffect(x: 1, y: 2, anchor: .center)
+                .frame(maxWidth: 250)
+        }
+        .padding()
+        .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
+            downloadPercentage = Int(viewModel.downloadProgress.fractionCompleted * 100)
+        }
     }
 }
 

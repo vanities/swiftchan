@@ -45,12 +45,12 @@ struct CatalogView: View {
 
         switch catalogViewModel.state {
         case .initial:
-            Text(catalogViewModel.progressText)
+            CatalogLoadingView(viewModel: catalogViewModel)
                 .task {
                     await catalogViewModel.load()
                 }
         case .loading:
-            Text(catalogViewModel.progressText)
+            CatalogLoadingView(viewModel: catalogViewModel)
         case .loaded:
             ScrollView(.vertical, showsIndicators: true) {
                 LazyVGrid(
@@ -142,6 +142,39 @@ struct CatalogView: View {
 
     struct Constants {
         static let refreshIcon = "arrow.clockwise"
+    }
+}
+
+struct CatalogLoadingView: View {
+    let viewModel: CatalogViewModel
+    @State private var downloadPercentage: Int = 0
+
+    var body: some View {
+        VStack(spacing: 15) {
+            Text("Loading /\(viewModel.boardName)/")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+
+            Text(viewModel.progressText.isEmpty ? "Preparing..." : viewModel.progressText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            Text("\(downloadPercentage)%")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.accentColor)
+
+            ProgressView(value: Double(downloadPercentage), total: 100.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
+                .scaleEffect(x: 1, y: 2, anchor: .center)
+                .frame(maxWidth: 250)
+        }
+        .padding()
+        .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
+            downloadPercentage = Int(viewModel.downloadProgress.fractionCompleted * 100)
+        }
     }
 }
 

@@ -58,12 +58,12 @@ struct ThreadView: View {
         Group {
             switch viewModel.state {
         case .initial:
-            Text(viewModel.progressText)
+            ThreadLoadingView(viewModel: viewModel)
                 .task {
                     await viewModel.getPosts()
                 }
         case .loading:
-            Text(viewModel.progressText)
+            ThreadLoadingView(viewModel: viewModel)
         case .loaded:
             ZStack {
                 ScrollViewReader { reader in
@@ -254,6 +254,39 @@ struct ThreadView: View {
         if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
             reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+        }
+    }
+}
+
+struct ThreadLoadingView: View {
+    let viewModel: ThreadViewModel
+    @State private var downloadPercentage: Int = 0
+
+    var body: some View {
+        VStack(spacing: 15) {
+            Text("Loading Thread")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+
+            Text(viewModel.progressText.isEmpty ? "Preparing..." : viewModel.progressText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            Text("\(downloadPercentage)%")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.accentColor)
+
+            ProgressView(value: Double(downloadPercentage), total: 100.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
+                .scaleEffect(x: 1, y: 2, anchor: .center)
+                .frame(maxWidth: 250)
+        }
+        .padding()
+        .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
+            downloadPercentage = Int(viewModel.downloadProgress.fractionCompleted * 100)
         }
     }
 }
