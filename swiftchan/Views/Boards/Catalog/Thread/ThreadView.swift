@@ -366,14 +366,6 @@ struct ThreadLoadingView: View {
     }
 }
 
-#if DEBUG
-#Preview {
-    NavigationView {
-        ThreadView(boardName: "biz", postNumber: 60278989)
-            .environment(AppState())
-    }
-}
-
 struct RefreshProgressBar: View {
     let progress: Double
     let total: Double
@@ -494,6 +486,14 @@ struct FilterChip: View {
                 )
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+#if DEBUG
+#Preview {
+    NavigationView {
+        ThreadView(boardName: "biz", postNumber: 60278989)
+            .environment(AppState())
     }
 }
 #endif
