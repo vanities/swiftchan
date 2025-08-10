@@ -20,7 +20,7 @@ class ThreadAutoRefresher {
     func startTimer() {
         cancelTimer()
         isActive = true
-        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+        timerCancellable = Timer.publish(every: 0.1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.timerTick()
@@ -47,7 +47,7 @@ class ThreadAutoRefresher {
     func incrementRefreshTimer() -> Bool {
         guard !pauseAutoRefresh, UserDefaults.getAutoRefreshEnabled() else { return false }
         
-        autoRefreshTimer += 1
+        autoRefreshTimer += 0.1
         
         // Get refresh time with validation - minimum 5 seconds, default 10
         let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)

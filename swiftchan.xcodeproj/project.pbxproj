@@ -39,6 +39,8 @@
 		9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F78E2843B07D00F5803F /* NSFWTagView.swift */; };
 		9559F7912843F1E900F5803F /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F7902843F1E900F5803F /* PrivacyView.swift */; };
 		9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */; };
+		955AF3B52E494B8A002CFB99 /* FilterChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AF3B32E494B8A002CFB99 /* FilterChip.swift */; };
+		955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AF3B42E494B8A002CFB99 /* RefreshProgressBar.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
@@ -159,6 +161,8 @@
 		9559F78E2843B07D00F5803F /* NSFWTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSFWTagView.swift; sourceTree = "<group>"; };
 		9559F7902843F1E900F5803F /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadAutoRefresher.swift; sourceTree = "<group>"; };
+		955AF3B32E494B8A002CFB99 /* FilterChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterChip.swift; sourceTree = "<group>"; };
+		955AF3B42E494B8A002CFB99 /* RefreshProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressBar.swift; sourceTree = "<group>"; };
 		956D9051256B18270000D84C /* Buildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildable.swift; sourceTree = "<group>"; };
 		9574CDED255E2350000C99B6 /* BoardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsViewModel.swift; sourceTree = "<group>"; };
 		9574CDF5255E254F000C99B6 /* FourchanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourchanService.swift; sourceTree = "<group>"; };
@@ -478,6 +482,8 @@
 		95D86F6F25EA301A005A7EBC /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				955AF3B32E494B8A002CFB99 /* FilterChip.swift */,
+				955AF3B42E494B8A002CFB99 /* RefreshProgressBar.swift */,
 				954FB5822730BDF0009CC52F /* RoundedCorners.swift */,
 				95C01FEA27389037000D64B1 /* Toast.swift */,
 				9524E1AE256F8E4D00D08075 /* Blur.swift */,
@@ -664,9 +670,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-swiftchan/Pods-swiftchan-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -785,6 +795,8 @@
 				9579F9F1263D1A1E007C70FC /* VLCVideo.swift in Sources */,
 				95F5D7622957610600DD561B /* SnowScene.swift in Sources */,
 				950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */,
+				955AF3B52E494B8A002CFB99 /* FilterChip.swift in Sources */,
+				955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -47,6 +47,7 @@ struct BoardView: View {
             }
         }
         .border(Colors.Board.border)
+        .background(.regularMaterial)
     }
 
     struct DrawingConstants {
