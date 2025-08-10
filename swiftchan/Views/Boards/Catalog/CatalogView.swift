@@ -16,8 +16,8 @@ struct CatalogView: View {
 
     var boardName: String
     @State var catalogViewModel: CatalogViewModel
-    @State var searchText: String = ""
     @State var isShowingMenu: Bool = false
+    @State var isSearching: Bool = false
 
     let columns = [
         GridItem(.flexible(), spacing: 0, alignment: .top),
@@ -41,7 +41,7 @@ struct CatalogView: View {
     @ViewBuilder
     var body: some View {
         @Bindable var appState = appState
-        let filteredPosts = catalogViewModel.getFilteredPosts(searchText: searchText)
+        let filteredPosts = catalogViewModel.getFilteredPostsWithFilters(searchText: catalogViewModel.searchText, filters: catalogViewModel.searchFilters)
 
         switch catalogViewModel.state {
         case .initial:
@@ -52,23 +52,43 @@ struct CatalogView: View {
         case .loading:
             CatalogLoadingView(viewModel: catalogViewModel)
         case .loaded:
-            ScrollView(.vertical, showsIndicators: true) {
-                LazyVGrid(
-                    columns: columns,
-                    alignment: .center,
-                    spacing: 0
-                ) {
-                    ForEach(filteredPosts) { post in
-                        if !post.post.isHidden(boardName: boardName) {
-                            NavigationLink(value: post) {
-                                OPView(
-                                    boardName: boardName,
-                                    post: post
-                                )
+            ScrollViewReader { reader in
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(
+                        columns: columns,
+                        alignment: .center,
+                        spacing: 0
+                    ) {
+                        ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { index, post in
+                            if !post.post.isHidden(boardName: boardName) {
+                                NavigationLink(value: post) {
+                                    OPView(
+                                        boardName: boardName,
+                                        post: post
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .id(post.id)
+                                .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
+                                       (catalogViewModel.searchResultIndices[catalogViewModel.currentSearchResultIndex] == catalogViewModel.posts.firstIndex(where: { $0.id == post.id }) ? 1.0 : 0.5) : 1.0)
+                                .animation(.easeInOut(duration: 0.2), value: catalogViewModel.currentSearchResultIndex)
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
                     }
+                }
+                .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
+                    if let postIndex = catalogViewModel.getCurrentSearchResultPostIndex(),
+                       postIndex < catalogViewModel.posts.count {
+                        let postId = catalogViewModel.posts[postIndex].id
+                        withAnimation {
+                            reader.scrollTo(postId, anchor: .center)
+                        }
+                    }
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if isSearching && !catalogViewModel.searchResultIndices.isEmpty {
+                    searchToolbar
                 }
             }
             .overlay {
@@ -96,7 +116,13 @@ struct CatalogView: View {
                     postNumber: post.post.id
                 )
             }
-            .searchable(text: $searchText)
+            .searchable(text: $catalogViewModel.searchText, isPresented: $isSearching)
+            .onChange(of: catalogViewModel.searchText) { _, _ in
+                catalogViewModel.updateSearchResults()
+            }
+            .onChange(of: catalogViewModel.searchFilters) { _, _ in
+                catalogViewModel.updateSearchResults()
+            }
             .refreshable {
                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                 Task {
@@ -142,6 +168,110 @@ struct CatalogView: View {
 
     struct Constants {
         static let refreshIcon = "arrow.clockwise"
+    }
+    
+    @ViewBuilder
+    var searchToolbar: some View {
+        VStack(spacing: 8) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    CatalogFilterChip(
+                        label: "Has Media",
+                        isSelected: catalogViewModel.searchFilters.hasMedia,
+                        action: {
+                            catalogViewModel.searchFilters.hasMedia.toggle()
+                        }
+                    )
+                    
+                    CatalogFilterChip(
+                        label: "10+ Replies",
+                        isSelected: catalogViewModel.searchFilters.minReplies == 10,
+                        action: {
+                            if catalogViewModel.searchFilters.minReplies == 10 {
+                                catalogViewModel.searchFilters.minReplies = nil
+                            } else {
+                                catalogViewModel.searchFilters.minReplies = 10
+                            }
+                        }
+                    )
+                    
+                    CatalogFilterChip(
+                        label: "20+ Replies",
+                        isSelected: catalogViewModel.searchFilters.minReplies == 20,
+                        action: {
+                            if catalogViewModel.searchFilters.minReplies == 20 {
+                                catalogViewModel.searchFilters.minReplies = nil
+                            } else {
+                                catalogViewModel.searchFilters.minReplies = 20
+                            }
+                        }
+                    )
+                    
+                    CatalogFilterChip(
+                        label: "5+ Images",
+                        isSelected: catalogViewModel.searchFilters.minImages == 5,
+                        action: {
+                            if catalogViewModel.searchFilters.minImages == 5 {
+                                catalogViewModel.searchFilters.minImages = nil
+                            } else {
+                                catalogViewModel.searchFilters.minImages = 5
+                            }
+                        }
+                    )
+                }
+                .padding(.horizontal)
+            }
+            
+            HStack {
+                Text("\(catalogViewModel.currentSearchResultIndex + 1) of \(catalogViewModel.searchResultIndices.count) threads")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Button(action: {
+                    catalogViewModel.jumpToPreviousSearchResult()
+                }) {
+                    Image(systemName: "chevron.up")
+                        .padding(8)
+                }
+                .disabled(catalogViewModel.searchResultIndices.isEmpty)
+                
+                Button(action: {
+                    catalogViewModel.jumpToNextSearchResult()
+                }) {
+                    Image(systemName: "chevron.down")
+                        .padding(8)
+                }
+                .disabled(catalogViewModel.searchResultIndices.isEmpty)
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 8)
+        .background(.regularMaterial)
+    }
+}
+
+struct CatalogFilterChip: View {
+    let label: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.caption)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? Color.accentColor : Color.gray.opacity(0.2))
+                .foregroundColor(isSelected ? .white : .primary)
+                .cornerRadius(15)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(isSelected ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

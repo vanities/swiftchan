@@ -11,14 +11,11 @@ import Combine
 import SpriteKit
 import ToastUI
 
-func createThreadUpdateTimer() -> Publishers.Autoconnect<Timer.TimerPublisher> {
-    return Timer.publish(every: 1, on: .current, in: .common).autoconnect()
-}
-
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
+    @AppStorage("showRefreshProgressBar") private var showRefreshProgressBar = true
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
 
@@ -32,6 +29,7 @@ struct ThreadView: View {
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
     @State private var showAutoRefreshToast: Bool = false
     @State private var autoRefreshToastMessage: String = ""
+    @State private var isSearching: Bool = false
 
     var scene: SKScene {
         let scene = SnowScene()
@@ -75,9 +73,13 @@ struct ThreadView: View {
                         ) {
                             ForEach(viewModel.posts.indices, id: \.self) { postIndex in
                                 let post = viewModel.posts[postIndex]
-                                if !post.isHidden(boardName: viewModel.boardName) {
+                                if !post.isHidden(boardName: viewModel.boardName) && viewModel.shouldShowPost(at: postIndex) {
                                     PostView(index: postIndex)
                                         .environment(viewModel)
+                                        .id(postIndex)
+                                        .opacity(isSearching && !viewModel.searchResultIndices.isEmpty ? 
+                                               (viewModel.searchResultIndices[viewModel.currentSearchResultIndex] == postIndex ? 1.0 : 0.5) : 1.0)
+                                        .animation(.easeInOut(duration: 0.2), value: viewModel.currentSearchResultIndex)
                                 }
                             }
                         }
@@ -89,7 +91,30 @@ struct ThreadView: View {
                             }
                         }
                         .opacity(opacity)
+                        .onChange(of: viewModel.currentSearchResultIndex) { _, _ in
+                            if let postIndex = viewModel.getCurrentSearchResultPostIndex() {
+                                withAnimation {
+                                    reader.scrollTo(postIndex, anchor: .center)
+                                }
+                            }
+                        }
                     }
+                }
+            }
+            .overlay(alignment: .top) {
+                if autoRefreshEnabled && showRefreshProgressBar && !threadAutorefresher.pauseAutoRefresh {
+                    let validatedRefreshTime = max(5, autoRefreshThreadTime > 0 ? autoRefreshThreadTime : 10)
+                    RefreshProgressBar(
+                        progress: threadAutorefresher.autoRefreshTimer,
+                        total: Double(validatedRefreshTime),
+                        isPaused: threadAutorefresher.pauseAutoRefresh
+                    )
+                    .allowsHitTesting(false)
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if isSearching && !viewModel.searchResultIndices.isEmpty {
+                    searchToolbar
                 }
             }
             .overlay {
@@ -118,7 +143,7 @@ struct ThreadView: View {
                         threadAutorefresher.cancelTimer()
                     }
                     .onDisappear {
-                        threadAutorefresher.setTimer()
+                        threadAutorefresher.startTimer()
                     }
                 }
             )
@@ -136,24 +161,22 @@ struct ThreadView: View {
             }
             .onAppear {
                 viewModel.prefetch()
-            }
-            .onDisappear {
-                viewModel.stopPrefetching()
-            }
-            .onReceive(threadAutorefresher.timer) { _ in
-                if threadAutorefresher.incrementRefreshTimer() {
+                threadAutorefresher.onRefresh = {
                     print("Thread auto refresh timer met, updating thread.")
                     Task {
                         await fetchAndPrefetchMedia(auto: true)
                     }
                 }
-
+            }
+            .onDisappear {
+                viewModel.stopPrefetching()
+                threadAutorefresher.cancelTimer()
             }
             .onChange(of: presentationState.presentingReplies) {
                 if presentationState.presentingReplies {
                     threadAutorefresher.cancelTimer()
                 } else {
-                    threadAutorefresher.setTimer()
+                    threadAutorefresher.startTimer()
                 }
             }
             .refreshable {
@@ -164,11 +187,17 @@ struct ThreadView: View {
             }
             .environment(presentationState)
             .navigationTitle(viewModel.title)
+            .searchable(text: $viewModel.searchText, isPresented: $isSearching)
+            .onChange(of: viewModel.searchText) { _, _ in
+                viewModel.updateSearchResults()
+            }
+            .onChange(of: viewModel.searchFilters) { _, _ in
+                viewModel.updateSearchResults()
+            }
             .toolbar(id: "toolbar-1") {
                 ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
                     HStack {
-                        // TODO: fix this from redrawing the whole posts in ThreadView,
-                        // autoRefreshButton
+                        autoRefreshButton
                         Link(destination: viewModel.url) {
                             Image(systemName: "square.and.arrow.up")
                         }
@@ -180,14 +209,14 @@ struct ThreadView: View {
                 if showReply {
                     threadAutorefresher.cancelTimer()
                 } else {
-                    threadAutorefresher.setTimer()
+                    threadAutorefresher.startTimer()
                 }
             }
             .onChange(of: showThread) {
                 if showThread {
                     threadAutorefresher.cancelTimer()
                 } else {
-                    threadAutorefresher.setTimer()
+                    threadAutorefresher.startTimer()
                 }
             }
             .navigationDestination(isPresented: $showReply) {
@@ -220,20 +249,67 @@ struct ThreadView: View {
     }
 
     @ViewBuilder
+    var searchToolbar: some View {
+        VStack(spacing: 8) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    FilterChip(
+                        label: "Has Media",
+                        isSelected: viewModel.searchFilters.hasMedia,
+                        action: {
+                            viewModel.searchFilters.hasMedia.toggle()
+                        }
+                    )
+                    
+                    FilterChip(
+                        label: "Has Replies",
+                        isSelected: viewModel.searchFilters.hasReplies,
+                        action: {
+                            viewModel.searchFilters.hasReplies.toggle()
+                        }
+                    )
+                }
+                .padding(.horizontal)
+            }
+            
+            HStack {
+                Text("\(viewModel.currentSearchResultIndex + 1) of \(viewModel.searchResultIndices.count)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Button(action: {
+                    viewModel.jumpToPreviousSearchResult()
+                }) {
+                    Image(systemName: "chevron.up")
+                        .padding(8)
+                }
+                .disabled(viewModel.searchResultIndices.isEmpty)
+                
+                Button(action: {
+                    viewModel.jumpToNextSearchResult()
+                }) {
+                    Image(systemName: "chevron.down")
+                        .padding(8)
+                }
+                .disabled(viewModel.searchResultIndices.isEmpty)
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 8)
+        .background(.regularMaterial)
+    }
+    
+    @ViewBuilder
     var autoRefreshButton: some View {
         if autoRefreshEnabled {
-            ProgressView(
-                value: Double(autoRefreshThreadTime) - threadAutorefresher.autoRefreshTimer,
-                total: Double(autoRefreshThreadTime)
-            ) {
-                Text("\(Int(autoRefreshThreadTime) - Int(threadAutorefresher.autoRefreshTimer))")
-                    .animation(nil)
-            }
-            .onTapGesture {
-                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                threadAutorefresher.pauseAutoRefresh.toggle()
-            }
-            .progressViewStyle(ThreadRefreshProgressViewStyle(paused: threadAutorefresher.pauseAutoRefresh))
+            Image(systemName: threadAutorefresher.pauseAutoRefresh ? "pause.circle" : "arrow.clockwise.circle")
+                .foregroundColor(threadAutorefresher.pauseAutoRefresh ? .red : .blue)
+                .onTapGesture {
+                    UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+                    threadAutorefresher.pauseAutoRefresh.toggle()
+                }
         } else {
             EmptyView()
         }
@@ -306,6 +382,72 @@ struct ThreadLoadingView: View {
                 .environment(viewModel)
                 .environment(AppState())
         }
+    }
+}
+
+struct RefreshProgressBar: View {
+    let progress: Double
+    let total: Double
+    let isPaused: Bool
+    
+    private var percentage: Double {
+        guard total > 0 else { return 0 }
+        return max(0, min(1, (total - progress) / total))
+    }
+    
+    private var barColor: Color {
+        if isPaused {
+            return Color.gray
+        }
+        
+        switch percentage {
+        case 0.5...1.0:
+            return Color.green
+        case 0.25..<0.5:
+            return Color.orange
+        default:
+            return Color.red
+        }
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.1))
+                    .frame(height: 2)
+                
+                Rectangle()
+                    .fill(barColor)
+                    .frame(width: geometry.size.width * percentage, height: 2)
+                    .animation(.linear(duration: 0.5), value: percentage)
+            }
+        }
+        .frame(height: 2)
+        .opacity(isPaused ? 0.5 : 1.0)
+    }
+}
+
+struct FilterChip: View {
+    let label: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.caption)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? Color.accentColor : Color.gray.opacity(0.2))
+                .foregroundColor(isSelected ? .white : .primary)
+                .cornerRadius(15)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(isSelected ? Color.clear : Color.gray.opacity(0.3), lineWidth: 1)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 #endif

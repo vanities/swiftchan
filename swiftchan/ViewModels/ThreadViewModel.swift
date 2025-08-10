@@ -10,6 +10,12 @@ import SwiftUI
 import FourChan
 import Combine
 
+struct SearchFilters: Equatable {
+    var hasMedia: Bool = false
+    var posterID: String? = nil
+    var hasReplies: Bool = false
+}
+
 @Observable
 final class ThreadViewModel {
     enum State {
@@ -28,6 +34,11 @@ final class ThreadViewModel {
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
+    
+    var searchText = ""
+    var searchFilters = SearchFilters()
+    private(set) var currentSearchResultIndex = 0
+    private(set) var searchResultIndices: [Int] = []
 
     var url: URL {
         return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
@@ -41,28 +52,41 @@ final class ThreadViewModel {
         self.boardName = boardName
         self.id = id
         self.replies = replies
-
-        // Set up reactive progress tracking similar to VLCVideoViewModel
+        setupProgressTracking()
+    }
+    
+    private func setupProgressTracking() {
+        // Cancel any existing subscriptions
+        cancellables.removeAll()
+        
+        // Set up reactive progress tracking
         downloadProgress.publisher(for: \.fractionCompleted)
             .receive(on: RunLoop.main)
             .throttle(for: .milliseconds(100), scheduler: RunLoop.main, latest: true)
             .sink { [weak self] fractionCompleted in
                 guard let self else { return }
-                // Only update if we don't have a custom message
-                if self.progressText.isEmpty || self.progressText.hasPrefix("Loading thread") {
-                    self.progressText = "Loading thread \(Int(fractionCompleted * 100))%"
+                // Only log if we're actually downloading
+                if self.state == .loading {
+                    // Only update if we don't have a custom message
+                    if self.progressText.isEmpty || self.progressText.hasPrefix("Loading thread") {
+                        self.progressText = "Loading thread \(Int(fractionCompleted * 100))%"
+                    }
+                    debugPrint("📥 Thread download progress: \(Int(fractionCompleted * 100))%")
                 }
-                debugPrint("📥 Thread download progress: \(Int(fractionCompleted * 100))%")
             }
             .store(in: &cancellables)
     }
 
     @MainActor
     func getPosts() async {
+        // Always reset progress when starting a new fetch
+        downloadProgress = Progress()
+        downloadProgress.totalUnitCount = 100
+        downloadProgress.completedUnitCount = 0
+        setupProgressTracking()
+        
         if state != .loaded {
             state = .loading
-            downloadProgress.totalUnitCount = 100
-            downloadProgress.completedUnitCount = 0
         }
 
         do {
@@ -185,6 +209,88 @@ final class ThreadViewModel {
             index += 1
         }
         return 0
+    }
+    
+    func getFilteredPostIndices() -> [Int] {
+        guard !searchText.isEmpty || searchFilters != SearchFilters() else {
+            return Array(0..<posts.count)
+        }
+        
+        var filteredIndices: [Int] = []
+        let searchTextLowercased = searchText.lowercased()
+        
+        for (index, post) in posts.enumerated() {
+            var matchesSearch = true
+            
+            if !searchText.isEmpty {
+                let comment = index < comments.count ? String(comments[index].characters) : ""
+                let subject = post.sub?.clean.lowercased() ?? ""
+                let name = post.name?.lowercased() ?? ""
+                let trip = post.trip?.lowercased() ?? ""
+                let filename = post.filename?.lowercased() ?? ""
+                let postNumber = String(post.no)
+                let posterID = post.pid?.lowercased() ?? ""
+                
+                let searchableText = "\(comment.lowercased()) \(subject) \(name) \(trip) \(filename) \(postNumber) \(posterID)"
+                matchesSearch = searchableText.contains(searchTextLowercased)
+            }
+            
+            if searchFilters.hasMedia && post.tim == nil {
+                matchesSearch = false
+            }
+            
+            if let filterPosterID = searchFilters.posterID, !filterPosterID.isEmpty {
+                if post.pid?.lowercased() != filterPosterID.lowercased() {
+                    matchesSearch = false
+                }
+            }
+            
+            if searchFilters.hasReplies {
+                if replies[index] == nil || replies[index]?.isEmpty == true {
+                    matchesSearch = false
+                }
+            }
+            
+            if matchesSearch {
+                filteredIndices.append(index)
+            }
+        }
+        
+        return filteredIndices
+    }
+    
+    func updateSearchResults() {
+        searchResultIndices = getFilteredPostIndices()
+        if currentSearchResultIndex >= searchResultIndices.count {
+            currentSearchResultIndex = max(0, searchResultIndices.count - 1)
+        }
+    }
+    
+    func jumpToNextSearchResult() {
+        guard !searchResultIndices.isEmpty else { return }
+        currentSearchResultIndex = (currentSearchResultIndex + 1) % searchResultIndices.count
+    }
+    
+    func jumpToPreviousSearchResult() {
+        guard !searchResultIndices.isEmpty else { return }
+        if currentSearchResultIndex == 0 {
+            currentSearchResultIndex = searchResultIndices.count - 1
+        } else {
+            currentSearchResultIndex -= 1
+        }
+    }
+    
+    func getCurrentSearchResultPostIndex() -> Int? {
+        guard !searchResultIndices.isEmpty,
+              currentSearchResultIndex < searchResultIndices.count else { return nil }
+        return searchResultIndices[currentSearchResultIndex]
+    }
+    
+    func shouldShowPost(at index: Int) -> Bool {
+        if searchText.isEmpty && searchFilters == SearchFilters() {
+            return true
+        }
+        return searchResultIndices.contains(index)
     }
 
 }

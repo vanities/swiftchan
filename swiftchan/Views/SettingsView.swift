@@ -14,6 +14,7 @@ struct SettingsView: View {
     @AppStorage("showGalleryPreview") var showGalleryPreview = false
     @AppStorage("autoRefreshEnabled") var autoRefreshEnabled = true
     @AppStorage("autoRefreshThreadTime") var autoRefreshThreadTime = 10
+    @AppStorage("showRefreshProgressBar") var showRefreshProgressBar = true
     @AppStorage("biometricsEnabled") var biometricsEnabled = false
     @AppStorage("showNSFWBoards") var showNSFWBoards = false
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
@@ -67,13 +68,42 @@ struct SettingsView: View {
     var threadSection: some View {
         Section(header: Text("Thread").font(.title)) {
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
+            if autoRefreshEnabled {
+                Toggle("Show Refresh Progress Bar", isOn: $showRefreshProgressBar)
+            }
             HStack {
-                Text("Auto Refresh Time")
+                Text("Auto Refresh Time (seconds)")
                 Spacer()
-                TextField("Auto Refresh Time", value: $autoRefreshThreadTime, formatter: NumberFormatter())
+                TextField("Auto Refresh Time", value: $autoRefreshThreadTime, formatter: {
+                    let formatter = NumberFormatter()
+                    formatter.minimum = 5
+                    formatter.maximum = 300
+                    return formatter
+                }())
                     .frame(width: 50)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.decimalPad)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            }
+                        }
+                    }
+                    .onChange(of: autoRefreshThreadTime) { _, newValue in
+                        // Ensure minimum of 5 seconds
+                        if newValue < 5 {
+                            autoRefreshThreadTime = 5
+                        } else if newValue > 300 {
+                            autoRefreshThreadTime = 300
+                        }
+                    }
+            }
+            if autoRefreshThreadTime < 10 {
+                Text("Minimum recommended: 10 seconds")
+                    .font(.caption)
+                    .foregroundColor(.orange)
             }
         }
     }
