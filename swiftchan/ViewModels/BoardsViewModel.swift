@@ -34,7 +34,6 @@ final class BoardsViewModel {
         }
     }
 
-
     func getAllBoards(favorites: [String], searchText: String) -> [Board] {
         return getFavoriteBoards(favorites) + getFilteredBoards(searchText: searchText)
     }
@@ -57,4 +56,3 @@ final class BoardsViewModel {
             }
     }
 }
-

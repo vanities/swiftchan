@@ -43,7 +43,7 @@ struct ThumbnailMediaView: View {
                 EmptyView()
             }
         }
-        .overlay (
+        .overlay(
                 ZStack {
                     if Date.isFourchanBday() {
                         Image("PartyHat")

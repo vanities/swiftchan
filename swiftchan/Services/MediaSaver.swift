@@ -14,7 +14,7 @@ class ImageSaver {
             guard let data = try? Data(contentsOf: url) else { return }
             PHPhotoLibrary.shared().performChanges({
                 PHAssetCreationRequest.forAsset().addResource(with: .photo, data: data, options: nil)
-            }, completionHandler: { success, error in
+            }, completionHandler: { _, error in
                 if let error = error {
                     complete(.failure(error))
                 }

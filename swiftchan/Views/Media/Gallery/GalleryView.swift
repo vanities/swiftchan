@@ -24,6 +24,7 @@ struct GalleryView: View {
     @State private var showPreview = false
     @State private var dragging  = false
     @State private var canShowContextMenu = true
+    @State private var isSeeking = false
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -33,7 +34,7 @@ struct GalleryView: View {
 
         return ZStack {
             Color.black.ignoresSafeArea()
-            
+
             // gallery
             Pager(
                 page: page,
@@ -42,13 +43,19 @@ struct GalleryView: View {
                 MediaView(media: media)
                     .onMediaChanged { zoomed in
                         canShowPreview = !zoomed
-                        canPage = !zoomed
+                        canPage = !zoomed && !isSeeking
                         canShowContextMenu = !zoomed
                         if zoomed {
                             // if zooming, remove the preview
                             showPreview = !zoomed
                         }
                         onMediaChanged?(zoomed)
+                    }
+                    .onSeekChanged { seeking in
+                        isSeeking = seeking
+                        canPage = !seeking
+                        canShowPreview = !seeking
+                        canShowContextMenu = !seeking
                     }
                     .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
                     .accessibilityIdentifier(

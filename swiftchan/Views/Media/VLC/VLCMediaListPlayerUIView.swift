@@ -29,16 +29,16 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
         guard currentMediaURL != url || mediaListPlayer.mediaPlayer.media == nil else { return }
-        
+
         // Only reset if we're switching to a different URL
         if currentMediaURL != url {
             resetPlayer()
         }
-        
+
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
-            
+
             // Use the original approach that was working
             mediaListPlayer.rootMedia = media
             mediaListPlayer.mediaPlayer.media = media
@@ -78,7 +78,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         }
     }
 
-
     /// Start playback immediately without delays.
     func initializeAndPlay() {
         guard !isBeingDeallocated else { return }
@@ -93,14 +92,14 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         }
 
         debugPrint("🎬 Initializing and playing: \(fileURL)")
-        
+
         // Initialize the player
         self.initialize(url: fileURL)
-        
+
         // Start playing immediately
         DispatchQueue.main.async { [weak self] in
             guard let self = self, !self.isBeingDeallocated else { return }
-            
+
             if let media = self.media {
                 debugPrint("🎬 Starting playback with media")
                 self.mediaListPlayer.play(media)
@@ -109,7 +108,6 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
         }
     }
-
 
     func resume() {
         guard !isBeingDeallocated else { return }
@@ -159,7 +157,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
         // Mark as being deallocated first
         uiView.isBeingDeallocated = true
-        
+
         // Clear delegate immediately to prevent callbacks
         uiView.mediaListPlayer.mediaPlayer.delegate = nil
         uiView.delegate = nil

@@ -12,6 +12,7 @@ import Kingfisher
 struct MediaView: View {
     let media: Media
     var onMediaChanged: ((Bool) -> Void)?
+    var onSeekChanged: ((Bool) -> Void)?
 
     @ViewBuilder
     var body: some View {
@@ -32,6 +33,9 @@ struct MediaView: View {
                     url: media.url,
                     isSelected: media.isSelected
                 )
+                .onSeekChanged { seeking in
+                    onSeekChanged?(seeking)
+                }
             }
         case .mp4:
             ZStack {
@@ -44,6 +48,9 @@ struct MediaView: View {
                     url: media.url,
                     isSelected: media.isSelected
                 )
+                .onSeekChanged { seeking in
+                    onSeekChanged?(seeking)
+                }
             }
         case .gif:
             GIFView(url: media.url)
@@ -57,6 +64,9 @@ struct MediaView: View {
 extension MediaView: Buildable {
     func onMediaChanged(_ callback: ((Bool) -> Void)?) -> Self {
         mutating(keyPath: \.onMediaChanged, value: callback)
+    }
+    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onSeekChanged, value: callback)
     }
 }
 

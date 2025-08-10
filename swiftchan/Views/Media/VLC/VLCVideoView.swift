@@ -18,11 +18,11 @@ struct VLCVideoView: UIViewRepresentable {
         )
         view.initialize(url: vlcVideoViewModel.video.url)
         view.setDelegate(context.coordinator)
-        
+
         // Connect the view to the view model for direct commands
         vlcVideoViewModel.vlcUIView = view
         debugPrint("🔗 Connected UIView to ViewModel")
-        
+
         return view
     }
 
@@ -33,7 +33,7 @@ struct VLCVideoView: UIViewRepresentable {
         @Bindable var viewModel = vlcVideoViewModel
         let currentState = viewModel.video.mediaControlState
         debugPrint("🎮 updateUIView called with state: \(currentState)")
-        
+
         switch currentState {
         case .initialize:
             return
@@ -101,13 +101,13 @@ struct VLCVideoView: UIViewRepresentable {
             let mediaState = player.media?.state
 
             guard let remainingTime = remainingTime,
-                  let mediaState = mediaState else { 
+                  let mediaState = mediaState else {
                 debugPrint("⚠️ Time changed but missing data")
-                return 
+                return
             }
 
             let totalTime = VLCTime(int: currentTime.intValue + abs(remainingTime.intValue))
-            
+
             // Debug every few seconds to see if callbacks are working
             if currentTime.intValue % 3000 == 0 && currentTime.intValue > 0 {
                 debugPrint("🕒 Time callback working: \(currentTime.description)")
@@ -153,7 +153,7 @@ struct VLCVideoView: UIViewRepresentable {
         func handleStateChange(from player: VLCMediaPlayer) {
             self.viewModel?.setMediaPlayerState(player.state)
         }
-        
+
         func stateToString(_ state: VLCMediaPlayerState) -> String {
             switch state {
             case .opening: return "opening"

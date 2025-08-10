@@ -46,7 +46,7 @@ struct VLCContainerView: View {
                 }
             }
         }
-        .playerControl(presenting: $presentingPlayerControl)
+        .playerControl(presenting: $presentingPlayerControl, onSeekChanged: onSeekChanged)
         .environment(vlcVideoViewModel)
         .onReceive(Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()) { _ in
             // Update download percentage without circular dependency
@@ -88,7 +88,7 @@ struct VLCContainerView: View {
                     // Add small delay to ensure file is ready
                     try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
                     debugPrint("🎬 Triggering play after download")
-                    
+
                     // Ensure we're on the main actor for UI updates
                     await MainActor.run {
                         vlcVideoViewModel.play()
@@ -98,6 +98,12 @@ struct VLCContainerView: View {
                 debugPrint("Failed to download video: \(error)")
             }
         }
+    }
+}
+
+extension VLCContainerView: Buildable {
+    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onSeekChanged, value: callback)
     }
 }
 

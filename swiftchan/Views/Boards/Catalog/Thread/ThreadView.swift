@@ -40,7 +40,6 @@ struct ThreadView: View {
         return scene
     }
 
-
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     init(boardName: String, postNumber: PostNumber) {

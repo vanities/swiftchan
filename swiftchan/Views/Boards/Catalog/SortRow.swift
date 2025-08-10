@@ -82,16 +82,13 @@ struct SortRow: View {
             let type = UserDefaults.getSortRepliesBy(boardName: viewModel.boardName)
             self.imageName = type == .none ? disabledImageName : enabledImageName
             self.sortState = type
-            break
-        case "sortFilesBy":
+            case "sortFilesBy":
             let type = UserDefaults.getSortFilesBy(boardName: viewModel.boardName)
             self.imageName = type == .none ? disabledImageName : enabledImageName
             self.sortState = type
-            break
-        default:
+            default:
             self.imageName = "none"
             self.sortState = .none
-            break
         }
     }
 
@@ -119,10 +116,8 @@ struct SortRow: View {
                 switch defaultsKeyType {
                 case "sortRepliesBy":
                     UserDefaults.setSortRepliesBy(boardName: viewModel.boardName, type: UserDefaults.getSortRepliesBy(boardName: viewModel.boardName).nextState())
-                    break
-                case "sortFilesBy":
+                    case "sortFilesBy":
                     UserDefaults.setSortFilesBy(boardName: viewModel.boardName, type: UserDefaults.getSortFilesBy(boardName: viewModel.boardName).nextState())
-                    break
                 default:
                     break
                 }

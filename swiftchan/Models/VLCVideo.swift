@@ -60,7 +60,6 @@ struct VLCVideo: Equatable, Identifiable, Sendable {
     }
 }
 
-
 extension VLCVideo: Hashable {
     static func == (lhs: VLCVideo, rhs: VLCVideo) -> Bool {
         lhs.url == rhs.url
@@ -70,7 +69,6 @@ extension VLCVideo: Hashable {
         hasher.combine(url)
     }
 }
-
 
 extension VLCVideo {
     func with(

@@ -276,7 +276,7 @@ extension CaseIterable where Self: Equatable {
     }
 }
 
-//https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift/40629365#40629365
+// https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift/40629365#40629365
 extension String: @retroactive Error {}
 
 extension UIScreen {

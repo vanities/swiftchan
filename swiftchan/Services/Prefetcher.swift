@@ -17,8 +17,8 @@ class Prefetcher {
     func prefetch(urls: [URL]) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
         prefetchImages(urls: imageUrls)
-        //let videoUrls = urls.filter { url in url.isWebm() }
-        //prefetchVideos(urls: videoUrls)
+        // let videoUrls = urls.filter { url in url.isWebm() }
+        // prefetchVideos(urls: videoUrls)
     }
 
     func prefetchImages(urls: [URL]) {
@@ -59,9 +59,8 @@ class Prefetcher {
         }
     }
 
-
     func stopPrefetching() {
         imagePrefetcher.stop()
-        //videoPrefetcher.queue.cancelAllOperations()
+        // videoPrefetcher.queue.cancelAllOperations()
     }
 }

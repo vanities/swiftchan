@@ -8,7 +8,6 @@
 import SwiftUI
 import FourChan
 
-
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("biometricsEnabled") private var biometricsEnabled = false
