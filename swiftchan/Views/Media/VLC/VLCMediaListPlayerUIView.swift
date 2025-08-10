@@ -1,4 +1,3 @@
-
 //
 //  VLCMediaListPlayerUIView.swift
 //  Updated for Safe Cleanup and Playback Retry
@@ -20,6 +19,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     let mediaListPlayer = VLCMediaListPlayer()
     var media: VLCMedia?
     private var currentMediaURL: URL?
+    private var isBeingDeallocated = false
 
     init(url: URL, frame: CGRect = .zero) {
         self.url = url
@@ -29,10 +29,17 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     /// Initialize the media with options and setup the media player.
     func initialize(url: URL) {
         guard currentMediaURL != url || mediaListPlayer.mediaPlayer.media == nil else { return }
-        resetPlayer()
+        
+        // Only reset if we're switching to a different URL
+        if currentMediaURL != url {
+            resetPlayer()
+        }
+        
         media = VLCMedia(url: url)
         if let media = media {
             media.addOption("-vv")
+            
+            // Use the original approach that was working
             mediaListPlayer.rootMedia = media
             mediaListPlayer.mediaPlayer.media = media
             mediaListPlayer.mediaPlayer.drawable = self
@@ -48,13 +55,17 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     /// Safely stop playback and release current media.
     private func resetPlayer() {
+        guard !isBeingDeallocated else { return }
+
         let cleanup = {
             // Detach the delegate and drawable first to avoid callbacks on
             // a deallocated object. Then stop playback and clear the media.
             self.mediaListPlayer.mediaPlayer.delegate = nil
             self.mediaListPlayer.mediaPlayer.drawable = nil
-            self.mediaListPlayer.mediaPlayer.stop()
-            self.mediaListPlayer.stop()
+            if !self.isBeingDeallocated {
+                self.mediaListPlayer.mediaPlayer.stop()
+                self.mediaListPlayer.stop()
+            }
             self.mediaListPlayer.mediaPlayer.media = nil
             self.mediaListPlayer.rootMedia = nil
             self.currentMediaURL = nil
@@ -63,13 +74,15 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         if Thread.isMainThread {
             cleanup()
         } else {
-            DispatchQueue.main.async(execute: cleanup)
+            DispatchQueue.main.sync(execute: cleanup)
         }
     }
 
 
-    /// Start playback with a fallback retry if buffering.
+    /// Start playback immediately without delays.
     func initializeAndPlay() {
+        guard !isBeingDeallocated else { return }
+
         let fileURL = _url
         let fileExists = FileManager.default.fileExists(atPath: fileURL.path)
         let fileSizeValid = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? Int64 ?? 0) ?? 0 > 0
@@ -79,66 +92,85 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
             return
         }
 
-        if mediaListPlayer.mediaPlayer.state == .buffering {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                if !self.mediaListPlayer.mediaPlayer.isPlaying, let media = self.media {
-                    self.mediaListPlayer.play(media)
-                }
-            }
-            return
-        }
-
+        debugPrint("🎬 Initializing and playing: \(fileURL)")
+        
+        // Initialize the player
         self.initialize(url: fileURL)
-
-        if !mediaListPlayer.mediaPlayer.isPlaying {
-            DispatchQueue.main.async { [weak self] in
-                if let media = self?.media {
-                    self?.mediaListPlayer.play(media)
-                }
+        
+        // Start playing immediately
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, !self.isBeingDeallocated else { return }
+            
+            if let media = self.media {
+                debugPrint("🎬 Starting playback with media")
+                self.mediaListPlayer.play(media)
+            } else {
+                debugPrint("⚠️ No media to play")
             }
         }
     }
 
 
     func resume() {
+        guard !isBeingDeallocated else { return }
         if !mediaListPlayer.mediaPlayer.isPlaying {
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.play()
+                guard let self = self, !self.isBeingDeallocated else { return }
+                debugPrint("▶️ Resuming playback")
+                self.mediaListPlayer.play()
             }
         }
     }
 
     func pause() {
+        guard !isBeingDeallocated else { return }
         if mediaListPlayer.mediaPlayer.canPause {
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.pause()
+                guard let self = self, !self.isBeingDeallocated else { return }
+                self.mediaListPlayer.pause()
             }
         }
     }
 
     func seek(time: VLCTime) {
+        guard !isBeingDeallocated else { return }
         if mediaListPlayer.mediaPlayer.isSeekable {
             DispatchQueue.main.async { [weak self] in
-                self?.mediaListPlayer.mediaPlayer.time = time
+                guard let self = self, !self.isBeingDeallocated else { return }
+                self.mediaListPlayer.mediaPlayer.time = time
             }
         }
     }
 
     func jump(direction: VLCVideo.MediaControlDirection, time: Int32) {
+        guard !isBeingDeallocated else { return }
         DispatchQueue.main.async { [weak self] in
+            guard let self = self, !self.isBeingDeallocated else { return }
             switch direction {
             case .forward:
-                self?.mediaListPlayer.mediaPlayer.jumpForward(time)
+                self.mediaListPlayer.mediaPlayer.jumpForward(time)
             case .backward:
-                self?.mediaListPlayer.mediaPlayer.jumpBackward(time)
+                self.mediaListPlayer.mediaPlayer.jumpBackward(time)
             }
         }
     }
 
     /// Clean up the media player to prevent callbacks on deallocated objects.
     public static func dismantleUIView(_ uiView: VLCMediaListPlayerUIView, coordinator: VLCVideoView.Coordinator) {
+        // Mark as being deallocated first
+        uiView.isBeingDeallocated = true
+        
+        // Clear delegate immediately to prevent callbacks
+        uiView.mediaListPlayer.mediaPlayer.delegate = nil
+        uiView.delegate = nil
+        // Then do cleanup
         DispatchQueue.main.async {
-            uiView.resetPlayer()
+            uiView.mediaListPlayer.mediaPlayer.drawable = nil
+            uiView.mediaListPlayer.mediaPlayer.stop()
+            uiView.mediaListPlayer.stop()
+            uiView.mediaListPlayer.mediaPlayer.media = nil
+            uiView.mediaListPlayer.rootMedia = nil
+            uiView.media = nil
         }
     }
 
@@ -148,10 +180,13 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
     deinit {
         debugPrint("🧹 VLCMediaListPlayerUIView deinit")
-        resetPlayer()
+        // Don't call resetPlayer here - it's handled in dismantleUIView
+        // Just mark as deallocated
+        isBeingDeallocated = true
     }
-    
+
     func setDelegate(_ delegate: VLCMediaPlayerDelegate) {
+        guard !isBeingDeallocated else { return }
         self.delegate = delegate
         mediaListPlayer.mediaPlayer.delegate = delegate
     }

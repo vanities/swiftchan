@@ -44,9 +44,6 @@ struct VLCContainerView: View {
                         .font(.title)
                 }
             }
-            if vlcVideoViewModel.video.downloadProgress.isFinished && vlcVideoViewModel.video.mediaState == .buffering {
-                ProgressView("Buffering")
-            }
         }
         .playerControl(presenting: $presentingPlayerControl)
         .environment(vlcVideoViewModel)
@@ -60,8 +57,13 @@ struct VLCContainerView: View {
             }
         }
         .onChange(of: isSelected) {
-            if isSelected && vlcVideoViewModel.video.downloadProgress.isFinished {
-                vlcVideoViewModel.play()
+            if isSelected {
+                // Always try to play when selected, even if still downloading
+                if vlcVideoViewModel.video.downloadProgress.isFinished {
+                    vlcVideoViewModel.play()
+                } else {
+                    // Will play automatically when download completes
+                }
             } else if !isSelected {
                 vlcVideoViewModel.pause()
             }
@@ -74,9 +76,21 @@ struct VLCContainerView: View {
             appState.vlcPlayerControlModifier = nil
         }
         .task {
-            try? await vlcVideoViewModel.download()
-            if isSelected {
-                vlcVideoViewModel.play()
+            do {
+                try await vlcVideoViewModel.download()
+                // Always play after download if selected
+                if isSelected {
+                    // Add small delay to ensure file is ready
+                    try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+                    debugPrint("🎬 Triggering play after download")
+                    
+                    // Ensure we're on the main actor for UI updates
+                    await MainActor.run {
+                        vlcVideoViewModel.play()
+                    }
+                }
+            } catch {
+                debugPrint("Failed to download video: \(error)")
             }
         }
     }
@@ -101,25 +115,3 @@ struct VLCContainerView: View {
     }
 }
 #endif
-
-
-#if DEBUG
-#Preview {
-    return Group {
-        VLCContainerView(
-            url: URLExamples.webm,
-            isSelected: false
-        )
-        .background(Color.black)
-        .previewInterfaceOrientation(.portrait)
-
-        VLCContainerView(
-            url: URLExamples.webm,
-            isSelected: true
-        )
-        .background(Color.black)
-        .previewInterfaceOrientation(.portrait)
-    }
-}
-#endif
-

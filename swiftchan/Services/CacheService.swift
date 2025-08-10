@@ -111,12 +111,37 @@ final class CacheManager {
 
     /// Basic validation to ensure cached WebM files are not corrupted.
     func isValidWebm(file: URL) -> Bool {
+        return isValidVideoFile(file: file)
+    }
+    
+    /// Validate video files (WebM and MP4)
+    func isValidVideoFile(file: URL) -> Bool {
         guard let handle = try? FileHandle(forReadingFrom: file) else { return false }
-        let header = handle.readData(ofLength: 4)
-        handle.closeFile()
+        defer { handle.closeFile() }
+        
+        let header = handle.readData(ofLength: 8)
         let bytes = [UInt8](header)
-        // EBML header 0x1A45DFA3
-        return bytes.count == 4 && bytes[0] == 0x1A && bytes[1] == 0x45 && bytes[2] == 0xDF && bytes[3] == 0xA3
+        
+        guard bytes.count >= 4 else { return false }
+        
+        // Check WebM (EBML header 0x1A45DFA3)
+        if bytes.count >= 4 && bytes[0] == 0x1A && bytes[1] == 0x45 && bytes[2] == 0xDF && bytes[3] == 0xA3 {
+            return true
+        }
+        
+        // Check MP4 (ftyp box at offset 4)
+        if bytes.count >= 8 && bytes[4] == 0x66 && bytes[5] == 0x74 && bytes[6] == 0x79 && bytes[7] == 0x70 {
+            return true
+        }
+        
+        // Also check for basic file size (non-empty)
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: file.path)
+            let fileSize = attributes[.size] as? Int64 ?? 0
+            return fileSize > 0
+        } catch {
+            return false
+        }
     }
 
 }

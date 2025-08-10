@@ -93,8 +93,8 @@ struct VLCPlayerControlsView: View {
                         let currentTime = Int32(CGFloat(vlcVideoViewModel.video.totalTime.intValue) * sliderPos)
                         let currentVLCTime = VLCTime(int: currentTime)
                         let remainingVLCTime = VLCTime(int: currentTime - Int32(vlcVideoViewModel.video.totalTime.intValue))
-                            vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
-                            vlcVideoViewModel.setMediaControlState(.seek(VLCTime(int: currentTime)))
+                        vlcVideoViewModel.updateTime(current: currentVLCTime, remaining: remainingVLCTime)
+                        vlcVideoViewModel.seek(to: VLCTime(int: currentTime))
                     }
                 }
                 .introspect(.slider, on: .iOS(.v17)) { slider in
