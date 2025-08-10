@@ -277,7 +277,6 @@ struct CatalogFilterChip: View {
 
 struct CatalogLoadingView: View {
     let viewModel: CatalogViewModel
-    @State private var downloadPercentage: Int = 0
 
     var body: some View {
         VStack(spacing: 15) {
@@ -291,20 +290,11 @@ struct CatalogLoadingView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Text("\(downloadPercentage)%")
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.accentColor)
-
-            ProgressView(value: Double(downloadPercentage), total: 100.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
-                .scaleEffect(x: 1, y: 2, anchor: .center)
-                .frame(maxWidth: 250)
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+                .scaleEffect(1.5, anchor: .center)
         }
         .padding()
-        .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
-            downloadPercentage = Int(viewModel.downloadProgress.fractionCompleted * 100)
-        }
     }
 }
 

@@ -335,7 +335,6 @@ struct ThreadView: View {
 
 struct ThreadLoadingView: View {
     let viewModel: ThreadViewModel
-    @State private var downloadPercentage: Int = 0
 
     var body: some View {
         VStack(spacing: 15) {
@@ -349,20 +348,11 @@ struct ThreadLoadingView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Text("\(downloadPercentage)%")
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.accentColor)
-
-            ProgressView(value: Double(downloadPercentage), total: 100.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
-                .scaleEffect(x: 1, y: 2, anchor: .center)
-                .frame(maxWidth: 250)
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+                .scaleEffect(1.5, anchor: .center)
         }
         .padding()
-        .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
-            downloadPercentage = Int(viewModel.downloadProgress.fractionCompleted * 100)
-        }
     }
 }
 
@@ -418,7 +408,7 @@ struct RefreshProgressBar: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             )
                     )
-                    .animation(.linear(duration: 0.5), value: percentage)
+                    .animation(.linear(duration: 0.1), value: percentage)
             }
         }
         .frame(height: 30)
@@ -434,7 +424,7 @@ struct CornerWrapShape: Shape {
         
         if isIPhone {
             let cornerRadius: CGFloat = 75
-            let barHeight: CGFloat = 6
+            let barHeight: CGFloat = 3
             
             // Start from bottom left, wrap up the corner
             path.move(to: CGPoint(x: 0, y: rect.height))

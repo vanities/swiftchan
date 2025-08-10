@@ -16,7 +16,7 @@ struct SearchFilters: Equatable {
     var hasReplies: Bool = false
 }
 
-@Observable
+@Observable @MainActor
 final class ThreadViewModel {
     enum State {
         case initial, loading, loaded, error
@@ -69,7 +69,7 @@ final class ThreadViewModel {
                 if self.state == .loading {
                     // Only update if we don't have a custom message
                     if self.progressText.isEmpty || self.progressText.hasPrefix("Loading thread") {
-                        self.progressText = "Loading thread \(Int(fractionCompleted * 100))%"
+                        self.progressText = "Loading thread..."
                     }
                     debugPrint("📥 Thread download progress: \(Int(fractionCompleted * 100))%")
                 }
@@ -77,10 +77,8 @@ final class ThreadViewModel {
             .store(in: &cancellables)
     }
 
-    @MainActor
     func getPosts() async {
-        // Always reset progress when starting a new fetch
-        downloadProgress = Progress()
+        // Reset progress without creating new object
         downloadProgress.totalUnitCount = 100
         downloadProgress.completedUnitCount = 0
         setupProgressTracking()
@@ -182,12 +180,10 @@ final class ThreadViewModel {
         return mediaList
     }
 
-    @MainActor
     func setMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) {
         media = getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
     }
 
-    @MainActor
     func prefetch() {
         let urls = media.flatMap { media in
             return [media.thumbnailUrl, media.url]
@@ -195,7 +191,6 @@ final class ThreadViewModel {
         prefetcher.prefetch(urls: urls)
     }
 
-    @MainActor
     func stopPrefetching() {
         prefetcher.stopPrefetching()
     }

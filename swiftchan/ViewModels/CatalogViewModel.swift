@@ -17,7 +17,7 @@ struct CatalogSearchFilters: Equatable {
     var maxImages: Int?
 }
 
-@Observable
+@Observable @MainActor
 class CatalogViewModel {
     enum LoadingState {
         case initial, loading, loaded, error
@@ -124,14 +124,13 @@ class CatalogViewModel {
                 guard let self else { return }
                 // Only update if we don't have a custom message
                 if self.progressText.isEmpty || self.progressText.hasPrefix("Loading /\(self.boardName)/") {
-                    self.progressText = "Loading /\(self.boardName)/ \(Int(fractionCompleted * 100))%"
+                    self.progressText = "Loading /\(self.boardName)/..."
                 }
                 debugPrint("📥 Catalog download progress: \(Int(fractionCompleted * 100))%")
             }
             .store(in: &cancellables)
     }
 
-    @MainActor
     func load() async {
         state = .loading
         downloadProgress.totalUnitCount = 100
@@ -237,7 +236,6 @@ class CatalogViewModel {
         }
     }
 
-    @MainActor
     func prefetch() {
         let urls = posts.compactMap { post in
             return post.post.getMediaUrl(boardId: boardName, thumbnail: !UserDefaults.getFullImagesForThumbanails())
@@ -245,7 +243,6 @@ class CatalogViewModel {
         prefetcher.prefetchImages(urls: urls)
     }
 
-    @MainActor
     func stopPrefetching() {
         prefetcher.stopPrefetching()
     }
