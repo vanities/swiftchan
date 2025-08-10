@@ -12,13 +12,13 @@ struct SettingsView: View {
     @AppStorage("fullImageForThumbnails") var fullImageForThumbnails = true
     @AppStorage("showGifThumbnails") var showGifThumbnails = true
     @AppStorage("showGalleryPreview") var showGalleryPreview = false
-    @AppStorage("autoRefreshEnabled") var autoRefreshEnabled = true
+    @AppStorage("autoRefreshEnabled") var autoRefreshEnabled = false
     @AppStorage("autoRefreshThreadTime") var autoRefreshThreadTime = 10
-    @AppStorage("showRefreshProgressBar") var showRefreshProgressBar = true
+    @AppStorage("showRefreshProgressBar") var showRefreshProgressBar = false
     @AppStorage("biometricsEnabled") var biometricsEnabled = false
     @AppStorage("showNSFWBoards") var showNSFWBoards = false
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
-    @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
+    @AppStorage("hideTabOnBoards") var hideTabOnBoards = true
 
     @State private var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
@@ -68,6 +68,12 @@ struct SettingsView: View {
     var threadSection: some View {
         Section(header: Text("Thread").font(.title)) {
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
+                .onChange(of: autoRefreshEnabled) { _, newValue in
+                    // Auto-disable progress bar when auto refresh is turned off
+                    if !newValue {
+                        showRefreshProgressBar = false
+                    }
+                }
             if autoRefreshEnabled {
                 Toggle("Show Refresh Progress Bar", isOn: $showRefreshProgressBar)
             }
