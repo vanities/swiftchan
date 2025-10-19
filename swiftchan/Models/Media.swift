@@ -48,7 +48,10 @@ struct Media {
 
 extension Media: Equatable {
     static func == (lhs: Media, rhs: Media) -> Bool {
-        lhs.url == rhs.url
+        lhs.id == rhs.id &&
+        lhs.url == rhs.url &&
+        lhs.thumbnailUrl == rhs.thumbnailUrl &&
+        lhs.isSelected == rhs.isSelected
     }
 }
 

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild -workspace swiftchan.xcworkspace -scheme swiftchan -configuration Debug build)",
+      "Bash(xcodebuild clean -workspace swiftchan.xcworkspace -scheme swiftchan)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
