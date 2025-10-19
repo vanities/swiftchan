@@ -26,6 +26,7 @@ struct GalleryView: View {
     @State private var isSeeking = false
     @State private var isZoomed = false
     @State private var pagerScrollView: UIScrollView?
+    @State private var sheetPresentationController: UISheetPresentationController?
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -108,12 +109,15 @@ struct GalleryView: View {
         .onDisappear {
             appState.vlcPlayerControlModifier = nil
             restorePagerScrolling()
+            sheetPresentationController?.presentedViewController.isModalInPresentation = false
         }
         .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
         .introspect(.sheet, on: .iOS(.v17, .v18, .v26)) { controller in
             controller.prefersGrabberVisible = true
             controller.prefersScrollingExpandsWhenScrolledToEdge = false
             controller.detents = [.large()]
+            sheetPresentationController = controller
+            updateInteractiveDismiss(using: controller)
         }
         .statusBar(hidden: true)
     }
@@ -131,6 +135,7 @@ struct GalleryView: View {
                     if zoomed {
                         showPreview = false
                     }
+                    updateInteractiveDismiss()
                     onMediaChanged?(zoomed)
                 }
                 .onSeekChanged { seeking in
@@ -138,6 +143,7 @@ struct GalleryView: View {
                     refreshPagingState()
                     canShowPreview = !seeking
                     canShowContextMenu = !seeking
+                    updateInteractiveDismiss()
                 }
                 .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
                 .accessibilityIdentifier(
@@ -173,6 +179,7 @@ struct GalleryView: View {
         var currentItem = viewModel.media[index]
         currentItem.isSelected = true
         viewModel.media[index] = currentItem
+        updateInteractiveDismiss()
     }
 
     func showPreviewTap() -> some Gesture {
@@ -204,6 +211,15 @@ struct GalleryView: View {
             scrollView.panGestureRecognizer.isEnabled = true
         }
         refreshPagingState()
+    }
+
+    private func updateInteractiveDismiss(using controller: UISheetPresentationController? = nil) {
+        let controller = controller ?? sheetPresentationController
+        guard let controller else { return }
+        let allowDismiss = !isZoomed && !isSeeking
+        DispatchQueue.main.async {
+            controller.presentedViewController.isModalInPresentation = !allowDismiss
+        }
     }
 }
 
