@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-import SwiftUIPager
-import ToastUI
+import SwiftUIIntrospect
+import UIKit
 
 struct GalleryView: View {
     @AppStorage("showGalleryPreview") var showGalleryPreview = false
@@ -18,16 +18,22 @@ struct GalleryView: View {
 
     let index: Int
 
-    @StateObject var page = Page.first()
+    @State private var selection: Int
     @State private var canPage = true
     @State private var canShowPreview = true
     @State private var showPreview = false
-    @State private var dragging  = false
     @State private var canShowContextMenu = true
     @State private var isSeeking = false
+    @State private var isZoomed = false
+    @State private var pagerScrollView: UIScrollView?
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
+
+    init(index: Int) {
+        self.index = index
+        _selection = State(initialValue: index)
+    }
 
     var body: some View {
         @Bindable var state = state
@@ -35,75 +41,61 @@ struct GalleryView: View {
         return ZStack {
             Color.black.ignoresSafeArea()
 
-            // gallery
-            Pager(
-                page: page,
-                data: viewModel.media
-            ) { media in
-                MediaView(media: media)
-                    .onMediaChanged { zoomed in
-                        canShowPreview = !zoomed
-                        canPage = !zoomed && !isSeeking
-                        canShowContextMenu = !zoomed
-                        if zoomed {
-                            // if zooming, remove the preview
-                            showPreview = !zoomed
-                        }
-                        onMediaChanged?(zoomed)
+            VerticalPagerView(
+                selection: $selection,
+                pageCount: viewModel.media.count,
+                canScroll: canPage,
+                onPageChanged: { index in
+                    updateActiveMedia(to: index)
+                },
+                onDragChanged: { translation in
+                    handlePagerDragChanged(translation)
+                },
+                onDragEnded: {
+                    handlePagerDragEnded()
+                },
+                onScrollViewCaptured: { scrollView in
+                    guard pagerScrollView !== scrollView else { return }
+                    DispatchQueue.main.async {
+                        pagerScrollView = scrollView
+                        scrollView.alwaysBounceVertical = true
+                        scrollView.alwaysBounceHorizontal = false
                     }
-                    .onSeekChanged { seeking in
-                        isSeeking = seeking
-                        canPage = !seeking
-                        canShowPreview = !seeking
-                        canShowContextMenu = !seeking
+                },
+                content: { pageIndex in
+                    mediaView(for: pageIndex)
+                }
+            )
+            .onChange(of: state.galleryIndex) { _, newValue in
+                guard selection != newValue,
+                      viewModel.media.indices.contains(newValue) else { return }
+                selection = newValue
+                updateActiveMedia(to: newValue)
+            }
+            .onChange(of: viewModel.media) { _, newMedia in
+                guard newMedia.indices.contains(selection) else {
+                    let newIndex = max(0, min(selection, max(newMedia.count - 1, 0)))
+                    if newIndex != selection {
+                        selection = newIndex
                     }
-                    .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
-                    .accessibilityIdentifier(
-                        AccessibilityIdentifiers.galleryMediaImage(media.index)
-                    )
-            }
-            .onDraggingEnded {
-                dragging = false
-                canShowContextMenu = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    onPageDragChanged?(.zero)
+                    updateActiveMedia(to: newIndex)
+                    return
                 }
-            }
-            .onDraggingChanged {
-                dragging = true
-                canShowContextMenu = false
-                onPageDragChanged?(CGFloat($0))
-            }
-            .onPageChanged { index in
-                dragging = false
-                canShowContextMenu = true
-                onPageDragChanged?(.zero)
-                state.galleryIndex = index
-                if index - 1 >= 0 {
-                    var item = viewModel.media[index - 1]
-                    item.isSelected = false
-                    viewModel.media[index - 1] = item
-                }
-                if index + 1 <= viewModel.media.count - 1 {
-                    var item = viewModel.media[index + 1]
-                    item.isSelected = false
-                    viewModel.media[index + 1] = item
-                }
-                var currentItem = viewModel.media[index]
-                currentItem.isSelected = true
-                viewModel.media[index] = currentItem
-            }
-            .allowsDragging(canPage)
-            .pagingPriority(.simultaneous)
-            .swipeInteractionArea(.allAvailable)
-            .onChange(of: state.galleryIndex) {
-                page.update(.new(index: state.galleryIndex))
             }
             .onAppear {
-                page.update(.new(index: index))
+                let resolvedIndex: Int
+                if viewModel.media.indices.contains(index) {
+                    resolvedIndex = index
+                } else {
+                    resolvedIndex = max(0, min(index, max(viewModel.media.count - 1, 0)))
+                }
+                selection = resolvedIndex
+                updateActiveMedia(to: resolvedIndex)
+                isZoomed = false
+                isSeeking = false
+                refreshPagingState()
             }
 
-            // preview
             if showPreview {
                 VStack {
                     Spacer()
@@ -115,18 +107,103 @@ struct GalleryView: View {
         }
         .onDisappear {
             appState.vlcPlayerControlModifier = nil
+            restorePagerScrolling()
         }
         .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
+        .introspect(.sheet, on: .iOS(.v17, .v18, .v26)) { controller in
+            controller.prefersGrabberVisible = true
+            controller.prefersScrollingExpandsWhenScrolledToEdge = false
+            controller.detents = [.large()]
+        }
         .statusBar(hidden: true)
     }
 
+    @ViewBuilder
+    private func mediaView(for index: Int) -> some View {
+        if viewModel.media.indices.contains(index) {
+            let media = viewModel.media[index]
+            MediaView(media: media)
+                .onMediaChanged { zoomed in
+                    isZoomed = zoomed
+                    refreshPagingState()
+                    canShowPreview = !zoomed
+                    canShowContextMenu = !zoomed
+                    if zoomed {
+                        showPreview = false
+                    }
+                    onMediaChanged?(zoomed)
+                }
+                .onSeekChanged { seeking in
+                    isSeeking = seeking
+                    refreshPagingState()
+                    canShowPreview = !seeking
+                    canShowContextMenu = !seeking
+                }
+                .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
+                .accessibilityIdentifier(
+                    AccessibilityIdentifiers.galleryMediaImage(media.index)
+                )
+        } else {
+            EmptyView()
+        }
+    }
+
+    private func updateActiveMedia(to index: Int) {
+        guard viewModel.media.indices.contains(index) else { return }
+
+        onPageDragChanged?(.zero)
+        canShowContextMenu = true
+        isZoomed = false
+        isSeeking = false
+        refreshPagingState()
+        state.galleryIndex = index
+
+        if index - 1 >= 0 {
+            var previousItem = viewModel.media[index - 1]
+            previousItem.isSelected = false
+            viewModel.media[index - 1] = previousItem
+        }
+
+        if index + 1 < viewModel.media.count {
+            var nextItem = viewModel.media[index + 1]
+            nextItem.isSelected = false
+            viewModel.media[index + 1] = nextItem
+        }
+
+        var currentItem = viewModel.media[index]
+        currentItem.isSelected = true
+        viewModel.media[index] = currentItem
+    }
+
     func showPreviewTap() -> some Gesture {
-        return TapGesture()
+        TapGesture()
             .onEnded {
                 withAnimation(.linear(duration: 0.2)) {
                     showPreview.toggle()
                 }
             }
+    }
+
+    private func handlePagerDragChanged(_ translation: CGFloat) {
+        onPageDragChanged?(translation)
+    }
+
+    private func handlePagerDragEnded() {
+        onPageDragChanged?(0)
+    }
+
+    private func refreshPagingState() {
+        canPage = !isZoomed && !isSeeking
+    }
+
+    private func restorePagerScrolling() {
+        if let scrollView = pagerScrollView {
+            if scrollView.isScrollEnabled == false {
+                scrollView.isScrollEnabled = true
+            }
+            scrollView.panGestureRecognizer.isEnabled = true
+        }
+        refreshPagingState()
     }
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 import Photos
 
 class ImageSaver {
-    static func saveImageToPhotoAlbum(url: URL, complete: @escaping ((Result<Void, Error>) -> Void)) {
+    static func saveImageToPhotoAlbum(url: URL, complete: @escaping @Sendable (Result<Void, Error>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             guard let data = try? Data(contentsOf: url) else { return }
             PHPhotoLibrary.shared().performChanges({
@@ -17,8 +17,9 @@ class ImageSaver {
             }, completionHandler: { _, error in
                 if let error = error {
                     complete(.failure(error))
+                } else {
+                    complete(.success(()))
                 }
-                complete(.success(()))
             })
         }
     }

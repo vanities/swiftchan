@@ -92,7 +92,6 @@ make get_certs
 
 **Swift Package Manager** (via Xcode project):
 - FourChan API - Custom fork at https://github.com/vanities/FourChanAPI.git
-- SwiftUIPager - Page view component
 - Kingfisher - Image caching
 - ToastUI - Toast notifications
 - Defaults - User preferences

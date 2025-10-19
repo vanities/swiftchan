@@ -78,7 +78,6 @@ Here's why:
 Dev requirements used in the app with CocoaPods and Swift Package Manager.
 
 * [FourChanApi](https://github.com/jackpal/FourChanAPI)
-* [SwiftUIPager](https://github.com/fermoya/SwiftUIPager)
 * [URLImage](https://github.com/dmytro-anokhin/url-image)
 * [MobileVLCKit](https://code.videolan.org/videolan/VLCKit)
 

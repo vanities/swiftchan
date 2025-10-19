@@ -18,7 +18,7 @@ class AppState {
     var selectedBottomSheetPost: Post?
     var selectedTab: Tabs = .boards
 
-    func requestBiometricUnlock(complete: ((Bool) -> Void)? = nil) {
+    func requestBiometricUnlock(complete: (@Sendable (Bool) -> Void)? = nil) {
         let context = LAContext()
 
         var error: NSError?
@@ -28,8 +28,10 @@ class AppState {
         if canEvaluate {
             if context.biometryType != .none {
                 context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "To access your data") { (success, _) in
-                    complete?(success)
-                    UserDefaults.setDidUnlokcBiometrics(value: success)
+                    Task { @MainActor in
+                        complete?(success)
+                        UserDefaults.setDidUnlokcBiometrics(value: success)
+                    }
                 }
             }
         }

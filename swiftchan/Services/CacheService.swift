@@ -9,7 +9,7 @@ import Foundation
 import Kingfisher
 
 // @MainActor
-final class CacheManager {
+final class CacheManager: @unchecked Sendable {
 
     static let shared = CacheManager()
     private let fileManager = FileManager.default
@@ -18,7 +18,7 @@ final class CacheManager {
         return documentsUrl
     }()
 
-    func getFileWith(stringUrl: String, completionHandler: @escaping (URL?) -> Void ) {
+    func getFileWith(stringUrl: String, completionHandler: @escaping @Sendable (URL?) -> Void ) {
         let cacheURL = cacheURL(URL(string: stringUrl)!)
 
         // return file path if already exists in cache directory

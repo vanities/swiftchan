@@ -27,11 +27,9 @@
 		9524F4B62580545C0006395F /* FileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4B52580545C0006395F /* FileExport.swift */; };
 		9524F4BB258054A60006395F /* MediaSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F4BA258054A60006395F /* MediaSaver.swift */; };
 		95257D8D25EF2804003E0A59 /* PresentationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95257D8C25EF2804003E0A59 /* PresentationState.swift */; };
-		952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = 952F72EB25D0608200762154 /* SwiftUIPager */; };
 		95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 95322F9E286BE76D0067C268 /* Kingfisher */; };
 		953508F2263F557D00C7FE83 /* Prefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953508F1263F557D00C7FE83 /* Prefetcher.swift */; };
 		9537082527F801FA00A4DF8F /* MultiActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9537082427F801FA00A4DF8F /* MultiActionItem.swift */; };
-		95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */; };
 		954D09402BB63D18004079B6 /* FourChan in Frameworks */ = {isa = PBXBuildFile; productRef = 954D093F2BB63D18004079B6 /* FourChan */; };
 		954FB581272CF257009CC52F /* MediaContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB580272CF257009CC52F /* MediaContextMenu.swift */; };
 		954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FB5822730BDF0009CC52F /* RoundedCorners.swift */; };
@@ -42,6 +40,7 @@
 		955AF3B52E494B8A002CFB99 /* FilterChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AF3B32E494B8A002CFB99 /* FilterChip.swift */; };
 		955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AF3B42E494B8A002CFB99 /* RefreshProgressBar.swift */; };
 		956D9052256B18270000D84C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D9051256B18270000D84C /* Buildable.swift */; };
+		95724CC52EA4704400405BBD /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 95724CC42EA4704400405BBD /* SwiftUIIntrospect */; };
 		9574CDEE255E2350000C99B6 /* BoardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDED255E2350000C99B6 /* BoardsViewModel.swift */; };
 		9574CDF6255E254F000C99B6 /* FourchanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDF5255E254F000C99B6 /* FourchanService.swift */; };
 		9574CDFE255E30E8000C99B6 /* ThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */; };
@@ -82,6 +81,7 @@
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
 		95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */; };
+		95F0A1F6295B123400ABCDEF /* VerticalPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0A1F5295B123400ABCDEF /* VerticalPagerView.swift */; };
 		95F5D75F295760DD00DD561B /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 95F5D75D295760DD00DD561B /* Snow.sks */; };
 		95F5D760295760DD00DD561B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95F5D75E295760DD00DD561B /* Assets.xcassets */; };
 		95F5D7622957610600DD561B /* SnowScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F5D7612957610600DD561B /* SnowScene.swift */; };
@@ -201,6 +201,7 @@
 		95D804E12568F9D8005A3128 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		95DBF2072712550C00356D8F /* AnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImage.swift; sourceTree = "<group>"; };
 		95E4A06C26BB7A08007B1A38 /* XCUIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUIApplication.swift; sourceTree = "<group>"; };
+		95F0A1F5295B123400ABCDEF /* VerticalPagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalPagerView.swift; sourceTree = "<group>"; };
 		95F5D75D295760DD00DD561B /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
 		95F5D75E295760DD00DD561B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95F5D7612957610600DD561B /* SnowScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnowScene.swift; sourceTree = "<group>"; };
@@ -217,12 +218,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95724CC52EA4704400405BBD /* SwiftUIIntrospect in Frameworks */,
 				954D09402BB63D18004079B6 /* FourChan in Frameworks */,
-				95480C2E2BA1EE59007F93DE /* SwiftUIIntrospect in Frameworks */,
 				95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */,
 				95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */,
 				95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */,
-				952F72EC25D0608200762154 /* SwiftUIPager in Frameworks */,
 				9576495F2841BFB800F08103 /* ConfettiSwiftUI in Frameworks */,
 				E2A7401FE9DE253776491C36 /* libPods-swiftchan.a in Frameworks */,
 			);
@@ -417,6 +417,7 @@
 		959E6152255CD4750003638E /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
+				95F0A1F5295B123400ABCDEF /* VerticalPagerView.swift */,
 				95A94EFB2554F8D1001D155E /* GalleryView.swift */,
 				9599D6282556655400BBC8B7 /* GalleryPreviewView.swift */,
 				954FB580272CF257009CC52F /* MediaContextMenu.swift */,
@@ -533,13 +534,12 @@
 			);
 			name = swiftchan;
 			packageProductDependencies = (
-				952F72EB25D0608200762154 /* SwiftUIPager */,
 				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95CEE15C271ABFCD0016EAC1 /* Defaults */,
 				9576495E2841BFB800F08103 /* ConfettiSwiftUI */,
 				95322F9E286BE76D0067C268 /* Kingfisher */,
-				95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */,
 				954D093F2BB63D18004079B6 /* FourChan */,
+				95724CC42EA4704400405BBD /* SwiftUIIntrospect */,
 			);
 			productName = swiftchan;
 			productReference = 9518178D254CFB600032616E /* swiftchan.app */;
@@ -614,13 +614,12 @@
 			);
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
-				952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
 				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
 				9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 				954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */,
+				95724CC32EA4704400405BBD /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 			);
 			productRefGroup = 9518178E254CFB600032616E /* Products */;
 			projectDirPath = "";
@@ -768,6 +767,7 @@
 				95CFC2FA2734B66E0053D62A /* Media.swift in Sources */,
 				95C01FE727382AD5000D64B1 /* VLCMediaListPlayerUIView.swift in Sources */,
 				95A94EFC2554F8D1001D155E /* GalleryView.swift in Sources */,
+				95F0A1F6295B123400ABCDEF /* VerticalPagerView.swift in Sources */,
 				95C8B7662DFB0F930005CB93 /* ThreadDestination.swift in Sources */,
 				9574CE07255E34E8000C99B6 /* CatalogViewModel.swift in Sources */,
 				958D2C99254D2DF200E54C41 /* ContentView.swift in Sources */,
@@ -1144,14 +1144,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:fermoya/SwiftUIPager.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
 		95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:onevcat/Kingfisher.git";
@@ -1160,20 +1152,20 @@
 				minimumVersion = 7.6.2;
 			};
 		};
-		95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:siteline/swiftui-introspect.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.3;
-			};
-		};
 		954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vanities/FourChanAPI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.2.12;
+			};
+		};
+		95724CC32EA4704400405BBD /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:siteline/swiftui-introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 26.0.0;
 			};
 		};
 		9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
@@ -1203,25 +1195,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		952F72EB25D0608200762154 /* SwiftUIPager */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 952F72EA25D0608200762154 /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
-			productName = SwiftUIPager;
-		};
 		95322F9E286BE76D0067C268 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
-		95480C2D2BA1EE59007F93DE /* SwiftUIIntrospect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 95480C2C2BA1EE59007F93DE /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
-			productName = SwiftUIIntrospect;
-		};
 		954D093F2BB63D18004079B6 /* FourChan */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */;
 			productName = FourChan;
+		};
+		95724CC42EA4704400405BBD /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95724CC32EA4704400405BBD /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
+			productName = SwiftUIIntrospect;
 		};
 		9576495E2841BFB800F08103 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

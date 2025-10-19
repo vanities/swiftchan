@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MobileVLCKit
+@preconcurrency import MobileVLCKit
 
 struct VLCVideo: Equatable, Identifiable, Sendable {
     let id: String
@@ -51,7 +51,7 @@ struct VLCVideo: Equatable, Identifiable, Sendable {
         self.downloadProgress = downloadProgress
     }
 
-    enum MediaControlState: Equatable, Hashable {
+    enum MediaControlState: Equatable, Hashable, Sendable {
         case play, resume, pause, seek(VLCTime), jump(MediaControlDirection, Int32), initialize
     }
 

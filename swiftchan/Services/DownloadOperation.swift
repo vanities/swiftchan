@@ -8,7 +8,7 @@
 
 import Foundation
 
-class DownloadOperation: Operation {
+class DownloadOperation: Operation, @unchecked Sendable {
     var task: URLSessionDownloadTask!
     let downloadTaskURL: URL
 
@@ -35,7 +35,7 @@ class DownloadOperation: Operation {
     override var isExecuting: Bool { return state == .executing }
     override var isFinished: Bool { return state == .finished }
 
-    init(session: URLSession, downloadTaskURL: URL, completionHandler: ((URL?, URLResponse?, Error?) -> Void)?) {
+    init(session: URLSession, downloadTaskURL: URL, completionHandler: (@Sendable (URL?, URLResponse?, Error?) -> Void)?) {
         self.downloadTaskURL = downloadTaskURL
         super.init()
 

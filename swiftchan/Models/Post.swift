@@ -37,7 +37,7 @@ extension Post {
         return nil
     }
 
-    func getDatePosted() -> String {
+    @MainActor func getDatePosted() -> String {
         var datePosted = ""
         if let time = self.time {
             let date = Date(timeIntervalSince1970: TimeInterval(time))

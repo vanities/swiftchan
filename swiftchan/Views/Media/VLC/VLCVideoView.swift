@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MobileVLCKit
+@preconcurrency import MobileVLCKit
 
 struct VLCVideoView: UIViewRepresentable {
     @Environment(VLCVideoViewModel.self) var vlcVideoViewModel: VLCVideoViewModel
@@ -114,7 +114,7 @@ struct VLCVideoView: UIViewRepresentable {
             }
 
             // Force immediate main thread execution
-            DispatchQueue.main.async { [weak viewModel] in
+            Task { @MainActor [weak viewModel] in
                 guard let viewModel = viewModel else { return }
                 viewModel.updateTime(current: currentTime, remaining: remainingTime, total: totalTime)
                 viewModel.setMediaState(mediaState)
@@ -144,7 +144,7 @@ struct VLCVideoView: UIViewRepresentable {
             print("🎮 Player state changed to: \(state.rawValue) (\(stateDescription))")
 
             // Force immediate main thread execution
-            DispatchQueue.main.async { [weak viewModel] in
+            Task { @MainActor [weak viewModel] in
                 viewModel?.setMediaPlayerState(state)
             }
         }
@@ -154,7 +154,7 @@ struct VLCVideoView: UIViewRepresentable {
             self.viewModel?.setMediaPlayerState(player.state)
         }
 
-        func stateToString(_ state: VLCMediaPlayerState) -> String {
+        nonisolated func stateToString(_ state: VLCMediaPlayerState) -> String {
             switch state {
             case .opening: return "opening"
             case .buffering: return "buffering"
@@ -163,6 +163,7 @@ struct VLCVideoView: UIViewRepresentable {
             case .stopped: return "stopped"
             case .ended: return "ended"
             case .error: return "error"
+            case .esAdded: return "added"
             @unknown default: return "unknown"
             }
         }

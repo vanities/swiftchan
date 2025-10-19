@@ -148,18 +148,7 @@ struct ThreadView: View {
 
                     },
                     content: {
-                        GalleryView(
-                            index: presentationState.galleryIndex
-                        )
-                        .environment(appState)
-                        .environment(presentationState)
-                        .environment(viewModel)
-                        .onAppear {
-                            threadAutorefresher.cancelTimer()
-                        }
-                        .onDisappear {
-                            threadAutorefresher.startTimer()
-                        }
+                        gallerySheetContent
                     }
                 )
                 .onOpenURL { url in
@@ -329,6 +318,32 @@ struct ThreadView: View {
         if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
             reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+        }
+    }
+}
+
+extension ThreadView {
+    @ViewBuilder
+    private var gallerySheetContent: some View {
+        let gallery = GalleryView(
+            index: presentationState.galleryIndex
+        )
+        .environment(appState)
+        .environment(presentationState)
+        .environment(viewModel)
+        .onAppear {
+            threadAutorefresher.cancelTimer()
+        }
+        .onDisappear {
+            threadAutorefresher.startTimer()
+        }
+
+        if #available(iOS 16.0, *) {
+            gallery
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+        } else {
+            gallery
         }
     }
 }

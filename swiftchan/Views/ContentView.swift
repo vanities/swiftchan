@@ -60,8 +60,10 @@ struct ContentView: View {
                     let timeInBackground = Date().timeIntervalSince(lastBackgroundTimestamp)
                     if timeInBackground >= 60, biometricsEnabled, !didUnlockBiometrics {
                         appState.requestBiometricUnlock { success in
-                            didUnlockBiometrics = success
-                            showPrivacyView = !success
+                            Task { @MainActor in
+                                didUnlockBiometrics = success
+                                showPrivacyView = !success
+                            }
                         }
                     } else {
                         withAnimation(.linear(duration: 0.05)) {

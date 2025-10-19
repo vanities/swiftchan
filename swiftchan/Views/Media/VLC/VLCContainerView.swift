@@ -18,6 +18,7 @@ struct VLCContainerView: View {
     @State private(set) var presentingjumpToast: VLCVideo.MediaControlDirection?
     @State private(set) var downloadProgress = Progress()
     @State private var downloadPercentage: Int = 0
+    @State private var isCurrentlySelected: Bool
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
 
@@ -29,6 +30,7 @@ struct VLCContainerView: View {
             wrappedValue: VLCVideoViewModel(url: url)
         )
         self.isSelected = isSelected
+        self._isCurrentlySelected = State(initialValue: isSelected)
     }
     var onSeekChanged: ((Bool) -> Void)?
 
@@ -62,6 +64,7 @@ struct VLCContainerView: View {
             }
         }
         .onChange(of: isSelected) {
+            isCurrentlySelected = isSelected
             if isSelected {
                 // Always try to play when selected, even if still downloading
                 if vlcVideoViewModel.video.downloadProgress.isFinished {
@@ -84,7 +87,7 @@ struct VLCContainerView: View {
             do {
                 try await vlcVideoViewModel.download()
                 // Always play after download if selected
-                if isSelected {
+                if isCurrentlySelected {
                     // Add small delay to ensure file is ready
                     try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
                     debugPrint("🎬 Triggering play after download")
