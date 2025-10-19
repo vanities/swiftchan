@@ -1,5 +1,5 @@
 {
-  "originHash" : "4bec0f56a312e627c9dffa03dadd42861642d06049538b5dc7afb378dc4894f3",
+  "originHash" : "f62d267fc629c8a5aa35bea5021986e7af40fe60cf1aeb36fcb3320f85099377",
   "pins" : [
     {
       "identity" : "confettiswiftui",
@@ -44,15 +44,6 @@
       "state" : {
         "revision" : "a08b87f96b41055577721a6e397562b21ad52454",
         "version" : "26.0.0"
-      }
-    },
-    {
-      "identity" : "toastui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/quanshousio/ToastUI",
-      "state" : {
-        "revision" : "e1fd43336630b40a4273a346bd9e6c250151c88d",
-        "version" : "2.0.0"
       }
     }
   ],

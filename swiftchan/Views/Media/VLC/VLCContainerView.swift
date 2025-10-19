@@ -6,8 +6,7 @@
 //
 
 import SwiftUI
-import MobileVLCKit
-import ToastUI
+@preconcurrency import MobileVLCKit
 import Kingfisher
 
 struct VLCContainerView: View {

@@ -36,7 +36,7 @@ class ThreadAutoRefresher {
     private func timerTick() {
         guard isActive else { return }
         Task { @MainActor in
-            _ = self.incrementRefreshTimer()
+            _ = incrementRefreshTimer()
         }
     }
 

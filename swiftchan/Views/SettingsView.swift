@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import ToastUI
 
 struct SettingsView: View {
     @AppStorage("fullImageForThumbnails") var fullImageForThumbnails = true
@@ -32,7 +31,7 @@ struct SettingsView: View {
             cacheSection
         }
         .navigationTitle("Settings")
-        .toast(isPresented: $showCacheDeleteToast, dismissAfter: 0.5) {
+        .toast(isPresented: $showCacheDeleteToast, dismissAfter: 1.5) {
             Toast(presentingToastResult: cacheResult)
         }
     }

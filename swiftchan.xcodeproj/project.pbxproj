@@ -76,7 +76,6 @@
 		95CEE159271A67590016EAC1 /* SortRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CEE158271A67590016EAC1 /* SortRow.swift */; };
 		95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 95CEE15C271ABFCD0016EAC1 /* Defaults */; };
 		95CFC2FA2734B66E0053D62A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CFC2F92734B66E0053D62A /* Media.swift */; };
-		95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */ = {isa = PBXBuildFile; productRef = 95D14F6026CC82A8007AF00F /* ToastUI */; };
 		95D804CE25677FF4005A3128 /* RepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804CD25677FF4005A3128 /* RepliesView.swift */; };
 		95D804E22568F9D8005A3128 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D804E12568F9D8005A3128 /* View.swift */; };
 		95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DBF2072712550C00356D8F /* AnimatedImage.swift */; };
@@ -222,7 +221,6 @@
 				954D09402BB63D18004079B6 /* FourChan in Frameworks */,
 				95CEE15D271ABFCD0016EAC1 /* Defaults in Frameworks */,
 				95322F9F286BE76D0067C268 /* Kingfisher in Frameworks */,
-				95D14F6126CC82A8007AF00F /* ToastUI in Frameworks */,
 				9576495F2841BFB800F08103 /* ConfettiSwiftUI in Frameworks */,
 				E2A7401FE9DE253776491C36 /* libPods-swiftchan.a in Frameworks */,
 			);
@@ -534,7 +532,6 @@
 			);
 			name = swiftchan;
 			packageProductDependencies = (
-				95D14F6026CC82A8007AF00F /* ToastUI */,
 				95CEE15C271ABFCD0016EAC1 /* Defaults */,
 				9576495E2841BFB800F08103 /* ConfettiSwiftUI */,
 				95322F9E286BE76D0067C268 /* Kingfisher */,
@@ -614,7 +611,6 @@
 			);
 			mainGroup = 95181784254CFB600032616E;
 			packageReferences = (
-				95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */,
 				95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */,
 				9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */,
@@ -1184,14 +1180,6 @@
 				minimumVersion = 8.0.0;
 			};
 		};
-		95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/quanshousio/ToastUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1219,11 +1207,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
-		};
-		95D14F6026CC82A8007AF00F /* ToastUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 95D14F5F26CC82A8007AF00F /* XCRemoteSwiftPackageReference "ToastUI" */;
-			productName = ToastUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

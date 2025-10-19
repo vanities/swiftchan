@@ -9,7 +9,6 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
-import ToastUI
 
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = false
@@ -243,7 +242,7 @@ struct ThreadView: View {
                     .foregroundColor(.red)
             }
         }
-        .toast(isPresented: $showAutoRefreshToast, dismissAfter: 0.5) {
+        .toast(isPresented: $showAutoRefreshToast, dismissAfter: 1.5) {
             ToastView(autoRefreshToastMessage, content: {}, background: { Color.clear })
                 .toastViewStyle(ErrorToastViewStyle())
         }

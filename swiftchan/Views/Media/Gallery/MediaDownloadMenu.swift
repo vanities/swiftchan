@@ -20,6 +20,7 @@ struct MediaDownloadMenuModifier: ViewModifier {
     @State var isExportingDocument: Bool = false
     @State private var presentingToast: Bool = false
     @State private var presentingToastResult: Result<URL, Error>?
+    @State private var presentingToastMessage: String?
 
     func body(content: Content) -> some View {
         content
@@ -29,6 +30,14 @@ struct MediaDownloadMenuModifier: ViewModifier {
                           contentType: .image
             ) { result in
                 presentingToastResult = result
+
+                switch result {
+                case .success:
+                    presentingToastMessage = "Saved to Files"
+                case .failure(let error):
+                    presentingToastMessage = error.localizedDescription
+                }
+
                 presentingToast = true
                 let generator = UINotificationFeedbackGenerator()
                 generator.notificationOccurred(.success)
@@ -39,9 +48,38 @@ struct MediaDownloadMenuModifier: ViewModifier {
                     isExportingDocument: $isExportingDocument,
                     canShowContextMenu: $canShowContextMenu,
                     presentingToast: $presentingToast,
-                    presentingToastResult: $presentingToastResult
+                    presentingToastResult: $presentingToastResult,
+                    presentingToastMessage: $presentingToastMessage
                 )
             }
-            .toast(isPresented: $presentingToast, dismissAfter: 0.2, content: { Toast(presentingToastResult: presentingToastResult) })
+            .overlay(alignment: .center) {
+                if presentingToast {
+                    Group {
+                        if let customMessage = presentingToastMessage, let result = presentingToastResult {
+                            let _ = debugPrint("🍞 Toast showing - message: \(customMessage), result: \(String(describing: result))")
+
+                            switch result {
+                            case .success:
+                                CustomToastView(message: customMessage, style: .success)
+                            case .failure:
+                                CustomToastView(message: customMessage, style: .error)
+                            }
+                        } else {
+                            let _ = debugPrint("🍞 Toast showing fallback - message: \(presentingToastMessage ?? "nil"), result: \(String(describing: presentingToastResult))")
+                            Toast(presentingToastResult: presentingToastResult)
+                        }
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    .zIndex(999)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            withAnimation {
+                                presentingToast = false
+                            }
+                        }
+                    }
+                }
+            }
+            .animation(.spring(response: 0.4, dampingFraction: 0.7), value: presentingToast)
     }
 }

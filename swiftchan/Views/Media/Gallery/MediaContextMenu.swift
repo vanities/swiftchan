@@ -16,15 +16,16 @@ struct MediaContextMenu: View {
     @Binding private(set) var canShowContextMenu: Bool
     @Binding var presentingToast: Bool
     @Binding var presentingToastResult: Result<URL, Error>?
+    @Binding var presentingToastMessage: String?
 
     @ViewBuilder
     var body: some View {
         if canShowContextMenu {
             Button {
                 UIPasteboard.general.string = url.absoluteString
+                debugPrint("📋 Copied URL to pasteboard: \(url.absoluteString)")
                 notificationGenerator.notificationOccurred(.success)
-                presentingToast = true
-                presentingToastResult = .success(url)
+                notifySuccess(for: url, message: "URL Copied")
             } label: {
                 Label("Copy URL", systemImage: "doc.on.doc")
             }
@@ -71,14 +72,14 @@ struct MediaContextMenu: View {
 
                 if cachedURL.isGif() {
                     UIPasteboard.general.setData(data, forPasteboardType: "com.compuserve.gif")
+                    notifySuccess(for: cachedURL, message: "GIF Copied")
                 } else if let image = UIImage(data: data) {
                     UIPasteboard.general.image = image
+                    notifySuccess(for: cachedURL, message: "Image Copied")
                 } else {
                     notifyFailure(message: "Could not copy image")
                     return
                 }
-
-                notifySuccess(for: cachedURL)
             }
         }
     }
@@ -88,7 +89,7 @@ struct MediaContextMenu: View {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    notifySuccess(for: url)
+                    notifySuccess(for: url, message: "Saved to Photos")
                 case .failure(let error):
                     notifyFailure(message: error.localizedDescription)
                 }
@@ -96,9 +97,16 @@ struct MediaContextMenu: View {
         }
     }
 
-    private func notifySuccess(for url: URL) {
+    private func notifySuccess(for url: URL, message: String = "Success!") {
         notificationGenerator.notificationOccurred(.success)
+
+        // Set state before showing toast
         presentingToastResult = .success(url)
+        presentingToastMessage = message
+
+        debugPrint("✅ Setting toast state - message: \(message), result: success")
+
+        // Show toast after state is set
         presentingToast = true
     }
 
@@ -106,6 +114,7 @@ struct MediaContextMenu: View {
         notificationGenerator.notificationOccurred(.error)
         let error = NSError(domain: "MediaContextMenu", code: -1, userInfo: [NSLocalizedDescriptionKey: message])
         presentingToastResult = .failure(error)
+        presentingToastMessage = message
         presentingToast = true
     }
 }
