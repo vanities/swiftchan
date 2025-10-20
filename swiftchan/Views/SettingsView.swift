@@ -21,6 +21,7 @@ struct SettingsView: View {
 
     @State private var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
+    @State private var cacheSize: String = "Calculating..."
 
     var body: some View {
         List {
@@ -38,14 +39,38 @@ struct SettingsView: View {
 
     var cacheSection: some View {
         Section(header: Text("Cache").font(.title)) {
+            HStack {
+                Text("Cache Size")
+                Spacer()
+                Text(cacheSize)
+                    .foregroundColor(.secondary)
+            }
+            .onAppear {
+                updateCacheSize()
+            }
+
             Button(role: .destructive, action: {
                 CacheManager.shared.deleteAll { result in
                     cacheResult = result
                     showCacheDeleteToast = true
+                    updateCacheSize()
                 }
             }) {
                 Label("Delete Cache", systemImage: "trash").bold()
             }
+        }
+    }
+
+    private func updateCacheSize() {
+        let sizeInBytes = CacheManager.shared.getCurrentCacheSize()
+        let sizeInMB = Double(sizeInBytes) / 1_048_576
+        let maxSizeInMB = 1024.0 // 1 GB
+
+        if sizeInMB < 1 {
+            cacheSize = String(format: "%.2f MB / %.0f MB", sizeInMB, maxSizeInMB)
+        } else {
+            let sizeInGB = sizeInMB / 1024
+            cacheSize = String(format: "%.2f GB / 1 GB", sizeInGB)
         }
     }
 

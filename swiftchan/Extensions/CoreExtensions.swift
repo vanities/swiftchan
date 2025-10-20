@@ -232,6 +232,9 @@ extension URL {
     func isWebm() -> Bool {
         return Media.detect(url: self) == .webm
     }
+    func isMP4() -> Bool {
+        return Media.detect(url: self) == .mp4
+    }
     func isImage() -> Bool {
         return Media.detect(url: self) == .image
     }

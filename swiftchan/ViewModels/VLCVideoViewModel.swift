@@ -69,8 +69,8 @@ class VLCVideoViewModel {
 
                 debugPrint("Download completed: \(cacheURL)")
 
-                // Cache and validate
-                guard let cached = CacheManager.shared.cache(tempURL, cacheURL) else {
+                // Cache and validate (pass original URL for LRU tracking)
+                guard let cached = CacheManager.shared.cache(tempURL, cacheURL, originalURL: video.url) else {
                     throw URLError(.cannotCreateFile)
                 }
 

@@ -8,6 +8,27 @@
 import Foundation
 import Kingfisher
 
+// MARK: - Cache Metadata
+
+struct CacheMetadata: Codable {
+    let url: String
+    let filePath: String
+    let fileSize: Int64
+    var lastAccessTime: Date
+    let createdTime: Date
+
+    init(url: String, filePath: String, fileSize: Int64) {
+        self.url = url
+        self.filePath = filePath
+        self.fileSize = fileSize
+        let now = Date()
+        self.lastAccessTime = now
+        self.createdTime = now
+    }
+}
+
+// MARK: - Cache Manager
+
 // @MainActor
 final class CacheManager: @unchecked Sendable {
 
@@ -17,6 +38,116 @@ final class CacheManager: @unchecked Sendable {
         let documentsUrl = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
     }()
+
+    // LRU cache management
+    private var metadata: [String: CacheMetadata] = [:]
+    private let metadataFileName = "swiftchan-cache-metadata.json"
+    private let maxCacheSize: Int64 = 1_073_741_824 // 1 GB in bytes
+    private let queue = DispatchQueue(label: "com.swiftchan.cachemanager", attributes: .concurrent)
+
+    private var metadataFileURL: URL {
+        mainDirectoryUrl.appendingPathComponent(metadataFileName)
+    }
+
+    init() {
+        loadMetadata()
+    }
+
+    // MARK: - LRU Cache Management
+
+    private func loadMetadata() {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            do {
+                let data = try Data(contentsOf: self.metadataFileURL)
+                let decoded = try JSONDecoder().decode([String: CacheMetadata].self, from: data)
+                self.metadata = decoded
+                debugPrint("Loaded \(decoded.count) cache metadata entries")
+            } catch {
+                debugPrint("No existing cache metadata or failed to load: \(error)")
+                self.metadata = [:]
+            }
+        }
+    }
+
+    private func saveMetadata() {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            do {
+                let data = try JSONEncoder().encode(self.metadata)
+                try data.write(to: self.metadataFileURL)
+            } catch {
+                debugPrint("Failed to save cache metadata: \(error)")
+            }
+        }
+    }
+
+    func getCurrentCacheSize() -> Int64 {
+        var totalSize: Int64 = 0
+        queue.sync {
+            totalSize = metadata.values.reduce(0) { $0 + $1.fileSize }
+        }
+        return totalSize
+    }
+
+    private func evictLRUIfNeeded(targetSize: Int64) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+
+            var currentSize = self.metadata.values.reduce(0) { $0 + $1.fileSize }
+            let sizeAfterAdd = currentSize + targetSize
+
+            // Only evict if we'll exceed the limit
+            guard sizeAfterAdd > self.maxCacheSize else { return }
+
+            let sizeToFree = sizeAfterAdd - self.maxCacheSize
+            debugPrint("📦 Cache will exceed limit. Current: \(currentSize / 1_048_576)MB, Need to free: \(sizeToFree / 1_048_576)MB")
+
+            // Sort by lastAccessTime (oldest first)
+            let sortedEntries = self.metadata.values.sorted { $0.lastAccessTime < $1.lastAccessTime }
+
+            var freedSize: Int64 = 0
+            for entry in sortedEntries {
+                guard freedSize < sizeToFree else { break }
+
+                let fileURL = URL(fileURLWithPath: entry.filePath)
+                do {
+                    try self.fileManager.removeItem(at: fileURL)
+                    freedSize += entry.fileSize
+                    self.metadata.removeValue(forKey: entry.url)
+                    debugPrint("🗑️ Evicted: \(fileURL.lastPathComponent) (\(entry.fileSize / 1_048_576)MB)")
+                } catch {
+                    debugPrint("Failed to evict \(fileURL.path): \(error)")
+                }
+            }
+
+            debugPrint("📦 Eviction complete. Freed: \(freedSize / 1_048_576)MB, New size: \((currentSize - freedSize) / 1_048_576)MB")
+            self.saveMetadata()
+        }
+    }
+
+    private func updateAccessTime(for url: String) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            if var entry = self.metadata[url] {
+                entry.lastAccessTime = Date()
+                self.metadata[url] = entry
+                // Don't save on every access - too expensive. Save periodically or on important events
+            }
+        }
+    }
+
+    private func addMetadata(url: String, filePath: String, fileSize: Int64) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            let entry = CacheMetadata(url: url, filePath: filePath, fileSize: fileSize)
+            self.metadata[url] = entry
+            debugPrint("📝 Added cache metadata for \(url)")
+            self.saveMetadata()
+        }
+    }
+
+    // MARK: - Cache Operations
 
     func getFileWith(stringUrl: String, completionHandler: @escaping @Sendable (URL?) -> Void ) {
         let cacheURL = cacheURL(URL(string: stringUrl)!)
@@ -37,6 +168,7 @@ final class CacheManager: @unchecked Sendable {
     func getCacheValue(_ url: URL) -> URL? {
         let cacheUrl = cacheURL(url)
         if cacheHit(file: cacheUrl) {
+            updateAccessTime(for: url.absoluteString)
             return cacheUrl
         }
         return nil
@@ -46,14 +178,26 @@ final class CacheManager: @unchecked Sendable {
         return directoryFor(stringUrl: url.absoluteString)
     }
 
-    func cache(_ tempURL: URL, _ cacheURL: URL) -> URL? {
+    func cache(_ tempURL: URL, _ cacheURL: URL, originalURL: URL? = nil) -> URL? {
         do {
+            // Get file size before moving
+            let attributes = try fileManager.attributesOfItem(atPath: tempURL.path)
+            let fileSize = attributes[.size] as? Int64 ?? 0
+
+            // Run LRU eviction if needed before adding new file
+            evictLRUIfNeeded(targetSize: fileSize)
+
             try? fileManager.removeItem(at: cacheURL)
             try fileManager.moveItem(at: tempURL, to: cacheURL)
-            debugPrint("completed writing file to cache \(cacheURL.path)" )
+
+            // Add metadata for LRU tracking using cacheURL as key (consistent with getCacheValue)
+            let metadataKey = originalURL?.absoluteString ?? cacheURL.absoluteString
+            addMetadata(url: metadataKey, filePath: cacheURL.path, fileSize: fileSize)
+
+            debugPrint("completed writing file to cache \(cacheURL.path) (\(fileSize / 1_048_576)MB)")
             return cacheURL
         } catch {
-            debugPrint("failed writing file to cache \(cacheURL.path)" )
+            debugPrint("failed writing file to cache \(cacheURL.path): \(error)")
             return nil
         }
     }

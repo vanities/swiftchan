@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct SwiftchanApp: App {
     init() {
-        CacheManager.shared.deleteAll { _ in }
+        // Cache now persists between sessions
+        // LRU eviction handles cleanup automatically
     }
 
     var body: some Scene {
