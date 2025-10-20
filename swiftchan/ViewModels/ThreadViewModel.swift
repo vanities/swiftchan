@@ -184,11 +184,11 @@ final class ThreadViewModel {
         media = getMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
     }
 
-    func prefetch() {
+    func prefetch(currentIndex: Int = 0) {
         let urls = media.flatMap { media in
             return [media.thumbnailUrl, media.url]
         }
-        prefetcher.prefetch(urls: urls)
+        prefetcher.prefetch(urls: urls, currentIndex: currentIndex)
     }
 
     func stopPrefetching() {

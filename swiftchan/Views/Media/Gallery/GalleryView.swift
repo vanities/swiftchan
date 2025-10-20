@@ -180,6 +180,9 @@ struct GalleryView: View {
         currentItem.isSelected = true
         viewModel.media[index] = currentItem
         updateInteractiveDismiss()
+
+        // Dynamic prefetching: update prefetch window as user swipes
+        viewModel.prefetch(currentIndex: index)
     }
 
     func showPreviewTap() -> some Gesture {

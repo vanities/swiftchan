@@ -17,6 +17,10 @@ class Prefetcher {
     // Track in-progress downloads to prevent duplicates
     private var activeDownloads: Set<URL> = []
 
+    // Track last prefetch position to avoid redundant updates
+    private var lastPrefetchIndex: Int = -1
+    private var lastVideoUrls: [URL] = []
+
     func prefetch(urls: [URL], currentIndex: Int = 0, prefetchWindow: Int = 5) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
         prefetchImages(urls: imageUrls)
@@ -24,13 +28,32 @@ class Prefetcher {
         // Smart video prefetching: only prefetch next N videos
         let videoUrls = urls.filter { url in url.isWebm() || url.isMP4() }
 
+        // Debounce: Only update if user moved 2+ videos from last update
+        let shouldUpdate = abs(currentIndex - lastPrefetchIndex) >= 2 || lastVideoUrls != videoUrls
+
+        if shouldUpdate {
+            updatePrefetchWindow(videoUrls: videoUrls, currentIndex: currentIndex, prefetchWindow: prefetchWindow)
+            lastPrefetchIndex = currentIndex
+            lastVideoUrls = videoUrls
+        }
+    }
+
+    private func updatePrefetchWindow(videoUrls: [URL], currentIndex: Int, prefetchWindow: Int) {
         // Calculate prefetch window
         let startIndex = max(0, currentIndex)
         let endIndex = min(videoUrls.count, currentIndex + prefetchWindow)
 
         guard startIndex < endIndex else { return }
 
+        // Cancel operations outside the new window
+        videoPrefetcher.cancelOperationsOutside(videoUrls: videoUrls, currentIndex: currentIndex, windowSize: prefetchWindow)
+
         let videosToPreload = Array(videoUrls[startIndex..<endIndex])
+
+        if !videosToPreload.isEmpty {
+            debugPrint("📥 Prefetch window updated: videos \(startIndex)-\(endIndex-1)")
+        }
+
         prefetchVideos(urls: videosToPreload)
     }
 
@@ -66,9 +89,10 @@ class Prefetcher {
             let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { [weak self] (tempURL, _, _) in
                 guard let self = self else { return }
 
-                // Remove from active downloads when complete
+                // Remove from active downloads and operations when complete
                 Task { @MainActor in
                     self.activeDownloads.remove(url)
+                    self.videoPrefetcher.removeOperation(for: url)
                 }
 
                 if let tempURL = tempURL,
@@ -83,16 +107,20 @@ class Prefetcher {
             }
 
             DispatchQueue.main.async { [weak self] in
-                self?.videoPrefetcher.queue.addOperation(operation)
+                self?.videoPrefetcher.addOperation(operation, for: url)
             }
         }
     }
 
     func stopPrefetching() {
         imagePrefetcher.stop()
-        videoPrefetcher.queue.cancelAllOperations()
+        videoPrefetcher.cancelAllOperations()
 
         // Clear active downloads when stopping
         activeDownloads.removeAll()
+
+        // Reset tracking
+        lastPrefetchIndex = -1
+        lastVideoUrls = []
     }
 }
