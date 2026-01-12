@@ -238,8 +238,40 @@ struct ThreadView: View {
                 }
                 .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
             case .error:
-                Text("Thread contains no posts.")
-                    .foregroundColor(.red)
+                VStack(spacing: 20) {
+                    // Retry button
+                    VStack {
+                        Image(systemName: "arrow.clockwise")
+                            .frame(width: 25, height: 25)
+                        Text("Error loading thread, Tap to retry.")
+                    }
+                    .onTapGesture {
+                        Task {
+                            await viewModel.getPosts()
+                        }
+                    }
+                    .foregroundColor(Color.red)
+
+                    // Archive option - only show for not found errors on supported boards
+                    if viewModel.errorType == .notFound && viewModel.canLoadFromArchive {
+                        Divider()
+                            .padding(.horizontal, 50)
+
+                        VStack {
+                            Image(systemName: "archivebox")
+                                .frame(width: 25, height: 25)
+                            Text("Thread may be archived.\nTap to load from 4plebs.")
+                                .multilineTextAlignment(.center)
+                        }
+                        .onTapGesture {
+                            Task {
+                                await viewModel.loadFromArchive()
+                            }
+                        }
+                        .foregroundColor(Color.orange)
+                    }
+                }
+                .padding()
             }
         }
         .toast(isPresented: $showAutoRefreshToast, dismissAfter: 1.5) {

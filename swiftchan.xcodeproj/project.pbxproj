@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		54FCC7F730B5724021923610 /* FourplebsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7113478DE4A376777536E98 /* FourplebsService.swift */; };
+		89C76C5731701B9571BF917B /* FourplebsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7155D7896C0095BED9E33698 /* FourplebsModels.swift */; };
 		950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FB2751E3DA0098DF73 /* DeepLinker.swift */; };
 		950846FE2752CA260098DF73 /* BoardSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FD2752CA260098DF73 /* BoardSection.swift */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
@@ -125,6 +127,7 @@
 
 /* Begin PBXFileReference section */
 		1A59B34C1967E26AD552D40A /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
+		7155D7896C0095BED9E33698 /* FourplebsModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FourplebsModels.swift; sourceTree = "<group>"; };
 		76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		950846FB2751E3DA0098DF73 /* DeepLinker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinker.swift; sourceTree = "<group>"; };
 		950846FD2752CA260098DF73 /* BoardSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSection.swift; sourceTree = "<group>"; };
@@ -210,6 +213,7 @@
 		95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanPerformanceTests.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 		CDD89983D4A69413FD4202F0 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
+		F7113478DE4A376777536E98 /* FourplebsService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FourplebsService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +286,7 @@
 				95257D8C25EF2804003E0A59 /* PresentationState.swift */,
 				9579F9F0263D1A1E007C70FC /* VLCVideo.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
+				7155D7896C0095BED9E33698 /* FourplebsModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -397,6 +402,7 @@
 				95F76D7F26D8801000F6A92F /* AccessibilityIdentifiers.swift */,
 				95DBF2072712550C00356D8F /* AnimatedImage.swift */,
 				950846FB2751E3DA0098DF73 /* DeepLinker.swift */,
+				F7113478DE4A376777536E98 /* FourplebsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -793,6 +799,8 @@
 				950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */,
 				955AF3B52E494B8A002CFB99 /* FilterChip.swift in Sources */,
 				955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */,
+				54FCC7F730B5724021923610 /* FourplebsService.swift in Sources */,
+				89C76C5731701B9571BF917B /* FourplebsModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,6 +37,16 @@ extension Post {
         return nil
     }
 
+    func getArchiveMediaUrl(boardId: String, thumbnail: Bool = false) -> URL? {
+        let thumb = thumbnail ? "s" : ""
+        if let filename = tim,
+           let extens = ext {
+            let extens = thumbnail ? ".jpg" : extens
+            return URL(string: "https://i.4pcdn.org/\(boardId)/\(String(filename))\(thumb)\(extens)")
+        }
+        return nil
+    }
+
     @MainActor func getDatePosted() -> String {
         var datePosted = ""
         if let time = self.time {
