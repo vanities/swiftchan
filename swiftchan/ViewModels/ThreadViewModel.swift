@@ -39,7 +39,6 @@ final class ThreadViewModel {
     private(set) var replies = [Int: [Int]]()
     private(set) var state = State.initial
     private(set) var errorType = ErrorType.generic
-    private(set) var isArchiveThread = false
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
@@ -59,6 +58,10 @@ final class ThreadViewModel {
 
     var canLoadFromArchive: Bool {
         FourplebsService.isSupported(board: boardName)
+    }
+
+    var archiveUrl: URL? {
+        FourplebsService.archiveUrl(board: boardName, threadNum: id)
     }
 
     init(boardName: String, id: Int, replies: [Int: [Int]] = [Int: [Int]]()) {
@@ -163,8 +166,10 @@ final class ThreadViewModel {
             } else if self.posts.isEmpty {
                 errorType = .notFound
                 state = .error
+                print("DEBUG: Thread empty, errorType=\(errorType), canLoadFromArchive=\(canLoadFromArchive)")
             }
         } catch {
+            print("DEBUG: Caught error: \(error)")
             // Determine error type based on the error
             if let urlError = error as? URLError {
                 switch urlError.code {
@@ -173,6 +178,9 @@ final class ThreadViewModel {
                 default:
                     errorType = .network
                 }
+            } else if error is DecodingError {
+                // Invalid/empty JSON usually means thread doesn't exist
+                errorType = .notFound
             } else {
                 // Check if error message indicates not found
                 let errorString = error.localizedDescription.lowercased()
@@ -185,93 +193,6 @@ final class ThreadViewModel {
             state = .error
         }
         print("Thread /\(boardName)/-\(id) successfully got \(self.posts.count) posts.")
-    }
-
-    func loadFromArchive() async {
-        guard canLoadFromArchive else { return }
-
-        isArchiveThread = true
-        state = .loading
-
-        // Reset progress
-        downloadProgress.totalUnitCount = 100
-        downloadProgress.completedUnitCount = 0
-        setupProgressTracking()
-
-        do {
-            await updateProgress(20, message: "Fetching from archive...")
-
-            let archivePosts = try await FourplebsService.shared.getThread(
-                board: boardName,
-                threadNum: id
-            )
-
-            await updateProgress(50, message: "Processing archived posts...")
-
-            if !archivePosts.isEmpty {
-                var mediaUrls: [URL] = []
-                var thumbnailMediaUrls: [URL] = []
-                var mapping: [Int: Int] = [:]
-                var comments: [AttributedString] = []
-                var postReplies: [Int: [String]] = [:]
-                var postIndex = 0
-                var mediaIndex = 0
-
-                for (index, post) in archivePosts.enumerated() {
-                    if index % max(1, archivePosts.count / 10) == 0 {
-                        let processingProgress = 50 + Int64((Double(index) / Double(archivePosts.count)) * 30)
-                        await updateProgress(processingProgress, message: "Processing archived posts...")
-                    }
-
-                    // Use archive media URLs (i.4pcdn.org)
-                    if let mediaUrl = post.getArchiveMediaUrl(boardId: boardName),
-                       let thumbnailUrl = post.getArchiveMediaUrl(boardId: boardName, thumbnail: true) {
-                        mapping[postIndex] = mediaIndex
-                        mediaUrls.append(mediaUrl)
-                        thumbnailMediaUrls.append(thumbnailUrl)
-                        mediaIndex += 1
-                    }
-
-                    if let comment = post.com {
-                        let parser = CommentParser(comment: comment)
-                        comments.append(parser.getComment())
-                        postReplies[postIndex] = parser.replies
-                    } else {
-                        comments.append(AttributedString())
-                    }
-                    postIndex += 1
-                }
-
-                await updateProgress(85, message: "Processing replies...")
-                let replies = FourchanService.getReplies(postReplies: postReplies, posts: archivePosts)
-
-                await updateProgress(95, message: "Loading media...")
-                self.posts = archivePosts
-                self.postMediaMapping = mapping
-                self.comments = comments
-                self.replies = replies
-                setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-
-                await updateProgress(100, message: "Complete!")
-                state = .loaded
-            } else {
-                errorType = .notFound
-                state = .error
-            }
-        } catch let error as FourplebsService.FourplebsError {
-            switch error {
-            case .notFound, .unsupportedBoard:
-                errorType = .notFound
-            case .networkError, .decodingError, .invalidResponse:
-                errorType = .network
-            }
-            state = .error
-        } catch {
-            errorType = .generic
-            state = .error
-        }
-
-        print("Archive thread /\(boardName)/-\(id) got \(self.posts.count) posts.")
     }
 
     private func updateProgress(_ progress: Int64, message: String) async {

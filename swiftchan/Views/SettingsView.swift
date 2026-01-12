@@ -24,16 +24,21 @@ struct SettingsView: View {
     @State private var cacheSize: String = "Calculating..."
 
     var body: some View {
-        List {
-            boardSection
-            mediaSection
-            threadSection
-            biometricsSection
-            cacheSection
-        }
-        .navigationTitle("Settings")
-        .toast(isPresented: $showCacheDeleteToast, dismissAfter: 1.5) {
-            Toast(presentingToastResult: cacheResult)
+        NavigationStack {
+            List {
+                boardSection
+                mediaSection
+                threadSection
+                biometricsSection
+                cacheSection
+                #if DEBUG
+                debugSection
+                #endif
+            }
+            .navigationTitle("Settings")
+            .toast(isPresented: $showCacheDeleteToast, dismissAfter: 1.5) {
+                Toast(presentingToastResult: cacheResult)
+            }
         }
     }
 
@@ -143,6 +148,17 @@ struct SettingsView: View {
             Toggle("Enabled", isOn: $biometricsEnabled)
         }
     }
+
+    #if DEBUG
+    var debugSection: some View {
+        Section(header: Text("Debug").font(.title)) {
+            // Test archived thread - will show "Tap to view on 4plebs" option
+            NavigationLink(destination: ThreadView(boardName: "pol", postNumber: 521138219).environment(AppState())) {
+                Label("Test 4plebs Archive (dead thread)", systemImage: "archivebox")
+            }
+        }
+    }
+    #endif
 }
 
 #if DEBUG

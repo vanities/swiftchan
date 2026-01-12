@@ -238,6 +238,7 @@ struct ThreadView: View {
                 }
                 .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
             case .error:
+                let _ = print("DEBUG View: errorType=\(viewModel.errorType), canLoadFromArchive=\(viewModel.canLoadFromArchive), board=\(viewModel.boardName)")
                 VStack(spacing: 20) {
                     // Retry button
                     VStack {
@@ -253,20 +254,19 @@ struct ThreadView: View {
                     .foregroundColor(Color.red)
 
                     // Archive option - only show for not found errors on supported boards
-                    if viewModel.errorType == .notFound && viewModel.canLoadFromArchive {
+                    if viewModel.errorType == .notFound && viewModel.canLoadFromArchive,
+                       let archiveUrl = viewModel.archiveUrl {
                         Divider()
                             .padding(.horizontal, 50)
 
                         VStack {
                             Image(systemName: "archivebox")
                                 .frame(width: 25, height: 25)
-                            Text("Thread may be archived.\nTap to load from 4plebs.")
+                            Text("Thread may be archived.\nTap to view on 4plebs.")
                                 .multilineTextAlignment(.center)
                         }
                         .onTapGesture {
-                            Task {
-                                await viewModel.loadFromArchive()
-                            }
+                            UIApplication.shared.open(archiveUrl)
                         }
                         .foregroundColor(Color.orange)
                     }

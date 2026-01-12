@@ -62,26 +62,27 @@ struct FourplebsThread: Codable {
     let op: FourplebsPost?
     let posts: [String: FourplebsPost]?
 
-    /// Convert to array of Post objects sorted by post number
-    func toPosts(board: String) -> [Post] {
-        var result: [Post] = []
+    /// Get all posts as FourplebsPost array sorted by post number
+    func getAllPosts() -> [FourplebsPost] {
+        var result: [FourplebsPost] = []
 
         // Add OP first
         if let op = op {
-            if let post = op.toPost(board: board) {
-                result.append(post)
-            }
+            result.append(op)
         }
 
         // Add replies sorted by post number
         if let posts = posts {
-            let sortedPosts = posts.values
-                .compactMap { $0.toPost(board: board) }
-                .sorted { $0.no < $1.no }
+            let sortedPosts = posts.values.sorted { ($0.num ?? 0) < ($1.num ?? 0) }
             result.append(contentsOf: sortedPosts)
         }
 
         return result
+    }
+
+    /// Convert to array of Post objects sorted by post number
+    func toPosts(board: String) -> [Post] {
+        return getAllPosts().compactMap { $0.toPost(board: board) }
     }
 }
 
@@ -173,12 +174,12 @@ struct FourplebsPost: Codable {
     }
 
     private func addMediaDimensions(from media: FourplebsMedia, to postDict: inout [String: Any]) {
-        if let w = media.mediaW { postDict["w"] = w }
-        if let h = media.mediaH { postDict["h"] = h }
-        if let fsize = media.mediaSize { postDict["fsize"] = fsize }
-        if let tnW = media.previewW { postDict["tn_w"] = tnW }
-        if let tnH = media.previewH { postDict["tn_h"] = tnH }
-        if media.spoiler == 1 { postDict["spoiler"] = 1 }
+        if let w = media.mediaW, let wInt = Int(w) { postDict["w"] = wInt }
+        if let h = media.mediaH, let hInt = Int(h) { postDict["h"] = hInt }
+        if let fsize = media.mediaSize, let fsizeInt = Int(fsize) { postDict["fsize"] = fsizeInt }
+        if let tnW = media.previewW, let tnWInt = Int(tnW) { postDict["tn_w"] = tnWInt }
+        if let tnH = media.previewH, let tnHInt = Int(tnH) { postDict["tn_h"] = tnHInt }
+        if media.spoiler == "1" { postDict["spoiler"] = 1 }
     }
 
     private func decodePost(from postDict: [String: Any]) -> Post? {
@@ -195,18 +196,21 @@ struct FourplebsPost: Codable {
 /// Media information from 4plebs
 struct FourplebsMedia: Codable {
     let mediaId: Int?
-    let spoiler: Int?
+    let spoiler: String?
     let previewOrig: String?
     let mediaOrig: String?
     let media: String?
     let mediaFilename: String?
-    let mediaW: Int?
-    let mediaH: Int?
-    let mediaSize: Int?
-    let previewW: Int?
-    let previewH: Int?
+    let mediaW: String?
+    let mediaH: String?
+    let mediaSize: String?
+    let previewW: String?
+    let previewH: String?
     let exif: String?
-    let banned: Int?
+    let banned: String?
+    // Direct URLs provided by API
+    let mediaLink: String?
+    let thumbLink: String?
 
     enum CodingKeys: String, CodingKey {
         case spoiler, media, exif, banned
@@ -219,5 +223,7 @@ struct FourplebsMedia: Codable {
         case mediaSize = "media_size"
         case previewW = "preview_w"
         case previewH = "preview_h"
+        case mediaLink = "media_link"
+        case thumbLink = "thumb_link"
     }
 }

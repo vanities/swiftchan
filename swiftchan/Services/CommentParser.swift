@@ -73,12 +73,29 @@ class CommentParser {
                     // text: >>794515 with cross thread href
                     else if text.starts(with: ">>") {
                         if href.contains("/thread/") {
-                            let components = href.split(separator: "/")
-                            if components.count >= 3 {
-                                let board = String(components[1])
-                                let idComponent = components.last ?? ""
+                            // Handle various href formats:
+                            // - //boards.4chan.org/pol/thread/12345
+                            // - /pol/thread/12345
+                            // - pol/thread/12345
+                            let components = href.split(separator: "/").filter { !$0.isEmpty }
+                            if let threadIndex = components.firstIndex(of: "thread"),
+                               threadIndex > 0,
+                               threadIndex + 1 < components.count {
+                                // Board is right before "thread"
+                                let board = String(components[threadIndex - 1])
+                                // ID is right after "thread", strip any #fragment
+                                let idComponent = String(components[threadIndex + 1])
                                 let id = idComponent.split(separator: "#").first.map(String.init) ?? ""
-                                part.link = URL.thread(board: board, id: id)
+                                // Only use if board looks valid (not a domain)
+                                if !board.contains(".") {
+                                    part.link = URL.thread(board: board, id: id)
+                                } else if threadIndex >= 2 {
+                                    // Domain case: //boards.4chan.org/pol/thread/123
+                                    let actualBoard = String(components[threadIndex - 1])
+                                    part.link = URL.thread(board: actualBoard, id: id)
+                                } else {
+                                    part.link = URL(string: href)
+                                }
                             } else {
                                 part.link = URL(string: href)
                             }
