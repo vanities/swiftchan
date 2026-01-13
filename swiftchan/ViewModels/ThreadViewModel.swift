@@ -39,6 +39,7 @@ final class ThreadViewModel {
     private(set) var replies = [Int: [Int]]()
     private(set) var state = State.initial
     private(set) var errorType = ErrorType.generic
+    private(set) var isArchived = false
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
@@ -193,6 +194,104 @@ final class ThreadViewModel {
             state = .error
         }
         print("Thread /\(boardName)/-\(id) successfully got \(self.posts.count) posts.")
+    }
+
+    func loadFromArchive() async {
+        print("DEBUG: loadFromArchive called for /\(boardName)/\(id)")
+        guard canLoadFromArchive else { return }
+
+        state = .loading
+        isArchived = true
+
+        // Reset progress
+        downloadProgress.totalUnitCount = 100
+        downloadProgress.completedUnitCount = 0
+        setupProgressTracking()
+
+        do {
+            await updateProgress(20, message: "Fetching from archive...")
+
+            let archiveThread = try await FourplebsService.shared.getThread(
+                board: boardName,
+                threadNum: id
+            )
+
+            await updateProgress(50, message: "Processing archived posts...")
+
+            let fourplebsPosts = archiveThread.getAllPosts()
+            let convertedPosts = archiveThread.toPosts(board: boardName)
+
+            if !convertedPosts.isEmpty {
+                var mediaUrls: [URL] = []
+                var thumbnailMediaUrls: [URL] = []
+                var mapping: [Int: Int] = [:]
+                var comments: [AttributedString] = []
+                var postReplies: [Int: [String]] = [:]
+                var postIndex = 0
+                var mediaIndex = 0
+
+                for (index, fourplebsPost) in fourplebsPosts.enumerated() {
+                    if index % max(1, fourplebsPosts.count / 10) == 0 {
+                        let processingProgress = 50 + Int64((Double(index) / Double(fourplebsPosts.count)) * 30)
+                        await updateProgress(processingProgress, message: "Processing archived posts...")
+                    }
+
+                    // Use direct media URLs from 4plebs API
+                    if let media = fourplebsPost.media,
+                       let mediaUrlStr = media.mediaLink,
+                       let thumbUrlStr = media.thumbLink,
+                       let mediaUrl = URL(string: mediaUrlStr),
+                       let thumbnailUrl = URL(string: thumbUrlStr) {
+                        mapping[postIndex] = mediaIndex
+                        mediaUrls.append(mediaUrl)
+                        thumbnailMediaUrls.append(thumbnailUrl)
+                        mediaIndex += 1
+                    }
+
+                    if let comment = fourplebsPost.comment {
+                        let parser = CommentParser(comment: comment)
+                        comments.append(parser.getComment())
+                        postReplies[postIndex] = parser.replies
+                    } else {
+                        comments.append(AttributedString())
+                    }
+                    postIndex += 1
+                }
+
+                await updateProgress(85, message: "Processing replies...")
+                let replies = FourchanService.getReplies(postReplies: postReplies, posts: convertedPosts)
+
+                await updateProgress(95, message: "Loading media...")
+                self.posts = convertedPosts
+                self.postMediaMapping = mapping
+                self.comments = comments
+                self.replies = replies
+                setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
+
+                await updateProgress(100, message: "Complete!")
+                state = .loaded
+            } else {
+                errorType = .notFound
+                state = .error
+            }
+        } catch let error as FourplebsService.FourplebsError {
+            print("DEBUG: 4plebs error: \(error)")
+            switch error {
+            case .notFound, .unsupportedBoard:
+                errorType = .notFound
+            case .antiBot:
+                errorType = .network
+            case .networkError, .decodingError, .invalidResponse:
+                errorType = .network
+            }
+            state = .error
+        } catch {
+            print("DEBUG: Unknown error: \(error)")
+            errorType = .generic
+            state = .error
+        }
+
+        print("Archive thread /\(boardName)/-\(id) got \(self.posts.count) posts.")
     }
 
     private func updateProgress(_ progress: Int64, message: String) async {

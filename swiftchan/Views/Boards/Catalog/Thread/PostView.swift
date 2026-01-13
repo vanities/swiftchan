@@ -40,23 +40,21 @@ struct PostView: View {
 
                 // media
                 HStack(alignment: .top, spacing: 0) {
-                    if let url = post.getMediaUrl(boardId: boardName),
-                       let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
+                    if let mediaIndex = viewModel.postMediaMapping[index],
+                       mediaIndex < viewModel.media.count {
+                        let media = viewModel.media[mediaIndex]
 
                         VStack {
                             ThumbnailMediaView(
-                                url: url,
-                                thumbnailUrl: thumbnailUrl
+                                url: media.url,
+                                thumbnailUrl: media.thumbnailUrl
                             )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.halfWidth)
                             .scaledToFill() // VStack
                             .onTapGesture {
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    let mediaIndex = viewModel.postMediaMapping[index] ?? 0
-                                    var item = viewModel.media[mediaIndex]
-                                    item.isSelected = true
-                                    viewModel.media[mediaIndex] = item
+                                    viewModel.media[mediaIndex].isSelected = true
                                     presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingGallery = true
                                 }

@@ -106,7 +106,7 @@ struct ThreadView: View {
                     }
                 }
                 .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if autoRefreshEnabled && showRefreshProgressBar {
+                    if autoRefreshEnabled && showRefreshProgressBar && !viewModel.isArchived {
                         // Transparent spacer to reserve space for the progress bar
                         Rectangle()
                             .fill(Color.clear)
@@ -114,7 +114,7 @@ struct ThreadView: View {
                     }
                 }
                 .overlay {
-                    if autoRefreshEnabled && showRefreshProgressBar {
+                    if autoRefreshEnabled && showRefreshProgressBar && !viewModel.isArchived {
                         let validatedRefreshTime = max(5, autoRefreshThreadTime > 0 ? autoRefreshThreadTime : 10)
                         VStack {
                             Spacer()
@@ -164,10 +164,13 @@ struct ThreadView: View {
                 }
                 .onAppear {
                     viewModel.prefetch()
-                    threadAutorefresher.onRefresh = {
-                        print("Thread auto refresh timer met, updating thread.")
-                        Task {
-                            await fetchAndPrefetchMedia(auto: true)
+                    // Don't set up auto-refresh for archived threads
+                    if !viewModel.isArchived {
+                        threadAutorefresher.onRefresh = {
+                            print("Thread auto refresh timer met, updating thread.")
+                            Task {
+                                await fetchAndPrefetchMedia(auto: true)
+                            }
                         }
                     }
                 }
@@ -183,6 +186,8 @@ struct ThreadView: View {
                     }
                 }
                 .refreshable {
+                    // Archived threads can't be refreshed
+                    guard !viewModel.isArchived else { return }
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     Task {
                         await fetchAndPrefetchMedia()
@@ -198,9 +203,21 @@ struct ThreadView: View {
                     viewModel.updateSearchResults()
                 }
                 .toolbar(id: "toolbar-1") {
+                    ToolbarItem(id: "toolbar-item-archive", placement: .navigationBarTrailing) {
+                        if viewModel.isArchived {
+                            Image(systemName: "archivebox.fill")
+                                .foregroundColor(.orange)
+                        }
+                    }
                     ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
-                        Link(destination: viewModel.url) {
-                            Image(systemName: "square.and.arrow.up")
+                        if viewModel.isArchived, let archiveUrl = viewModel.archiveUrl {
+                            Link(destination: archiveUrl) {
+                                Image(systemName: "square.and.arrow.up")
+                            }
+                        } else {
+                            Link(destination: viewModel.url) {
+                                Image(systemName: "square.and.arrow.up")
+                            }
                         }
                     }
                     .defaultCustomization(.hidden)
@@ -254,19 +271,20 @@ struct ThreadView: View {
                     .foregroundColor(Color.red)
 
                     // Archive option - only show for not found errors on supported boards
-                    if viewModel.errorType == .notFound && viewModel.canLoadFromArchive,
-                       let archiveUrl = viewModel.archiveUrl {
+                    if viewModel.errorType == .notFound && viewModel.canLoadFromArchive {
                         Divider()
                             .padding(.horizontal, 50)
 
                         VStack {
                             Image(systemName: "archivebox")
                                 .frame(width: 25, height: 25)
-                            Text("Thread may be archived.\nTap to view on 4plebs.")
+                            Text("Thread may be archived.\nTap to load from 4plebs.")
                                 .multilineTextAlignment(.center)
                         }
                         .onTapGesture {
-                            UIApplication.shared.open(archiveUrl)
+                            Task {
+                                await viewModel.loadFromArchive()
+                            }
                         }
                         .foregroundColor(Color.orange)
                     }

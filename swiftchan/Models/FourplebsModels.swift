@@ -33,9 +33,12 @@ struct FourplebsThreadResponse: Codable {
             if key.stringValue == "error" { continue }
 
             // Try to decode as thread
-            if let threadData = try? dynamicContainer.decode(FourplebsThread.self, forKey: key) {
+            do {
+                let threadData = try dynamicContainer.decode(FourplebsThread.self, forKey: key)
                 thread = threadData
                 break
+            } catch {
+                print("DEBUG FourplebsThreadResponse: Failed to decode thread for key '\(key.stringValue)': \(error)")
             }
         }
     }
@@ -73,7 +76,7 @@ struct FourplebsThread: Codable {
 
         // Add replies sorted by post number
         if let posts = posts {
-            let sortedPosts = posts.values.sorted { ($0.num ?? 0) < ($1.num ?? 0) }
+            let sortedPosts = posts.values.sorted { ($0.numInt ?? 0) < ($1.numInt ?? 0) }
             result.append(contentsOf: sortedPosts)
         }
 
@@ -87,13 +90,14 @@ struct FourplebsThread: Codable {
 }
 
 /// Individual post from 4plebs archive
+/// Note: Many numeric fields come as strings from the API
+/// Some fields like timestamp_expired are inconsistent (string or int) so we skip them
 struct FourplebsPost: Codable {
-    let num: Int?
-    let subnum: Int?
-    let threadNum: Int?
-    let op: Int?
+    let num: String?
+    let subnum: String?
+    let threadNum: String?
+    let op: String?
     let timestamp: Int?
-    let timestampExpired: Int?
     let capcode: String?
     let name: String?
     let trip: String?
@@ -101,18 +105,20 @@ struct FourplebsPost: Codable {
     let comment: String?
     let posterHash: String?
     let posterCountry: String?
-    let sticky: Int?
-    let locked: Int?
+    let sticky: String?
+    let locked: String?
 
     let media: FourplebsMedia?
 
     enum CodingKeys: String, CodingKey {
         case num, subnum, op, timestamp, capcode, name, trip, title, comment, sticky, locked, media
         case threadNum = "thread_num"
-        case timestampExpired = "timestamp_expired"
         case posterHash = "poster_hash"
         case posterCountry = "poster_country"
     }
+
+    var numInt: Int? { num.flatMap { Int($0) } }
+    var threadNumInt: Int? { threadNum.flatMap { Int($0) } }
 
     /// Convert to FourChan.Post for compatibility with existing views
     func toPost(board: String) -> Post? {
@@ -124,8 +130,8 @@ struct FourplebsPost: Codable {
 
     private func buildBasePostDict() -> [String: Any] {
         return [
-            "no": num ?? 0,
-            "resto": threadNum ?? 0,
+            "no": numInt ?? 0,
+            "resto": threadNumInt ?? 0,
             "time": timestamp ?? 0
         ]
     }
@@ -138,8 +144,8 @@ struct FourplebsPost: Codable {
         if let capcode = capcode, !capcode.isEmpty, capcode != "N" { postDict["capcode"] = capcode }
         if let hash = posterHash, !hash.isEmpty, hash != "null" { postDict["id"] = hash }
         if let country = posterCountry { postDict["country"] = country }
-        if sticky == 1 { postDict["sticky"] = 1 }
-        if locked == 1 { postDict["closed"] = 1 }
+        if sticky == "1" { postDict["sticky"] = 1 }
+        if locked == "1" { postDict["closed"] = 1 }
     }
 
     private func addMediaFields(to postDict: inout [String: Any]) {
@@ -151,8 +157,8 @@ struct FourplebsPost: Codable {
     }
 
     private func addMediaId(from media: FourplebsMedia, to postDict: inout [String: Any]) {
-        if let mediaId = media.mediaId {
-            postDict["tim"] = mediaId
+        if let mediaId = media.mediaId, let mediaIdInt = Int(mediaId) {
+            postDict["tim"] = mediaIdInt
         } else if let mediaOrig = media.mediaOrig {
             let components = mediaOrig.components(separatedBy: ".")
             if let first = components.first, let tim = Int(first) {
@@ -195,7 +201,7 @@ struct FourplebsPost: Codable {
 
 /// Media information from 4plebs
 struct FourplebsMedia: Codable {
-    let mediaId: Int?
+    let mediaId: String?
     let spoiler: String?
     let previewOrig: String?
     let mediaOrig: String?

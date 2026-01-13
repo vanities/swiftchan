@@ -87,6 +87,7 @@ final class FourplebsService {
         }
 
         var request = URLRequest(url: url)
+        request.setValue("swiftchan/1.0 (iOS; https://github.com/vanities/swiftchan)", forHTTPHeaderField: "User-Agent")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         let data: Data
