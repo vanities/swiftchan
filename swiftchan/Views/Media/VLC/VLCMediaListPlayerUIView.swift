@@ -9,10 +9,11 @@ import MobileVLCKit
 class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     private var _url: URL {
         let cacheURL = CacheManager.shared.cacheURL(url)
-        guard CacheManager.shared.cacheHit(file: cacheURL) else {
-            return url
+        if CacheManager.shared.cacheHit(file: cacheURL) {
+            return cacheURL
         }
-        return cacheURL
+        debugPrint("📁 Cache miss for \(url.lastPathComponent), expected at: \(cacheURL.path)")
+        return url
     }
     private var url: URL
     private weak var delegate: VLCMediaPlayerDelegate?
@@ -79,7 +80,7 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
     }
 
     /// Start playback immediately without delays.
-    func initializeAndPlay() {
+    func initializeAndPlay(retryCount: Int = 0) {
         guard !isBeingDeallocated else { return }
 
         let fileURL = _url
@@ -87,7 +88,15 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
         let fileSizeValid = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? Int64 ?? 0) ?? 0 > 0
 
         guard fileExists, fileSizeValid else {
-            debugPrint("⚠️ Cannot play video: file does not exist or is empty \(fileURL)")
+            // Retry a few times with delay if file isn't ready yet
+            if retryCount < 5 {
+                debugPrint("⏳ File not ready yet, retrying in 100ms (attempt \(retryCount + 1)/5): \(fileURL)")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    self?.initializeAndPlay(retryCount: retryCount + 1)
+                }
+                return
+            }
+            debugPrint("⚠️ Cannot play video: file does not exist or is empty after \(retryCount) retries: \(fileURL)")
             return
         }
 

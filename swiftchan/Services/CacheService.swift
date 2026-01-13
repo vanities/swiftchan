@@ -91,8 +91,20 @@ final class CacheManager: @unchecked Sendable {
     }
 
     private func evictLRUIfNeeded(targetSize: Int64) {
-        queue.async(flags: .barrier) { [weak self] in
+        evictLRUIfNeededSync(targetSize: targetSize, excludingURL: nil)
+    }
+
+    /// Synchronous version that excludes a specific URL from eviction candidates
+    /// This prevents race conditions where a file being cached could be evicted
+    private func evictLRUIfNeededSync(targetSize: Int64, excludingURL: String?) {
+        queue.sync(flags: .barrier) { [weak self] in
             guard let self = self else { return }
+
+            // First, remove any stale metadata for the URL we're about to cache
+            // This prevents the new file from being immediately evicted
+            if let excludingURL = excludingURL {
+                self.metadata.removeValue(forKey: excludingURL)
+            }
 
             var currentSize = self.metadata.values.reduce(0) { $0 + $1.fileSize }
             let sizeAfterAdd = currentSize + targetSize
@@ -122,7 +134,7 @@ final class CacheManager: @unchecked Sendable {
             }
 
             debugPrint("📦 Eviction complete. Freed: \(freedSize / 1_048_576)MB, New size: \((currentSize - freedSize) / 1_048_576)MB")
-            self.saveMetadata()
+            self.saveMetadataUnsafe()
         }
     }
 
@@ -143,7 +155,28 @@ final class CacheManager: @unchecked Sendable {
             let entry = CacheMetadata(url: url, filePath: filePath, fileSize: fileSize)
             self.metadata[url] = entry
             debugPrint("📝 Added cache metadata for \(url)")
-            self.saveMetadata()
+            self.saveMetadataUnsafe()
+        }
+    }
+
+    /// Synchronous version for use during cache operations
+    private func addMetadataSync(url: String, filePath: String, fileSize: Int64) {
+        queue.sync(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            let entry = CacheMetadata(url: url, filePath: filePath, fileSize: fileSize)
+            self.metadata[url] = entry
+            debugPrint("📝 Added cache metadata for \(url)")
+            self.saveMetadataUnsafe()
+        }
+    }
+
+    /// Save metadata without queue synchronization (call from within queue.sync/async)
+    private func saveMetadataUnsafe() {
+        do {
+            let data = try JSONEncoder().encode(metadata)
+            try data.write(to: metadataFileURL)
+        } catch {
+            debugPrint("Failed to save cache metadata: \(error)")
         }
     }
 
@@ -184,15 +217,17 @@ final class CacheManager: @unchecked Sendable {
             let attributes = try fileManager.attributesOfItem(atPath: tempURL.path)
             let fileSize = attributes[.size] as? Int64 ?? 0
 
-            // Run LRU eviction if needed before adding new file
-            evictLRUIfNeeded(targetSize: fileSize)
+            let metadataKey = originalURL?.absoluteString ?? cacheURL.absoluteString
+
+            // Run LRU eviction synchronously before moving the file,
+            // excluding the URL we're about to cache to prevent race condition
+            evictLRUIfNeededSync(targetSize: fileSize, excludingURL: metadataKey)
 
             try? fileManager.removeItem(at: cacheURL)
             try fileManager.moveItem(at: tempURL, to: cacheURL)
 
             // Add metadata for LRU tracking using cacheURL as key (consistent with getCacheValue)
-            let metadataKey = originalURL?.absoluteString ?? cacheURL.absoluteString
-            addMetadata(url: metadataKey, filePath: cacheURL.path, fileSize: fileSize)
+            addMetadataSync(url: metadataKey, filePath: cacheURL.path, fileSize: fileSize)
 
             debugPrint("completed writing file to cache \(cacheURL.path) (\(fileSize / 1_048_576)MB)")
             return cacheURL

@@ -116,7 +116,12 @@ struct GalleryView: View {
             controller.prefersGrabberVisible = true
             controller.prefersScrollingExpandsWhenScrolledToEdge = false
             controller.detents = [.large()]
-            sheetPresentationController = controller
+            // Defer state update to avoid "Modifying state during view update" warning
+            if sheetPresentationController !== controller {
+                DispatchQueue.main.async {
+                    sheetPresentationController = controller
+                }
+            }
             updateInteractiveDismiss(using: controller)
         }
         .statusBar(hidden: true)
