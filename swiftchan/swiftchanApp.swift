@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SwiftchanApp: App {
@@ -18,5 +19,6 @@ struct SwiftchanApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: FavoriteThread.self)
     }
 }

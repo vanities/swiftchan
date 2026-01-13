@@ -25,6 +25,10 @@ struct ContentView: View {
                 BoardsView()
             }
 
+            Tab("Favorites", systemImage: "heart.fill", value: .favorites) {
+                FavoritesView()
+            }
+
             Tab("Settings", systemImage: "gearshape", value: .settings) {
                 SettingsView()
             }

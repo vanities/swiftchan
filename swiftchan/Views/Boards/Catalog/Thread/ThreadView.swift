@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 import Combine
 import SpriteKit
+import SwiftData
 
 struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = false
@@ -17,6 +18,8 @@ struct ThreadView: View {
     @AppStorage("showRefreshProgressBar") private var showRefreshProgressBar = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allFavorites: [FavoriteThread]
 
     @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
@@ -38,6 +41,10 @@ struct ThreadView: View {
     }
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
+
+    private var isFavorited: Bool {
+        allFavorites.contains { $0.threadId == viewModel.id && $0.boardName == viewModel.boardName }
+    }
 
     init(boardName: String, postNumber: PostNumber) {
         self._viewModel = State(
@@ -203,6 +210,14 @@ struct ThreadView: View {
                     viewModel.updateSearchResults()
                 }
                 .toolbar(id: "toolbar-1") {
+                    ToolbarItem(id: "toolbar-item-favorite", placement: .navigationBarTrailing) {
+                        Button {
+                            toggleFavorite()
+                        } label: {
+                            Image(systemName: isFavorited ? "heart.fill" : "heart")
+                                .foregroundColor(isFavorited ? .red : .primary)
+                        }
+                    }
                     ToolbarItem(id: "toolbar-item-archive", placement: .navigationBarTrailing) {
                         if viewModel.isArchived {
                             Image(systemName: "archivebox.fill")
@@ -367,6 +382,29 @@ struct ThreadView: View {
         if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
             reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+        }
+    }
+
+    private func toggleFavorite() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+        if let existingFavorite = allFavorites.first(where: {
+            $0.threadId == viewModel.id && $0.boardName == viewModel.boardName
+        }) {
+            modelContext.delete(existingFavorite)
+        } else {
+            guard let firstPost = viewModel.posts.first else { return }
+
+            let favorite = FavoriteThread(
+                threadId: viewModel.id,
+                boardName: viewModel.boardName,
+                title: firstPost.sub?.clean ?? "",
+                thumbnailUrlString: firstPost.getMediaUrl(boardId: viewModel.boardName, thumbnail: true)?.absoluteString,
+                replyCount: firstPost.replies ?? 0,
+                imageCount: firstPost.images ?? 0,
+                createdTime: Date(timeIntervalSince1970: TimeInterval(firstPost.time ?? 0))
+            )
+            modelContext.insert(favorite)
         }
     }
 }

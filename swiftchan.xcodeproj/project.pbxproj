@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		54FCC7F730B5724021923610 /* FourplebsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7113478DE4A376777536E98 /* FourplebsService.swift */; };
+		7D9CD4032CD3A8B39B5660C4 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */; };
 		950846FC2751E3DA0098DF73 /* DeepLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FB2751E3DA0098DF73 /* DeepLinker.swift */; };
 		950846FE2752CA260098DF73 /* BoardSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950846FD2752CA260098DF73 /* BoardSection.swift */; };
 		950E3940255CDA3B00A00A74 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E393F255CDA3B00A00A74 /* MediaView.swift */; };
@@ -91,6 +92,8 @@
 		95F76D8426D8830F00F6A92F /* XCUIApplication+Identifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8226D8830F00F6A92F /* XCUIApplication+Identifiers.swift */; };
 		95F76D8626D888BB00F6A92F /* swiftchanPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */; };
 		95F7CFCD25639BD70063149B /* DateFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7CFCC25639BD70063149B /* DateFormatterService.swift */; };
+		B3097C1AEE48110A2ECBCCA5 /* FavoriteThreadRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01E215C9A3306E1A631FA2C /* FavoriteThreadRow.swift */; };
+		C5F3F253025477DBEB72F71B /* FavoriteThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD37E85CCB260D679EEEC5 /* FavoriteThread.swift */; };
 		E2A7401FE9DE253776491C36 /* libPods-swiftchan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */; };
 		F22DF234D8D6A701CB836E0E /* FourplebsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB654D68A9820A7AEA660B /* FourplebsModels.swift */; };
 /* End PBXBuildFile section */
@@ -127,6 +130,7 @@
 
 /* Begin PBXFileReference section */
 		1A59B34C1967E26AD552D40A /* Pods-swiftchan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.release.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.release.xcconfig"; sourceTree = "<group>"; };
+		5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-swiftchan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		950846FB2751E3DA0098DF73 /* DeepLinker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinker.swift; sourceTree = "<group>"; };
 		950846FD2752CA260098DF73 /* BoardSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSection.swift; sourceTree = "<group>"; };
@@ -212,7 +216,9 @@
 		95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftchanPerformanceTests.swift; sourceTree = "<group>"; };
 		95F7CFCC25639BD70063149B /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 		CDD89983D4A69413FD4202F0 /* Pods-swiftchan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-swiftchan.debug.xcconfig"; path = "Target Support Files/Pods-swiftchan/Pods-swiftchan.debug.xcconfig"; sourceTree = "<group>"; };
+		D01E215C9A3306E1A631FA2C /* FavoriteThreadRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoriteThreadRow.swift; sourceTree = "<group>"; };
 		D6BB654D68A9820A7AEA660B /* FourplebsModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FourplebsModels.swift; sourceTree = "<group>"; };
+		ECDD37E85CCB260D679EEEC5 /* FavoriteThread.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoriteThread.swift; sourceTree = "<group>"; };
 		F7113478DE4A376777536E98 /* FourplebsService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FourplebsService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -247,12 +253,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F62ABB509907B2E2D948712 /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+				5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */,
+				D01E215C9A3306E1A631FA2C /* FavoriteThreadRow.swift */,
+			);
+			name = Favorites;
+			path = Favorites;
+			sourceTree = "<group>";
+		};
 		23A1515D0040BD7D522776C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				76EE6EC133F7354F9C641B0D /* libPods-swiftchan.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2BA6BE71A1C0F2F67A42CF5E /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Favorites;
 			sourceTree = "<group>";
 		};
 		950E3933255CD9BB00A00A74 /* Media */ = {
@@ -287,6 +310,7 @@
 				9579F9F0263D1A1E007C70FC /* VLCVideo.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
 				D6BB654D68A9820A7AEA660B /* FourplebsModels.swift */,
+				ECDD37E85CCB260D679EEEC5 /* FavoriteThread.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -368,6 +392,9 @@
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
 				950E3933255CD9BB00A00A74 /* Media */,
 				95D86F6F25EA301A005A7EBC /* Utility */,
+				2BA6BE71A1C0F2F67A42CF5E /* Favorites */,
+				FCB6DD19C174E2E4920387EF /* Favorites */,
+				1F62ABB509907B2E2D948712 /* Favorites */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -506,6 +533,14 @@
 				95F5D7612957610600DD561B /* SnowScene.swift */,
 			);
 			path = Sprites;
+			sourceTree = "<group>";
+		};
+		FCB6DD19C174E2E4920387EF /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Favorites;
+			path = Favorites;
 			sourceTree = "<group>";
 		};
 		FF4A11C5390644ACDA29A498 /* Pods */ = {
@@ -797,6 +832,9 @@
 				955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */,
 				54FCC7F730B5724021923610 /* FourplebsService.swift in Sources */,
 				F22DF234D8D6A701CB836E0E /* FourplebsModels.swift in Sources */,
+				C5F3F253025477DBEB72F71B /* FavoriteThread.swift in Sources */,
+				7D9CD4032CD3A8B39B5660C4 /* FavoritesView.swift in Sources */,
+				B3097C1AEE48110A2ECBCCA5 /* FavoriteThreadRow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

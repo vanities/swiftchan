@@ -9,5 +9,6 @@ import SwiftUI
 
 enum Tabs: Equatable, Hashable {
     case boards
+    case favorites
     case settings
 }
