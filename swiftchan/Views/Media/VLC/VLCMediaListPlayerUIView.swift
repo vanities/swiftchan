@@ -102,18 +102,41 @@ class VLCMediaListPlayerUIView: UIView, VLCMediaPlayerDelegate {
 
         debugPrint("🎬 Initializing and playing: \(fileURL)")
 
-        // Initialize the player
-        self.initialize(url: fileURL)
+        // Check if already initialized with same URL
+        let alreadyInitialized = currentMediaURL == fileURL && mediaListPlayer.mediaPlayer.media != nil
 
-        // Start playing immediately
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self, !self.isBeingDeallocated else { return }
+        if alreadyInitialized {
+            // Already set up - just resume/play
+            debugPrint("🎬 Already initialized, resuming playback")
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, !self.isBeingDeallocated else { return }
+                let playerState = self.mediaListPlayer.mediaPlayer.state
+                debugPrint("🎬 Player state: \(playerState.rawValue)")
 
-            if let media = self.media {
-                debugPrint("🎬 Starting playback with media")
-                self.mediaListPlayer.play(media)
-            } else {
-                debugPrint("⚠️ No media to play")
+                if playerState == .paused || playerState == .stopped {
+                    self.mediaListPlayer.play()
+                } else if playerState != .playing {
+                    // For other states (opening, buffering, etc.), try play with media
+                    if let media = self.media {
+                        self.mediaListPlayer.play(media)
+                    }
+                }
+                // If already playing, do nothing
+            }
+        } else {
+            // Initialize the player
+            self.initialize(url: fileURL)
+
+            // Start playing immediately
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, !self.isBeingDeallocated else { return }
+
+                if let media = self.media {
+                    debugPrint("🎬 Starting playback with media")
+                    self.mediaListPlayer.play(media)
+                } else {
+                    debugPrint("⚠️ No media to play")
+                }
             }
         }
     }

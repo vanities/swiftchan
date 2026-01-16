@@ -64,12 +64,14 @@ struct VLCContainerView: View {
         }
         .onChange(of: isSelected) {
             isCurrentlySelected = isSelected
+            debugPrint("📺 isSelected changed to: \(isSelected), downloadFinished: \(vlcVideoViewModel.video.downloadProgress.isFinished)")
             if isSelected {
                 // Always try to play when selected, even if still downloading
                 if vlcVideoViewModel.video.downloadProgress.isFinished {
+                    debugPrint("📺 Calling play() from onChange")
                     vlcVideoViewModel.play()
                 } else {
-                    // Will play automatically when download completes
+                    debugPrint("📺 Download not finished, will play when complete")
                 }
             } else if !isSelected {
                 vlcVideoViewModel.pause()
@@ -77,6 +79,7 @@ struct VLCContainerView: View {
         }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
+            debugPrint("📺 VLCContainerView appeared, isSelected: \(isSelected), downloadFinished: \(vlcVideoViewModel.video.downloadProgress.isFinished)")
         }
         .onDisappear {
             vlcVideoViewModel.pause()
