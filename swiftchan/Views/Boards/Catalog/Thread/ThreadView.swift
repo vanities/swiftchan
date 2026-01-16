@@ -19,7 +19,7 @@ struct ThreadView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
     @Environment(\.modelContext) private var modelContext
-    @Query private var allFavorites: [FavoriteThread]
+    // @Query private var allFavorites: [FavoriteThread]
 
     @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
@@ -43,7 +43,11 @@ struct ThreadView: View {
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
     private var isFavorited: Bool {
-        allFavorites.contains { $0.threadId == viewModel.id && $0.boardName == viewModel.boardName }
+        // Using direct fetch instead of @Query to avoid observation overhead
+        // that causes watchdog timeout during scene phase changes
+        let descriptor = FetchDescriptor<FavoriteThread>()
+        let allFavorites = (try? modelContext.fetch(descriptor)) ?? []
+        return allFavorites.contains { $0.threadId == viewModel.id && $0.boardName == viewModel.boardName }
     }
 
     init(boardName: String, postNumber: PostNumber) {
@@ -387,6 +391,11 @@ struct ThreadView: View {
 
     private func toggleFavorite() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+        // TODO: fix SwiftData @Query causing crash
+        // Fetch favorites directly instead of using @Query
+        let descriptor = FetchDescriptor<FavoriteThread>()
+        let allFavorites = (try? modelContext.fetch(descriptor)) ?? []
 
         if let existingFavorite = allFavorites.first(where: {
             $0.threadId == viewModel.id && $0.boardName == viewModel.boardName
