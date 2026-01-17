@@ -370,7 +370,6 @@ struct ThreadView: View {
         .background(.regularMaterial)
     }
 
-
     private func fetchAndPrefetchMedia(auto: Bool = false) async {
         let hadPosts = !viewModel.posts.isEmpty
         await viewModel.getPosts()

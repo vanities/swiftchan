@@ -35,19 +35,19 @@ struct RefreshProgressBar: View {
             return Color(red: 1.0, green: 0.2, blue: 0.4) // Hot pink when almost out
         }
     }
-    
+
     private var glowOpacity: Double {
         0.3 + 0.3 * sin(progress * .pi)
     }
-    
+
     private var glowRadius: Double {
         6 + 4 * sin(progress * .pi)
     }
-    
+
     private var pulseOpacity: Double {
         isPaused ? 0.5 : (percentage < 0.2 ? 0.85 + (0.15 * sin(progress * .pi * 4)) : 1.0)
     }
-    
+
     @ViewBuilder
     private func makeProgressBar(width: CGFloat) -> some View {
         ZStack {
@@ -69,13 +69,13 @@ struct RefreshProgressBar: View {
                 .frame(width: width, height: 30)
         }
     }
-    
+
     @ViewBuilder
     private func makeShimmer(width: CGFloat) -> some View {
         HStack(spacing: 0) {
             Spacer()
                 .frame(width: max(0, width * percentage - 20))
-            
+
             Rectangle()
                 .fill(
                     LinearGradient(
@@ -89,7 +89,7 @@ struct RefreshProgressBar: View {
                     )
                 )
                 .frame(width: 20, height: 30)
-            
+
             Spacer()
         }
         .frame(width: width * percentage, height: 30)
@@ -101,11 +101,11 @@ struct RefreshProgressBar: View {
         GeometryReader { geometry in
             let width = geometry.size.width
             let progressWidth = width * percentage
-            
+
             ZStack(alignment: .leading) {
                 // Background
                 backgroundBar(width: width)
-                
+
                 // Progress bar with effects
                 progressBarWithEffects(width: width, progressWidth: progressWidth)
             }
@@ -114,14 +114,14 @@ struct RefreshProgressBar: View {
         .opacity(pulseOpacity)
         .animation(.linear(duration: 0.1), value: percentage)
     }
-    
+
     @ViewBuilder
     private func backgroundBar(width: CGFloat) -> some View {
         CornerWrapShape(isIPhone: UIDevice.current.userInterfaceIdiom == .phone)
             .fill(Color.gray.opacity(0.1))
             .frame(width: width, height: 30)
     }
-    
+
     @ViewBuilder
     private func progressBarWithEffects(width: CGFloat, progressWidth: CGFloat) -> some View {
         makeProgressBar(width: width)
@@ -146,14 +146,14 @@ struct RefreshProgressBar: View {
 
 struct CornerWrapShape: Shape {
     let isIPhone: Bool
-    
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         if isIPhone {
             let cornerRadius: CGFloat = 75
             let barHeight: CGFloat = 3
-            
+
             // Start from bottom left, wrap up the corner
             path.move(to: CGPoint(x: 0, y: rect.height))
             path.addLine(to: CGPoint(x: 0, y: rect.height - cornerRadius))
@@ -161,17 +161,17 @@ struct CornerWrapShape: Shape {
                 to: CGPoint(x: cornerRadius, y: rect.height - barHeight),
                 control: CGPoint(x: 0, y: rect.height - barHeight)
             )
-            
+
             // Straight line across the bottom
             path.addLine(to: CGPoint(x: rect.width - cornerRadius, y: rect.height - barHeight))
-            
+
             // Wrap up the right corner
             path.addQuadCurve(
                 to: CGPoint(x: rect.width, y: rect.height - cornerRadius),
                 control: CGPoint(x: rect.width, y: rect.height - barHeight)
             )
             path.addLine(to: CGPoint(x: rect.width, y: rect.height))
-            
+
             // Close the path along the bottom
             path.addLine(to: CGPoint(x: 0, y: rect.height))
         } else {
@@ -179,7 +179,7 @@ struct CornerWrapShape: Shape {
             let barHeight: CGFloat = 6
             path.addRect(CGRect(x: 0, y: rect.height - barHeight, width: rect.width, height: barHeight))
         }
-        
+
         return path
     }
 }

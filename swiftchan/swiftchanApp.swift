@@ -19,6 +19,6 @@ struct SwiftchanApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: FavoriteThread.self)
+        .modelContainer(for: [FavoriteThread.self, RecurringFavorite.self])
     }
 }

@@ -34,6 +34,7 @@ struct SettingsView: View {
                 #if DEBUG
                 debugSection
                 #endif
+                versionSection
             }
             .navigationTitle("Settings")
             .toast(isPresented: $showCacheDeleteToast, dismissAfter: 1.5) {
@@ -159,6 +160,27 @@ struct SettingsView: View {
         }
     }
     #endif
+
+    var versionSection: some View {
+        Section {
+            HStack {
+                Spacer()
+                Text("swiftchan \(appVersion) (\(buildNumber))")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+        }
+        .listRowBackground(Color.clear)
+    }
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+    }
 }
 
 #if DEBUG

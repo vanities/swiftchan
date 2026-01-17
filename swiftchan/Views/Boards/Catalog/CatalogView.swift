@@ -18,6 +18,7 @@ struct CatalogView: View {
     @State var catalogViewModel: CatalogViewModel
     @State var isShowingMenu: Bool = false
     @State var isSearching: Bool = false
+    @State var showAddRecurringSheet: Bool = false
 
     let columns = [
         GridItem(.flexible(), spacing: 0, alignment: .top),
@@ -59,7 +60,7 @@ struct CatalogView: View {
                         alignment: .center,
                         spacing: 0
                     ) {
-                        ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { index, post in
+                        ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
                             if !post.post.isHidden(boardName: boardName) {
                                 NavigationLink(value: post) {
                                     OPView(
@@ -138,6 +139,19 @@ struct CatalogView: View {
                 }
                 .presentationDetents([.fraction(0.4)])
             }
+            .sheet(isPresented: $showAddRecurringSheet) {
+                AddRecurringFavoriteSheet(
+                    searchPattern: catalogViewModel.searchText,
+                    boardName: boardName,
+                    onSave: {
+                        // Clear search and switch to favorites
+                        catalogViewModel.searchText = ""
+                        isSearching = false
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        appState.selectedTab = .favorites
+                    }
+                )
+            }
             .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
         case .error:
             VStack {
@@ -169,7 +183,7 @@ struct CatalogView: View {
     struct Constants {
         static let refreshIcon = "arrow.clockwise"
     }
-    
+
     @ViewBuilder
     var searchToolbar: some View {
         VStack(spacing: 8) {
@@ -182,7 +196,7 @@ struct CatalogView: View {
                             catalogViewModel.searchFilters.hasMedia.toggle()
                         }
                     )
-                    
+
                     CatalogFilterChip(
                         label: "10+ Replies",
                         isSelected: catalogViewModel.searchFilters.minReplies == 10,
@@ -194,7 +208,7 @@ struct CatalogView: View {
                             }
                         }
                     )
-                    
+
                     CatalogFilterChip(
                         label: "20+ Replies",
                         isSelected: catalogViewModel.searchFilters.minReplies == 20,
@@ -206,7 +220,7 @@ struct CatalogView: View {
                             }
                         }
                     )
-                    
+
                     CatalogFilterChip(
                         label: "5+ Images",
                         isSelected: catalogViewModel.searchFilters.minImages == 5,
@@ -221,14 +235,22 @@ struct CatalogView: View {
                 }
                 .padding(.horizontal)
             }
-            
+
             HStack {
                 Text("\(catalogViewModel.currentSearchResultIndex + 1) of \(catalogViewModel.searchResultIndices.count) threads")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                
+
                 Spacer()
-                
+
+                Button(action: {
+                    showAddRecurringSheet = true
+                }) {
+                    Label("Save /\(catalogViewModel.searchText)/", systemImage: "repeat")
+                        .font(.caption)
+                }
+                .disabled(catalogViewModel.searchText.isEmpty)
+
                 Button(action: {
                     catalogViewModel.jumpToPreviousSearchResult()
                 }) {
@@ -236,7 +258,7 @@ struct CatalogView: View {
                         .padding(8)
                 }
                 .disabled(catalogViewModel.searchResultIndices.isEmpty)
-                
+
                 Button(action: {
                     catalogViewModel.jumpToNextSearchResult()
                 }) {
@@ -256,7 +278,7 @@ struct CatalogFilterChip: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(label)

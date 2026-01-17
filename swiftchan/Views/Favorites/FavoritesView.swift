@@ -19,12 +19,15 @@ struct FavoritesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
     @Query(sort: \FavoriteThread.savedAt, order: .reverse) private var favorites: [FavoriteThread]
+    @Query(sort: \RecurringFavorite.createdAt, order: .reverse) private var recurringFavorites: [RecurringFavorite]
 
     @State private var presentedNavigation = NavigationPath()
     @State private var searchText = ""
     @State private var sortOption: FavoriteSortOption = .savedAt
     @State private var sortAscending = false
     @State private var selectedBoard: String?
+    @State private var selectedRecurring: RecurringFavorite?
+    @State private var recurringViewModel = RecurringFavoriteViewModel()
 
     private var availableBoards: [String] {
         Array(Set(favorites.map { $0.boardName })).sorted()
@@ -66,10 +69,14 @@ struct FavoritesView: View {
         return result
     }
 
+    private var isEmpty: Bool {
+        favorites.isEmpty && recurringFavorites.isEmpty
+    }
+
     var body: some View {
         NavigationStack(path: $presentedNavigation) {
             Group {
-                if favorites.isEmpty {
+                if isEmpty {
                     emptyState
                 } else {
                     favoritesList
@@ -87,6 +94,17 @@ struct FavoritesView: View {
             }
             .navigationDestination(for: ThreadDestination.self) { dest in
                 ThreadView(boardName: dest.board, postNumber: dest.id)
+            }
+            .sheet(item: $selectedRecurring) { recurring in
+                RecurringMatchSheet(
+                    favorite: recurring,
+                    viewModel: recurringViewModel,
+                    onSelect: { post in
+                        presentedNavigation.append(
+                            ThreadDestination(board: post.boardName, id: post.post.no)
+                        )
+                    }
+                )
             }
         }
     }
@@ -164,25 +182,63 @@ struct FavoritesView: View {
         }
     }
 
+    private var filteredRecurringFavorites: [RecurringFavorite] {
+        guard !searchText.isEmpty else { return recurringFavorites }
+        return recurringFavorites.filter { recurring in
+            recurring.searchPattern.localizedCaseInsensitiveContains(searchText) ||
+            recurring.boardName.localizedCaseInsensitiveContains(searchText) ||
+            (recurring.displayName?.localizedCaseInsensitiveContains(searchText) ?? false)
+        }
+    }
+
     private var favoritesList: some View {
         List {
-            if filteredAndSortedFavorites.isEmpty {
-                ContentUnavailableView.search(text: searchText)
-            } else {
-                ForEach(filteredAndSortedFavorites) { favorite in
-                    Button {
-                        presentedNavigation.append(
-                            ThreadDestination(board: favorite.boardName, id: favorite.threadId)
-                        )
-                    } label: {
-                        FavoriteThreadRow(favorite: favorite)
+            if !filteredRecurringFavorites.isEmpty {
+                Section("Recurring Threads") {
+                    ForEach(filteredRecurringFavorites) { recurring in
+                        Button {
+                            selectedRecurring = recurring
+                        } label: {
+                            RecurringFavoriteRow(favorite: recurring)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
+                    .onDelete(perform: deleteRecurringFavorites)
                 }
-                .onDelete(perform: deleteFavorites)
+            }
+
+            if !filteredAndSortedFavorites.isEmpty {
+                Section("Saved Threads") {
+                    ForEach(filteredAndSortedFavorites) { favorite in
+                        Button {
+                            presentedNavigation.append(
+                                ThreadDestination(board: favorite.boardName, id: favorite.threadId)
+                            )
+                        } label: {
+                            FavoriteThreadRow(favorite: favorite)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .onDelete(perform: deleteFavorites)
+                }
+            }
+
+            if filteredAndSortedFavorites.isEmpty && filteredRecurringFavorites.isEmpty && !searchText.isEmpty {
+                ContentUnavailableView.search(text: searchText)
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
+    }
+
+    private func deleteRecurringFavorites(offsets: IndexSet) {
+        withAnimation {
+            let toDelete = offsets.map { filteredRecurringFavorites[$0] }
+            for recurring in toDelete {
+                modelContext.delete(recurring)
+            }
+        }
     }
 
     private func deleteFavorites(offsets: IndexSet) {
@@ -199,6 +255,6 @@ struct FavoritesView: View {
 #Preview {
     FavoritesView()
         .environment(AppState())
-        .modelContainer(for: FavoriteThread.self, inMemory: true)
+        .modelContainer(for: [FavoriteThread.self, RecurringFavorite.self], inMemory: true)
 }
 #endif

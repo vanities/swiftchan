@@ -191,7 +191,7 @@ private struct IndexedContent<Content: View>: View {
     }
 }
 
-fileprivate final class IndexedHostingController<Content: View>: UIHostingController<IndexedContent<Content>> {
+private final class IndexedHostingController<Content: View>: UIHostingController<IndexedContent<Content>> {
     let index: Int
 
     init(index: Int, rootView: IndexedContent<Content>) {

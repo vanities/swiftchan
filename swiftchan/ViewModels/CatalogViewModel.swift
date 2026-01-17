@@ -32,7 +32,7 @@ class CatalogViewModel {
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
-    
+
     var searchText = ""
     var searchFilters = CatalogSearchFilters()
     private(set) var currentSearchResultIndex = 0
@@ -41,10 +41,10 @@ class CatalogViewModel {
     func getFilteredPosts(searchText: String) -> [SwiftchanPost] {
         return getFilteredPostsWithFilters(searchText: searchText, filters: CatalogSearchFilters())
     }
-    
+
     func getFilteredPostsWithFilters(searchText: String = "", filters: CatalogSearchFilters = CatalogSearchFilters()) -> [SwiftchanPost] {
         var filteredPosts = posts
-        
+
         if !searchText.isEmpty {
             let searchTextLowercased = searchText.lowercased()
             filteredPosts = filteredPosts.filter { swiftChanPost in
@@ -53,51 +53,51 @@ class CatalogViewModel {
                 let name = swiftChanPost.post.name?.lowercased() ?? ""
                 let filename = swiftChanPost.post.filename?.lowercased() ?? ""
                 let postNumber = String(swiftChanPost.post.no)
-                
+
                 let searchableText = "\(comment) \(subject) \(name) \(filename) \(postNumber)"
                 return searchableText.contains(searchTextLowercased)
             }
         }
-        
+
         if filters.hasMedia {
             filteredPosts = filteredPosts.filter { $0.post.tim != nil }
         }
-        
+
         if let minReplies = filters.minReplies {
             filteredPosts = filteredPosts.filter { ($0.post.replies ?? 0) >= minReplies }
         }
-        
+
         if let maxReplies = filters.maxReplies {
             filteredPosts = filteredPosts.filter { ($0.post.replies ?? 0) <= maxReplies }
         }
-        
+
         if let minImages = filters.minImages {
             filteredPosts = filteredPosts.filter { ($0.post.images ?? 0) >= minImages }
         }
-        
+
         if let maxImages = filters.maxImages {
             filteredPosts = filteredPosts.filter { ($0.post.images ?? 0) <= maxImages }
         }
-        
+
         return filteredPosts
     }
-    
+
     func updateSearchResults() {
         let filteredPosts = getFilteredPostsWithFilters(searchText: searchText, filters: searchFilters)
         searchResultIndices = filteredPosts.map { post in
             posts.firstIndex(where: { $0.id == post.id }) ?? 0
         }
-        
+
         if currentSearchResultIndex >= searchResultIndices.count {
             currentSearchResultIndex = max(0, searchResultIndices.count - 1)
         }
     }
-    
+
     func jumpToNextSearchResult() {
         guard !searchResultIndices.isEmpty else { return }
         currentSearchResultIndex = (currentSearchResultIndex + 1) % searchResultIndices.count
     }
-    
+
     func jumpToPreviousSearchResult() {
         guard !searchResultIndices.isEmpty else { return }
         if currentSearchResultIndex == 0 {
@@ -106,7 +106,7 @@ class CatalogViewModel {
             currentSearchResultIndex -= 1
         }
     }
-    
+
     func getCurrentSearchResultPostIndex() -> Int? {
         guard !searchResultIndices.isEmpty,
               currentSearchResultIndex < searchResultIndices.count else { return nil }

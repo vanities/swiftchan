@@ -117,7 +117,7 @@ class FourchanService {
                 }
             }
         }
-        
+
         // Sort each post's replies by timestamp
         for (postIndex, replyIndices) in replies {
             replies[postIndex] = replyIndices.sorted { index1, index2 in
@@ -126,7 +126,7 @@ class FourchanService {
                 return time1 < time2
             }
         }
-        
+
         return replies
     }
 }

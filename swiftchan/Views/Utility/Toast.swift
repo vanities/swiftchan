@@ -72,7 +72,6 @@ enum ToastStyle {
     }
 }
 
-
 // MARK: - Legacy Toast Support (for compatibility)
 
 struct Toast<T>: View {
