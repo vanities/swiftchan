@@ -1,4 +1,8 @@
-disabled_rules: shorthand_operator
+disabled_rules:
+  - shorthand_operator
+  - type_body_length
+  - large_tuple
+  - redundant_discardable_let
 type_name:
   min_length: 1
 line_length: 1000

@@ -129,7 +129,11 @@ final class CacheManager: @unchecked Sendable {
                     self.metadata.removeValue(forKey: entry.url)
                     debugPrint("🗑️ Evicted: \(fileURL.lastPathComponent) (\(entry.fileSize / 1_048_576)MB)")
                 } catch {
-                    debugPrint("Failed to evict \(fileURL.path): \(error)")
+                    // Silently skip files that are in use (error code 4 = file busy)
+                    let nsError = error as NSError
+                    if nsError.domain != NSCocoaErrorDomain || nsError.code != 4 {
+                        debugPrint("Failed to evict \(fileURL.path): \(error)")
+                    }
                 }
             }
 

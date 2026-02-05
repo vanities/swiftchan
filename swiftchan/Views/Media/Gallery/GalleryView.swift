@@ -107,7 +107,6 @@ struct GalleryView: View {
             }
         }
         .onDisappear {
-            appState.vlcPlayerControlModifier = nil
             restorePagerScrolling()
             sheetPresentationController?.presentedViewController.isModalInPresentation = false
         }

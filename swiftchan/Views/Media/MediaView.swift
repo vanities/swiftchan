@@ -29,7 +29,7 @@ struct MediaView: View {
                     canGesture: false
                 )
 
-                VLCContainerView(
+                VideoContainerView(
                     url: media.url,
                     isSelected: media.isSelected
                 )
@@ -44,7 +44,7 @@ struct MediaView: View {
                     canGesture: false
                 )
 
-                VLCContainerView(
+                VideoContainerView(
                     url: media.url,
                     isSelected: media.isSelected
                 )

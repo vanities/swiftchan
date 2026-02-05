@@ -13,7 +13,6 @@ import LocalAuthentication
 @Observable @MainActor
 class AppState {
     var showingCatalogMenu: Bool = false
-    var vlcPlayerControlModifier: VLCPlayerControlModifier?
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
     var selectedTab: Tabs = .boards
