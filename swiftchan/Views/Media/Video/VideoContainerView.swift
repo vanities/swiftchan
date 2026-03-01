@@ -19,22 +19,12 @@ struct VideoContainerView: View {
     @State private var showControls = false
     @State private var controlsHideTask: Task<Void, Never>?
     @State private var isPlaying = false
+    @State private var isSeeking = false
 
-    enum DownloadState: Equatable {
+    enum DownloadState {
         case idle
-        case downloading(progress: Double)
         case ready
         case error(String)
-
-        static func == (lhs: DownloadState, rhs: DownloadState) -> Bool {
-            switch (lhs, rhs) {
-            case (.idle, .idle): return true
-            case (.downloading(let a), .downloading(let b)): return a == b
-            case (.ready, .ready): return true
-            case (.error(let a), .error(let b)): return a == b
-            default: return false
-            }
-        }
     }
 
     var body: some View {
@@ -68,20 +58,19 @@ struct VideoContainerView: View {
                 VideoPlayerControlsView(
                     coordinator: coordinator,
                     isPlaying: $isPlaying,
-                    onSeekChanged: onSeekChanged
+                    onSeekChanged: { seeking in
+                        isSeeking = seeking
+                        if seeking {
+                            // Keep controls visible during seek
+                            controlsHideTask?.cancel()
+                        } else {
+                            // Restart hide timer after seek completes
+                            scheduleControlsHide()
+                        }
+                        onSeekChanged?(seeking)
+                    }
                 )
                 .opacity(showControls ? 1 : 0)
-            }
-
-            // Download progress overlay
-            if case .downloading(let progress) = downloadState {
-                VStack {
-                    Text("Downloading")
-                        .foregroundColor(.white)
-                    Text("\(Int(progress * 100))%")
-                        .foregroundColor(.white)
-                        .font(.title)
-                }
             }
 
             if case .error(let msg) = downloadState {
@@ -98,7 +87,7 @@ struct VideoContainerView: View {
                 }
         )
         .task {
-            await download()
+            await loadVideo()
         }
         .onChange(of: isSelected) { _, selected in
             if !selected {
@@ -124,15 +113,14 @@ struct VideoContainerView: View {
         }
     }
 
-    private func download() async {
-        // Skip if already downloaded or downloading
+    private func loadVideo() async {
+        // Skip if already ready
         if case .ready = downloadState { return }
-        if case .downloading = downloadState { return }
         if fileURL != nil { return }
 
         let cacheURL = CacheManager.shared.cacheURL(url)
 
-        // Check cache first
+        // Check cache first - instant local playback
         if CacheManager.shared.cacheHit(file: cacheURL) {
             if CacheManager.shared.isValidVideoFile(file: cacheURL) {
                 debugPrint("🎬 Cache hit for \(url.lastPathComponent)")
@@ -144,64 +132,39 @@ struct VideoContainerView: View {
                 try? FileManager.default.removeItem(at: cacheURL)
             }
         }
-        debugPrint("🎬 Cache miss, downloading: \(url.lastPathComponent)")
 
-        // Download with retry logic
-        var retryCount = 0
-        let maxRetries = 3
+        debugPrint("🎬 Cache miss, streaming: \(url.lastPathComponent)")
 
-        while retryCount < maxRetries {
-            do {
-                downloadState = .downloading(progress: 0)
+        // Stream immediately from remote URL - KSPlayer handles buffering
+        fileURL = url
+        downloadState = .ready
 
-                // Use delegate-based download for progress tracking
-                let (tempURL, response) = try await downloadWithProgress(url: url) { progress in
-                    Task { @MainActor in
-                        self.downloadState = .downloading(progress: progress)
-                    }
-                }
-
-                if let httpResponse = response as? HTTPURLResponse,
-                   httpResponse.statusCode != 200 {
-                    throw URLError(.badServerResponse)
-                }
-
-                // Cache and validate
-                guard let cached = CacheManager.shared.cache(tempURL, cacheURL, originalURL: url) else {
-                    throw URLError(.cannotCreateFile)
-                }
-
-                guard CacheManager.shared.isValidVideoFile(file: cached) else {
-                    try? FileManager.default.removeItem(at: cached)
-                    throw URLError(.cannotParseResponse)
-                }
-
-                fileURL = cached
-                downloadState = .ready
-                return
-
-            } catch {
-                retryCount += 1
-                if retryCount >= maxRetries {
-                    downloadState = .error("Download failed")
-                    return
-                }
-                let delay = Double(retryCount) * 1.0
-                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-            }
-        }
+        // Cache in background for future plays
+        await cacheInBackground(remoteURL: url, cacheURL: cacheURL)
     }
 
-    private func downloadWithProgress(url: URL, onProgress: @escaping (Double) -> Void) async throws -> (URL, URLResponse) {
-        try await withCheckedThrowingContinuation { continuation in
-            let delegate = DownloadDelegate(onProgress: onProgress) { result in
-                continuation.resume(with: result)
-            }
+    private func cacheInBackground(remoteURL: URL, cacheURL: URL) async {
+        // Skip if already cached (prefetcher may have finished)
+        guard !CacheManager.shared.cacheHit(file: cacheURL) else { return }
 
-            let task = URLSession.shared.downloadTask(with: url)
-            objc_setAssociatedObject(task, "delegate", delegate, .OBJC_ASSOCIATION_RETAIN)
-            task.delegate = delegate
-            task.resume()
+        do {
+            let (tempURL, response) = try await URLSession.shared.download(from: remoteURL)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else { return }
+
+            let persistentTemp = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension(remoteURL.pathExtension)
+            try FileManager.default.moveItem(at: tempURL, to: persistentTemp)
+
+            if let cached = CacheManager.shared.cache(persistentTemp, cacheURL, originalURL: remoteURL),
+               CacheManager.shared.isValidVideoFile(file: cached) {
+                debugPrint("🎬 Background cached: \(cached.lastPathComponent)")
+            }
+        } catch {
+            // Non-critical - video is already streaming
+            debugPrint("🎬 Background cache failed: \(error.localizedDescription)")
         }
     }
 
@@ -212,63 +175,30 @@ struct VideoContainerView: View {
     }
 
     private func toggleControls() {
+        // Don't toggle off while seeking
+        if isSeeking && showControls { return }
+
         controlsHideTask?.cancel()
         withAnimation(.linear(duration: 0.2)) {
             showControls.toggle()
         }
         if showControls {
-            controlsHideTask = Task {
-                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                guard !Task.isCancelled else { return }
-                await MainActor.run {
-                    withAnimation(.linear(duration: 0.2)) {
-                        showControls = false
-                    }
+            scheduleControlsHide()
+        }
+    }
+
+    private func scheduleControlsHide() {
+        controlsHideTask?.cancel()
+        controlsHideTask = Task {
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard !Task.isCancelled else { return }
+            // Don't hide while seeking
+            guard !isSeeking else { return }
+            await MainActor.run {
+                withAnimation(.linear(duration: 0.2)) {
+                    showControls = false
                 }
             }
-        }
-    }
-}
-
-// MARK: - Download Delegate
-private class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
-    let onProgress: (Double) -> Void
-    let onCompletion: (Result<(URL, URLResponse), Error>) -> Void
-
-    init(onProgress: @escaping (Double) -> Void, completion: @escaping (Result<(URL, URLResponse), Error>) -> Void) {
-        self.onProgress = onProgress
-        self.onCompletion = completion
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        // Move to a persistent temp location before the system deletes it
-        let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension(downloadTask.originalRequest?.url?.pathExtension ?? "tmp")
-        do {
-            try FileManager.default.moveItem(at: location, to: tempURL)
-            if let response = downloadTask.response {
-                onCompletion(.success((tempURL, response)))
-            } else {
-                onCompletion(.failure(URLError(.badServerResponse)))
-            }
-        } catch {
-            onCompletion(.failure(error))
-        }
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
-                    didWriteData bytesWritten: Int64, totalBytesWritten: Int64,
-                    totalBytesExpectedToWrite: Int64) {
-        if totalBytesExpectedToWrite > 0 {
-            let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
-            onProgress(progress)
-        }
-    }
-
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        if let error = error {
-            onCompletion(.failure(error))
         }
     }
 }

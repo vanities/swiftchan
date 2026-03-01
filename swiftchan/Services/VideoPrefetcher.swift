@@ -15,8 +15,9 @@ class VideoPrefetcher {
     private let operationsQueue = DispatchQueue(label: "com.swiftchan.videoprefetcher", attributes: .concurrent)
 
     init() {
-        queue.maxConcurrentOperationCount = 3
-        queue.underlyingQueue = .global()
+        queue.maxConcurrentOperationCount = 4
+        queue.qualityOfService = .utility
+        queue.underlyingQueue = .global(qos: .utility)
     }
 
     func addOperation(_ operation: DownloadOperation, for url: URL) {

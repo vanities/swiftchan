@@ -9,8 +9,10 @@
 import Foundation
 
 class DownloadOperation: Operation, @unchecked Sendable {
-    var task: URLSessionDownloadTask!
+    private(set) var task: URLSessionDownloadTask!
     let downloadTaskURL: URL
+
+    private let stateLock = NSRecursiveLock()
 
     enum OperationState: Int {
         case ready
@@ -18,16 +20,22 @@ class DownloadOperation: Operation, @unchecked Sendable {
         case finished
     }
 
-    // default state is ready (when the operation is created)
-    private var state: OperationState = .ready {
-        willSet {
-            self.willChangeValue(forKey: "isExecuting")
-            self.willChangeValue(forKey: "isFinished")
-        }
+    private var _state: OperationState = .ready
 
-        didSet {
-            self.didChangeValue(forKey: "isExecuting")
-            self.didChangeValue(forKey: "isFinished")
+    private var state: OperationState {
+        get {
+            stateLock.lock()
+            defer { stateLock.unlock() }
+            return _state
+        }
+        set {
+            stateLock.lock()
+            willChangeValue(forKey: "isExecuting")
+            willChangeValue(forKey: "isFinished")
+            _state = newValue
+            didChangeValue(forKey: "isExecuting")
+            didChangeValue(forKey: "isFinished")
+            stateLock.unlock()
         }
     }
 
@@ -40,50 +48,37 @@ class DownloadOperation: Operation, @unchecked Sendable {
         super.init()
 
         task = session.downloadTask(with: downloadTaskURL, completionHandler: { [weak self] (localURL, response, error) in
+            completionHandler?(localURL, response, error)
 
-            /*
-            if there is a custom completionHandler defined,
-            pass the result gotten in downloadTask's completionHandler to the
-            custom completionHandler
-            */
-            if let completionHandler = completionHandler {
-                // localURL is the temporary URL the downloaded file is located
-                completionHandler(localURL, response, error)
+            // Only mark finished if we were actually executing.
+            // Cancelled-before-start is handled by start() seeing isCancelled.
+            if self?.isExecuting == true {
+                self?.state = .finished
             }
-
-           /*
-             set the operation state to finished once
-             the download task is completed or have error
-           */
-            self?.state = .finished
         })
     }
 
     override func start() {
-      /*
-      if the operation or queue got cancelled even
-      before the operation has started, set the
-      operation state to finished and return
-      */
-      if self.isCancelled {
-          state = .finished
-          return
-      }
+        if self.isCancelled {
+            state = .finished
+            return
+        }
 
-      // set the state to executing
-      state = .executing
+        state = .executing
 
-      debugPrint("downloading \(task.originalRequest?.url?.absoluteString ?? "")")
+        debugPrint("downloading \(task.originalRequest?.url?.absoluteString ?? "")")
+        self.task.resume()
+    }
 
-      // start the downloading
-      self.task.resume()
-  }
+    override func cancel() {
+        super.cancel()
 
-  override func cancel() {
-      super.cancel()
+        // If the operation hasn't started yet, mark finished so the queue can clean it up.
+        // If it's executing, the completion handler will handle the transition.
+        if state == .ready {
+            state = .finished
+        }
 
-      // cancel the downloading
-      task.cancel()
-      debugPrint("canceling \(task.originalRequest?.url?.absoluteString ?? "")")
-  }
+        task.cancel()
+    }
 }

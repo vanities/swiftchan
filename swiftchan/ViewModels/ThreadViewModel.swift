@@ -306,7 +306,7 @@ final class ThreadViewModel {
         var index = 0
         for (mediaUrl, thumbnailMediaUrl) in zip(mediaUrls, thumbnailMediaUrls) {
             var media = Media(index: index, url: mediaUrl, thumbnailUrl: thumbnailMediaUrl)
-            if media.format == .webm {
+            if media.format == .webm || media.format == .mp4 {
                 if let cacheUrl = CacheManager.shared.getCacheValue(media.url) {
                     media = Media(index: index, url: cacheUrl, thumbnailUrl: thumbnailMediaUrl)
                 }

@@ -21,7 +21,7 @@ class Prefetcher {
     private var lastPrefetchIndex: Int = -1
     private var lastVideoUrls: [URL] = []
 
-    func prefetch(urls: [URL], currentIndex: Int = 0, prefetchWindow: Int = 5) {
+    func prefetch(urls: [URL], currentIndex: Int = 0, prefetchWindow: Int = 8) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
         prefetchImages(urls: imageUrls)
 

@@ -100,16 +100,25 @@ final class CacheManager: @unchecked Sendable {
         queue.sync(flags: .barrier) { [weak self] in
             guard let self = self else { return }
 
-            // First, remove any stale metadata for the URL we're about to cache
-            // This prevents the new file from being immediately evicted
+            // Remove stale metadata for the URL we're about to cache
             if let excludingURL = excludingURL {
                 self.metadata.removeValue(forKey: excludingURL)
+            }
+
+            // Clean up stale metadata (files deleted by the OS or missing from disk)
+            let staleKeys = self.metadata.filter { _, entry in
+                !self.fileManager.fileExists(atPath: entry.filePath)
+            }.map { $0.key }
+            if !staleKeys.isEmpty {
+                for key in staleKeys {
+                    self.metadata.removeValue(forKey: key)
+                }
+                debugPrint("📦 Cleaned up \(staleKeys.count) stale cache entries")
             }
 
             var currentSize = self.metadata.values.reduce(0) { $0 + $1.fileSize }
             let sizeAfterAdd = currentSize + targetSize
 
-            // Only evict if we'll exceed the limit
             guard sizeAfterAdd > self.maxCacheSize else { return }
 
             let sizeToFree = sizeAfterAdd - self.maxCacheSize
@@ -129,11 +138,8 @@ final class CacheManager: @unchecked Sendable {
                     self.metadata.removeValue(forKey: entry.url)
                     debugPrint("🗑️ Evicted: \(fileURL.lastPathComponent) (\(entry.fileSize / 1_048_576)MB)")
                 } catch {
-                    // Silently skip files that are in use (error code 4 = file busy)
-                    let nsError = error as NSError
-                    if nsError.domain != NSCocoaErrorDomain || nsError.code != 4 {
-                        debugPrint("Failed to evict \(fileURL.path): \(error)")
-                    }
+                    // Skip files in use — they'll be evicted on a future pass
+                    continue
                 }
             }
 

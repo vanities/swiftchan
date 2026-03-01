@@ -14,7 +14,7 @@ struct VideoPlayerControlsView: View {
     var onSeekChanged: ((Bool) -> Void)?
 
     @State private var sliderValue: Double = 0
-    @State private var isDragging = false
+    @State private var isSeeking = false
     @State private var currentTimeText: String = "--:--"
     @State private var remainingTimeText: String = "--:--"
     @State private var timerTask: Task<Void, Never>?
@@ -61,21 +61,30 @@ struct VideoPlayerControlsView: View {
     }
 
     private func sliderEditingChanged(editing: Bool) {
-        isDragging = editing
         if editing {
+            isSeeking = true
             onSeekChanged?(true)
             coordinator.playerLayer?.pause()
         } else {
-            if let playerLayer = coordinator.playerLayer {
-                let duration = playerLayer.player.duration
-                let seekTime = duration * sliderValue
-                playerLayer.seek(time: seekTime, autoPlay: true) { _ in
-                    Task { @MainActor in
-                        self.isPlaying = true
-                    }
+            guard let playerLayer = coordinator.playerLayer else {
+                isSeeking = false
+                onSeekChanged?(false)
+                return
+            }
+            let duration = playerLayer.player.duration
+            guard duration > 0, !duration.isNaN, !duration.isInfinite else {
+                isSeeking = false
+                onSeekChanged?(false)
+                return
+            }
+            let seekTime = duration * sliderValue
+            playerLayer.seek(time: seekTime, autoPlay: true) { _ in
+                Task { @MainActor in
+                    self.isSeeking = false
+                    self.isPlaying = true
+                    self.onSeekChanged?(false)
                 }
             }
-            onSeekChanged?(false)
         }
     }
 
@@ -96,14 +105,15 @@ struct VideoPlayerControlsView: View {
         guard let playerLayer = coordinator.playerLayer else { return }
         let current = playerLayer.player.currentPlaybackTime
         let duration = playerLayer.player.duration
-        guard duration > 0 else { return }
+        guard duration > 0, !duration.isNaN, !duration.isInfinite else { return }
 
-        if !isDragging {
+        if !isSeeking {
             sliderValue = current / duration
         }
 
-        let remaining = current - duration
-        currentTimeText = formatTime(current)
+        let displayTime = isSeeking ? duration * sliderValue : current
+        let remaining = displayTime - duration
+        currentTimeText = formatTime(displayTime)
         remainingTimeText = formatTime(remaining)
     }
 
