@@ -25,12 +25,12 @@ struct CatalogView: View {
         GridItem(.flexible(), spacing: 0, alignment: .top)
     ]
 
-    var scene: SKScene {
-        let scene = SnowScene()
-        scene.scaleMode = .resizeFill
-        scene.backgroundColor = .clear
-        return scene
-    }
+    @State private var scene: SKScene = {
+        let s = SnowScene()
+        s.scaleMode = .resizeFill
+        s.backgroundColor = .clear
+        return s
+    }()
 
     init(boardName: String) {
         self.boardName = boardName
@@ -60,6 +60,7 @@ struct CatalogView: View {
                         alignment: .center,
                         spacing: 0
                     ) {
+                        let highlightedPostIndex = catalogViewModel.getCurrentSearchResultPostIndex()
                         ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
                             if !post.post.isHidden(boardName: boardName) {
                                 NavigationLink(value: post) {
@@ -70,8 +71,8 @@ struct CatalogView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 .id(post.id)
-                                .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
-                                       (catalogViewModel.searchResultIndices[catalogViewModel.currentSearchResultIndex] == catalogViewModel.posts.firstIndex(where: { $0.id == post.id }) ? 1.0 : 0.5) : 1.0)
+                                .opacity(isSearching && highlightedPostIndex != nil ?
+                                       (post.index == highlightedPostIndex ? 1.0 : 0.5) : 1.0)
                             }
                         }
                     }

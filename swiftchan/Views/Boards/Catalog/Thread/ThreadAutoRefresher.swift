@@ -8,10 +8,13 @@ class ThreadAutoRefresher {
     var isActive: Bool = true
 
     private var timerCancellable: AnyCancellable?
+    private var cachedRefreshEnabled: Bool = false
+    private var cachedRefreshTime: Int = 10
 
     var onRefresh: (() -> Void)?
 
     init() {
+        updateCachedSettings()
         resetTimer()
         startTimer()
     }
@@ -20,9 +23,15 @@ class ThreadAutoRefresher {
         cancelTimer()
     }
 
+    func updateCachedSettings() {
+        cachedRefreshEnabled = UserDefaults.getAutoRefreshEnabled()
+        cachedRefreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
+    }
+
     func startTimer() {
         cancelTimer()
         isActive = true
+        updateCachedSettings()
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -37,7 +46,7 @@ class ThreadAutoRefresher {
     }
 
     private func timerTick() {
-        guard isActive, !pauseAutoRefresh, UserDefaults.getAutoRefreshEnabled() else { return }
+        guard isActive, !pauseAutoRefresh, cachedRefreshEnabled else { return }
 
         secondsRemaining -= 1
 
@@ -48,13 +57,10 @@ class ThreadAutoRefresher {
     }
 
     func resetTimer() {
-        let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
-        secondsRemaining = refreshTime
+        secondsRemaining = cachedRefreshTime
     }
 
-    /// Progress from 0.0 to 1.0 representing time remaining
     var progress: Double {
-        let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
-        return Double(secondsRemaining) / Double(refreshTime)
+        Double(secondsRemaining) / Double(cachedRefreshTime)
     }
 }

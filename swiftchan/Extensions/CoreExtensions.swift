@@ -7,14 +7,18 @@
 
 import SwiftUI
 
-internal func getFlag(from countryCode: String) -> String {
+private var flagCache = [String: String]()
 
-    return countryCode
-        .unicodeScalars
-        .map({ 127397 + $0.value })
-        .compactMap(UnicodeScalar.init)
-        .map(String.init)
-        .joined()
+internal func getFlag(from countryCode: String) -> String {
+    if let cached = flagCache[countryCode] { return cached }
+    var result = ""
+    for scalar in countryCode.unicodeScalars {
+        if let flag = UnicodeScalar(127397 + scalar.value) {
+            result.append(Character(flag))
+        }
+    }
+    flagCache[countryCode] = result
+    return result
 }
 
 extension CGPoint {
@@ -169,23 +173,33 @@ extension String {
 
 extension Color {
 
+    private static var colorCache = [String: Color]()
+    private static var colorLightnessCache = [String: Bool]()
+
     static func randomColor(seed: String) -> Color {
+        if let cached = colorCache[seed] { return cached }
 
-        var total: Int = 0
-        for u in seed.unicodeScalars {
-            total += Int(UInt32(u))
+        var hash = seed.unicodeScalars.reduce(5381) { result, scalar in
+            ((result << 5) &+ result) &+ Int(scalar.value)
         }
+        // Ensure positive
+        hash = abs(hash)
+        let r = Double((hash >> 0) & 0xFF) / 255.0
+        let g = Double((hash >> 8) & 0xFF) / 255.0
+        let b = Double((hash >> 16) & 0xFF) / 255.0
+        let color = Color(red: r, green: g, blue: b)
+        colorCache[seed] = color
+        // Pre-cache lightness too
+        let brightness = (r * 299 + g * 587 + b * 114) / 1000
+        colorLightnessCache[seed] = brightness > 0.5
+        return color
+    }
 
-        srand48(total * 200)
-        let red = drand48()
-
-        srand48(total)
-        let green = drand48()
-
-        srand48(total / 200)
-        let blue = drand48()
-
-        return Color(red: red, green: green, blue: blue)
+    static func isRandomColorLight(seed: String) -> Bool {
+        if let cached = colorLightnessCache[seed] { return cached }
+        // Trigger color generation which populates both caches
+        _ = randomColor(seed: seed)
+        return colorLightnessCache[seed] ?? true
     }
 }
 
@@ -403,41 +417,35 @@ extension OutputStream {
 }
 
 extension Date {
-    static func isFourchanBday() -> Bool {
-        var day = DateComponents()
-        day.month = 10
-        day.day = 1
-        day.year = Calendar.current.component(.year, from: Date())
-        if let date = Calendar.current.date(from: day) {
-            return Calendar.current.isDateInToday(date)
+    private static var _isFourchanBdayCached: Bool?
+    private static var _isChristmasCached: Bool?
+    private static var _cachedDay: Int?
+
+    private static func refreshCacheIfNeeded() {
+        let today = Calendar.current.component(.day, from: Date())
+        if _cachedDay != today {
+            _cachedDay = today
+            _isFourchanBdayCached = nil
+            _isChristmasCached = nil
         }
-        return false
+    }
+
+    static func isFourchanBday() -> Bool {
+        refreshCacheIfNeeded()
+        if let cached = _isFourchanBdayCached { return cached }
+        let components = Calendar.current.dateComponents([.month, .day], from: Date())
+        let result = components.month == 10 && components.day == 1
+        _isFourchanBdayCached = result
+        return result
     }
 
     static func isChristmas() -> Bool {
-        var christmasEve = DateComponents()
-        christmasEve.month = 12
-        christmasEve.day = 24
-        christmasEve.year = Calendar.current.component(.year, from: Date())
-
-        var christmas = DateComponents()
-        christmas.month = 12
-        christmas.day = 25
-        christmas.year = Calendar.current.component(.year, from: Date())
-
-        var christmasAfter = DateComponents()
-        christmasAfter.month = 12
-        christmasAfter.day = 26
-        christmasAfter.year = Calendar.current.component(.year, from: Date())
-
-        if let christmasEveDate = Calendar.current.date(from: christmasEve),
-           let christmasDate = Calendar.current.date(from: christmas),
-           let christmasAfterDate = Calendar.current.date(from: christmasAfter) {
-            return Calendar.current.isDateInToday(christmasEveDate) ||
-                Calendar.current.isDateInToday(christmasDate) ||
-                Calendar.current.isDateInToday(christmasAfterDate)
-        }
-        return false
+        refreshCacheIfNeeded()
+        if let cached = _isChristmasCached { return cached }
+        let components = Calendar.current.dateComponents([.month, .day], from: Date())
+        let result = components.month == 12 && (components.day == 24 || components.day == 25 || components.day == 26)
+        _isChristmasCached = result
+        return result
     }
 }
 

@@ -96,7 +96,7 @@ struct PostView: View {
                             if let id = post.pid {
                                 let color = Color.randomColor(seed: id)
                                 Text(id.description)
-                                    .foregroundColor(color.isLight() ? .black : .white)
+                                    .foregroundColor(Color.isRandomColorLight(seed: id) ? .black : .white)
                                     .background(
                                         Rectangle()
                                             .fill(color)

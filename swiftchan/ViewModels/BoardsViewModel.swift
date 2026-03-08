@@ -44,43 +44,20 @@ final class BoardsViewModel {
         downloadProgress.completedUnitCount = 0
 
         do {
-            // Phase 1: Fetching board list (0-60%)
-            await updateProgress(20, message: "Fetching board list...")
+            progressText = "Fetching board list..."
 
             let result = try await FourChanAsyncService.shared.getBoards { progress in
-                // Map API progress to our 20-60% range
                 let mappedProgress = Int64(20 + (progress * 40))
                 self.downloadProgress.completedUnitCount = mappedProgress
             }
 
-            // Phase 2: Processing boards (60-90%)
-            await updateProgress(60, message: "Processing boards...")
-
-            // Simulate processing time for board data
-            let boardCount = result.boards.count
-            for (index, _) in result.boards.enumerated() {
-                if index % max(1, boardCount / 10) == 0 {
-                    let processingProgress = 60 + Int64((Double(index) / Double(boardCount)) * 30)
-                    await updateProgress(processingProgress, message: "Processing boards...")
-                }
-            }
-
             boards = result.boards
-
-            // Phase 3: Complete (100%)
-            await updateProgress(100, message: "Complete!")
+            downloadProgress.completedUnitCount = 100
             state = boards.isEmpty ? .error : .loaded
         } catch {
             boards = []
             state = .error
         }
-    }
-
-    private func updateProgress(_ progress: Int64, message: String) async {
-        downloadProgress.completedUnitCount = progress
-        progressText = message
-        // Small delay to make progress visible
-        try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
     }
 
     func getAllBoards(favorites: [String], searchText: String) -> [Board] {

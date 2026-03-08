@@ -33,12 +33,12 @@ struct ThreadView: View {
     @State private var autoRefreshToastMessage: String = ""
     @State private var isSearching: Bool = false
 
-    var scene: SKScene {
-        let scene = SnowScene()
-        scene.scaleMode = .resizeFill
-        scene.backgroundColor = .clear
-        return scene
-    }
+    @State private var scene: SKScene = {
+        let s = SnowScene()
+        s.scaleMode = .resizeFill
+        s.backgroundColor = .clear
+        return s
+    }()
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 

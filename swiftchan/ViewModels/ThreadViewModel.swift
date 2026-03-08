@@ -125,7 +125,7 @@ final class ThreadViewModel {
 
         do {
             // Phase 1: Fetching thread data (0-40%)
-            await updateProgress(30, message: "Fetching thread data...")
+            updateProgress(30, message: "Fetching thread data...")
 
             let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { [weak self] progress in
                 // Map API progress to our 0-40% range
@@ -136,7 +136,7 @@ final class ThreadViewModel {
 
             if posts.count > 0 {
                 // Phase 2: Processing posts (40-80%)
-                await updateProgress(40, message: "Processing posts...")
+                updateProgress(40, message: "Processing posts...")
 
                 var mediaUrls: [URL] = []
                 var thumbnailMediaUrls: [URL] = []
@@ -151,7 +151,7 @@ final class ThreadViewModel {
                     // Update progress during post processing
                     if index % max(1, posts.count / 10) == 0 {
                         let processingProgress = 40 + Int64((Double(index) / Double(posts.count)) * 40)
-                        await updateProgress(processingProgress, message: "Processing posts...")
+                        updateProgress(processingProgress, message: "Processing posts...")
                     }
                     if let mediaUrl = post.getMediaUrl(boardId: boardName), let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
                         mapping[postIndex] = mediaIndex
@@ -171,11 +171,11 @@ final class ThreadViewModel {
                 }
 
                 // Phase 3: Processing replies (80-90%)
-                await updateProgress(80, message: "Processing replies...")
+                updateProgress(80, message: "Processing replies...")
                 let replies = FourchanService.getReplies(postReplies: postReplies, posts: posts)
 
                 // Phase 4: Loading media (90-100%)
-                await updateProgress(90, message: "Loading media...")
+                updateProgress(90, message: "Loading media...")
                 self.posts = posts
                 self.postMediaMapping = mapping
                 self.rawComments = rawComs
@@ -186,7 +186,7 @@ final class ThreadViewModel {
                 setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
 
                 // Phase 5: Complete
-                await updateProgress(100, message: "Complete!")
+                updateProgress(100, message: "Complete!")
                 state = .loaded
             } else if self.posts.isEmpty {
                 errorType = .notFound
@@ -233,14 +233,14 @@ final class ThreadViewModel {
         setupProgressTracking()
 
         do {
-            await updateProgress(20, message: "Fetching from archive...")
+            updateProgress(20, message: "Fetching from archive...")
 
             let archiveThread = try await FourplebsService.shared.getThread(
                 board: boardName,
                 threadNum: id
             )
 
-            await updateProgress(50, message: "Processing archived posts...")
+            updateProgress(50, message: "Processing archived posts...")
 
             let fourplebsPosts = archiveThread.getAllPosts()
             let convertedPosts = archiveThread.toPosts(board: boardName)
@@ -258,7 +258,7 @@ final class ThreadViewModel {
                 for (index, fourplebsPost) in fourplebsPosts.enumerated() {
                     if index % max(1, fourplebsPosts.count / 10) == 0 {
                         let processingProgress = 50 + Int64((Double(index) / Double(fourplebsPosts.count)) * 30)
-                        await updateProgress(processingProgress, message: "Processing archived posts...")
+                        updateProgress(processingProgress, message: "Processing archived posts...")
                     }
 
                     // Use direct media URLs from 4plebs API
@@ -284,10 +284,10 @@ final class ThreadViewModel {
                     postIndex += 1
                 }
 
-                await updateProgress(85, message: "Processing replies...")
+                updateProgress(85, message: "Processing replies...")
                 let replies = FourchanService.getReplies(postReplies: postReplies, posts: convertedPosts)
 
-                await updateProgress(95, message: "Loading media...")
+                updateProgress(95, message: "Loading media...")
                 self.posts = convertedPosts
                 self.postMediaMapping = mapping
                 self.rawComments = rawComs
@@ -297,7 +297,7 @@ final class ThreadViewModel {
                 self.buildPostIdIndex()
                 setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
 
-                await updateProgress(100, message: "Complete!")
+                updateProgress(100, message: "Complete!")
                 state = .loaded
             } else {
                 errorType = .notFound
@@ -323,11 +323,9 @@ final class ThreadViewModel {
         print("Archive thread /\(boardName)/-\(id) got \(self.posts.count) posts.")
     }
 
-    private func updateProgress(_ progress: Int64, message: String) async {
+    private func updateProgress(_ progress: Int64, message: String) {
         downloadProgress.completedUnitCount = progress
         progressText = message
-        // Small delay to make progress visible
-        try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
     }
 
     private func getMedia(mediaUrls: [URL], thumbnailMediaUrls: [URL]) -> [Media] {

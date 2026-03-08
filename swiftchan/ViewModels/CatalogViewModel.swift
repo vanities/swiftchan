@@ -104,9 +104,7 @@ class CatalogViewModel {
 
     func updateSearchResults() {
         let filteredPosts = getFilteredPostsWithFilters(searchText: searchText, filters: searchFilters)
-        searchResultIndices = filteredPosts.map { post in
-            posts.firstIndex(where: { $0.id == post.id }) ?? 0
-        }
+        searchResultIndices = filteredPosts.map { $0.index }
 
         if currentSearchResultIndex >= searchResultIndices.count {
             currentSearchResultIndex = max(0, searchResultIndices.count - 1)
@@ -155,40 +153,21 @@ class CatalogViewModel {
         state = .loading
         downloadProgress.totalUnitCount = 100
         downloadProgress.completedUnitCount = 0
+        progressText = "Fetching /\(boardName)/ catalog..."
 
         do {
-            // Phase 1: Fetching catalog data (0-40%)
-            await updateProgress(20, message: "Fetching /\(boardName)/ catalog...")
-
             let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: boardName) { [weak self] progress in
                 DispatchQueue.main.async {
-                    // Map API progress to our 20-40% range
-                    let mappedProgress = Int64(20 + (progress * 20))
+                    let mappedProgress = Int64(20 + (progress * 40))
                     self?.downloadProgress.completedUnitCount = mappedProgress
                 }
             }
 
-            // Phase 2: Processing threads (40-90%)
-            await updateProgress(40, message: "Processing threads...")
-
             var tempPosts: [SwiftchanPost] = []
             var index = 0
-            var totalThreads = 0
 
-            // Count total threads for progress calculation
-            for page in catalog {
-                totalThreads += page.threads.count
-            }
-
-            var processedThreads = 0
             for page in catalog {
                 for thread in page.threads {
-                    // Update progress every 10% of threads
-                    if processedThreads % max(1, totalThreads / 10) == 0 {
-                        let processingProgress = 40 + Int64((Double(processedThreads) / Double(totalThreads)) * 50)
-                        await updateProgress(processingProgress, message: "Processing threads...")
-                    }
-
                     let comment: AttributedString
                     if let com = thread.com {
                         comment = CommentParser(comment: com).getComment()
@@ -197,15 +176,11 @@ class CatalogViewModel {
                     }
                     tempPosts.append(SwiftchanPost(post: thread, boardName: boardName, comment: comment, index: index))
                     index += 1
-                    processedThreads += 1
                 }
             }
 
-            // Phase 3: Final setup (90-100%)
-            await updateProgress(90, message: "Finalizing catalog...")
             posts = tempPosts
-
-            await updateProgress(100, message: "Complete!")
+            downloadProgress.completedUnitCount = 100
 
             if posts.count > 0 {
                 state = .loaded
@@ -233,13 +208,6 @@ class CatalogViewModel {
         } catch {
             state = .error
         }
-    }
-
-    private func updateProgress(_ progress: Int64, message: String) async {
-        downloadProgress.completedUnitCount = progress
-        progressText = message
-        // Small delay to make progress visible
-        try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
     }
 
     func handleSorting(value: SortRow.SortType, attributeKey: String) {
