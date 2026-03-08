@@ -17,6 +17,11 @@ class VideoPrefetcher {
     init() {
         queue.maxConcurrentOperationCount = 4
         queue.qualityOfService = .utility
+        // Run start()/cancel() on main thread so all KVO notifications
+        // (observed by NSOperationQueue) are serialized with addOperation.
+        // DownloadOperation.start() is non-blocking (just calls task.resume()),
+        // so this doesn't block the UI — actual downloads run on URLSession threads.
+        queue.underlyingQueue = .main
     }
 
     func addOperation(_ operation: DownloadOperation, for url: URL) {
