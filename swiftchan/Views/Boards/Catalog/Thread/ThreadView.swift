@@ -42,13 +42,7 @@ struct ThreadView: View {
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
-    private var isFavorited: Bool {
-        // Using direct fetch instead of @Query to avoid observation overhead
-        // that causes watchdog timeout during scene phase changes
-        let descriptor = FetchDescriptor<FavoriteThread>()
-        let allFavorites = (try? modelContext.fetch(descriptor)) ?? []
-        return allFavorites.contains { $0.threadId == viewModel.id && $0.boardName == viewModel.boardName }
-    }
+    @State private var isFavorited: Bool = false
 
     init(boardName: String, postNumber: PostNumber) {
         self._viewModel = State(
@@ -89,7 +83,6 @@ struct ThreadView: View {
                                             .id(postIndex)
                                             .opacity(isSearching && !viewModel.searchResultIndices.isEmpty ?
                                                      (viewModel.searchResultIndices[viewModel.currentSearchResultIndex] == postIndex ? 1.0 : 0.5) : 1.0)
-                                            .animation(.easeInOut(duration: 0.2), value: viewModel.currentSearchResultIndex)
                                     }
                                 }
                             }
@@ -116,30 +109,17 @@ struct ThreadView: View {
                         searchToolbar
                     }
                 }
-                .safeAreaInset(edge: .bottom, spacing: 0) {
+                .overlay(alignment: .bottom) {
                     if autoRefreshEnabled && showRefreshProgressBar && !viewModel.isArchived {
-                        // Transparent spacer to reserve space for the progress bar
-                        Rectangle()
-                            .fill(Color.clear)
-                            .frame(height: 6)
-                    }
-                }
-                .overlay {
-                    if autoRefreshEnabled && showRefreshProgressBar && !viewModel.isArchived {
-                        let validatedRefreshTime = max(5, autoRefreshThreadTime > 0 ? autoRefreshThreadTime : 10)
-                        VStack {
-                            Spacer()
-                            RefreshProgressBar(
-                                progress: threadAutorefresher.autoRefreshTimer,
-                                total: Double(validatedRefreshTime),
-                                isPaused: threadAutorefresher.pauseAutoRefresh
-                            )
-                            .onTapGesture {
-                                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                                threadAutorefresher.pauseAutoRefresh.toggle()
-                            }
+                        RefreshProgressBar(
+                            progress: threadAutorefresher.progress,
+                            isPaused: threadAutorefresher.pauseAutoRefresh,
+                            secondsRemaining: threadAutorefresher.secondsRemaining
+                        )
+                        .onTapGesture {
+                            UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+                            threadAutorefresher.pauseAutoRefresh.toggle()
                         }
-                        .ignoresSafeArea(.all, edges: .bottom)
                     }
                 }
                 .overlay {
@@ -175,12 +155,14 @@ struct ThreadView: View {
                 }
                 .onAppear {
                     viewModel.prefetch()
+                    refreshFavoriteState()
                     // Don't set up auto-refresh for archived threads
                     if !viewModel.isArchived {
-                        threadAutorefresher.onRefresh = {
+                        threadAutorefresher.onRefresh = { [weak threadAutorefresher] in
                             print("Thread auto refresh timer met, updating thread.")
                             Task {
                                 await fetchAndPrefetchMedia(auto: true)
+                                threadAutorefresher?.resetTimer()
                             }
                         }
                     }
@@ -388,17 +370,28 @@ struct ThreadView: View {
         }
     }
 
+    private func refreshFavoriteState() {
+        let threadId = viewModel.id
+        let boardName = viewModel.boardName
+        var descriptor = FetchDescriptor<FavoriteThread>(
+            predicate: #Predicate { $0.threadId == threadId && $0.boardName == boardName }
+        )
+        descriptor.fetchLimit = 1
+        isFavorited = ((try? modelContext.fetchCount(descriptor)) ?? 0) > 0
+    }
+
     private func toggleFavorite() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        // TODO: fix SwiftData @Query causing crash
-        // Fetch favorites directly instead of using @Query
-        let descriptor = FetchDescriptor<FavoriteThread>()
-        let allFavorites = (try? modelContext.fetch(descriptor)) ?? []
+        let threadId = viewModel.id
+        let boardName = viewModel.boardName
+        var descriptor = FetchDescriptor<FavoriteThread>(
+            predicate: #Predicate { $0.threadId == threadId && $0.boardName == boardName }
+        )
+        descriptor.fetchLimit = 1
+        let matches = (try? modelContext.fetch(descriptor)) ?? []
 
-        if let existingFavorite = allFavorites.first(where: {
-            $0.threadId == viewModel.id && $0.boardName == viewModel.boardName
-        }) {
+        if let existingFavorite = matches.first {
             modelContext.delete(existingFavorite)
         } else {
             guard let firstPost = viewModel.posts.first else { return }
@@ -414,6 +407,7 @@ struct ThreadView: View {
             )
             modelContext.insert(favorite)
         }
+        refreshFavoriteState()
     }
 }
 

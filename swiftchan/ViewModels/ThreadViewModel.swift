@@ -35,7 +35,6 @@ final class ThreadViewModel {
     private(set) var posts = [Post]()
     var media = [Media]()
     private(set) var postMediaMapping = [Int: Int]()
-    private(set) var comments = [AttributedString]()
     private(set) var replies = [Int: [Int]]()
     private(set) var state = State.initial
     private(set) var errorType = ErrorType.generic
@@ -44,10 +43,17 @@ final class ThreadViewModel {
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
 
+    // Lazy comment parsing: store raw HTML, parse AttributedString on demand
+    @ObservationIgnored private var rawComments = [String?]()
+    @ObservationIgnored private var commentCache = [Int: AttributedString]()
+    @ObservationIgnored private var searchableComments = [String]()
+
     var searchText = ""
     var searchFilters = SearchFilters()
     private(set) var currentSearchResultIndex = 0
     private(set) var searchResultIndices: [Int] = []
+    @ObservationIgnored private var searchResultIndexSet = Set<Int>()
+    @ObservationIgnored private var postIdToIndex = [Int: Int]()
 
     var url: URL {
         return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
@@ -63,6 +69,19 @@ final class ThreadViewModel {
 
     var archiveUrl: URL? {
         FourplebsService.archiveUrl(board: boardName, threadNum: id)
+    }
+
+    /// Lazily parses and caches the AttributedString for a post's comment.
+    func comment(at index: Int) -> AttributedString {
+        if let cached = commentCache[index] {
+            return cached
+        }
+        guard index < rawComments.count, let raw = rawComments[index] else {
+            return AttributedString()
+        }
+        let parsed = CommentParser(comment: raw).getComment()
+        commentCache[index] = parsed
+        return parsed
     }
 
     init(boardName: String, id: Int, replies: [Int: [Int]] = [Int: [Int]]()) {
@@ -122,7 +141,8 @@ final class ThreadViewModel {
                 var mediaUrls: [URL] = []
                 var thumbnailMediaUrls: [URL] = []
                 var mapping: [Int: Int] = [:]
-                var comments: [AttributedString] = []
+                var rawComs = [String?]()
+                var searchComs = [String]()
                 var postReplies: [Int: [String]] = [:]
                 var postIndex = 0
                 var mediaIndex = 0
@@ -140,11 +160,12 @@ final class ThreadViewModel {
                         mediaIndex += 1
                     }
                     if let comment = post.com {
-                        let parser = CommentParser(comment: comment)
-                        comments.append(parser.getComment())
-                        postReplies[postIndex] = parser.replies
+                        rawComs.append(comment)
+                        searchComs.append(comment.clean)
+                        postReplies[postIndex] = CommentParser.extractReplyIds(from: comment)
                     } else {
-                        comments.append(AttributedString())
+                        rawComs.append(nil)
+                        searchComs.append("")
                     }
                     postIndex += 1
                 }
@@ -157,8 +178,11 @@ final class ThreadViewModel {
                 await updateProgress(90, message: "Loading media...")
                 self.posts = posts
                 self.postMediaMapping = mapping
-                self.comments = comments
+                self.rawComments = rawComs
+                self.searchableComments = searchComs
+                self.commentCache.removeAll()
                 self.replies = replies
+                self.buildPostIdIndex()
                 setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
 
                 // Phase 5: Complete
@@ -225,7 +249,8 @@ final class ThreadViewModel {
                 var mediaUrls: [URL] = []
                 var thumbnailMediaUrls: [URL] = []
                 var mapping: [Int: Int] = [:]
-                var comments: [AttributedString] = []
+                var rawComs = [String?]()
+                var searchComs = [String]()
                 var postReplies: [Int: [String]] = [:]
                 var postIndex = 0
                 var mediaIndex = 0
@@ -249,11 +274,12 @@ final class ThreadViewModel {
                     }
 
                     if let comment = fourplebsPost.comment {
-                        let parser = CommentParser(comment: comment)
-                        comments.append(parser.getComment())
-                        postReplies[postIndex] = parser.replies
+                        rawComs.append(comment)
+                        searchComs.append(comment.clean)
+                        postReplies[postIndex] = CommentParser.extractReplyIds(from: comment)
                     } else {
-                        comments.append(AttributedString())
+                        rawComs.append(nil)
+                        searchComs.append("")
                     }
                     postIndex += 1
                 }
@@ -264,8 +290,11 @@ final class ThreadViewModel {
                 await updateProgress(95, message: "Loading media...")
                 self.posts = convertedPosts
                 self.postMediaMapping = mapping
-                self.comments = comments
+                self.rawComments = rawComs
+                self.searchableComments = searchComs
+                self.commentCache.removeAll()
                 self.replies = replies
+                self.buildPostIdIndex()
                 setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
 
                 await updateProgress(100, message: "Complete!")
@@ -333,13 +362,23 @@ final class ThreadViewModel {
         prefetcher.stopPrefetching()
     }
 
+    private func buildPostIdIndex() {
+        postIdToIndex.removeAll()
+        postIdToIndex.reserveCapacity(posts.count)
+        for (index, post) in posts.enumerated() {
+            postIdToIndex[post.id] = index
+        }
+    }
+
     func getPostIndexFromId(_ id: String) -> Int {
-        var index = 0
-        for post in posts {
+        if let postId = Int(id), let index = postIdToIndex[postId] {
+            return index
+        }
+        // Fallback for partial matches
+        for (index, post) in posts.enumerated() {
             if id.contains(String(post.id)) {
                 return index
             }
-            index += 1
         }
         return 0
     }
@@ -356,7 +395,7 @@ final class ThreadViewModel {
             var matchesSearch = true
 
             if !searchText.isEmpty {
-                let comment = index < comments.count ? String(comments[index].characters) : ""
+                let comment = index < searchableComments.count ? searchableComments[index] : ""
                 let subject = post.sub?.clean.lowercased() ?? ""
                 let name = post.name?.lowercased() ?? ""
                 let trip = post.trip?.lowercased() ?? ""
@@ -394,6 +433,7 @@ final class ThreadViewModel {
 
     func updateSearchResults() {
         searchResultIndices = getFilteredPostIndices()
+        searchResultIndexSet = Set(searchResultIndices)
         if currentSearchResultIndex >= searchResultIndices.count {
             currentSearchResultIndex = max(0, searchResultIndices.count - 1)
         }
@@ -423,7 +463,7 @@ final class ThreadViewModel {
         if searchText.isEmpty && searchFilters == SearchFilters() {
             return true
         }
-        return searchResultIndices.contains(index)
+        return searchResultIndexSet.contains(index)
     }
 
 }

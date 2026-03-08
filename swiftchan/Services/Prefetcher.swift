@@ -20,6 +20,7 @@ class Prefetcher {
     // Track last prefetch position to avoid redundant updates
     private var lastPrefetchIndex: Int = -1
     private var lastVideoUrls: [URL] = []
+    private var lastImageUrls: [URL] = []
 
     func prefetch(urls: [URL], currentIndex: Int = 0, prefetchWindow: Int = 8) {
         let imageUrls = urls.filter { url in url.isImage() || url.isGif()}
@@ -58,6 +59,9 @@ class Prefetcher {
     }
 
     func prefetchImages(urls: [URL]) {
+        guard urls != lastImageUrls else { return }
+        imagePrefetcher.stop()
+        lastImageUrls = urls
         imagePrefetcher = ImagePrefetcher(
             urls: urls,
             options: [
@@ -120,5 +124,6 @@ class Prefetcher {
         // Reset tracking
         lastPrefetchIndex = -1
         lastVideoUrls = []
+        lastImageUrls = []
     }
 }

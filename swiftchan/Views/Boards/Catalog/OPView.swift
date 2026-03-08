@@ -10,7 +10,6 @@ import FourChan
 
 struct OPView: View {
     @AppStorage("showOPPreview") var showOPPreview: Bool = false
-    @State var threadViewModel: ThreadViewModel
     @Environment(AppState.self) var appState
     @Namespace var fullscreenNspace
 
@@ -26,12 +25,6 @@ struct OPView: View {
         self.swiftchanPost = post
         self.comment = post.comment
         self.index = post.index
-        self._threadViewModel = State(
-            wrappedValue: ThreadViewModel(
-                boardName: boardName,
-                id: post.post.no
-            )
-        )
     }
 
     var body: some View {
@@ -96,7 +89,6 @@ struct OPView: View {
             }
             .padding(.all, Constants.padding)
         }
-        .environment(threadViewModel)
         .allowsHitTesting(!appState.showingCatalogMenu)
     }
 

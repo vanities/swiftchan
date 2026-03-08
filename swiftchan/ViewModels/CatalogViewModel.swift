@@ -38,11 +38,25 @@ class CatalogViewModel {
     private(set) var currentSearchResultIndex = 0
     private(set) var searchResultIndices: [Int] = []
 
+    // Memoized filter cache
+    @ObservationIgnored private var cachedFilteredPosts: [SwiftchanPost]?
+    @ObservationIgnored private var cachedFilterSearchText: String = ""
+    @ObservationIgnored private var cachedFilterFilters: CatalogSearchFilters = CatalogSearchFilters()
+    @ObservationIgnored private var cachedFilterPostsCount: Int = 0
+
     func getFilteredPosts(searchText: String) -> [SwiftchanPost] {
         return getFilteredPostsWithFilters(searchText: searchText, filters: CatalogSearchFilters())
     }
 
     func getFilteredPostsWithFilters(searchText: String = "", filters: CatalogSearchFilters = CatalogSearchFilters()) -> [SwiftchanPost] {
+        // Return cached result if inputs haven't changed
+        if let cached = cachedFilteredPosts,
+           cachedFilterSearchText == searchText,
+           cachedFilterFilters == filters,
+           cachedFilterPostsCount == posts.count {
+            return cached
+        }
+
         var filteredPosts = posts
 
         if !searchText.isEmpty {
@@ -78,6 +92,12 @@ class CatalogViewModel {
         if let maxImages = filters.maxImages {
             filteredPosts = filteredPosts.filter { ($0.post.images ?? 0) <= maxImages }
         }
+
+        // Cache the result
+        cachedFilteredPosts = filteredPosts
+        cachedFilterSearchText = searchText
+        cachedFilterFilters = filters
+        cachedFilterPostsCount = posts.count
 
         return filteredPosts
     }
@@ -234,6 +254,7 @@ class CatalogViewModel {
                 rhs.post.valueByPropertyName(name: attributeKey)
             )
         }
+        cachedFilteredPosts = nil
     }
 
     func prefetch() {

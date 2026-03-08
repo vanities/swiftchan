@@ -99,21 +99,20 @@ class FourchanService {
     }
 
     static func getReplies(postReplies: [Int: [String]], posts: [Post]) -> [Int: [Int]] {
-        var replies: [Int: [Int]] = [:]
-        var postIndex = 0
+        // Build postId -> index map for O(1) lookup instead of O(n) scan
+        var postIdToIndex = [Int: Int]()
+        postIdToIndex.reserveCapacity(posts.count)
+        for (index, post) in posts.enumerated() {
+            postIdToIndex[post.id] = index
+        }
 
-        for (i, r) in postReplies {
-            for reply in r {
-                postIndex = 0
-                for post in posts {
-                    if Int(reply) == post.id {
-                        if replies[postIndex] == nil {
-                            replies[postIndex] = [i]
-                        } else {
-                            replies[postIndex]?.append(i)
-                        }
-                    }
-                    postIndex += 1
+        var replies: [Int: [Int]] = [:]
+
+        for (sourceIndex, replyIds) in postReplies {
+            for replyId in replyIds {
+                if let replyInt = Int(replyId),
+                   let targetIndex = postIdToIndex[replyInt] {
+                    replies[targetIndex, default: []].append(sourceIndex)
                 }
             }
         }

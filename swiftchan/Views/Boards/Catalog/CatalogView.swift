@@ -72,7 +72,6 @@ struct CatalogView: View {
                                 .id(post.id)
                                 .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
                                        (catalogViewModel.searchResultIndices[catalogViewModel.currentSearchResultIndex] == catalogViewModel.posts.firstIndex(where: { $0.id == post.id }) ? 1.0 : 0.5) : 1.0)
-                                .animation(.easeInOut(duration: 0.2), value: catalogViewModel.currentSearchResultIndex)
                             }
                         }
                     }

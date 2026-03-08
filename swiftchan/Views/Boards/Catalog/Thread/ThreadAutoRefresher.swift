@@ -3,13 +3,16 @@ import Combine
 
 @Observable
 class ThreadAutoRefresher {
-    private(set) var autoRefreshTimer: Double = 0
+    private(set) var secondsRemaining: Int = 0
     var pauseAutoRefresh: Bool = false
     var isActive: Bool = true
 
     private var timerCancellable: AnyCancellable?
 
+    var onRefresh: (() -> Void)?
+
     init() {
+        resetTimer()
         startTimer()
     }
 
@@ -20,7 +23,7 @@ class ThreadAutoRefresher {
     func startTimer() {
         cancelTimer()
         isActive = true
-        timerCancellable = Timer.publish(every: 0.1, on: .main, in: .common)
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.timerTick()
@@ -34,33 +37,24 @@ class ThreadAutoRefresher {
     }
 
     private func timerTick() {
-        guard isActive else { return }
-        Task { @MainActor in
-            _ = incrementRefreshTimer()
-        }
-    }
+        guard isActive, !pauseAutoRefresh, UserDefaults.getAutoRefreshEnabled() else { return }
 
-    var onRefresh: (() -> Void)?
+        secondsRemaining -= 1
 
-    // Returns true if hit reset limit
-    @MainActor
-    func incrementRefreshTimer() -> Bool {
-        guard !pauseAutoRefresh, UserDefaults.getAutoRefreshEnabled() else { return false }
-
-        autoRefreshTimer += 0.1
-
-        // Get refresh time with validation - minimum 5 seconds, default 10
-        let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
-
-        if autoRefreshTimer >= Double(refreshTime) {
-            autoRefreshTimer = 0
+        if secondsRemaining <= 0 {
+            resetTimer()
             onRefresh?()
-            return true
         }
-        return false
     }
 
     func resetTimer() {
-        autoRefreshTimer = 0
+        let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
+        secondsRemaining = refreshTime
+    }
+
+    /// Progress from 0.0 to 1.0 representing time remaining
+    var progress: Double {
+        let refreshTime = max(5, UserDefaults.getAutoRefreshThreadTime() > 0 ? UserDefaults.getAutoRefreshThreadTime() : 10)
+        return Double(secondsRemaining) / Double(refreshTime)
     }
 }

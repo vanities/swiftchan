@@ -19,8 +19,7 @@ struct PostView: View {
         let boardName = viewModel.boardName
         let post = index < viewModel.posts.count ?
         viewModel.posts[index] : Post.example()!
-        let comment = index < viewModel.comments.count ?
-        viewModel.comments[index] : AttributedString("")
+        let comment = viewModel.comment(at: index)
         let replies = viewModel.replies[index] ?? nil
 
         return ZStack(alignment: .topLeading) {
@@ -138,8 +137,6 @@ struct PostView: View {
                 // comment
                 Text(comment)
                     .textSelection(.enabled)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 20)
                     .accessibilityIdentifier(AccessibilityIdentifiers.postText(index))
 

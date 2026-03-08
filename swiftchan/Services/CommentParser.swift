@@ -16,6 +16,18 @@ class CommentParser {
         self.comment = comment
     }
 
+    // swiftlint:disable:next force_try
+    private static let replyRegex = try! NSRegularExpression(pattern: "href=\"#p(\\d+)\"")
+
+    /// Lightweight reply extraction using regex on raw HTML, without building AttributedString.
+    static func extractReplyIds(from comment: String) -> [String] {
+        let range = NSRange(comment.startIndex..., in: comment)
+        return replyRegex.matches(in: comment, range: range).compactMap { match in
+            guard let range = Range(match.range(at: 1), in: comment) else { return nil }
+            return String(comment[range])
+        }
+    }
+
     func getComment() -> AttributedString {
         let nsText = parseComment(comment)
         return nsText
