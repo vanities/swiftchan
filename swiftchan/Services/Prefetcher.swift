@@ -106,9 +106,7 @@ class Prefetcher {
                 continue // Skip this operation but continue the loop
             }
 
-            DispatchQueue.main.async { [weak self] in
-                self?.videoPrefetcher.addOperation(operation, for: url)
-            }
+            videoPrefetcher.addOperation(operation, for: url)
         }
     }
 

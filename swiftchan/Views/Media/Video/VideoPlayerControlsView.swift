@@ -15,6 +15,7 @@ struct VideoPlayerControlsView: View {
 
     @State private var sliderValue: Double = 0
     @State private var isSeeking = false
+    @State private var seekRetryCount = 0
     @State private var currentTimeText: String = "--:--"
     @State private var remainingTimeText: String = "--:--"
     @State private var timerTask: Task<Void, Never>?
@@ -63,29 +64,53 @@ struct VideoPlayerControlsView: View {
     private func sliderEditingChanged(editing: Bool) {
         if editing {
             isSeeking = true
+            seekRetryCount = 0
             onSeekChanged?(true)
             coordinator.playerLayer?.pause()
         } else {
-            guard let playerLayer = coordinator.playerLayer else {
-                isSeeking = false
-                onSeekChanged?(false)
-                return
-            }
-            let duration = playerLayer.player.duration
-            guard duration > 0, !duration.isNaN, !duration.isInfinite else {
-                isSeeking = false
-                onSeekChanged?(false)
-                return
-            }
-            let seekTime = duration * sliderValue
-            playerLayer.seek(time: seekTime, autoPlay: true) { _ in
-                Task { @MainActor in
-                    self.isSeeking = false
-                    self.isPlaying = true
-                    self.onSeekChanged?(false)
+            performSeek()
+        }
+    }
+
+    private func performSeek() {
+        guard let playerLayer = coordinator.playerLayer else {
+            finishSeeking(success: false)
+            return
+        }
+        let duration = playerLayer.player.duration
+        guard duration > 0, !duration.isNaN, !duration.isInfinite else {
+            finishSeeking(success: false)
+            return
+        }
+        let seekTime = min(duration * sliderValue, duration - 0.1)
+        playerLayer.seek(time: seekTime, autoPlay: true) { [self] finished in
+            Task { @MainActor in
+                if finished {
+                    finishSeeking(success: true)
+                } else if seekRetryCount < 3 {
+                    // Seek failed (player not ready/seekable yet) — retry after a short delay
+                    seekRetryCount += 1
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    performSeek()
+                } else {
+                    // Retries exhausted — resume playback at whatever position the player is at
+                    finishSeeking(success: false)
                 }
             }
         }
+    }
+
+    private func finishSeeking(success: Bool) {
+        isSeeking = false
+        seekRetryCount = 0
+        if success {
+            isPlaying = true
+        } else {
+            // Seek failed — resume playback from current position rather than leaving paused
+            coordinator.playerLayer?.play()
+            isPlaying = coordinator.playerLayer?.player.isPlaying ?? false
+        }
+        onSeekChanged?(false)
     }
 
     private func startTimeUpdates() {

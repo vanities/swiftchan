@@ -7,30 +7,25 @@
 
 import Foundation
 
+@MainActor
 class VideoPrefetcher {
     let queue = OperationQueue()
 
     // Track active operations by URL for smart cancellation
     private var activeOperations: [URL: DownloadOperation] = [:]
-    private let operationsQueue = DispatchQueue(label: "com.swiftchan.videoprefetcher", attributes: .concurrent)
 
     init() {
         queue.maxConcurrentOperationCount = 4
         queue.qualityOfService = .utility
-        queue.underlyingQueue = .global(qos: .utility)
     }
 
     func addOperation(_ operation: DownloadOperation, for url: URL) {
-        operationsQueue.async(flags: .barrier) { [weak self] in
-            self?.activeOperations[url] = operation
-        }
+        activeOperations[url] = operation
         queue.addOperation(operation)
     }
 
     func removeOperation(for url: URL) {
-        operationsQueue.async(flags: .barrier) { [weak self] in
-            self?.activeOperations.removeValue(forKey: url)
-        }
+        activeOperations.removeValue(forKey: url)
     }
 
     func cancelOperationsOutside(videoUrls: [URL], currentIndex: Int, windowSize: Int) {
@@ -41,11 +36,8 @@ class VideoPrefetcher {
 
         let videosInWindow = Set(videoUrls[startIndex..<endIndex])
 
-        var operationsToCancel: [URL: DownloadOperation] = [:]
-        operationsQueue.sync {
-            operationsToCancel = activeOperations.filter { url, _ in
-                !videosInWindow.contains(url)
-            }
+        let operationsToCancel = activeOperations.filter { url, _ in
+            !videosInWindow.contains(url)
         }
 
         guard !operationsToCancel.isEmpty else { return }
@@ -54,14 +46,12 @@ class VideoPrefetcher {
 
         for (url, operation) in operationsToCancel {
             operation.cancel()
-            removeOperation(for: url)
+            activeOperations.removeValue(forKey: url)
         }
     }
 
     func cancelAllOperations() {
         queue.cancelAllOperations()
-        operationsQueue.async(flags: .barrier) { [weak self] in
-            self?.activeOperations.removeAll()
-        }
+        activeOperations.removeAll()
     }
 }

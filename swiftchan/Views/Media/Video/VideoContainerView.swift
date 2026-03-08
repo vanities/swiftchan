@@ -171,6 +171,7 @@ struct VideoContainerView: View {
     private func ksOptions() -> KSOptions {
         let options = KSOptions()
         options.isLoopPlay = true
+        options.isAccurateSeek = true
         return options
     }
 
