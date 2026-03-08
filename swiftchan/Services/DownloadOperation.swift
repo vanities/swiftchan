@@ -50,10 +50,11 @@ class DownloadOperation: Operation, @unchecked Sendable {
         task = session.downloadTask(with: downloadTaskURL, completionHandler: { [weak self] (localURL, response, error) in
             completionHandler?(localURL, response, error)
 
-            // Only mark finished if we were actually executing.
-            // Cancelled-before-start is handled by start() seeing isCancelled.
-            if self?.isExecuting == true {
-                self?.state = .finished
+            // Dispatch state change to main thread so KVO notifications
+            // (observed by NSOperationQueue) don't race with addOperation/cancel on main.
+            DispatchQueue.main.async {
+                guard let self, self.isExecuting else { return }
+                self.state = .finished
             }
         })
     }
