@@ -13,7 +13,6 @@ struct SettingsView: View {
     @AppStorage("showGalleryPreview") var showGalleryPreview = false
     @AppStorage("autoRefreshEnabled") var autoRefreshEnabled = false
     @AppStorage("autoRefreshThreadTime") var autoRefreshThreadTime = 10
-    @AppStorage("showRefreshProgressBar") var showRefreshProgressBar = false
     @AppStorage("biometricsEnabled") var biometricsEnabled = false
     @AppStorage("showNSFWBoards") var showNSFWBoards = false
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
@@ -98,15 +97,6 @@ struct SettingsView: View {
     var threadSection: some View {
         Section(header: Text("Thread").font(.title)) {
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
-                .onChange(of: autoRefreshEnabled) { _, newValue in
-                    // Auto-disable progress bar when auto refresh is turned off
-                    if !newValue {
-                        showRefreshProgressBar = false
-                    }
-                }
-            if autoRefreshEnabled {
-                Toggle("Show Refresh Progress Bar", isOn: $showRefreshProgressBar)
-            }
             HStack {
                 Text("Auto Refresh Time (seconds)")
                 Spacer()

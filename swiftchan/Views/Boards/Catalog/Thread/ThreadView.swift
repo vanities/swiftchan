@@ -15,7 +15,6 @@ struct ThreadView: View {
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = false
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = true
-    @AppStorage("showRefreshProgressBar") private var showRefreshProgressBar = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
     @Environment(\.modelContext) private var modelContext
@@ -107,19 +106,6 @@ struct ThreadView: View {
                 .overlay(alignment: .bottom) {
                     if isSearching && !viewModel.searchResultIndices.isEmpty {
                         searchToolbar
-                    }
-                }
-                .overlay(alignment: .bottom) {
-                    if autoRefreshEnabled && showRefreshProgressBar && !viewModel.isArchived {
-                        RefreshProgressBar(
-                            progress: threadAutorefresher.progress,
-                            isPaused: threadAutorefresher.pauseAutoRefresh,
-                            secondsRemaining: threadAutorefresher.secondsRemaining
-                        )
-                        .onTapGesture {
-                            UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                            threadAutorefresher.pauseAutoRefresh.toggle()
-                        }
                     }
                 }
                 .overlay {
