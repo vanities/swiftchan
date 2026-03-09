@@ -46,8 +46,8 @@ class Prefetcher {
 
         guard startIndex < endIndex else { return }
 
-        // Cancel operations outside the new window
-        videoPrefetcher.cancelOperationsOutside(videoUrls: videoUrls, currentIndex: currentIndex, windowSize: prefetchWindow)
+        // Cancel downloads outside the new window
+        videoPrefetcher.cancelDownloadsOutside(videoUrls: videoUrls, currentIndex: currentIndex, windowSize: prefetchWindow)
 
         let videosToPreload = Array(videoUrls[startIndex..<endIndex])
 
@@ -90,33 +90,26 @@ class Prefetcher {
             // Mark as downloading
             activeDownloads.insert(url)
 
-            let operation = DownloadOperation(session: URLSession.shared, downloadTaskURL: url, completionHandler: { [weak self] (tempURL, _, _) in
+            videoPrefetcher.addDownload(session: URLSession.shared, url: url) { [weak self] (tempURL, _, _) in
                 guard let self = self else { return }
 
-                // Remove from active downloads and operations when complete
+                // Remove from active downloads when complete
                 Task { @MainActor in
                     self.activeDownloads.remove(url)
-                    self.videoPrefetcher.removeOperation(for: url)
+                    self.videoPrefetcher.removeDownload(for: url)
                 }
 
                 if let tempURL = tempURL,
                    let result = CacheManager.shared.cache(tempURL, cacheURL, originalURL: url) {
                     debugPrint("successfully cached video url \(result)")
                 }
-            })
-
-            if operation.isFinished || operation.isCancelled {
-                activeDownloads.remove(url)
-                continue // Skip this operation but continue the loop
             }
-
-            videoPrefetcher.addOperation(operation, for: url)
         }
     }
 
     func stopPrefetching() {
         imagePrefetcher.stop()
-        videoPrefetcher.cancelAllOperations()
+        videoPrefetcher.cancelAllDownloads()
 
         // Clear active downloads when stopping
         activeDownloads.removeAll()
