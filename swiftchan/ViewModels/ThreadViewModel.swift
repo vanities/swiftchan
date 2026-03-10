@@ -127,10 +127,12 @@ final class ThreadViewModel {
             // Phase 1: Fetching thread data (0-40%)
             updateProgress(30, message: "Fetching thread data...")
 
-            let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { [weak self] progress in
+            let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { @Sendable progress in
                 // Map API progress to our 0-40% range
                 let mappedProgress = Int64(30 + (progress * 10))
-                self?.downloadProgress.completedUnitCount = mappedProgress
+                Task { @MainActor [weak self] in
+                    self?.downloadProgress.completedUnitCount = mappedProgress
+                }
             }
             let posts = thread.posts
 

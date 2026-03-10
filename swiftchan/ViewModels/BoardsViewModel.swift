@@ -46,9 +46,11 @@ final class BoardsViewModel {
         do {
             progressText = "Fetching board list..."
 
-            let result = try await FourChanAsyncService.shared.getBoards { progress in
+            let result = try await FourChanAsyncService.shared.getBoards { @Sendable progress in
                 let mappedProgress = Int64(20 + (progress * 40))
-                self.downloadProgress.completedUnitCount = mappedProgress
+                Task { @MainActor [weak self] in
+                    self?.downloadProgress.completedUnitCount = mappedProgress
+                }
             }
 
             boards = result.boards

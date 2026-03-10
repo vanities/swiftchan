@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private var flagCache = [String: String]()
+private nonisolated(unsafe) var flagCache = [String: String]()
 
 internal func getFlag(from countryCode: String) -> String {
     if let cached = flagCache[countryCode] { return cached }
@@ -173,8 +173,8 @@ extension String {
 
 extension Color {
 
-    private static var colorCache = [String: Color]()
-    private static var colorLightnessCache = [String: Bool]()
+    private static nonisolated(unsafe) var colorCache = [String: Color]()
+    private static nonisolated(unsafe) var colorLightnessCache = [String: Bool]()
 
     static func randomColor(seed: String) -> Color {
         if let cached = colorCache[seed] { return cached }
@@ -417,9 +417,9 @@ extension OutputStream {
 }
 
 extension Date {
-    private static var _isFourchanBdayCached: Bool?
-    private static var _isChristmasCached: Bool?
-    private static var _cachedDay: Int?
+    private static nonisolated(unsafe) var _isFourchanBdayCached: Bool?
+    private static nonisolated(unsafe) var _isChristmasCached: Bool?
+    private static nonisolated(unsafe) var _cachedDay: Int?
 
     private static func refreshCacheIfNeeded() {
         let today = Calendar.current.component(.day, from: Date())

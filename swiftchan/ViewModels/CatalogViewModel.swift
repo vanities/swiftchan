@@ -156,9 +156,9 @@ class CatalogViewModel {
         progressText = "Fetching /\(boardName)/ catalog..."
 
         do {
-            let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: boardName) { [weak self] progress in
-                DispatchQueue.main.async {
-                    let mappedProgress = Int64(20 + (progress * 40))
+            let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: boardName) { @Sendable progress in
+                let mappedProgress = Int64(20 + (progress * 40))
+                Task { @MainActor [weak self] in
                     self?.downloadProgress.completedUnitCount = mappedProgress
                 }
             }

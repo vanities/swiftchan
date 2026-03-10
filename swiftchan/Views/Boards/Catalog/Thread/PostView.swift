@@ -16,7 +16,6 @@ struct PostView: View {
     let index: Int
 
     var body: some View {
-        let boardName = viewModel.boardName
         let post = index < viewModel.posts.count ?
         viewModel.posts[index] : Post.example()!
         let comment = viewModel.comment(at: index)

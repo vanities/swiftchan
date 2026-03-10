@@ -116,7 +116,7 @@ final class CacheManager: @unchecked Sendable {
                 debugPrint("📦 Cleaned up \(staleKeys.count) stale cache entries")
             }
 
-            var currentSize = self.metadata.values.reduce(0) { $0 + $1.fileSize }
+            let currentSize = self.metadata.values.reduce(0) { $0 + $1.fileSize }
             let sizeAfterAdd = currentSize + targetSize
 
             guard sizeAfterAdd > self.maxCacheSize else { return }
