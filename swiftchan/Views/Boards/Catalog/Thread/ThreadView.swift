@@ -20,6 +20,8 @@ struct ThreadView: View {
     @Environment(\.modelContext) private var modelContext
     // @Query private var allFavorites: [FavoriteThread]
 
+    @Namespace private var galleryNamespace
+
     @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
     @State var viewModel: ThreadViewModel
@@ -31,6 +33,12 @@ struct ThreadView: View {
     @State private var showAutoRefreshToast: Bool = false
     @State private var autoRefreshToastMessage: String = ""
     @State private var isSearching: Bool = false
+
+    // Gallery hero animation state
+    @State private var galleryDragOffset: CGFloat = 0
+    @State private var galleryBackgroundOpacity: Double = 1
+    @State private var isGalleryZoomed: Bool = false
+    @State private var isGallerySeeking: Bool = false
 
     @State private var scene: SKScene = {
         let s = SnowScene()
@@ -101,6 +109,13 @@ struct ThreadView: View {
                                 }
                             }
                         }
+                        .scrollDisabled(presentationState.presentingGallery && !presentationState.presentingReplies)
+                    }
+
+                    // Gallery hero overlay
+                    if presentationState.presentingGallery && !presentationState.presentingReplies {
+                        galleryOverlayContent
+                            .zIndex(10)
                     }
                 }
                 .overlay(alignment: .bottom) {
@@ -117,11 +132,12 @@ struct ThreadView: View {
                     }
                 }
                 .sheet(
-                    isPresented: $presentationState.presentingGallery,
+                    isPresented: Binding(
+                        get: { presentationState.presentingGallery && presentationState.presentingReplies },
+                        set: { if !$0 { presentationState.presentingGallery = false } }
+                    ),
                     onDismiss: {
-                        // reneable this if it got disabled
                         UIApplication.shared.isIdleTimerDisabled = false
-
                     },
                     content: {
                         gallerySheetContent
@@ -173,7 +189,10 @@ struct ThreadView: View {
                     }
                 }
                 .environment(presentationState)
+                .environment(\.galleryNamespace, galleryNamespace)
                 .navigationTitle(viewModel.title)
+                .toolbar(presentationState.presentingGallery && !presentationState.presentingReplies ? .hidden : .automatic, for: .navigationBar)
+                .statusBar(hidden: presentationState.presentingGallery && !presentationState.presentingReplies)
                 .searchable(text: $viewModel.searchText, isPresented: $isSearching)
                 .onChange(of: viewModel.searchText) { _, _ in
                     viewModel.updateSearchResults()
@@ -398,6 +417,80 @@ struct ThreadView: View {
 }
 
 extension ThreadView {
+    // MARK: - Gallery Hero Overlay
+
+    @ViewBuilder
+    private var galleryOverlayContent: some View {
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+                .opacity(galleryBackgroundOpacity)
+
+            GalleryView(index: presentationState.galleryIndex)
+                .onMediaChanged { zoomed in
+                    isGalleryZoomed = zoomed
+                }
+                .onSeekChanged { seeking in
+                    isGallerySeeking = seeking
+                }
+                .onDismissDrag { translation in
+                    galleryDragOffset = translation
+                    let progress = min(translation / 300, 1)
+                    galleryBackgroundOpacity = 1 - (progress * 0.6)
+                }
+                .onDismissDragEnded { velocity in
+                    // Rubber-banded offset is small (~30-50pt for big drags), so use low threshold
+                    // velocity.y < 0 means user was dragging content offset downward (finger moving down)
+                    let offsetThreshold: CGFloat = 20
+                    let velocityThreshold: CGFloat = 0.3
+                    if galleryDragOffset > offsetThreshold || velocity < -velocityThreshold {
+                        dismissGallery()
+                    } else {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            galleryDragOffset = 0
+                            galleryBackgroundOpacity = 1
+                        }
+                    }
+                }
+                .onClosePressed {
+                    dismissGallery()
+                }
+                .environment(appState)
+                .environment(presentationState)
+                .environment(viewModel)
+                .matchedGeometryEffect(
+                    id: "gallery-\(presentationState.galleryIndex)",
+                    in: galleryNamespace,
+                    isSource: true
+                )
+                .offset(y: galleryDragOffset)
+                .scaleEffect(galleryDragScale)
+                .onAppear {
+                    threadAutorefresher.cancelTimer()
+                }
+                .onDisappear {
+                    threadAutorefresher.startTimer()
+                }
+        }
+        .transition(.opacity)
+    }
+
+    private var galleryDragScale: CGFloat {
+        let progress = min(abs(galleryDragOffset) / 300, 1)
+        return 1 - (progress * 0.3)
+    }
+
+    private func dismissGallery() {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            presentationState.presentingGallery = false
+            galleryDragOffset = 0
+            galleryBackgroundOpacity = 1
+        }
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+
+    // MARK: - Gallery Sheet (fallback for replies context)
+
     @ViewBuilder
     private var gallerySheetContent: some View {
         let gallery = GalleryView(

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 import UIKit
 
 struct GalleryView: View {
@@ -26,10 +25,13 @@ struct GalleryView: View {
     @State private var isSeeking = false
     @State private var isZoomed = false
     @State private var pagerScrollView: UIScrollView?
-    @State private var sheetPresentationController: UISheetPresentationController?
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
+    var onSeekChanged: ((Bool) -> Void)?
+    var onDismissDrag: ((CGFloat) -> Void)?
+    var onDismissDragEnded: ((CGFloat) -> Void)?
+    var onClosePressed: (() -> Void)?
 
     init(index: Int) {
         self.index = index
@@ -54,6 +56,16 @@ struct GalleryView: View {
                 },
                 onDragEnded: {
                     handlePagerDragEnded()
+                },
+                onDismissDrag: { translation in
+                    if !isZoomed && !isSeeking {
+                        onDismissDrag?(translation)
+                    }
+                },
+                onDismissDragEnded: { velocity in
+                    if !isZoomed && !isSeeking {
+                        onDismissDragEnded?(velocity)
+                    }
                 },
                 onScrollViewCaptured: { scrollView in
                     guard pagerScrollView !== scrollView else { return }
@@ -105,24 +117,27 @@ struct GalleryView: View {
                         .padding(.bottom, 60)
                 }
             }
+
+            // Close button
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: { onClosePressed?() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 28))
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.white)
+                            .shadow(radius: 4)
+                    }
+                    .padding(16)
+                }
+                Spacer()
+            }
         }
         .onDisappear {
             restorePagerScrolling()
-            sheetPresentationController?.presentedViewController.isModalInPresentation = false
         }
         .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
-        .introspect(.sheet, on: .iOS(.v17, .v18, .v26)) { controller in
-            controller.prefersGrabberVisible = true
-            controller.prefersScrollingExpandsWhenScrolledToEdge = false
-            controller.detents = [.large()]
-            // Defer state update to avoid "Modifying state during view update" warning
-            if sheetPresentationController !== controller {
-                DispatchQueue.main.async {
-                    sheetPresentationController = controller
-                }
-            }
-            updateInteractiveDismiss(using: controller)
-        }
         .statusBar(hidden: true)
     }
 
@@ -139,7 +154,6 @@ struct GalleryView: View {
                     if zoomed {
                         showPreview = false
                     }
-                    updateInteractiveDismiss()
                     onMediaChanged?(zoomed)
                 }
                 .onSeekChanged { seeking in
@@ -147,7 +161,7 @@ struct GalleryView: View {
                     refreshPagingState()
                     canShowPreview = !seeking
                     canShowContextMenu = !seeking
-                    updateInteractiveDismiss()
+                    onSeekChanged?(seeking)
                 }
                 .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
                 .accessibilityIdentifier(
@@ -183,7 +197,6 @@ struct GalleryView: View {
         var currentItem = viewModel.media[index]
         currentItem.isSelected = true
         viewModel.media[index] = currentItem
-        updateInteractiveDismiss()
 
         // Dynamic prefetching: update prefetch window as user swipes
         viewModel.prefetch(currentIndex: index)
@@ -219,15 +232,6 @@ struct GalleryView: View {
         }
         refreshPagingState()
     }
-
-    private func updateInteractiveDismiss(using controller: UISheetPresentationController? = nil) {
-        let controller = controller ?? sheetPresentationController
-        guard let controller else { return }
-        let allowDismiss = !isZoomed && !isSeeking
-        DispatchQueue.main.async {
-            controller.presentedViewController.isModalInPresentation = !allowDismiss
-        }
-    }
 }
 
 extension GalleryView: Buildable {
@@ -236,6 +240,18 @@ extension GalleryView: Buildable {
     }
     func onPageDragChanged(_ callback: ((CGFloat) -> Void)?) -> Self {
         mutating(keyPath: \.onPageDragChanged, value: callback)
+    }
+    func onSeekChanged(_ callback: ((Bool) -> Void)?) -> Self {
+        mutating(keyPath: \.onSeekChanged, value: callback)
+    }
+    func onDismissDrag(_ callback: ((CGFloat) -> Void)?) -> Self {
+        mutating(keyPath: \.onDismissDrag, value: callback)
+    }
+    func onDismissDragEnded(_ callback: ((CGFloat) -> Void)?) -> Self {
+        mutating(keyPath: \.onDismissDragEnded, value: callback)
+    }
+    func onClosePressed(_ callback: (() -> Void)?) -> Self {
+        mutating(keyPath: \.onClosePressed, value: callback)
     }
 }
 

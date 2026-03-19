@@ -12,6 +12,7 @@ struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
     @Environment(PresentationState.self) private var presentationState: PresentationState
+    @Environment(\.galleryNamespace) private var galleryNamespace
 
     let index: Int
 
@@ -50,8 +51,14 @@ struct PostView: View {
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.halfWidth)
                             .scaledToFill() // VStack
+                            .matchedGeometryEffect(
+                                id: "gallery-\(mediaIndex)",
+                                in: galleryNamespace ?? Namespace().wrappedValue,
+                                isSource: !(presentationState.presentingGallery && presentationState.galleryIndex == mediaIndex)
+                            )
+                            .opacity(presentationState.presentingGallery && presentationState.galleryIndex == mediaIndex ? 0 : 1)
                             .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                                     viewModel.media[mediaIndex].isSelected = true
                                     presentationState.galleryIndex = mediaIndex
                                     presentationState.presentingGallery = true

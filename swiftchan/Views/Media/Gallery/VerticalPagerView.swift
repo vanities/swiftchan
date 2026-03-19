@@ -15,6 +15,8 @@ struct VerticalPagerView<Content: View>: UIViewControllerRepresentable {
     var onPageChanged: ((Int) -> Void)?
     var onDragChanged: ((CGFloat) -> Void)?
     var onDragEnded: (() -> Void)?
+    var onDismissDrag: ((CGFloat) -> Void)?
+    var onDismissDragEnded: ((CGFloat) -> Void)?
     var onScrollViewCaptured: ((UIScrollView) -> Void)?
     var content: (Int) -> Content
 
@@ -66,6 +68,8 @@ extension VerticalPagerView {
         weak var scrollView: UIScrollView?
         var currentIndex: Int = 0
         var isSettingViewController = false
+        private var isDismissTracking = false
+        private var dismissVelocity: CGFloat = 0
 
         init(parent: VerticalPagerView) {
             self.parent = parent
@@ -156,12 +160,40 @@ extension VerticalPagerView {
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             guard parent.canScroll else { return }
             let baseline = scrollView.bounds.height
-            let translation = baseline - scrollView.contentOffset.y
+            let rawOffset = scrollView.contentOffset.y
+
+            // Dismiss tracking: page 0, user dragging down past boundary
+            if currentIndex == 0 && rawOffset < baseline && !isSettingViewController {
+                if !isDismissTracking {
+                    isDismissTracking = true
+                }
+                let dismissTranslation = baseline - rawOffset
+                parent.onDismissDrag?(dismissTranslation)
+                return
+            }
+
+            // Only reset dismiss if user is actively dragging back up (not deceleration)
+            if isDismissTracking && rawOffset >= baseline && scrollView.isDragging {
+                isDismissTracking = false
+                parent.onDismissDrag?(0)
+            }
+
+            let translation = baseline - rawOffset
             parent.onDragChanged?(translation)
         }
 
         func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
             guard parent.canScroll else { return }
+
+            if isDismissTracking {
+                isDismissTracking = false
+                // Force scroll back to rest position
+                targetContentOffset.pointee.y = scrollView.bounds.height
+                // Fire dismiss end with velocity immediately (before deceleration resets state)
+                parent.onDismissDragEnded?(velocity.y)
+                return
+            }
+
             parent.onDragChanged?(0)
         }
 

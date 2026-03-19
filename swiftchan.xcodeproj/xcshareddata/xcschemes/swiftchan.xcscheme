@@ -38,6 +38,16 @@
                ReferencedContainer = "container:swiftchan.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "951817A8254CFB620032616E"
+               BuildableName = "swiftchanUITests.xctest"
+               BlueprintName = "swiftchanUITests"
+               ReferencedContainer = "container:swiftchan.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

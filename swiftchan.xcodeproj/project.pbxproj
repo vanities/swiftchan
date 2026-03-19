@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		549DB3585CF7DBE5800AD093 /* GalleryNamespaceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951BEC5E7078A59F1215DD0F /* GalleryNamespaceKey.swift */; };
 		09B1DFCA9F650DAC27B6DB21 /* RecurringFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */; };
 		1A5F76AD0CB8E1E22917C335 /* RecurringFavoriteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D12254DE163971EE1E9188 /* RecurringFavoriteViewModel.swift */; };
 		2C999DFDE990B515FFB0B779 /* AddRecurringFavoriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044AE15507088A1373984CA /* AddRecurringFavoriteSheet.swift */; };
@@ -130,6 +131,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		951BEC5E7078A59F1215DD0F /* GalleryNamespaceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryNamespaceKey.swift; sourceTree = "<group>"; };
 		3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecurringFavorite.swift; sourceTree = "<group>"; };
 		5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		83D12254DE163971EE1E9188 /* RecurringFavoriteViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecurringFavoriteViewModel.swift; sourceTree = "<group>"; };
@@ -477,6 +479,7 @@
 			children = (
 				95C73105256CA1F700F18257 /* UserSettings.swift */,
 				9524E19E256F272200D08075 /* AppState.swift */,
+				951BEC5E7078A59F1215DD0F /* GalleryNamespaceKey.swift */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -740,6 +743,7 @@
 				95DBF2082712550C00356D8F /* AnimatedImage.swift in Sources */,
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				95C73106256CA1F700F18257 /* UserSettings.swift in Sources */,
+				549DB3585CF7DBE5800AD093 /* GalleryNamespaceKey.swift in Sources */,
 				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
