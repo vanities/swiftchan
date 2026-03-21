@@ -135,6 +135,8 @@ struct PostView: View {
                 }
                 // comment
                 Text(comment)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
                     .padding(.vertical, 20)
                     .accessibilityIdentifier(AccessibilityIdentifiers.postText(index))
