@@ -106,6 +106,8 @@ struct ThreadView: View {
                 .overlay(alignment: .bottom) {
                     if isSearching && !viewModel.searchResultIndices.isEmpty {
                         searchToolbar
+                    } else if viewModel.searchFilters.posterID != nil {
+                        posterIDFilterBanner
                     }
                 }
                 .overlay {
@@ -305,6 +307,16 @@ struct ThreadView: View {
                             viewModel.searchFilters.hasReplies.toggle()
                         }
                     )
+
+                    if let posterID = viewModel.searchFilters.posterID {
+                        FilterChip(
+                            label: "ID: \(posterID)",
+                            isSelected: true,
+                            action: {
+                                viewModel.searchFilters.posterID = nil
+                            }
+                        )
+                    }
                 }
                 .padding(.horizontal)
             }
@@ -336,6 +348,39 @@ struct ThreadView: View {
         }
         .padding(.vertical, 8)
         .background(.regularMaterial)
+    }
+
+    @ViewBuilder
+    var posterIDFilterBanner: some View {
+        if let posterID = viewModel.searchFilters.posterID {
+            HStack {
+                let color = Color.randomColor(seed: posterID)
+                Text("Showing posts by")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Text(posterID)
+                    .font(.subheadline)
+                    .bold()
+                    .foregroundColor(Color.isRandomColorLight(seed: posterID) ? .black : .white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(color)
+                    .cornerRadius(5)
+                Text("(\(viewModel.searchResultIndices.count))")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button {
+                    viewModel.searchFilters.posterID = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.regularMaterial)
+        }
     }
 
     private func fetchAndPrefetchMedia(auto: Bool = false) async {

@@ -94,6 +94,7 @@ struct PostView: View {
                             }
                             if let id = post.pid {
                                 let color = Color.randomColor(seed: id)
+                                let isFiltered = viewModel.searchFilters.posterID == id
                                 Text(id.description)
                                     .foregroundColor(Color.isRandomColorLight(seed: id) ? .black : .white)
                                     .background(
@@ -102,7 +103,20 @@ struct PostView: View {
                                             .cornerRadius(5)
                                             .padding(.horizontal, -5)
                                     )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .stroke(Color.accentColor, lineWidth: isFiltered ? 2 : 0)
+                                            .padding(.horizontal, -5)
+                                    )
                                     .offset(x: 5)
+                                    .onTapGesture {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        if viewModel.searchFilters.posterID == id {
+                                            viewModel.searchFilters.posterID = nil
+                                        } else {
+                                            viewModel.searchFilters.posterID = id
+                                        }
+                                    }
 
                             }
                             // Anonymous
