@@ -11,7 +11,6 @@ import FourChan
 struct OPView: View {
     @AppStorage("showOPPreview") var showOPPreview: Bool = false
     @Environment(AppState.self) var appState
-    @Namespace var fullscreenNspace
 
     let index: Int
     let boardName: String
