@@ -23,6 +23,7 @@ class AccessibilityIdentifiers {
     static func galleryMediaImage(_ index: Int) -> String {
         "\(index) Gallery Media Image"
     }
+    static let galleryCloseButton: String = "Gallery Close Button"
     static let saveToPhotosButton: String = "Save to Photos Button"
     static let saveToFilesButton: String = "Save to Files Button"
     static let copyToPasteboardButton: String = "Copy to Pasteboard Button"

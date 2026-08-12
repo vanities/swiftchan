@@ -31,6 +31,7 @@ struct ThreadView: View {
     @State private var showAutoRefreshToast: Bool = false
     @State private var autoRefreshToastMessage: String = ""
     @State private var isSearching: Bool = false
+    @Namespace private var galleryNamespace
 
     @State private var scene: SKScene = {
         let s = SnowScene()
@@ -118,7 +119,7 @@ struct ThreadView: View {
                             .disabled(true)
                     }
                 }
-                .sheet(
+                .fullScreenCover(
                     isPresented: $presentationState.presentingGallery,
                     onDismiss: {
                         // reneable this if it got disabled
@@ -127,6 +128,11 @@ struct ThreadView: View {
                     },
                     content: {
                         gallerySheetContent
+                            // Zoom back to whichever media the user is on;
+                            // scrollToPost keeps its thumbnail on screen.
+                            .navigationTransition(
+                                .zoom(sourceID: presentationState.galleryIndex, in: galleryNamespace)
+                            )
                     }
                 )
                 .onOpenURL { url in
@@ -175,6 +181,7 @@ struct ThreadView: View {
                     }
                 }
                 .environment(presentationState)
+                .environment(\.galleryNamespace, galleryNamespace)
                 .navigationTitle(viewModel.title)
                 .searchable(text: $viewModel.searchText, isPresented: $isSearching)
                 .onChange(of: viewModel.searchText) { _, _ in
@@ -445,7 +452,7 @@ struct ThreadView: View {
 extension ThreadView {
     @ViewBuilder
     private var gallerySheetContent: some View {
-        let gallery = GalleryView(
+        GalleryView(
             index: presentationState.galleryIndex
         )
         .environment(appState)
@@ -456,14 +463,6 @@ extension ThreadView {
         }
         .onDisappear {
             threadAutorefresher.startTimer()
-        }
-
-        if #available(iOS 16.0, *) {
-            gallery
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
-        } else {
-            gallery
         }
     }
 }
