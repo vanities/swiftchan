@@ -28,6 +28,7 @@ struct RepliesView: View {
                 }
             }
         }
+        .environment(\.inRepliesContext, true)
         .onOpenURL { url in
             if case .post(let id) = Deeplinker.getType(url: url) {
                 showReply = true

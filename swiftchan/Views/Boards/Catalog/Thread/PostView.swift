@@ -12,6 +12,8 @@ struct PostView: View {
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
     @Environment(PresentationState.self) private var presentationState: PresentationState
+    @Environment(\.galleryNamespace) private var galleryNamespace
+    @Environment(\.inRepliesContext) private var inRepliesContext
 
     let index: Int
 
@@ -50,12 +52,17 @@ struct PostView: View {
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
                             .frame(width: UIScreen.halfWidth)
                             .scaledToFill() // VStack
+                            .galleryTransitionSource(
+                                id: mediaIndex,
+                                namespace: galleryNamespace,
+                                // Only one context may own a source id: the thread
+                                // list normally, RepliesView while it is pushed.
+                                isActive: inRepliesContext == presentationState.presentingReplies
+                            )
                             .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    viewModel.media[mediaIndex].isSelected = true
-                                    presentationState.galleryIndex = mediaIndex
-                                    presentationState.presentingGallery = true
-                                }
+                                viewModel.media[mediaIndex].isSelected = true
+                                presentationState.galleryIndex = mediaIndex
+                                presentationState.presentingGallery = true
                             }
                             if let filename = post.filename,
                                let fileExtension = post.ext {

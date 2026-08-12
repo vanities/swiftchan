@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 import UIKit
 
 struct GalleryView: View {
@@ -26,7 +25,6 @@ struct GalleryView: View {
     @State private var isSeeking = false
     @State private var isZoomed = false
     @State private var pagerScrollView: UIScrollView?
-    @State private var sheetPresentationController: UISheetPresentationController?
 
     var onMediaChanged: ((Bool) -> Void)?
     var onPageDragChanged: ((CGFloat) -> Void)?
@@ -106,24 +104,33 @@ struct GalleryView: View {
                 }
             }
         }
+        .overlay(alignment: .topLeading) {
+            closeButton
+        }
         .onDisappear {
             restorePagerScrolling()
-            sheetPresentationController?.presentedViewController.isModalInPresentation = false
         }
         .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
-        .introspect(.sheet, on: .iOS(.v17, .v18, .v26)) { controller in
-            controller.prefersGrabberVisible = true
-            controller.prefersScrollingExpandsWhenScrolledToEdge = false
-            controller.detents = [.large()]
-            // Defer state update to avoid "Modifying state during view update" warning
-            if sheetPresentationController !== controller {
-                DispatchQueue.main.async {
-                    sheetPresentationController = controller
-                }
-            }
-            updateInteractiveDismiss(using: controller)
-        }
+        // Block the zoom transition's pan-to-dismiss while pinch-zoomed into
+        // media or scrubbing video, so those gestures keep priority.
+        .interactiveDismissDisabled(isZoomed || isSeeking)
         .statusBar(hidden: true)
+    }
+
+    private var closeButton: some View {
+        Button {
+            state.presentingGallery = false
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 28))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(.white)
+                .shadow(radius: 4)
+        }
+        .padding(16)
+        .opacity(isZoomed ? 0 : 1)
+        .animation(.easeInOut(duration: 0.15), value: isZoomed)
+        .accessibilityIdentifier(AccessibilityIdentifiers.galleryCloseButton)
     }
 
     @ViewBuilder
@@ -139,7 +146,6 @@ struct GalleryView: View {
                     if zoomed {
                         showPreview = false
                     }
-                    updateInteractiveDismiss()
                     onMediaChanged?(zoomed)
                 }
                 .onSeekChanged { seeking in
@@ -147,7 +153,6 @@ struct GalleryView: View {
                     refreshPagingState()
                     canShowPreview = !seeking
                     canShowContextMenu = !seeking
-                    updateInteractiveDismiss()
                 }
                 .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
                 .accessibilityIdentifier(
@@ -183,7 +188,6 @@ struct GalleryView: View {
         var currentItem = viewModel.media[index]
         currentItem.isSelected = true
         viewModel.media[index] = currentItem
-        updateInteractiveDismiss()
 
         // Dynamic prefetching: update prefetch window as user swipes
         viewModel.prefetch(currentIndex: index)
@@ -220,14 +224,6 @@ struct GalleryView: View {
         refreshPagingState()
     }
 
-    private func updateInteractiveDismiss(using controller: UISheetPresentationController? = nil) {
-        let controller = controller ?? sheetPresentationController
-        guard let controller else { return }
-        let allowDismiss = !isZoomed && !isSeeking
-        DispatchQueue.main.async {
-            controller.presentedViewController.isModalInPresentation = !allowDismiss
-        }
-    }
 }
 
 extension GalleryView: Buildable {
