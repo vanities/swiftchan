@@ -25,11 +25,11 @@ class SwiftchanTests: XCTestCase {
 
                             Softimage Mod Tool:
 
-                            http://usa.autodesk.com/adsk/servle​t/pc/item?id=13571257&siteID=123112
+                            http://usa.autodesk.com/adsk/servle\u{200B}t/pc/item?id=13571257&siteID=123112
 
                             Houdini Apprentice:
 
-                            http://www.sidefx.com/index.php?opt​ion=com_download&Itemid=208&task=ap​prentice
+                            http://www.sidefx.com/index.php?opt\u{200B}ion=com_download&Itemid=208&task=ap\u{200B}prentice
 """)
         print(result)
         XCTAssertEqual(result[0].0, URL(string: "http://www.blender.org/")!)
@@ -39,8 +39,8 @@ class SwiftchanTests: XCTestCase {
     }
 
     func testHyperLinkFinderQueryParam() throws {
-        let urlString = "https://store.steampowered.com/app/​773840/DRAG/"
-        // let percentUrlString = "https://store.steampowered.com/app/​773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let urlString = "https://store.steampowered.com/app/\u{200B}773840/DRAG/"
+        // let percentUrlString = "https://store.steampowered.com/app/\u{200B}773840/DRAG/".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let result = parser.checkForUrls(urlString)
         XCTAssertEqual(result[0].0, URL(string: "https://store.steampowered.com/app/773840/DRAG/"))
     }
