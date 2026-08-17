@@ -13,6 +13,12 @@ struct VideoContainerView: View {
     let isSelected: Bool
     var onSeekChanged: ((Bool) -> Void)?
 
+    // Reference type so async playback callbacks observe the *current*
+    // lifecycle state instead of a value captured at closure creation.
+    private final class PlaybackLifecycle {
+        var isActive = true
+    }
+
     @State private var downloadState: DownloadState = .idle
     @State private var fileURL: URL?
     @StateObject private var coordinator = KSVideoPlayer.Coordinator()
@@ -20,6 +26,7 @@ struct VideoContainerView: View {
     @State private var controlsHideTask: Task<Void, Never>?
     @State private var isPlaying = false
     @State private var isSeeking = false
+    @State private var lifecycle = PlaybackLifecycle()
 
     enum DownloadState {
         case idle
@@ -36,8 +43,13 @@ struct VideoContainerView: View {
                         DispatchQueue.main.async {
                             switch state {
                             case .readyToPlay:
-                                if isSelected {
+                                // Guard against resurrecting an orphaned player: this block can
+                                // land after gallery dismissal has already paused and detached
+                                // the layer, and play() here would restart audio no one can stop.
+                                if isSelected, lifecycle.isActive, coordinator.playerLayer === playerLayer {
                                     playerLayer.play()
+                                } else if isSelected {
+                                    debugPrint("🎬 Skipping play after teardown: \(url.lastPathComponent)")
                                 }
                             case .bufferFinished:
                                 isPlaying = playerLayer.player.isPlaying
@@ -97,7 +109,7 @@ struct VideoContainerView: View {
                 // Debounce play to avoid triggering during drag
                 Task {
                     try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
-                    if isSelected {
+                    if isSelected, lifecycle.isActive {
                         coordinator.playerLayer?.play()
                         isPlaying = true
                     }
@@ -105,9 +117,11 @@ struct VideoContainerView: View {
             }
         }
         .onAppear {
+            lifecycle.isActive = true
             UIApplication.shared.isIdleTimerDisabled = true
         }
         .onDisappear {
+            lifecycle.isActive = false
             coordinator.playerLayer?.pause()
             isPlaying = false
         }

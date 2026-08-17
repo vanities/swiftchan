@@ -124,7 +124,11 @@ struct ThreadView: View {
                     onDismiss: {
                         // reneable this if it got disabled
                         UIApplication.shared.isIdleTimerDisabled = false
-
+                        // Deselect all media so no video is left flagged as
+                        // playing after the gallery closes.
+                        for index in viewModel.media.indices where viewModel.media[index].isSelected {
+                            viewModel.media[index].isSelected = false
+                        }
                     },
                     content: {
                         gallerySheetContent
