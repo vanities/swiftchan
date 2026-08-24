@@ -36,11 +36,18 @@ struct VideoContainerView: View {
 
     var body: some View {
         ZStack {
-            if let fileURL {
+            // Only build the player once this page is the settled, active one.
+            // KSPlayerLayer autoplays on construction (KSOptions.isAutoPlay), and
+            // UIPageViewController instantiates the adjacent page as soon as the
+            // drag begins — constructing eagerly leaks the next video's audio
+            // mid-swipe. Gating on isSelected (set in didFinishAnimating) means no
+            // player exists until the page transition has fully ended.
+            if let fileURL, isSelected {
                 KSVideoPlayer(coordinator: coordinator, url: fileURL, options: ksOptions())
                     .onStateChanged { playerLayer, state in
                         // Defer state updates to avoid "Publishing changes from within view updates"
                         DispatchQueue.main.async {
+                            debugPrint("🎬 state=\(state) selected=\(isSelected) \(url.lastPathComponent)")
                             switch state {
                             case .readyToPlay:
                                 // Guard against resurrecting an orphaned player: this block can
@@ -102,18 +109,12 @@ struct VideoContainerView: View {
             await loadVideo()
         }
         .onChange(of: isSelected) { _, selected in
+            debugPrint("🎬 isSelected=\(selected) \(url.lastPathComponent)")
             if !selected {
+                // Tearing down the KSVideoPlayer above dismantles the layer, but
+                // pause first so audio stops on the same runloop tick as the swipe.
                 coordinator.playerLayer?.pause()
                 isPlaying = false
-            } else if fileURL != nil {
-                // Debounce play to avoid triggering during drag
-                Task {
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
-                    if isSelected, lifecycle.isActive {
-                        coordinator.playerLayer?.play()
-                        isPlaying = true
-                    }
-                }
             }
         }
         .onAppear {
