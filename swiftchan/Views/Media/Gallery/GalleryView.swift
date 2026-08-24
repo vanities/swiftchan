@@ -68,8 +68,9 @@ struct GalleryView: View {
             .onChange(of: state.galleryIndex) { _, newValue in
                 guard selection != newValue,
                       viewModel.media.indices.contains(newValue) else { return }
+                // Only move the pager here. Activation (and video playback) is
+                // driven by onPageChanged, which fires when the transition ends.
                 selection = newValue
-                updateActiveMedia(to: newValue)
             }
             .onChange(of: viewModel.media) { _, newMedia in
                 guard newMedia.indices.contains(selection) else {

@@ -50,10 +50,15 @@ struct VerticalPagerView<Content: View>: UIViewControllerRepresentable {
               let target = context.coordinator.controller(for: clampedSelection) else { return }
 
         let direction: UIPageViewController.NavigationDirection = clampedSelection >= context.coordinator.currentIndex ? .forward : .reverse
+        let animated = abs(clampedSelection - context.coordinator.currentIndex) == 1
         context.coordinator.isSettingViewController = true
-        uiViewController.setViewControllers([target], direction: direction, animated: abs(clampedSelection - context.coordinator.currentIndex) == 1) { _ in
+        uiViewController.setViewControllers([target], direction: direction, animated: animated) { _ in
             context.coordinator.isSettingViewController = false
             context.coordinator.currentIndex = clampedSelection
+            // Report the change only once the programmatic transition has fully
+            // ended, so media activation (and therefore video playback) never
+            // begins mid-animation.
+            context.coordinator.notifyPageChanged(clampedSelection)
         }
     }
 }
@@ -70,6 +75,10 @@ extension VerticalPagerView {
         init(parent: VerticalPagerView) {
             self.parent = parent
             super.init()
+        }
+
+        func notifyPageChanged(_ index: Int) {
+            parent.onPageChanged?(index)
         }
 
         func update(parent: VerticalPagerView, controller: UIPageViewController) {
