@@ -121,6 +121,8 @@ final class BrowsingUITests: XCTestCase {
         openFixtureThread(in: app, anchor: "#p105")
         app.buttons["Post Options 105"].tap()
         XCTAssertTrue(app.buttons["Hide Selected Post"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Share Selected Post"].isHittable)
+        attachScreenshot("Post Sharing Options", app: app)
         app.buttons["Hide Selected Post"].tap()
         XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["#105"].exists)

@@ -65,6 +65,12 @@ final class ThreadViewModel {
         return URL(string: "https://boards.4chan.org/\(self.boardName)/thread/\(self.id)")!
     }
 
+    func postURL(_ postID: Int) -> URL {
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        components?.fragment = "p\(postID)"
+        return components?.url ?? url
+    }
+
     var title: String {
         posts.first?.sub?.clean ?? ""
     }

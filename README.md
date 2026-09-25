@@ -134,6 +134,8 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+To share a specific reply, open its **… → Share Post** action. The link includes the post number and opens at that reply in Swiftchan or on the website.
+
 Use a post's **… → Hide** action to hide it, then tap **Undo** if needed. **Settings → Hidden Posts & Threads** lists hidden items by board and post number, with search, individual restore, and **Restore All**. Previously hidden items appear there too.
 
 Threads remember the last visible post and read progress. Reopening resumes there; a banner counts unread replies and jumps to the first one, with a divider marking new replies. Explicit post links take priority over the saved position. Use **Settings → Thread → Remember Reading Progress** to turn this off, or **Clear Reading Progress** to remove saved positions. Progress is stored locally for up to 300 recently visited threads.
