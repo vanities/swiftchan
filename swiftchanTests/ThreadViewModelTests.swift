@@ -4,6 +4,14 @@ import FourChan
 
 @MainActor
 final class ThreadViewModelTests: XCTestCase {
+    func testSharedPostLinkPreservesBoardThreadAndExactReply() {
+        let model = ThreadViewModel(boardName: "biz", id: 100)
+        XCTAssertEqual(model.postURL(105).absoluteString, "https://boards.4chan.org/biz/thread/100#p105")
+        XCTAssertEqual(Deeplinker.getType(url: model.postURL(105)), .thread(board: "biz", id: "100", postID: 105))
+        XCTAssertEqual(model.postURL(100).fragment, "p100")
+        XCTAssertNil(model.url.fragment)
+    }
+
     func testRefreshFailurePreservesReadablePostsAndReportsError() async throws {
         let response = try thread(#"[{"no":1,"com":"Original post","tim":123,"ext":".jpg"}]"#)
         var calls = 0

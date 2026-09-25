@@ -321,14 +321,22 @@ struct ThreadView: View {
                 .sheet(isPresented: $appState.showingBottomSheet) {
                     if let post = appState.selectedBottomSheetPost,
                        let index = viewModel.posts.firstIndex(of: post) {
-                        Button("Hide \(index == 0 ? "Thread" : "Post")") {
-                            recentlyHidden = HiddenPostStore.shared.hide(board: viewModel.boardName, postID: post.no,
-                                                                         threadID: viewModel.id, title: index == 0 ? viewModel.title : nil)
-                            appState.showingBottomSheet = false
-                            appState.selectedBottomSheetPost = nil
+                        VStack(spacing: 24) {
+                            ShareLink(item: viewModel.postURL(post.no)) {
+                                Label("Share Post", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityIdentifier("Share Selected Post")
+                            Button("Hide \(index == 0 ? "Thread" : "Post")") {
+                                recentlyHidden = HiddenPostStore.shared.hide(board: viewModel.boardName, postID: post.no,
+                                                                             threadID: viewModel.id, title: index == 0 ? viewModel.title : nil)
+                                appState.showingBottomSheet = false
+                                appState.selectedBottomSheetPost = nil
+                            }
+                            .accessibilityIdentifier("Hide Selected Post")
                         }
-                        .accessibilityIdentifier("Hide Selected Post")
-                        .presentationDetents([.height(100)])
+                        .padding()
+                        .presentationDetents([.height(180), .medium])
+                        .presentationDragIndicator(.visible)
                     }
                 }
                 .safeAreaInset(edge: .bottom, spacing: 0) {
