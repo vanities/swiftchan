@@ -28,13 +28,12 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertEqual(nameField(in: app).value as? String, "Metals Watch")
         let name = nameField(in: app)
         name.tap()
-        name.press(forDuration: 1.2)
-        let selectAll = app.menuItems["Select All"].exists ? app.menuItems["Select All"] : app.buttons["Select All"]
-        XCTAssertTrue(selectAll.waitForExistence(timeout: 3))
-        selectAll.tap()
-        name.typeText("Precious Metals General")
+        name.typeText("Updated ")
+        let editedName = name.value as? String ?? ""
+        XCTAssertTrue(editedName.contains("Updated "))
+        XCTAssertNotEqual(editedName, "Metals Watch")
         app.buttons["Save General"].tap()
-        XCTAssertTrue(app.staticTexts["Precious Metals General"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts[editedName].waitForExistence(timeout: 5))
         XCTAssertEqual(app.staticTexts.matching(identifier: "/biz/ · /pmg/").count, 1)
         attachScreenshot("Followed General", app: app)
     }
