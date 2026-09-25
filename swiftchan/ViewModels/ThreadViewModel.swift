@@ -18,6 +18,11 @@ struct SearchFilters: Equatable {
 
 @Observable @MainActor
 final class ThreadViewModel {
+    typealias ThreadLoader = (String, Int, @escaping @Sendable (Double) -> Void) async throws -> ChanThread
+    typealias ArchiveLoader = (String, Int) async throws -> FourplebsThread
+    @ObservationIgnored private let fetchThread: ThreadLoader
+    @ObservationIgnored private let fetchArchive: ArchiveLoader
+    @ObservationIgnored private var isLoading = false
     enum State {
         case initial, loading, loaded, error
     }
@@ -38,6 +43,7 @@ final class ThreadViewModel {
     private(set) var replies = [Int: [Int]]()
     private(set) var state = State.initial
     private(set) var errorType = ErrorType.generic
+    private(set) var refreshError: String?
     private(set) var isArchived = false
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
@@ -76,7 +82,7 @@ final class ThreadViewModel {
         if let cached = commentCache[index] {
             return cached
         }
-        guard index < rawComments.count, let raw = rawComments[index] else {
+        guard rawComments.indices.contains(index), let raw = rawComments[index] else {
             return AttributedString()
         }
         let parsed = CommentParser(comment: raw).getComment()
@@ -84,10 +90,22 @@ final class ThreadViewModel {
         return parsed
     }
 
-    init(boardName: String, id: Int, replies: [Int: [Int]] = [Int: [Int]]()) {
+    init(
+        boardName: String,
+        id: Int,
+        replies: [Int: [Int]] = [:],
+        fetchThread: @escaping ThreadLoader = { board, id, progress in
+            try await FourChanAsyncService.shared.getThread(boardName: board, no: id, progress: progress)
+        },
+        fetchArchive: @escaping ArchiveLoader = { board, id in
+            try await FourplebsService.shared.getThread(board: board, threadNum: id)
+        }
+    ) {
         self.boardName = boardName
         self.id = id
         self.replies = replies
+        self.fetchThread = fetchThread
+        self.fetchArchive = fetchArchive
         setupProgressTracking()
     }
 
@@ -113,216 +131,146 @@ final class ThreadViewModel {
             .store(in: &cancellables)
     }
 
-    func getPosts() async {
-        // Reset progress without creating new object
-        downloadProgress.totalUnitCount = 100
-        downloadProgress.completedUnitCount = 0
-        setupProgressTracking()
-
-        if state != .loaded {
-            state = .loading
-        }
+    @discardableResult
+    func getPosts() async -> Bool {
+        guard beginLoading() else { return false }
+        defer { isLoading = false }
 
         do {
-            // Phase 1: Fetching thread data (0-40%)
             updateProgress(30, message: "Fetching thread data...")
-
-            let thread = try await FourChanAsyncService.shared.getThread(boardName: boardName, no: id) { @Sendable progress in
-                // Map API progress to our 0-40% range
-                let mappedProgress = Int64(30 + (progress * 10))
+            let thread = try await fetchThread(boardName, id) { @Sendable progress in
                 Task { @MainActor [weak self] in
-                    self?.downloadProgress.completedUnitCount = mappedProgress
+                    self?.downloadProgress.completedUnitCount = Int64(30 + progress * 10)
                 }
             }
-            let posts = thread.posts
-
-            if posts.count > 0 {
-                // Phase 2: Processing posts (40-80%)
-                updateProgress(40, message: "Processing posts...")
-
-                var mediaUrls: [URL] = []
-                var thumbnailMediaUrls: [URL] = []
-                var mapping: [Int: Int] = [:]
-                var rawComs = [String?]()
-                var searchComs = [String]()
-                var postReplies: [Int: [String]] = [:]
-                var postIndex = 0
-                var mediaIndex = 0
-
-                for (index, post) in posts.enumerated() {
-                    // Update progress during post processing
-                    if index % max(1, posts.count / 10) == 0 {
-                        let processingProgress = 40 + Int64((Double(index) / Double(posts.count)) * 40)
-                        updateProgress(processingProgress, message: "Processing posts...")
-                    }
-                    if let mediaUrl = post.getMediaUrl(boardId: boardName), let thumbnailUrl = post.getMediaUrl(boardId: boardName, thumbnail: true) {
-                        mapping[postIndex] = mediaIndex
-                        mediaUrls.append(mediaUrl)
-                        thumbnailMediaUrls.append(thumbnailUrl)
-                        mediaIndex += 1
-                    }
-                    if let comment = post.com {
-                        rawComs.append(comment)
-                        searchComs.append(comment.clean)
-                        postReplies[postIndex] = CommentParser.extractReplyIds(from: comment)
-                    } else {
-                        rawComs.append(nil)
-                        searchComs.append("")
-                    }
-                    postIndex += 1
-                }
-
-                // Phase 3: Processing replies (80-90%)
-                updateProgress(80, message: "Processing replies...")
-                let replies = FourchanService.getReplies(postReplies: postReplies, posts: posts)
-
-                // Phase 4: Loading media (90-100%)
-                updateProgress(90, message: "Loading media...")
-                self.posts = posts
-                self.postMediaMapping = mapping
-                self.rawComments = rawComs
-                self.searchableComments = searchComs
-                self.commentCache.removeAll()
-                self.replies = replies
-                self.buildPostIdIndex()
-                setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-
-                // Phase 5: Complete
-                updateProgress(100, message: "Complete!")
-                state = .loaded
-            } else if self.posts.isEmpty {
-                errorType = .notFound
-                state = .error
-                print("DEBUG: Thread empty, errorType=\(errorType), canLoadFromArchive=\(canLoadFromArchive)")
+            try Task.checkCancellation()
+            guard !thread.posts.isEmpty else {
+                reportFailure(.notFound)
+                return false
             }
+            let contents = thread.posts.map { post in
+                LoadedPost(post: post, mediaURL: post.getMediaUrl(boardId: boardName),
+                           thumbnailURL: post.getMediaUrl(boardId: boardName, thumbnail: true))
+            }
+            apply(contents, archived: false)
+            return true
         } catch {
-            print("DEBUG: Caught error: \(error)")
-            // Determine error type based on the error
-            if let urlError = error as? URLError {
-                switch urlError.code {
-                case .resourceUnavailable, .fileDoesNotExist, .cannotFindHost:
-                    errorType = .notFound
-                default:
-                    errorType = .network
-                }
-            } else if error is DecodingError {
-                // Invalid/empty JSON usually means thread doesn't exist
-                errorType = .notFound
-            } else {
-                // Check if error message indicates not found
-                let errorString = error.localizedDescription.lowercased()
-                if errorString.contains("404") || errorString.contains("not found") {
-                    errorType = .notFound
-                } else {
-                    errorType = .generic
-                }
-            }
-            state = .error
+            handleFailure(error)
+            return false
         }
-        print("Thread /\(boardName)/-\(id) successfully got \(self.posts.count) posts.")
     }
 
-    func loadFromArchive() async {
-        print("DEBUG: loadFromArchive called for /\(boardName)/\(id)")
-        guard canLoadFromArchive else { return }
-
-        state = .loading
-        isArchived = true
-
-        // Reset progress
-        downloadProgress.totalUnitCount = 100
-        downloadProgress.completedUnitCount = 0
-        setupProgressTracking()
+    @discardableResult
+    func loadFromArchive() async -> Bool {
+        guard canLoadFromArchive, beginLoading() else { return false }
+        defer { isLoading = false }
 
         do {
             updateProgress(20, message: "Fetching from archive...")
-
-            let archiveThread = try await FourplebsService.shared.getThread(
-                board: boardName,
-                threadNum: id
-            )
-
-            updateProgress(50, message: "Processing archived posts...")
-
-            let fourplebsPosts = archiveThread.getAllPosts()
-            let convertedPosts = archiveThread.toPosts(board: boardName)
-
-            if !convertedPosts.isEmpty {
-                var mediaUrls: [URL] = []
-                var thumbnailMediaUrls: [URL] = []
-                var mapping: [Int: Int] = [:]
-                var rawComs = [String?]()
-                var searchComs = [String]()
-                var postReplies: [Int: [String]] = [:]
-                var postIndex = 0
-                var mediaIndex = 0
-
-                for (index, fourplebsPost) in fourplebsPosts.enumerated() {
-                    if index % max(1, fourplebsPosts.count / 10) == 0 {
-                        let processingProgress = 50 + Int64((Double(index) / Double(fourplebsPosts.count)) * 30)
-                        updateProgress(processingProgress, message: "Processing archived posts...")
-                    }
-
-                    // Use direct media URLs from 4plebs API
-                    if let media = fourplebsPost.media,
-                       let mediaUrlStr = media.mediaLink,
-                       let thumbUrlStr = media.thumbLink,
-                       let mediaUrl = URL(string: mediaUrlStr),
-                       let thumbnailUrl = URL(string: thumbUrlStr) {
-                        mapping[postIndex] = mediaIndex
-                        mediaUrls.append(mediaUrl)
-                        thumbnailMediaUrls.append(thumbnailUrl)
-                        mediaIndex += 1
-                    }
-
-                    if let comment = fourplebsPost.comment {
-                        rawComs.append(comment)
-                        searchComs.append(comment.clean)
-                        postReplies[postIndex] = CommentParser.extractReplyIds(from: comment)
-                    } else {
-                        rawComs.append(nil)
-                        searchComs.append("")
-                    }
-                    postIndex += 1
-                }
-
-                updateProgress(85, message: "Processing replies...")
-                let replies = FourchanService.getReplies(postReplies: postReplies, posts: convertedPosts)
-
-                updateProgress(95, message: "Loading media...")
-                self.posts = convertedPosts
-                self.postMediaMapping = mapping
-                self.rawComments = rawComs
-                self.searchableComments = searchComs
-                self.commentCache.removeAll()
-                self.replies = replies
-                self.buildPostIdIndex()
-                setMedia(mediaUrls: mediaUrls, thumbnailMediaUrls: thumbnailMediaUrls)
-
-                updateProgress(100, message: "Complete!")
-                state = .loaded
-            } else {
-                errorType = .notFound
-                state = .error
+            let thread = try await fetchArchive(boardName, id)
+            try Task.checkCancellation()
+            let contents = thread.getAllPosts().compactMap { archivedPost -> LoadedPost? in
+                guard let post = archivedPost.toPost(board: boardName) else { return nil }
+                return LoadedPost(post: post,
+                                  mediaURL: archivedPost.media?.mediaLink.flatMap(URL.init(string:)),
+                                  thumbnailURL: archivedPost.media?.thumbLink.flatMap(URL.init(string:)))
             }
-        } catch let error as FourplebsService.FourplebsError {
-            print("DEBUG: 4plebs error: \(error)")
-            switch error {
-            case .notFound, .unsupportedBoard:
-                errorType = .notFound
-            case .antiBot:
-                errorType = .network
-            case .networkError, .decodingError, .invalidResponse:
-                errorType = .network
+            guard !contents.isEmpty else {
+                reportFailure(.notFound)
+                return false
             }
-            state = .error
+            apply(contents, archived: true)
+            return true
         } catch {
-            print("DEBUG: Unknown error: \(error)")
-            errorType = .generic
-            state = .error
+            handleFailure(error)
+            return false
         }
+    }
 
-        print("Archive thread /\(boardName)/-\(id) got \(self.posts.count) posts.")
+    private func beginLoading() -> Bool {
+        guard !isLoading else { return false }
+        isLoading = true
+        refreshError = nil
+        if posts.isEmpty { state = .loading }
+        downloadProgress.totalUnitCount = 100
+        downloadProgress.completedUnitCount = 0
+        return true
+    }
+
+    private struct LoadedPost {
+        let post: Post
+        let mediaURL: URL?
+        let thumbnailURL: URL?
+    }
+
+    /// Install live and archived responses together so every index refers to the same snapshot.
+    private func apply(_ contents: [LoadedPost], archived: Bool) {
+        updateProgress(50, message: "Processing posts...")
+        var mediaURLs: [URL] = []
+        var thumbnailURLs: [URL] = []
+        var mapping: [Int: Int] = [:]
+        var postReplies: [Int: [String]] = [:]
+        for (index, content) in contents.enumerated() {
+            if let mediaURL = content.mediaURL, let thumbnailURL = content.thumbnailURL {
+                mapping[index] = mediaURLs.count
+                mediaURLs.append(mediaURL)
+                thumbnailURLs.append(thumbnailURL)
+            }
+            if let comment = content.post.com {
+                postReplies[index] = CommentParser.extractReplyIds(from: comment)
+            }
+        }
+        posts = contents.map(\.post)
+        postMediaMapping = mapping
+        rawComments = posts.map(\.com)
+        searchableComments = rawComments.map { $0?.clean ?? "" }
+        commentCache.removeAll()
+        replies = FourchanService.getReplies(postReplies: postReplies, posts: posts)
+        buildPostIdIndex()
+        setMedia(mediaUrls: mediaURLs, thumbnailMediaUrls: thumbnailURLs)
+        isArchived = archived
+        errorType = .generic
+        updateSearchResults()
+        updateProgress(100, message: "Complete!")
+        state = .loaded
+    }
+
+    private func handleFailure(_ error: Error) {
+        if error is CancellationError || (error as? URLError)?.code == .cancelled {
+            state = posts.isEmpty ? .initial : .loaded
+            return
+        }
+        if let archiveError = error as? FourplebsService.FourplebsError {
+            switch archiveError {
+            case .notFound, .unsupportedBoard:
+                reportFailure(.notFound)
+            case .antiBot, .networkError, .decodingError, .invalidResponse:
+                reportFailure(.network)
+            }
+        } else if let urlError = error as? URLError {
+            switch urlError.code {
+            case .resourceUnavailable, .fileDoesNotExist:
+                reportFailure(.notFound)
+            default:
+                reportFailure(.network)
+            }
+        } else if error is DecodingError {
+            // The current API package surfaces non-JSON 404 responses as decoding failures.
+            reportFailure(.notFound)
+        } else {
+            let description = error.localizedDescription.lowercased()
+            reportFailure(description.contains("404") || description.contains("not found") ? .notFound : .generic)
+        }
+    }
+
+    private func reportFailure(_ type: ErrorType) {
+        errorType = type
+        state = posts.isEmpty ? .error : .loaded
+        if !posts.isEmpty {
+            refreshError = type == .notFound
+                ? "This thread is no longer available. Showing previously loaded posts."
+                : "Couldn’t refresh the thread. Pull down to try again."
+        }
     }
 
     private func updateProgress(_ progress: Int64, message: String) {

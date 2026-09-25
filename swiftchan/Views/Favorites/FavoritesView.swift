@@ -8,13 +8,6 @@
 import SwiftUI
 import SwiftData
 
-enum FavoriteSortOption: String, CaseIterable {
-    case savedAt = "Date Saved"
-    case boardName = "Board"
-    case replyCount = "Replies"
-    case imageCount = "Images"
-}
-
 struct FavoritesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
@@ -29,44 +22,16 @@ struct FavoritesView: View {
     @State private var selectedRecurring: RecurringFavorite?
     @State private var recurringViewModel = RecurringFavoriteViewModel()
 
+    private var query: FavoritesQuery {
+        FavoritesQuery(searchText: searchText, boardName: selectedBoard, sort: sortOption, ascending: sortAscending)
+    }
+
     private var availableBoards: [String] {
-        Array(Set(favorites.map { $0.boardName })).sorted()
+        FavoritesQuery.availableBoards(saved: favorites, recurring: recurringFavorites)
     }
 
     private var filteredAndSortedFavorites: [FavoriteThread] {
-        var result = favorites
-
-        // Filter by search text
-        if !searchText.isEmpty {
-            result = result.filter { favorite in
-                favorite.title.localizedCaseInsensitiveContains(searchText) ||
-                favorite.boardName.localizedCaseInsensitiveContains(searchText) ||
-                String(favorite.threadId).contains(searchText)
-            }
-        }
-
-        // Filter by board
-        if let board = selectedBoard {
-            result = result.filter { $0.boardName == board }
-        }
-
-        // Sort
-        result.sort { a, b in
-            let comparison: Bool
-            switch sortOption {
-            case .savedAt:
-                comparison = a.savedAt > b.savedAt
-            case .boardName:
-                comparison = a.boardName < b.boardName
-            case .replyCount:
-                comparison = a.replyCount > b.replyCount
-            case .imageCount:
-                comparison = a.imageCount > b.imageCount
-            }
-            return sortAscending ? !comparison : comparison
-        }
-
-        return result
+        query.savedThreads(favorites)
     }
 
     private var isEmpty: Bool {
@@ -183,12 +148,7 @@ struct FavoritesView: View {
     }
 
     private var filteredRecurringFavorites: [RecurringFavorite] {
-        guard !searchText.isEmpty else { return recurringFavorites }
-        return recurringFavorites.filter { recurring in
-            recurring.searchPattern.localizedCaseInsensitiveContains(searchText) ||
-            recurring.boardName.localizedCaseInsensitiveContains(searchText) ||
-            (recurring.displayName?.localizedCaseInsensitiveContains(searchText) ?? false)
-        }
+        query.recurringThreads(recurringFavorites)
     }
 
     private var favoritesList: some View {
@@ -225,8 +185,13 @@ struct FavoritesView: View {
                 }
             }
 
-            if filteredAndSortedFavorites.isEmpty && filteredRecurringFavorites.isEmpty && !searchText.isEmpty {
-                ContentUnavailableView.search(text: searchText)
+            if filteredAndSortedFavorites.isEmpty && filteredRecurringFavorites.isEmpty {
+                if !searchText.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                } else {
+                    ContentUnavailableView("No Favorites on This Board", systemImage: "heart.slash",
+                                           description: Text("Choose All Boards to see your other favorites."))
+                }
             }
         }
         .listStyle(.insetGrouped)
