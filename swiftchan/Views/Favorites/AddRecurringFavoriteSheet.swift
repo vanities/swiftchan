@@ -11,12 +11,12 @@ struct AddRecurringFavoriteSheet: View {
     @State private var displayName: String
     @State private var errorMessage: String?
 
-    init(searchPattern: String = "", boardName: String = "", favorite: RecurringFavorite? = nil, onSave: (() -> Void)? = nil) {
+    init(searchPattern: String = "", boardName: String = "", displayName: String = "", favorite: RecurringFavorite? = nil, onSave: (() -> Void)? = nil) {
         self.favorite = favorite
         self.onSave = onSave
         _boardName = State(initialValue: favorite?.boardName ?? boardName)
         _searchPattern = State(initialValue: favorite?.searchPattern ?? searchPattern)
-        _displayName = State(initialValue: favorite?.displayName ?? "")
+        _displayName = State(initialValue: favorite?.displayName ?? displayName)
     }
 
     private var draft: RecurringFavoriteDraft? {

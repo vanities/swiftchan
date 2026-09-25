@@ -40,8 +40,8 @@ KSPlayer is intentionally pinned to `bb6d367c02f3247ef3f328dc0cfea34e77aef7c5` f
 ## Tests and releases
 
 - Unit tests live in `swiftchanTests/`; ensure new files belong to the Xcode test target.
-- UI tests live in `swiftchanUITests/`. The shared scheme runs `BrowsingUITests` for following/editing generals and link validation. These tests use a debug-only in-memory favorites store (`--ui-testing`); older live-network UI tests remain excluded.
+- UI tests live in `swiftchanUITests/`. The shared scheme runs `BrowsingUITests` for following/editing generals, link validation, reading restoration, and unread navigation. These tests use a debug-only in-memory favorites store (`--ui-testing`); Thread UI tests opt into a deterministic debug-only fixture with `--ui-thread-fixture`; older live-network UI tests remain excluded.
 - Add focused regressions for behavior fixes. Prefer fixtures and injected loaders over live network dependencies.
-- GitHub Actions builds and runs unit tests for pull requests.
+- GitHub Actions builds and runs unit and focused UI tests for pull requests.
 - `bundle exec fastlane beta` signs and uploads a TestFlight release, then bumps the build number. Run it only when releasing is requested.
 - Certificates are managed with Fastlane match (`make renew_certs` / `make get_certs`).

@@ -134,6 +134,10 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Threads remember the last visible post and read progress. Reopening resumes there; a banner counts unread replies and jumps to the first one, with a divider marking new replies. Explicit post links take priority over the saved position. Use **Settings → Thread → Remember Reading Progress** to turn this off, or **Clear Reading Progress** to remove saved positions. Progress is stored locally for up to 300 recently visited threads.
+
+When a thread title contains a tag such as `/pmg/`, tap the **repeat** icon in its toolbar to follow that general. The form fills in the board, tag, and title; if it is already followed, the same action edits its existing entry and preserves its custom name.
+
 To follow a general such as Precious Metals General:
 
 1. Open **Favorites** and tap **+** (or **Follow a General** in the empty state).

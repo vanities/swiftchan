@@ -18,7 +18,7 @@ struct ThreadView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppState.self) private var appState
     @Environment(\.modelContext) private var modelContext
-    // @Query private var allFavorites: [FavoriteThread]
+    @Query private var followedGenerals: [RecurringFavorite]
 
     @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
@@ -27,7 +27,10 @@ struct ThreadView: View {
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
     @State private var showPostUnavailable = false
-    @State private var openedLinkedPost = false
+    @AppStorage("rememberThreadPositions") private var rememberThreadPositions = true
+    @State private var reading = ThreadReadingSession()
+    @State private var visiblePostIDs: [Int] = []
+    @State private var showFollowGeneral = false
     private let initialPostID: Int?
     @State private var isThreadVisible = false
     @State private var isSearching: Bool = false
@@ -68,6 +71,7 @@ struct ThreadView: View {
                         }
                     }
             case .loaded:
+                let newPostID = reading.firstNewPostID(in: readablePostIDs)
                 ZStack {
                     ScrollViewReader { reader in
                         ScrollView {
@@ -76,12 +80,23 @@ struct ThreadView: View {
                                 alignment: .center,
                                 spacing: 0
                             ) {
-                                ForEach(viewModel.posts.indices, id: \.self) { postIndex in
-                                    let post = viewModel.posts[postIndex]
+                                ForEach(Array(viewModel.posts.enumerated()), id: \.element.no) { postIndex, post in
                                     if !post.isHidden(boardName: viewModel.boardName) && viewModel.shouldShowPost(at: postIndex) {
-                                        PostView(index: postIndex)
-                                            .environment(viewModel)
-                                            .id(postIndex)
+                                        VStack(spacing: 0) {
+                                            if rememberThreadPositions, post.no == newPostID {
+                                                Text("New replies")
+                                                    .font(.caption.bold())
+                                                    .foregroundStyle(.tint)
+                                                    .frame(maxWidth: .infinity)
+                                                    .padding(8)
+                                                    .background(.tint.opacity(0.1))
+                                                    .accessibilityIdentifier("New Replies Divider")
+                                            }
+                                            PostView(index: postIndex)
+                                                .environment(viewModel)
+                                        }
+                                            .id(post.no)
+                                            .accessibilityIdentifier("Thread Post \(post.no)")
                                             .opacity(isSearching && !viewModel.searchResultIndices.isEmpty ?
                                                      (viewModel.searchResultIndices[viewModel.currentSearchResultIndex] == postIndex ? 1.0 : 0.5) : 1.0)
                                     }
@@ -90,14 +105,14 @@ struct ThreadView: View {
                             .scrollTargetLayout()
                             .padding(.all, 3)
                             .task {
-                                guard let postID = initialPostID, !openedLinkedPost else { return }
-                                openedLinkedPost = true
+                                guard !reading.started else { return }
+                                let saved = rememberThreadPositions ? ThreadReadingStore.shared.progress(board: viewModel.boardName, threadID: viewModel.id) : nil
+                                let linkedPost = initialPostID.flatMap { readablePostIDs.contains($0) ? $0 : nil }
+                                if initialPostID != nil && linkedPost == nil { showPostUnavailable = true }
+                                let target = reading.start(postIDs: readablePostIDs, saved: saved, linkedPostID: linkedPost)
                                 await Task.yield()
-                                if let index = viewModel.getPostIndexFromId(String(postID)) {
-                                    reader.scrollTo(index, anchor: .top)
-                                } else {
-                                    showPostUnavailable = true
-                                }
+                                if let target { reader.scrollTo(target, anchor: .top) }
+                                recordVisiblePosts()
                             }
                             .onChange(of: presentationState.galleryIndex) { _, _  in
                                 if !presentationState.presentingReplies && !showReply {
@@ -108,9 +123,35 @@ struct ThreadView: View {
                             .onChange(of: viewModel.currentSearchResultIndex) { _, _ in
                                 if let postIndex = viewModel.getCurrentSearchResultPostIndex() {
                                     withAnimation {
-                                        reader.scrollTo(postIndex, anchor: .center)
+                                        reader.scrollTo(viewModel.posts[postIndex].no, anchor: .center)
                                     }
                                 }
+                            }
+                        }
+                        .accessibilityIdentifier("Thread Posts")
+                        .onScrollTargetVisibilityChange(idType: Int.self, threshold: 0.1) { ids in
+                            visiblePostIDs = ids
+                            recordVisiblePosts()
+                        }
+                        .onScrollPhaseChange { _, phase in
+                            if phase == .idle { ThreadReadingStore.shared.flush() }
+                        }
+                        .safeAreaInset(edge: .top, spacing: 0) {
+                            if rememberThreadPositions, !isSearching, viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(),
+                               let firstUnread = unreadPostIDs.first {
+                                Button {
+                                    reader.scrollTo(firstUnread, anchor: .top)
+                                } label: {
+                                    HStack {
+                                        Text("\(unreadPostIDs.count) unread \(unreadPostIDs.count == 1 ? "reply" : "replies")")
+                                        Spacer()
+                                        Label("Jump", systemImage: "arrow.down")
+                                    }
+                                    .font(.subheadline)
+                                    .padding(10)
+                                    .background(.regularMaterial)
+                                }
+                                .accessibilityIdentifier("Jump To Unread")
                             }
                         }
                     }
@@ -169,6 +210,7 @@ struct ThreadView: View {
                     isThreadVisible = true
                     viewModel.prefetch()
                     refreshFavoriteState()
+                    recordVisiblePosts()
                     threadAutorefresher.onRefresh = { [weak threadAutorefresher] in
                         Task {
                             await fetchAndPrefetchMedia()
@@ -179,10 +221,18 @@ struct ThreadView: View {
                 }
                 .onDisappear {
                     isThreadVisible = false
+                    ThreadReadingStore.shared.flush()
                     viewModel.stopPrefetching()
                     threadAutorefresher.cancelTimer()
                 }
-                .onChange(of: scenePhase) { updateAutoRefreshState() }
+                .onChange(of: scenePhase) {
+                    updateAutoRefreshState()
+                    if scenePhase != .active { ThreadReadingStore.shared.flush() }
+                }
+                .onChange(of: ThreadReadingStore.shared.resetID) {
+                    reading = ThreadReadingSession()
+                    _ = reading.start(postIDs: readablePostIDs, saved: nil, linkedPostID: nil)
+                }
                 .onChange(of: viewModel.isArchived) { updateAutoRefreshState() }
                 .onChange(of: presentationState.presentingGallery) { updateAutoRefreshState() }
                 .onChange(of: autoRefreshEnabled) { updateAutoRefreshState() }
@@ -210,7 +260,24 @@ struct ThreadView: View {
                 .onChange(of: viewModel.searchFilters) { _, _ in
                     viewModel.updateSearchResults()
                 }
+                .sheet(isPresented: $showFollowGeneral) {
+                    if let suggestion = GeneralSuggestion(title: viewModel.title) {
+                        AddRecurringFavoriteSheet(searchPattern: suggestion.tag, boardName: viewModel.boardName,
+                                                 displayName: suggestion.name, favorite: followedGeneral)
+                    }
+                }
                 .toolbar(id: "toolbar-1") {
+                    ToolbarItem(id: "toolbar-follow-general", placement: .navigationBarTrailing) {
+                        if GeneralSuggestion(title: viewModel.title) != nil {
+                            Button {
+                                showFollowGeneral = true
+                            } label: {
+                                Image(systemName: followedGeneral == nil ? "repeat" : "repeat.circle.fill")
+                            }
+                            .accessibilityLabel(followedGeneral == nil ? "Follow this general" : "Edit followed general")
+                            .accessibilityIdentifier("Follow This General")
+                        }
+                    }
                     ToolbarItem(id: "toolbar-item-favorite", placement: .navigationBarTrailing) {
                         Button {
                             toggleFavorite()
@@ -397,6 +464,32 @@ struct ThreadView: View {
         }
     }
 
+    private var followedGeneral: RecurringFavorite? {
+        guard let suggestion = GeneralSuggestion(title: viewModel.title) else { return nil }
+        return followedGenerals.first {
+            RecurringFavoriteDraft(boardName: $0.boardName, searchPattern: $0.searchPattern, displayName: "").map {
+                $0.boardName == viewModel.boardName && $0.searchPattern == suggestion.tag
+            } == true
+        }
+    }
+
+    private var readablePostIDs: [Int] {
+        viewModel.posts.filter { !$0.isHidden(boardName: viewModel.boardName) }.map(\.no)
+    }
+
+    private var unreadPostIDs: [Int] { reading.unreadPostIDs(in: readablePostIDs) }
+
+    private func recordVisiblePosts() {
+        guard rememberThreadPositions, isThreadVisible, scenePhase == .active, !isSearching,
+              viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(), !showReply,
+              !presentationState.presentingGallery, !presentationState.presentingReplies, !showFollowGeneral else { return }
+        reading.observe(visiblePostIDs: visiblePostIDs)
+        if let postID = reading.postID {
+            ThreadReadingStore.shared.record(board: viewModel.boardName, threadID: viewModel.id,
+                                             postID: postID, highestReadID: reading.highestReadID)
+        }
+    }
+
     private var postLinkAction: OpenURLAction {
         OpenURLAction { url in
             if case .post(let id) = Deeplinker.getType(url: url) {
@@ -431,7 +524,7 @@ struct ThreadView: View {
     private func scrollToPost(reader: ScrollViewProxy) {
         if presentationState.presentingIndex != presentationState.galleryIndex,
            let mediaI = viewModel.postMediaMapping.firstIndex(where: { $0.value == presentationState.galleryIndex }) {
-            reader.scrollTo(viewModel.postMediaMapping[mediaI].key, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
+            reader.scrollTo(viewModel.posts[viewModel.postMediaMapping[mediaI].key].no, anchor: viewModel.media.count - presentationState.galleryIndex < 3 ? .bottom : .top)
         }
     }
 

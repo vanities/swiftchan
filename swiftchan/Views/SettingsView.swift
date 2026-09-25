@@ -18,6 +18,7 @@ struct SettingsView: View {
     @AppStorage("rememberThreadPositions") var rememberThreadPositions = true
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = true
 
+    @State private var showClearReadingConfirmation = false
     @State private var showCacheDeleteToast = false
     @State private var cacheResult: Result<Void, Error>?
     @State private var cacheSize: String = "Calculating..."
@@ -96,6 +97,11 @@ struct SettingsView: View {
 
     var threadSection: some View {
         Section(header: Text("Thread").font(.title)) {
+            Toggle("Remember Reading Progress", isOn: $rememberThreadPositions)
+            Button("Clear Reading Progress", role: .destructive) { showClearReadingConfirmation = true }
+                .confirmationDialog("Clear saved positions and unread progress?", isPresented: $showClearReadingConfirmation, titleVisibility: .visible) {
+                    Button("Clear Reading Progress", role: .destructive) { ThreadReadingStore.shared.clear() }
+                }
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)
             HStack {
                 Text("Auto Refresh Time (seconds)")
