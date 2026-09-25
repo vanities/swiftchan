@@ -253,9 +253,12 @@ GEM
       xcpretty (~> 0.2, >= 0.0.7)
 
 PLATFORMS
+  arm64-darwin-23
   arm64-darwin-25
+  ruby
   universal-darwin-21
   universal-darwin-22
+  x86_64-darwin-23
 
 DEPENDENCIES
   fastlane (~> 2.240.1)
