@@ -12,6 +12,14 @@ import SpriteKit
 import SwiftData
 
 struct ThreadView: View {
+    // Snapshot the draft before presentation; the sheet must not observe the presenting view's query or title.
+    private struct FollowPresentation: Identifiable {
+        let id = UUID()
+        let board: String
+        let suggestion: GeneralSuggestion
+        let favorite: RecurringFavorite?
+    }
+
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = false
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = true
@@ -30,7 +38,7 @@ struct ThreadView: View {
     @AppStorage("rememberThreadPositions") private var rememberThreadPositions = true
     @State private var reading = ThreadReadingSession()
     @State private var visiblePostIDs: [Int] = []
-    @State private var showFollowGeneral = false
+    @State private var followPresentation: FollowPresentation?
     @State private var recentlyHidden: HiddenPost?
     private let initialPostID: Int?
     @State private var isThreadVisible = false
@@ -260,17 +268,17 @@ struct ThreadView: View {
                 .onChange(of: viewModel.searchFilters) { _, _ in
                     viewModel.updateSearchResults()
                 }
-                .sheet(isPresented: $showFollowGeneral) {
-                    if let suggestion = GeneralSuggestion(title: viewModel.title) {
-                        AddRecurringFavoriteSheet(searchPattern: suggestion.tag, boardName: viewModel.boardName,
-                                                 displayName: suggestion.name, favorite: followedGeneral)
-                    }
+                .sheet(item: $followPresentation) { presentation in
+                    AddRecurringFavoriteSheet(searchPattern: presentation.suggestion.tag, boardName: presentation.board,
+                                             displayName: presentation.suggestion.name, favorite: presentation.favorite)
                 }
                 .toolbar(id: "toolbar-1") {
                     ToolbarItem(id: "toolbar-follow-general", placement: .navigationBarTrailing) {
                         if GeneralSuggestion(title: viewModel.title) != nil {
                             Button {
-                                showFollowGeneral = true
+                                guard let suggestion = GeneralSuggestion(title: viewModel.title) else { return }
+                                followPresentation = FollowPresentation(board: viewModel.boardName, suggestion: suggestion,
+                                                                        favorite: followedGeneral)
                             } label: {
                                 Image(systemName: followedGeneral == nil ? "repeat" : "repeat.circle.fill")
                             }
@@ -513,7 +521,7 @@ struct ThreadView: View {
     private func recordVisiblePosts() {
         guard rememberThreadPositions, isThreadVisible, scenePhase == .active, !isSearching,
               viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(), !showReply,
-              !presentationState.presentingGallery, !presentationState.presentingReplies, !showFollowGeneral else { return }
+              !presentationState.presentingGallery, !presentationState.presentingReplies, followPresentation == nil else { return }
         reading.observe(visiblePostIDs: visiblePostIDs)
         if let postID = reading.postID {
             ThreadReadingStore.shared.record(board: viewModel.boardName, threadID: viewModel.id,
