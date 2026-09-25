@@ -31,6 +31,7 @@ struct ThreadView: View {
     @State private var reading = ThreadReadingSession()
     @State private var visiblePostIDs: [Int] = []
     @State private var showFollowGeneral = false
+    @State private var recentlyHidden: HiddenPost?
     private let initialPostID: Int?
     @State private var isThreadVisible = false
     @State private var isSearching: Bool = false
@@ -96,7 +97,6 @@ struct ThreadView: View {
                                                 .environment(viewModel)
                                         }
                                             .id(post.no)
-                                            .accessibilityIdentifier("Thread Post \(post.no)")
                                             .opacity(isSearching && !viewModel.searchResultIndices.isEmpty ?
                                                      (viewModel.searchResultIndices[viewModel.currentSearchResultIndex] == postIndex ? 1.0 : 0.5) : 1.0)
                                     }
@@ -322,9 +322,32 @@ struct ThreadView: View {
                     if let post = appState.selectedBottomSheetPost,
                        let index = viewModel.posts.firstIndex(of: post) {
                         Button("Hide \(index == 0 ? "Thread" : "Post")") {
-                            post.hide(boardName: viewModel.boardName)
+                            recentlyHidden = HiddenPostStore.shared.hide(board: viewModel.boardName, postID: post.no,
+                                                                         threadID: viewModel.id, title: index == 0 ? viewModel.title : nil)
+                            appState.showingBottomSheet = false
+                            appState.selectedBottomSheetPost = nil
                         }
-                        .presentationDetents([.fraction(0.1)])
+                        .accessibilityIdentifier("Hide Selected Post")
+                        .presentationDetents([.height(100)])
+                    }
+                }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if let item = recentlyHidden, HiddenPostStore.shared.isHidden(board: item.boardName, postID: item.postID) {
+                        HStack {
+                            Text(item.isThread ? "Thread hidden" : "Post hidden")
+                            Spacer()
+                            Button("Undo") {
+                                HiddenPostStore.shared.restore(item)
+                                recentlyHidden = nil
+                            }
+                            .accessibilityIdentifier("Undo Hide")
+                            Button("Dismiss", systemImage: "xmark") { recentlyHidden = nil }
+                                .labelStyle(.iconOnly)
+                                .accessibilityLabel("Dismiss undo")
+                        }
+                        .font(.subheadline)
+                        .padding()
+                        .background(.regularMaterial)
                     }
                 }
                 .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */; };
+		EE000002EEEE000100000002 /* HiddenPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000002EEEE000100000001 /* HiddenPostsView.swift */; };
+		EE000001EEEE000100000002 /* HiddenPostStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000001EEEE000100000001 /* HiddenPostStore.swift */; };
 		DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000004DDDD000100000001 /* ReadingProgressTests.swift */; };
 		DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000003DDDD000100000001 /* ThreadUITestFixture.swift */; };
 		DD000002DDDD000100000002 /* GeneralSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000002DDDD000100000001 /* GeneralSuggestion.swift */; };
@@ -144,6 +147,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostStoreTests.swift; sourceTree = "<group>"; };
+		EE000002EEEE000100000001 /* HiddenPostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostsView.swift; sourceTree = "<group>"; };
+		EE000001EEEE000100000001 /* HiddenPostStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostStore.swift; sourceTree = "<group>"; };
 		DD000004DDDD000100000001 /* ReadingProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProgressTests.swift; sourceTree = "<group>"; };
 		DD000003DDDD000100000001 /* ThreadUITestFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUITestFixture.swift; sourceTree = "<group>"; };
 		DD000002DDDD000100000001 /* GeneralSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSuggestion.swift; sourceTree = "<group>"; };
@@ -323,6 +329,7 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				EE000001EEEE000100000001 /* HiddenPostStore.swift */,
 				DD000002DDDD000100000001 /* GeneralSuggestion.swift */,
 				DD000001DDDD000100000001 /* ThreadReadingProgress.swift */,
 				95C8B7652DFB0F930005CB93 /* ThreadDestination.swift */,
@@ -389,6 +396,7 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */,
 				DD000004DDDD000100000001 /* ReadingProgressTests.swift */,
 				CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */,
 				CC000002CCCC000100000002 /* DeepLinkerTests.swift */,
@@ -418,6 +426,7 @@
 		955814B6254D249B00A966BA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EE000002EEEE000100000001 /* HiddenPostsView.swift */,
 				958D2C98254D2DF200E54C41 /* ContentView.swift */,
 				95B7BE43256CBBCA00F75BC9 /* Boards */,
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
@@ -774,6 +783,8 @@
 				AA000001AAAA000100000001 /* VideoContainerView.swift in Sources */,
 				AA000002AAAA000100000002 /* VideoPlayerControlsView.swift in Sources */,
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
+				EE000001EEEE000100000002 /* HiddenPostStore.swift in Sources */,
+				EE000002EEEE000100000002 /* HiddenPostsView.swift in Sources */,
 				DD000001DDDD000100000002 /* ThreadReadingProgress.swift in Sources */,
 				DD000002DDDD000100000002 /* GeneralSuggestion.swift in Sources */,
 				DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */,
@@ -850,6 +861,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */,
 				DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */,
 				CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */,
 				CC000001CCCC000100000001 /* DeepLinkerTests.swift in Sources */,

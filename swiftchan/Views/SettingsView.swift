@@ -27,6 +27,14 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 boardSection
+                Section {
+                    NavigationLink {
+                        HiddenPostsView()
+                    } label: {
+                        Label("Hidden Posts & Threads", systemImage: "eye.slash")
+                    }
+                    .accessibilityIdentifier("Manage Hidden Posts")
+                }
                 mediaSection
                 threadSection
                 biometricsSection
