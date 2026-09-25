@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000004DDDD000100000001 /* ReadingProgressTests.swift */; };
+		DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000003DDDD000100000001 /* ThreadUITestFixture.swift */; };
+		DD000002DDDD000100000002 /* GeneralSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000002DDDD000100000001 /* GeneralSuggestion.swift */; };
+		DD000001DDDD000100000002 /* ThreadReadingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD000001DDDD000100000001 /* ThreadReadingProgress.swift */; };
 		CC000007CCCC000100000007 /* BrowsingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000008CCCC000100000008 /* BrowsingUITests.swift */; };
 		CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */; };
 		CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000004CCCC000100000004 /* OpenLinkSheet.swift */; };
@@ -140,6 +144,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DD000004DDDD000100000001 /* ReadingProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProgressTests.swift; sourceTree = "<group>"; };
+		DD000003DDDD000100000001 /* ThreadUITestFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUITestFixture.swift; sourceTree = "<group>"; };
+		DD000002DDDD000100000001 /* GeneralSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSuggestion.swift; sourceTree = "<group>"; };
+		DD000001DDDD000100000001 /* ThreadReadingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReadingProgress.swift; sourceTree = "<group>"; };
 		CC000008CCCC000100000008 /* BrowsingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingUITests.swift; sourceTree = "<group>"; };
 		CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringFavoriteTests.swift; sourceTree = "<group>"; };
 		CC000004CCCC000100000004 /* OpenLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLinkSheet.swift; sourceTree = "<group>"; };
@@ -315,6 +323,8 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DD000002DDDD000100000001 /* GeneralSuggestion.swift */,
+				DD000001DDDD000100000001 /* ThreadReadingProgress.swift */,
 				95C8B7652DFB0F930005CB93 /* ThreadDestination.swift */,
 				95978F112CA795E000C520EF /* Tabs.swift */,
 				95105368256600C9002E4051 /* Post.swift */,
@@ -379,6 +389,7 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				DD000004DDDD000100000001 /* ReadingProgressTests.swift */,
 				CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */,
 				CC000002CCCC000100000002 /* DeepLinkerTests.swift */,
 				BB000006BBBB000100000006 /* ThreadViewModelTests.swift */,
@@ -433,6 +444,7 @@
 		9580614A255263DB0003FFF3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				DD000003DDDD000100000001 /* ThreadUITestFixture.swift */,
 				9537082427F801FA00A4DF8F /* MultiActionItem.swift */,
 				95F6245F255CE64400E9147B /* URLExamples.swift */,
 				9524F4BA258054A60006395F /* MediaSaver.swift */,
@@ -762,6 +774,9 @@
 				AA000001AAAA000100000001 /* VideoContainerView.swift in Sources */,
 				AA000002AAAA000100000002 /* VideoPlayerControlsView.swift in Sources */,
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
+				DD000001DDDD000100000002 /* ThreadReadingProgress.swift in Sources */,
+				DD000002DDDD000100000002 /* GeneralSuggestion.swift in Sources */,
+				DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */,
 				CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
@@ -835,6 +850,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */,
 				CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */,
 				CC000001CCCC000100000001 /* DeepLinkerTests.swift in Sources */,
 				BB000005BBBB000100000005 /* ThreadViewModelTests.swift in Sources */,

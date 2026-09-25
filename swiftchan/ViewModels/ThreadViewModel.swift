@@ -95,7 +95,10 @@ final class ThreadViewModel {
         id: Int,
         replies: [Int: [Int]] = [:],
         fetchThread: @escaping ThreadLoader = { board, id, progress in
-            try await FourChanAsyncService.shared.getThread(boardName: board, no: id, progress: progress)
+            #if DEBUG
+            if let fixture = try ThreadUITestFixture.load(board: board, id: id) { return fixture }
+            #endif
+            return try await FourChanAsyncService.shared.getThread(boardName: board, no: id, progress: progress)
         },
         fetchArchive: @escaping ArchiveLoader = { board, id in
             try await FourplebsService.shared.getThread(board: board, threadNum: id)
