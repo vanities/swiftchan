@@ -48,9 +48,7 @@ class CommentParser {
                 // in-thread reply
                 // >>798116 #p798116
                 if href.starts(with: "#p") {
-                    let bareText = text
-                        .replacingOccurrences(of: ">>", with: "")
-                        .replacingOccurrences(of: "(OP)", with: "")
+                    let bareText = String(href.dropFirst(2))
                     replies.append(bareText)
                     part.foregroundColor = Colors.Text.reply
                     part.font = font
@@ -59,8 +57,7 @@ class CommentParser {
                 // self-served url
                 // readme.txt http://freetexthost.com/nzjanyanw0
                 else if href.starts(with: "http") || href.starts(with: "https") {
-                    if let urlString = href.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-                       let url = URL(string: urlString) {
+                    if let url = URL(string: href) {
                         part.foregroundColor = Colors.Text.link
                         part.font = font
                         part.link = url

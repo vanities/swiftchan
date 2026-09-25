@@ -10,6 +10,14 @@ import FourChan
 
 @Observable @MainActor
 class RecurringFavoriteViewModel {
+    typealias CatalogLoader = (String) async throws -> Catalog
+    @ObservationIgnored private let fetchCatalog: CatalogLoader
+    @ObservationIgnored private var activeRequest: UUID?
+
+    init(fetchCatalog: @escaping CatalogLoader = { try await FourChanAsyncService.shared.getCatalog(boardName: $0) }) {
+        self.fetchCatalog = fetchCatalog
+    }
+
     enum MatchState: Equatable {
         case idle
         case loading
@@ -37,10 +45,14 @@ class RecurringFavoriteViewModel {
     var state: MatchState = .idle
 
     func findMatches(for favorite: RecurringFavorite) async {
+        let request = UUID()
+        activeRequest = request
         state = .loading
 
         do {
-            let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: favorite.boardName)
+            let catalog = try await fetchCatalog(favorite.boardName)
+            guard activeRequest == request else { return }
+            try Task.checkCancellation()
 
             var allPosts: [SwiftchanPost] = []
             var index = 0
@@ -64,9 +76,7 @@ class RecurringFavoriteViewModel {
             favorite.lastMatchCount = matches.count
 
             // Save the thumbnail of the most recent match
-            if let firstMatch = matches.first {
-                favorite.lastThumbnailUrlString = firstMatch.post.getMediaUrl(boardId: favorite.boardName, thumbnail: true)?.absoluteString
-            }
+            favorite.lastThumbnailUrlString = matches.first?.post.getMediaUrl(boardId: favorite.boardName, thumbnail: true)?.absoluteString
 
             switch matches.count {
             case 0:
@@ -77,7 +87,12 @@ class RecurringFavoriteViewModel {
                 state = .multipleMatches(matches)
             }
         } catch {
-            state = .error(error.localizedDescription)
+            guard activeRequest == request else { return }
+            if error is CancellationError || (error as? URLError)?.code == .cancelled {
+                state = .idle
+            } else {
+                state = .error(error.localizedDescription)
+            }
         }
     }
 
@@ -94,6 +109,7 @@ class RecurringFavoriteViewModel {
     }
 
     func reset() {
+        activeRequest = nil
         state = .idle
     }
 }

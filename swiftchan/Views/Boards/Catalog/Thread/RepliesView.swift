@@ -14,6 +14,8 @@ struct RepliesView: View {
 
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
+    @State private var showPostUnavailable = false
+    @Environment(\.openURL) private var openURL
 
     @Environment(PresentationState.self) private var presentationState: PresentationState
     @Environment(ThreadViewModel.self) private var viewModel
@@ -29,18 +31,35 @@ struct RepliesView: View {
             }
         }
         .environment(\.inRepliesContext, true)
-        .onOpenURL { url in
-            if case .post(let id) = Deeplinker.getType(url: url) {
-                showReply = true
-                replyId = viewModel.getPostIndexFromId(id)
-            }
+        .environment(\.openURL, postLinkAction)
+        .alert("Post Unavailable", isPresented: $showPostUnavailable) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("This post is not in the loaded thread. It may have been deleted.")
         }
         .navigationDestination(isPresented: $showReply) {
             PostView(index: replyId)
                 .environment(viewModel)
                 .environment(presentationState)
+                .environment(\.openURL, postLinkAction)
         }
     }
+    private var postLinkAction: OpenURLAction {
+        OpenURLAction { url in
+            guard case .post(let id) = Deeplinker.getType(url: url) else {
+                openURL(url)
+                return .handled
+            }
+            if let index = viewModel.getPostIndexFromId(id) {
+                replyId = index
+                showReply = true
+            } else {
+                showPostUnavailable = true
+            }
+            return .handled
+        }
+    }
+
 }
 
 #if DEBUG

@@ -26,8 +26,9 @@ struct ThreadView: View {
     @State private var opacity: Double = 1
     @State private var showReply: Bool = false
     @State private var replyId: Int = 0
-    @State private var showThread: Bool = false
-    @State private var threadDestination = ThreadDestination(board: "", id: 0)
+    @State private var showPostUnavailable = false
+    @State private var openedLinkedPost = false
+    private let initialPostID: Int?
     @State private var isThreadVisible = false
     @State private var isSearching: Bool = false
     @Namespace private var galleryNamespace
@@ -43,7 +44,8 @@ struct ThreadView: View {
 
     @State private var isFavorited: Bool = false
 
-    init(boardName: String, postNumber: PostNumber) {
+    init(boardName: String, postNumber: PostNumber, postID: Int? = nil) {
+        initialPostID = postID
         self._viewModel = State(
             wrappedValue: ThreadViewModel(
                 boardName: boardName,
@@ -87,6 +89,16 @@ struct ThreadView: View {
                             }
                             .scrollTargetLayout()
                             .padding(.all, 3)
+                            .task {
+                                guard let postID = initialPostID, !openedLinkedPost else { return }
+                                openedLinkedPost = true
+                                await Task.yield()
+                                if let index = viewModel.getPostIndexFromId(String(postID)) {
+                                    reader.scrollTo(index, anchor: .top)
+                                } else {
+                                    showPostUnavailable = true
+                                }
+                            }
                             .onChange(of: presentationState.galleryIndex) { _, _  in
                                 if !presentationState.presentingReplies && !showReply {
                                     scrollToPost(reader: reader)
@@ -147,17 +159,11 @@ struct ThreadView: View {
                             )
                     }
                 )
-                .onOpenURL { url in
-                    switch Deeplinker.getType(url: url) {
-                    case .post(let id):
-                        showReply = true
-                        replyId = viewModel.getPostIndexFromId(id)
-                    case .thread(let board, let id):
-                        threadDestination = ThreadDestination(board: board, id: Int(id) ?? 0)
-                        showThread = true
-                    default:
-                        break
-                    }
+                .environment(\.openURL, postLinkAction)
+                .alert("Post Unavailable", isPresented: $showPostUnavailable) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("This post is not in the loaded thread. It may have been deleted.")
                 }
                 .onAppear {
                     isThreadVisible = true
@@ -221,11 +227,11 @@ struct ThreadView: View {
                     }
                     ToolbarItem(id: "toolbar-item-1", placement: ToolbarItemPlacement.navigationBarTrailing) {
                         if viewModel.isArchived, let archiveUrl = viewModel.archiveUrl {
-                            Link(destination: archiveUrl) {
+                            ShareLink(item: archiveUrl) {
                                 Image(systemName: "square.and.arrow.up")
                             }
                         } else {
-                            Link(destination: viewModel.url) {
+                            ShareLink(item: viewModel.url) {
                                 Image(systemName: "square.and.arrow.up")
                             }
                         }
@@ -239,20 +245,11 @@ struct ThreadView: View {
                         updateAutoRefreshState()
                     }
                 }
-                .onChange(of: showThread) {
-                    if showThread {
-                        threadAutorefresher.cancelTimer()
-                    } else {
-                        updateAutoRefreshState()
-                    }
-                }
                 .navigationDestination(isPresented: $showReply) {
                     PostView(index: replyId)
                         .environment(viewModel)
                         .environment(presentationState)
-                }
-                .navigationDestination(isPresented: $showThread) {
-                    ThreadView(boardName: threadDestination.board, postNumber: threadDestination.id)
+                        .environment(\.openURL, postLinkAction)
                 }
                 .sheet(isPresented: $appState.showingBottomSheet) {
                     if let post = appState.selectedBottomSheetPost,
@@ -400,6 +397,21 @@ struct ThreadView: View {
         }
     }
 
+    private var postLinkAction: OpenURLAction {
+        OpenURLAction { url in
+            if case .post(let id) = Deeplinker.getType(url: url) {
+                if let index = viewModel.getPostIndexFromId(id) {
+                    replyId = index
+                    showReply = true
+                } else {
+                    showPostUnavailable = true
+                }
+                return .handled
+            }
+            return appState.openLink(url) ? .handled : .systemAction
+        }
+    }
+
     private func fetchAndPrefetchMedia() async {
         if await viewModel.getPosts() {
             viewModel.prefetch()
@@ -409,7 +421,7 @@ struct ThreadView: View {
     private func updateAutoRefreshState() {
         if isThreadVisible, scenePhase == .active, !viewModel.isArchived,
            !presentationState.presentingGallery, !presentationState.presentingReplies,
-           !showReply, !showThread {
+           !showReply {
             threadAutorefresher.startTimer()
         } else {
             threadAutorefresher.cancelTimer()

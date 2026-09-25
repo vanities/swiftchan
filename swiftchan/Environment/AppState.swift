@@ -16,6 +16,25 @@ class AppState {
     var showingBottomSheet = false
     var selectedBottomSheetPost: Post?
     var selectedTab: Tabs = .boards
+    var pendingLink: Deeplinker.Deeplink?
+
+    @discardableResult
+    func openLink(_ url: URL) -> Bool {
+        guard let link = Deeplinker.getType(url: url) else { return false }
+        return openLink(link)
+    }
+
+    @discardableResult
+    func openLink(_ link: Deeplinker.Deeplink) -> Bool {
+        switch link {
+        case .board, .thread:
+            pendingLink = link
+            selectedTab = .boards
+            return true
+        case .post:
+            return false
+        }
+    }
 
     func requestBiometricUnlock(complete: (@Sendable (Bool) -> Void)? = nil) {
         let context = LAContext()

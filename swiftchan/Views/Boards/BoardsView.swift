@@ -18,65 +18,67 @@ struct BoardsView: View {
     @State private var searchText: String = ""
     @State private var presentedNavigation = NavigationPath()
 
-    @ViewBuilder
+    @State private var showOpenLink = false
+
     var body: some View {
+        NavigationStack(path: $presentedNavigation) {
+            boardContent
+                .navigationTitle(Constants.title)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Open Link", systemImage: "link") { showOpenLink = true }
+                            .accessibilityIdentifier("Open Link Button")
+                    }
+                }
+                .navigationDestination(for: String.self) { CatalogView(boardName: $0) }
+                .navigationDestination(for: ThreadDestination.self) { destination in
+                    ThreadView(boardName: destination.board, postNumber: destination.id, postID: destination.postID)
+                }
+                .sheet(isPresented: $showOpenLink) {
+                    OpenLinkSheet { appState.openLink($0) }
+                }
+        }
+        .onChange(of: appState.pendingLink, initial: true) {
+            guard let link = appState.pendingLink else { return }
+            switch link {
+            case .board(let name):
+                presentedNavigation.append(name)
+            case .thread(let board, let id, let postID):
+                if let number = Int(id) {
+                    presentedNavigation.append(ThreadDestination(board: board, id: number, postID: postID))
+                }
+            case .post:
+                break
+            }
+            appState.pendingLink = nil
+        }
+    }
+
+    @ViewBuilder
+    private var boardContent: some View {
         switch boardsViewModel.state {
-        case .initial:
+        case .initial, .loading:
             BoardsLoadingView(viewModel: boardsViewModel)
                 .task {
-                    await boardsViewModel.load()
+                    if boardsViewModel.state == .initial { await boardsViewModel.load() }
                 }
-        case .loading:
-            BoardsLoadingView(viewModel: boardsViewModel)
         case .loaded:
-            NavigationStack(path: $presentedNavigation) {
-                ZStack {
-                    ScrollView(.vertical, showsIndicators: true) {
-                        LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
-                            if searchText.isEmpty {
-                                BoardSection(
-                                    headerText: Constants.favoritesText,
-                                    list: boardsViewModel.getFavoriteBoards(favoriteBoards)
-                                )
-                            }
-                            BoardSection(
-                                headerText: Constants.allText,
-                                list: boardsViewModel.getFilteredBoards(searchText: searchText)
-                            )
-                        }
+            ScrollView(.vertical, showsIndicators: true) {
+                LazyVStack(alignment: .leading, spacing: Constants.gridSpacing) {
+                    if searchText.isEmpty {
+                        BoardSection(headerText: Constants.favoritesText, list: boardsViewModel.getFavoriteBoards(favoriteBoards))
                     }
-                    .searchable(text: $searchText)
-                }
-                .buttonStyle(.plain)
-                .navigationBarTitle(Constants.title)
-                .navigationDestination(for: String.self) { value in
-                    CatalogView(boardName: value)
-                }
-                .navigationDestination(for: ThreadDestination.self) { dest in
-                    ThreadView(boardName: dest.board, postNumber: dest.id)
+                    BoardSection(headerText: Constants.allText, list: boardsViewModel.getFilteredBoards(searchText: searchText))
                 }
             }
-            .onOpenURL { url in
-                switch Deeplinker.getType(url: url) {
-                case .board(let name):
-                    presentedNavigation.append(name)
-                case .thread(let board, let id):
-                    presentedNavigation.append(ThreadDestination(board: board, id: Int(id) ?? 0))
-                default:
-                    break
-                }
-            }
+            .searchable(text: $searchText)
+            .buttonStyle(.plain)
         case .error:
-            VStack {
-                Image(systemName: Constants.refreshIcon)
-                    .frame(width: 25, height: 25)
-                Text("Error loading boards, Tap to retry.")
-            }.onTapGesture {
-                Task {
-                    await boardsViewModel.load()
-                }
+            ContentUnavailableView {
+                Label("Couldn’t Load Boards", systemImage: "wifi.exclamationmark")
+            } actions: {
+                Button("Retry") { Task { await boardsViewModel.load() } }
             }
-            .foregroundColor(Color.red)
         }
     }
 

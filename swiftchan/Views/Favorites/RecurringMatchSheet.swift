@@ -9,10 +9,10 @@ import SwiftUI
 
 struct RecurringMatchSheet: View {
     let favorite: RecurringFavorite
-    @Bindable var viewModel: RecurringFavoriteViewModel
+    @State private var viewModel = RecurringFavoriteViewModel()
     let onSelect: (SwiftchanPost) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var hasNavigated = false
+    @State private var searchAttempt = UUID()
 
     var body: some View {
         NavigationStack {
@@ -38,15 +38,19 @@ struct RecurringMatchSheet: View {
                         viewModel.reset()
                         dismiss()
                     }
-                    .disabled(viewModel.state == .idle || viewModel.state == .loading)
                 }
             }
-            .interactiveDismissDisabled(viewModel.state == .idle || viewModel.state == .loading)
         }
         .presentationDetents([.medium, .large])
-        .task {
+        .task(id: searchAttempt) {
             await viewModel.findMatches(for: favorite)
+            guard case .singleMatch(let post) = viewModel.state else { return }
+            do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
+            guard !Task.isCancelled, case .singleMatch(let current) = viewModel.state, current.id == post.id else { return }
+            dismiss()
+            onSelect(post)
         }
+        .onDisappear { viewModel.reset() }
     }
 
     private var loadingView: some View {
@@ -72,10 +76,7 @@ struct RecurringMatchSheet: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            Button("Dismiss") {
-                viewModel.reset()
-                dismiss()
-            }
+            Button("Search Again") { searchAttempt = UUID() }
             .buttonStyle(.borderedProminent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -102,17 +103,6 @@ struct RecurringMatchSheet: View {
             .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            guard !hasNavigated else { return }
-            hasNavigated = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                let postToSelect = post
-                dismiss()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    onSelect(postToSelect)
-                }
-            }
-        }
     }
 
     private func multipleMatchesView(_ posts: [SwiftchanPost]) -> some View {
@@ -165,10 +155,7 @@ struct RecurringMatchSheet: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            Button("Dismiss") {
-                viewModel.reset()
-                dismiss()
-            }
+            Button("Retry") { searchAttempt = UUID() }
             .buttonStyle(.borderedProminent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
