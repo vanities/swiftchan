@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB00000BBBBB00010000000B /* FavoritesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000CBBBB00010000000C /* FavoritesQuery.swift */; };
+		BB000009BBBB000100000009 /* FavoritesSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000ABBBB00010000000A /* FavoritesSchema.swift */; };
+		BB000007BBBB000100000007 /* FavoritesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000008BBBB000100000008 /* FavoritesTests.swift */; };
+		BB000005BBBB000100000005 /* ThreadViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000006BBBB000100000006 /* ThreadViewModelTests.swift */; };
 		BB000001BBBB000100000001 /* CatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002BBBB000100000002 /* CatalogViewModelTests.swift */; };
 		BB000003BBBB000100000003 /* WebmValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000004BBBB000100000004 /* WebmValidationTests.swift */; };
 		09B1DFCA9F650DAC27B6DB21 /* RecurringFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */; };
@@ -132,6 +136,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BB00000CBBBB00010000000C /* FavoritesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesQuery.swift; sourceTree = "<group>"; };
+		BB00000ABBBB00010000000A /* FavoritesSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesSchema.swift; sourceTree = "<group>"; };
+		BB000008BBBB000100000008 /* FavoritesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTests.swift; sourceTree = "<group>"; };
+		BB000006BBBB000100000006 /* ThreadViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadViewModelTests.swift; sourceTree = "<group>"; };
 		BB000002BBBB000100000002 /* CatalogViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModelTests.swift; sourceTree = "<group>"; };
 		BB000004BBBB000100000004 /* WebmValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebmValidationTests.swift; sourceTree = "<group>"; };
 		3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecurringFavorite.swift; sourceTree = "<group>"; };
@@ -306,6 +314,8 @@
 				95257D8C25EF2804003E0A59 /* PresentationState.swift */,
 				95CFC2F92734B66E0053D62A /* Media.swift */,
 				D6BB654D68A9820A7AEA660B /* FourplebsModels.swift */,
+				BB00000ABBBB00010000000A /* FavoritesSchema.swift */,
+				BB00000CBBBB00010000000C /* FavoritesQuery.swift */,
 				ECDD37E85CCB260D679EEEC5 /* FavoriteThread.swift */,
 				3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */,
 			);
@@ -361,6 +371,8 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				BB000006BBBB000100000006 /* ThreadViewModelTests.swift */,
+				BB000008BBBB000100000008 /* FavoritesTests.swift */,
 				951817A2254CFB620032616E /* swiftchanTests.swift */,
 				BB000002BBBB000100000002 /* CatalogViewModelTests.swift */,
 				BB000004BBBB000100000004 /* WebmValidationTests.swift */,
@@ -793,6 +805,8 @@
 				955AF3B62E494B8A002CFB99 /* RefreshProgressBar.swift in Sources */,
 				54FCC7F730B5724021923610 /* FourplebsService.swift in Sources */,
 				F22DF234D8D6A701CB836E0E /* FourplebsModels.swift in Sources */,
+				BB000009BBBB000100000009 /* FavoritesSchema.swift in Sources */,
+				BB00000BBBBB00010000000B /* FavoritesQuery.swift in Sources */,
 				C5F3F253025477DBEB72F71B /* FavoriteThread.swift in Sources */,
 				7D9CD4032CD3A8B39B5660C4 /* FavoritesView.swift in Sources */,
 				B3097C1AEE48110A2ECBCCA5 /* FavoriteThreadRow.swift in Sources */,
@@ -808,6 +822,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB000005BBBB000100000005 /* ThreadViewModelTests.swift in Sources */,
+				BB000007BBBB000100000007 /* FavoritesTests.swift in Sources */,
 				951817A3254CFB620032616E /* swiftchanTests.swift in Sources */,
 				BB000001BBBB000100000001 /* CatalogViewModelTests.swift in Sources */,
 				BB000003BBBB000100000003 /* WebmValidationTests.swift in Sources */,

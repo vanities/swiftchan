@@ -18,16 +18,16 @@ Swiftchan is a SwiftUI imageboard app using MVVM, SwiftData, and Swift Package M
 ## Architecture
 
 - `swiftchan/swiftchanApp.swift`: entry point, Kingfisher limits, SwiftData model container.
-- `Environment/AppState.swift`: observable app state and navigation.
-- `Environment/UserSettings.swift`: preferences and sorting notifications.
-- `ViewModels/`: observable main-actor models for boards, catalogs, threads, and recurring favorites.
-- `Services/FourchanService.swift`: legacy API helpers and reply indexing; current loaders use the FourChan package's async interface.
-- `Services/FourplebsService.swift`: archive retrieval.
-- `Services/CacheService.swift`: local media cache and video header validation.
-- `Services/Prefetcher.swift` and `VideoPrefetcher.swift`: image and video prefetching.
-- `Views/Media/Video/`: KSPlayer integration and playback controls.
-- `Views/Media/Gallery/`: gallery paging and transitions.
-- `Models/FavoriteThread.swift` and `RecurringFavorite.swift`: persisted favorites. Consider existing stores when changing uniqueness or schema.
+- `swiftchan/Environment/AppState.swift`: observable app state and navigation.
+- `swiftchan/Environment/UserSettings.swift`: preferences and sorting notifications.
+- `swiftchan/ViewModels/`: observable main-actor models for boards, catalogs, threads, and recurring favorites.
+- `swiftchan/Services/FourchanService.swift`: legacy API helpers and reply indexing; current loaders use the FourChan package's async interface.
+- `swiftchan/Services/FourplebsService.swift`: archive retrieval.
+- `swiftchan/Services/CacheService.swift`: local media cache and video header validation.
+- `swiftchan/Services/Prefetcher.swift` and `swiftchan/Services/VideoPrefetcher.swift`: image and video prefetching.
+- `swiftchan/Views/Media/Video/`: KSPlayer integration and playback controls.
+- `swiftchan/Views/Media/Gallery/`: gallery paging and transitions.
+- `swiftchan/Models/FavoriteThread.swift` and `swiftchan/Models/RecurringFavorite.swift`: persisted favorites. Consider existing stores when changing uniqueness or schema.
 
 ## Dependencies
 

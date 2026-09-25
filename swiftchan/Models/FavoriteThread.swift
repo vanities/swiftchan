@@ -10,7 +10,9 @@ import SwiftData
 
 @Model
 final class FavoriteThread {
-    @Attribute(.unique) var threadId: Int
+    #Unique<FavoriteThread>([\.boardName, \.threadId])
+
+    var threadId: Int
     var boardName: String
     var title: String
     var thumbnailUrlString: String?

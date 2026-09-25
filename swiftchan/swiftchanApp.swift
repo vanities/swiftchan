@@ -11,7 +11,14 @@ import Kingfisher
 
 @main
 struct SwiftchanApp: App {
+    private let modelContainer: ModelContainer
+
     init() {
+        do {
+            modelContainer = try FavoritesStore.makeContainer()
+        } catch {
+            fatalError("Could not open saved favorites: \(error)")
+        }
         // Configure Kingfisher memory cache limit (150MB)
         ImageCache.default.memoryStorage.config.totalCostLimit = 150 * 1024 * 1024
         // Keep at most 100 images in memory
@@ -22,6 +29,6 @@ struct SwiftchanApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [FavoriteThread.self, RecurringFavorite.self])
+        .modelContainer(modelContainer)
     }
 }

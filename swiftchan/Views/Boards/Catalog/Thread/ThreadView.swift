@@ -28,8 +28,7 @@ struct ThreadView: View {
     @State private var replyId: Int = 0
     @State private var showThread: Bool = false
     @State private var threadDestination = ThreadDestination(board: "", id: 0)
-    @State private var showAutoRefreshToast: Bool = false
-    @State private var autoRefreshToastMessage: String = ""
+    @State private var isThreadVisible = false
     @State private var isSearching: Bool = false
     @Namespace private var galleryNamespace
 
@@ -59,13 +58,13 @@ struct ThreadView: View {
 
         Group {
             switch viewModel.state {
-            case .initial:
+            case .initial, .loading:
                 ThreadLoadingView(viewModel: viewModel)
                     .task {
-                        await viewModel.getPosts()
+                        if viewModel.state == .initial {
+                            await viewModel.getPosts()
+                        }
                     }
-            case .loading:
-                ThreadLoadingView(viewModel: viewModel)
             case .loaded:
                 ZStack {
                     ScrollViewReader { reader in
@@ -111,6 +110,15 @@ struct ThreadView: View {
                         posterIDFilterBanner
                     }
                 }
+                .safeAreaInset(edge: .top) {
+                    if let error = viewModel.refreshError {
+                        Text(error)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity)
+                            .padding(8)
+                            .background(.regularMaterial)
+                    }
+                }
                 .overlay {
                     if Date.isChristmas() {
                         SpriteView(scene: scene, options: [.allowsTransparency])
@@ -152,37 +160,39 @@ struct ThreadView: View {
                     }
                 }
                 .onAppear {
+                    isThreadVisible = true
                     viewModel.prefetch()
                     refreshFavoriteState()
-                    // Don't set up auto-refresh for archived threads
-                    if !viewModel.isArchived {
-                        threadAutorefresher.onRefresh = { [weak threadAutorefresher] in
-                            print("Thread auto refresh timer met, updating thread.")
-                            Task {
-                                await fetchAndPrefetchMedia(auto: true)
-                                threadAutorefresher?.resetTimer()
-                            }
+                    threadAutorefresher.onRefresh = { [weak threadAutorefresher] in
+                        Task {
+                            await fetchAndPrefetchMedia()
+                            threadAutorefresher?.resetTimer()
                         }
                     }
+                    updateAutoRefreshState()
                 }
                 .onDisappear {
+                    isThreadVisible = false
                     viewModel.stopPrefetching()
                     threadAutorefresher.cancelTimer()
                 }
+                .onChange(of: scenePhase) { updateAutoRefreshState() }
+                .onChange(of: viewModel.isArchived) { updateAutoRefreshState() }
+                .onChange(of: presentationState.presentingGallery) { updateAutoRefreshState() }
+                .onChange(of: autoRefreshEnabled) { updateAutoRefreshState() }
+                .onChange(of: autoRefreshThreadTime) { updateAutoRefreshState() }
                 .onChange(of: presentationState.presentingReplies) {
                     if presentationState.presentingReplies {
                         threadAutorefresher.cancelTimer()
                     } else {
-                        threadAutorefresher.startTimer()
+                        updateAutoRefreshState()
                     }
                 }
                 .refreshable {
                     // Archived threads can't be refreshed
                     guard !viewModel.isArchived else { return }
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                    Task {
-                        await fetchAndPrefetchMedia()
-                    }
+                    await fetchAndPrefetchMedia()
                 }
                 .environment(presentationState)
                 .environment(\.galleryNamespace, galleryNamespace)
@@ -226,14 +236,14 @@ struct ThreadView: View {
                     if showReply {
                         threadAutorefresher.cancelTimer()
                     } else {
-                        threadAutorefresher.startTimer()
+                        updateAutoRefreshState()
                     }
                 }
                 .onChange(of: showThread) {
                     if showThread {
                         threadAutorefresher.cancelTimer()
                     } else {
-                        threadAutorefresher.startTimer()
+                        updateAutoRefreshState()
                     }
                 }
                 .navigationDestination(isPresented: $showReply) {
@@ -291,10 +301,6 @@ struct ThreadView: View {
                 }
                 .padding()
             }
-        }
-        .toast(isPresented: $showAutoRefreshToast, dismissAfter: 1.5) {
-            ToastView(autoRefreshToastMessage, content: {}, background: { Color.clear })
-                .toastViewStyle(ErrorToastViewStyle())
         }
     }
 
@@ -394,14 +400,19 @@ struct ThreadView: View {
         }
     }
 
-    private func fetchAndPrefetchMedia(auto: Bool = false) async {
-        let hadPosts = !viewModel.posts.isEmpty
-        await viewModel.getPosts()
-        if viewModel.state == .loaded {
+    private func fetchAndPrefetchMedia() async {
+        if await viewModel.getPosts() {
             viewModel.prefetch()
-        } else if auto {
-            autoRefreshToastMessage = hadPosts ? "Could not auto refresh" : "Thread not found"
-            showAutoRefreshToast = true
+        }
+    }
+
+    private func updateAutoRefreshState() {
+        if isThreadVisible, scenePhase == .active, !viewModel.isArchived,
+           !presentationState.presentingGallery, !presentationState.presentingReplies,
+           !showReply, !showThread {
+            threadAutorefresher.startTimer()
+        } else {
+            threadAutorefresher.cancelTimer()
         }
     }
 
@@ -466,7 +477,7 @@ extension ThreadView {
             threadAutorefresher.cancelTimer()
         }
         .onDisappear {
-            threadAutorefresher.startTimer()
+            updateAutoRefreshState()
         }
     }
 }
