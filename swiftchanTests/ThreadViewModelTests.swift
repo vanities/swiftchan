@@ -1,9 +1,24 @@
 import XCTest
 import FourChan
+import Observation
 @testable import swiftchan
 
 @MainActor
 final class ThreadViewModelTests: XCTestCase {
+    func testDiscardingTemporaryRefresherDoesNotInvalidatePresentingView() {
+        let invalidation = expectation(description: "Temporary timer does not invalidate view construction")
+        invalidation.isInverted = true
+        var refresher: ThreadAutoRefresher? = withObservationTracking {
+            ThreadAutoRefresher()
+        } onChange: {
+            invalidation.fulfill()
+        }
+        XCTAssertNotNil(refresher)
+        XCTAssertFalse(refresher?.isActive ?? true)
+        refresher = nil
+        wait(for: [invalidation], timeout: 0.05)
+    }
+
     func testSharedPostLinkPreservesBoardThreadAndExactReply() {
         let model = ThreadViewModel(boardName: "biz", id: 100)
         XCTAssertEqual(model.postURL(105).absoluteString, "https://boards.4chan.org/biz/thread/100#p105")

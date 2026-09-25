@@ -5,22 +5,23 @@ import Combine
 class ThreadAutoRefresher {
     private(set) var secondsRemaining: Int = 0
     var pauseAutoRefresh: Bool = false
-    var isActive: Bool = true
+    var isActive: Bool = false
 
-    private var timerCancellable: AnyCancellable?
-    private var cachedRefreshEnabled: Bool = false
-    private var cachedRefreshTime: Int = 10
+    @ObservationIgnored private var timerCancellable: AnyCancellable?
+    @ObservationIgnored private var cachedRefreshEnabled: Bool = false
+    @ObservationIgnored private var cachedRefreshTime: Int = 10
 
-    var onRefresh: (() -> Void)?
+    @ObservationIgnored var onRefresh: (() -> Void)?
 
     init() {
         updateCachedSettings()
         resetTimer()
-        startTimer()
     }
 
     deinit {
-        cancelTimer()
+        // SwiftUI discards temporary State initial values during body evaluation.
+        // Deinitialization must not invalidate that evaluation through Observation.
+        timerCancellable?.cancel()
     }
 
     func updateCachedSettings() {
