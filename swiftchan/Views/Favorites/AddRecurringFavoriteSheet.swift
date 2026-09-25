@@ -1,95 +1,90 @@
-//
-//  AddRecurringFavoriteSheet.swift
-//  swiftchan
-//
-//  Sheet for confirming and saving a recurring favorite.
-//
-
 import SwiftUI
 import SwiftData
 
 struct AddRecurringFavoriteSheet: View {
-    let searchPattern: String
-    let boardName: String
     var onSave: (() -> Void)?
+    private let favorite: RecurringFavorite?
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @State private var boardName: String
+    @State private var searchPattern: String
+    @State private var displayName: String
+    @State private var errorMessage: String?
 
-    @State private var displayName: String = ""
+    init(searchPattern: String = "", boardName: String = "", favorite: RecurringFavorite? = nil, onSave: (() -> Void)? = nil) {
+        self.favorite = favorite
+        self.onSave = onSave
+        _boardName = State(initialValue: favorite?.boardName ?? boardName)
+        _searchPattern = State(initialValue: favorite?.searchPattern ?? searchPattern)
+        _displayName = State(initialValue: favorite?.displayName ?? "")
+    }
+
+    private var draft: RecurringFavoriteDraft? {
+        RecurringFavoriteDraft(boardName: boardName, searchPattern: searchPattern, displayName: displayName)
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    HStack {
-                        Text("Board")
-                        Spacer()
-                        Text("/\(boardName)/")
-                            .foregroundColor(.secondary)
+                    LabeledContent("Board") {
+                        TextField("Board", text: $boardName, prompt: Text("biz"))
+                            .multilineTextAlignment(.trailing)
+                            .accessibilityIdentifier("General Board")
                     }
-
-                    HStack {
-                        Text("Search Pattern")
-                        Spacer()
-                        Text(searchPattern)
-                            .foregroundColor(.secondary)
+                    LabeledContent("General tag") {
+                        TextField("General tag", text: $searchPattern, prompt: Text("/pmg/"))
+                            .multilineTextAlignment(.trailing)
+                            .accessibilityIdentifier("General Tag")
                     }
-                }
-
-                Section {
-                    TextField("Display Name (optional)", text: $displayName)
+                } header: {
+                    Text("Find the general")
                 } footer: {
-                    Text("A custom name to display instead of the search pattern.")
+                    Text("For Precious Metals General, enter biz and /pmg/. Slashes are optional.")
                 }
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
 
                 Section {
-                    Text("This will save the search pattern as a recurring favorite. When you tap it in Favorites, it will search /\(boardName)/ for threads matching \"\(searchPattern)\" and open the most recent one.")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                    TextField("Name (optional)", text: $displayName, prompt: Text("Precious Metals General"), axis: .vertical)
+                        .lineLimit(1...3)
+                        .accessibilityIdentifier("General Name")
+                } header: {
+                    Text("Name (optional)")
+                } footer: {
+                    if let draft {
+                        Text("Tap this favorite to find current threads with \(draft.searchPattern) in their title on /\(draft.boardName)/.")
+                    } else {
+                        Text("Give it a name you’ll recognize in Favorites. It follows new threads as older ones expire.")
+                    }
+                }
+                if let errorMessage {
+                    Text(errorMessage).foregroundStyle(.red)
                 }
             }
-            .navigationTitle("Save Recurring")
+            .navigationTitle(favorite == nil ? "Follow a General" : "Edit General")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveRecurringFavorite()
-                        onSave?()
-                        dismiss()
-                    }
+                    Button(favorite == nil ? "Follow" : "Save", action: save)
+                        .disabled(draft == nil)
+                        .accessibilityIdentifier("Save General")
                 }
             }
         }
-        .presentationDetents([.medium])
     }
 
-    private func saveRecurringFavorite() {
-        // Wrap pattern in slashes if not already wrapped
-        var pattern = searchPattern
-        if !pattern.hasPrefix("/") {
-            pattern = "/" + pattern
+    private func save() {
+        guard let draft else { return }
+        do {
+            _ = try draft.save(in: modelContext, editing: favorite)
+            onSave?()
+            dismiss()
+        } catch {
+            errorMessage = error.localizedDescription
         }
-        if !pattern.hasSuffix("/") {
-            pattern = pattern + "/"
-        }
-
-        let favorite = RecurringFavorite(
-            searchPattern: pattern,
-            boardName: boardName,
-            displayName: displayName.isEmpty ? nil : displayName
-        )
-        modelContext.insert(favorite)
     }
 }
-
-#if DEBUG
-#Preview {
-    AddRecurringFavoriteSheet(searchPattern: "ptg", boardName: "g")
-        .modelContainer(for: RecurringFavorite.self, inMemory: true)
-}
-#endif

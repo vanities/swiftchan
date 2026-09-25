@@ -110,7 +110,7 @@ xcodebuild -resolvePackageDependencies -workspace swiftchan.xcworkspace -scheme 
 ```
 3. Open `swiftchan.xcworkspace` in Xcode.
 
-Run unit tests on an installed simulator:
+Run unit tests and the focused browsing UI tests on an installed simulator:
 ```sh
 bundle exec fastlane tests
 # Choose a different installed device if needed:
@@ -134,7 +134,15 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Open the `swiftchan.xcworkspace` file with Xcode.
+To follow a general such as Precious Metals General:
+
+1. Open **Favorites** and tap **+** (or **Follow a General** in the empty state).
+2. Enter **biz** as the board, **pmg** as the general tag, and **Precious Metals General** as the name.
+3. Tap **Follow**. Tap the favorite to find current matching threads. Swipe right on it to edit its board, tag, or name.
+
+Slashes are optional. Following the same board/tag again updates its name without adding a duplicate. Catalog search also offers **Follow a General** with the board and tag already filled in.
+
+To open a copied board or thread URL, use the **link** button on the Boards screen. Both `boards.4chan.org` and `boards.4channel.org` links are supported, including links to a specific post.
 
 
 

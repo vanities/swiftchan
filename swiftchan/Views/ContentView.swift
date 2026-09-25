@@ -35,6 +35,10 @@ struct ContentView: View {
         }
         .privacyView(enabled: $showPrivacyView)
         .environment(appState)
+        .environment(\.openURL, OpenURLAction { url in
+            appState.openLink(url) ? .handled : .systemAction
+        })
+        .onOpenURL { appState.openLink($0) }
         .onChange(of: biometricsEnabled) {
             if biometricsEnabled {
                 showPrivacyView = true

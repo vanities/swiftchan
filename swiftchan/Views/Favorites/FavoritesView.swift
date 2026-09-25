@@ -20,7 +20,8 @@ struct FavoritesView: View {
     @State private var sortAscending = false
     @State private var selectedBoard: String?
     @State private var selectedRecurring: RecurringFavorite?
-    @State private var recurringViewModel = RecurringFavoriteViewModel()
+    @State private var showAddGeneral = false
+    @State private var editingGeneral: RecurringFavorite?
 
     private var query: FavoritesQuery {
         FavoritesQuery(searchText: searchText, boardName: selectedBoard, sort: sortOption, ascending: sortAscending)
@@ -50,6 +51,10 @@ struct FavoritesView: View {
             .navigationTitle("Favorites")
             .searchable(text: $searchText, prompt: "Search favorites")
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Follow a General", systemImage: "plus") { showAddGeneral = true }
+                        .accessibilityIdentifier("Follow General Button")
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     sortMenu
                 }
@@ -60,10 +65,18 @@ struct FavoritesView: View {
             .navigationDestination(for: ThreadDestination.self) { dest in
                 ThreadView(boardName: dest.board, postNumber: dest.id)
             }
+            .sheet(isPresented: $showAddGeneral) {
+                AddRecurringFavoriteSheet(boardName: selectedBoard ?? "") {
+                    searchText = ""
+                    selectedBoard = nil
+                }
+            }
+            .sheet(item: $editingGeneral) { favorite in
+                AddRecurringFavoriteSheet(favorite: favorite)
+            }
             .sheet(item: $selectedRecurring) { recurring in
                 RecurringMatchSheet(
                     favorite: recurring,
-                    viewModel: recurringViewModel,
                     onSelect: { post in
                         presentedNavigation.append(
                             ThreadDestination(board: post.boardName, id: post.post.no)
@@ -144,6 +157,8 @@ struct FavoritesView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
+            Button("Follow a General", systemImage: "repeat") { showAddGeneral = true }
+                .buttonStyle(.borderedProminent)
         }
     }
 
@@ -154,7 +169,7 @@ struct FavoritesView: View {
     private var favoritesList: some View {
         List {
             if !filteredRecurringFavorites.isEmpty {
-                Section("Recurring Threads") {
+                Section("Followed Generals") {
                     ForEach(filteredRecurringFavorites) { recurring in
                         Button {
                             selectedRecurring = recurring
@@ -163,6 +178,13 @@ struct FavoritesView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        .contextMenu {
+                            Button("Edit General", systemImage: "pencil") { editingGeneral = recurring }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button("Edit", systemImage: "pencil") { editingGeneral = recurring }
+                                .tint(.accentColor)
+                        }
                     }
                     .onDelete(perform: deleteRecurringFavorites)
                 }

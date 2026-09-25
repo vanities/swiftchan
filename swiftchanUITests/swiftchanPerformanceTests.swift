@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import swiftchan
 
 class SwiftchanPerformanceTests: XCTestCase {
     var app: XCUIApplication!

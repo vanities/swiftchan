@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC000007CCCC000100000007 /* BrowsingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000008CCCC000100000008 /* BrowsingUITests.swift */; };
+		CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */; };
+		CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000004CCCC000100000004 /* OpenLinkSheet.swift */; };
+		CC000001CCCC000100000001 /* DeepLinkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC000002CCCC000100000002 /* DeepLinkerTests.swift */; };
 		BB00000BBBBB00010000000B /* FavoritesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000CBBBB00010000000C /* FavoritesQuery.swift */; };
 		BB000009BBBB000100000009 /* FavoritesSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000ABBBB00010000000A /* FavoritesSchema.swift */; };
 		BB000007BBBB000100000007 /* FavoritesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000008BBBB000100000008 /* FavoritesTests.swift */; };
@@ -136,6 +140,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CC000008CCCC000100000008 /* BrowsingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowsingUITests.swift; sourceTree = "<group>"; };
+		CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringFavoriteTests.swift; sourceTree = "<group>"; };
+		CC000004CCCC000100000004 /* OpenLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLinkSheet.swift; sourceTree = "<group>"; };
+		CC000002CCCC000100000002 /* DeepLinkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkerTests.swift; sourceTree = "<group>"; };
 		BB00000CBBBB00010000000C /* FavoritesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesQuery.swift; sourceTree = "<group>"; };
 		BB00000ABBBB00010000000A /* FavoritesSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesSchema.swift; sourceTree = "<group>"; };
 		BB000008BBBB000100000008 /* FavoritesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTests.swift; sourceTree = "<group>"; };
@@ -371,6 +379,8 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */,
+				CC000002CCCC000100000002 /* DeepLinkerTests.swift */,
 				BB000006BBBB000100000006 /* ThreadViewModelTests.swift */,
 				BB000008BBBB000100000008 /* FavoritesTests.swift */,
 				951817A2254CFB620032616E /* swiftchanTests.swift */,
@@ -384,6 +394,7 @@
 		951817AC254CFB620032616E /* swiftchanUITests */ = {
 			isa = PBXGroup;
 			children = (
+				CC000008CCCC000100000008 /* BrowsingUITests.swift */,
 				951817AD254CFB620032616E /* swiftchanUITests.swift */,
 				95F76D8526D888BB00F6A92F /* swiftchanPerformanceTests.swift */,
 				951817AF254CFB620032616E /* Info.plist */,
@@ -470,6 +481,7 @@
 		95B7BE43256CBBCA00F75BC9 /* Boards */ = {
 			isa = PBXGroup;
 			children = (
+				CC000004CCCC000100000004 /* OpenLinkSheet.swift */,
 				95181792254CFB600032616E /* BoardsView.swift */,
 				950846FD2752CA260098DF73 /* BoardSection.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
@@ -750,6 +762,7 @@
 				AA000001AAAA000100000001 /* VideoContainerView.swift in Sources */,
 				AA000002AAAA000100000002 /* VideoPlayerControlsView.swift in Sources */,
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
+				CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
@@ -822,6 +835,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */,
+				CC000001CCCC000100000001 /* DeepLinkerTests.swift in Sources */,
 				BB000005BBBB000100000005 /* ThreadViewModelTests.swift in Sources */,
 				BB000007BBBB000100000007 /* FavoritesTests.swift in Sources */,
 				951817A3254CFB620032616E /* swiftchanTests.swift in Sources */,
@@ -836,6 +851,7 @@
 			files = (
 				95F76D8626D888BB00F6A92F /* swiftchanPerformanceTests.swift in Sources */,
 				95F76D8126D8801000F6A92F /* AccessibilityIdentifiers.swift in Sources */,
+				CC000007CCCC000100000007 /* BrowsingUITests.swift in Sources */,
 				951817AE254CFB620032616E /* swiftchanUITests.swift in Sources */,
 				95F76D8426D8830F00F6A92F /* XCUIApplication+Identifiers.swift in Sources */,
 				95E4A06D26BB7A08007B1A38 /* XCUIApplication.swift in Sources */,

@@ -318,17 +318,9 @@ final class ThreadViewModel {
         }
     }
 
-    func getPostIndexFromId(_ id: String) -> Int {
-        if let postId = Int(id), let index = postIdToIndex[postId] {
-            return index
-        }
-        // Fallback for partial matches
-        for (index, post) in posts.enumerated() {
-            if id.contains(String(post.id)) {
-                return index
-            }
-        }
-        return 0
+    func getPostIndexFromId(_ id: String) -> Int? {
+        guard let postID = Int(id), postID > 0 else { return nil }
+        return postIdToIndex[postID]
     }
 
     func getFilteredPostIndices() -> [Int] {

@@ -15,7 +15,12 @@ struct SwiftchanApp: App {
 
     init() {
         do {
-            modelContainer = try FavoritesStore.makeContainer()
+            #if DEBUG
+            let configuration = ModelConfiguration(isStoredInMemoryOnly: ProcessInfo.processInfo.arguments.contains("--ui-testing"))
+            #else
+            let configuration = ModelConfiguration()
+            #endif
+            modelContainer = try FavoritesStore.makeContainer(configuration: configuration)
         } catch {
             fatalError("Could not open saved favorites: \(error)")
         }

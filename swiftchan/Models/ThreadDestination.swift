@@ -10,4 +10,5 @@ import Foundation
 struct ThreadDestination: Hashable {
     let board: String
     let id: Int
+    var postID: Int?
 }

@@ -16,20 +16,20 @@ struct RecurringFavoriteRow: View {
             thumbnailView
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("/\(favorite.boardName)/")
+                Text("/\(favorite.boardName)/ · \(favorite.searchPattern)")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
                 Text(favorite.effectiveDisplayName)
                     .font(.headline)
-                    .lineLimit(1)
+                    .lineLimit(2)
 
                 if let lastMatched = favorite.lastMatchedAt {
                     Text("\(favorite.lastMatchCount) match\(favorite.lastMatchCount == 1 ? "" : "es") - \(lastMatched.timeAgoDisplay)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 } else {
-                    Text("Not yet searched")
+                    Text("Tap to find the current thread")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

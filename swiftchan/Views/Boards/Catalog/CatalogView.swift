@@ -255,7 +255,7 @@ struct CatalogView: View {
                 Button(action: {
                     showAddRecurringSheet = true
                 }) {
-                    Label("Save /\(catalogViewModel.searchText)/", systemImage: "repeat")
+                    Label("Follow a General", systemImage: "repeat")
                         .font(.caption)
                 }
                 .disabled(catalogViewModel.searchText.isEmpty)
