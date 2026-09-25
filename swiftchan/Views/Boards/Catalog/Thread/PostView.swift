@@ -152,6 +152,8 @@ struct PostView: View {
                                     .padding(5)
                             }
                         )
+                        .accessibilityLabel("Post options")
+                        .accessibilityIdentifier("Post Options \(post.no)")
                     }
                 }
                 // comment

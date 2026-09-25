@@ -91,10 +91,10 @@ extension Post {
 }
 
 extension Post {
-    func isHidden(boardName: String) -> Bool {
+    @MainActor func isHidden(boardName: String) -> Bool {
         return UserDefaults.hiddenPosts(boardName: boardName, postId: id) == true
     }
-    func hide(boardName: String) {
+    @MainActor func hide(boardName: String) {
         UserDefaults.hidePost(boardName: boardName, postId: id)
     }
 }

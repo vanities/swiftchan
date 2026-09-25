@@ -27,6 +27,14 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 boardSection
+                Section {
+                    NavigationLink {
+                        HiddenPostsView()
+                    } label: {
+                        Label("Hidden Posts & Threads", systemImage: "eye.slash")
+                    }
+                    .accessibilityIdentifier("Manage Hidden Posts")
+                }
                 mediaSection
                 threadSection
                 biometricsSection
@@ -37,6 +45,11 @@ struct SettingsView: View {
                 versionSection
             }
             .navigationTitle("Settings")
+            #if DEBUG
+            .navigationDestination(for: ThreadDestination.self) { destination in
+                ThreadView(boardName: destination.board, postNumber: destination.id, postID: destination.postID)
+            }
+            #endif
             .toast(isPresented: $showCacheDeleteToast, dismissAfter: 1.5) {
                 Toast(presentingToastResult: cacheResult)
             }
@@ -150,7 +163,7 @@ struct SettingsView: View {
     var debugSection: some View {
         Section(header: Text("Debug").font(.title)) {
             // Test archived thread - will show "Tap to view on 4plebs" option
-            NavigationLink(destination: ThreadView(boardName: "pol", postNumber: 521138219).environment(AppState())) {
+            NavigationLink(value: ThreadDestination(board: "pol", id: 521138219, postID: nil)) {
                 Label("Test 4plebs Archive (dead thread)", systemImage: "archivebox")
             }
         }

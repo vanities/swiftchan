@@ -116,6 +116,42 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertFalse(app.buttons["Jump To Unread"].exists)
     }
 
+    func testHideReplyCanBeUndoneImmediately() {
+        let app = launchThreadFixture()
+        openFixtureThread(in: app, anchor: "#p105")
+        app.buttons["Post Options 105"].tap()
+        XCTAssertTrue(app.buttons["Hide Selected Post"].waitForExistence(timeout: 5))
+        app.buttons["Hide Selected Post"].tap()
+        XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["#105"].exists)
+        attachScreenshot("Hidden Reply With Undo", app: app)
+        app.buttons["Undo Hide"].tap()
+        XCTAssertTrue(app.staticTexts["#105"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Undo Hide"].exists)
+    }
+
+    func testHiddenThreadCanBeRestoredFromSettings() {
+        let app = launchThreadFixture()
+        openFixtureThread(in: app)
+        app.buttons["Post Options 100"].tap()
+        XCTAssertTrue(app.buttons["Hide Selected Post"].waitForExistence(timeout: 5))
+        app.buttons["Hide Selected Post"].tap()
+        XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["#100"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Settings"].tap()
+        app.buttons["Manage Hidden Posts"].tap()
+        let restore = app.buttons["Restore Hidden biz/100"]
+        XCTAssertTrue(restore.waitForExistence(timeout: 5))
+        attachScreenshot("Manage Hidden Threads", app: app)
+        restore.tap()
+        XCTAssertTrue(app.staticTexts["Nothing Hidden"].waitForExistence(timeout: 5))
+        app.buttons["Boards"].tap()
+        openFixtureThread(in: app, anchor: "#p100")
+        XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#100"].isHittable)
+    }
+
     private func launchThreadFixture(seedProgress: Bool = false, rememberProgress: Bool = true) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()

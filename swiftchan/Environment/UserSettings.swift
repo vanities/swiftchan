@@ -50,16 +50,16 @@ extension UserDefaults {
     static func getSortFilesBy(boardName: String) -> SortRow.SortType {
         return SortRow.SortType(rawValue: UserDefaults.standard.string(forKey: "sortFilesBy\(boardName)") ?? "none") ?? .none
     }
-    static func hiddenPosts(boardName: String, postId: Int) -> Bool {
-        return UserDefaults.standard.bool(forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
+    @MainActor static func hiddenPosts(boardName: String, postId: Int) -> Bool {
+        return HiddenPostStore.shared.isHidden(board: boardName, postID: postId)
     }
 
     // MARK: Setters
     static func setDidUnlokcBiometrics(value: Bool) {
         UserDefaults.standard.set(value, forKey: "didUnlokcBiometrics")
     }
-    static func hidePost(boardName: String, postId: Int) {
-        UserDefaults.standard.set(true, forKey: "hiddenPosts board=\(boardName) postId=\(postId)")
+    @MainActor static func hidePost(boardName: String, postId: Int) {
+        HiddenPostStore.shared.hide(board: boardName, postID: postId)
     }
     static func setSortRepliesBy(boardName: String, type: SortRow.SortType) {
         UserDefaults.standard.set(type.rawValue, forKey: "sortRepliesBy\(boardName)")
