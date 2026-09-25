@@ -3,60 +3,52 @@ name: Build and Test
 on:
   pull_request:
     branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build and Test
-    runs-on: macos-13
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      TEST_DEVICE: iPhone 17
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      - uses: ruby/setup-ruby@v1
         with:
-          key: ${{ secrets.SSH_KEY }}
-          name: id_rsa # optional
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          ruby-version: '3.4'
+          bundler-cache: true
 
-      - name: Force Xcode Version
-        run: sudo xcode-select -switch /Applications/Xcode_15.0.1..app
-
-      - name: Swift Package Manager Cache
-        id: spm-cache
-        uses: actions/cache@v3
+      - name: Cache Swift packages
+        uses: actions/cache@v6
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
+          path: build/SourcePackages
+          key: ${{ runner.os }}-${{ runner.arch }}-xcode-26.6-spm-${{ hashFiles('swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
-      - name: Pods Cache
-        uses: actions/cache@v3
-        id: pods-cache
+      - name: Resolve locked dependencies
+        run: >-
+          xcodebuild -resolvePackageDependencies
+          -workspace swiftchan.xcworkspace -scheme swiftchan
+          -clonedSourcePackagesDirPath build/SourcePackages
+          -onlyUsePackageVersionsFromResolvedFile
+
+      - name: Build and test
+        run: bundle exec fastlane tests
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
-      - name: Install Dependencies
-        if: steps.pods-cache.outputs.cache-hit != 'true'
-        run:
-          pod install --repo-update
-
-          #- name: Test
-          #run: fastlane tests
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 15
-
-      - name: Archive Failed Tests artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: FailureDiff
-          path: .build/Logs/Test/
+          name: test-results
+          path: fastlane/test_output/
+          if-no-files-found: ignore

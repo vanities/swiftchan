@@ -22,7 +22,12 @@ platform :ios do
       use_system_scm: true,
       workspace: "swiftchan.xcworkspace",
       scheme: "swiftchan",
-      device: "iPhone 14",
+      device: ENV.fetch("TEST_DEVICE", "iPhone 17"),
+      derived_data_path: "build/DerivedData",
+      cloned_source_packages_path: "build/SourcePackages",
+      disable_package_automatic_updates: true,
+      result_bundle: true,
+      xcargs: "CODE_SIGNING_ALLOWED=NO",
       skip_testing: ["swiftchanUITests/SwiftchanPerformanceTests"]
     )
   end

@@ -34,6 +34,7 @@ final class CacheManager: @unchecked Sendable {
 
     static let shared = CacheManager()
     private let fileManager = FileManager.default
+    private let session: URLSession
     private lazy var mainDirectoryUrl: URL = {
         let documentsUrl = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return documentsUrl
@@ -49,7 +50,8 @@ final class CacheManager: @unchecked Sendable {
         mainDirectoryUrl.appendingPathComponent(metadataFileName)
     }
 
-    init() {
+    init(session: URLSession = .shared) {
+        self.session = session
         loadMetadata()
     }
 
@@ -193,18 +195,35 @@ final class CacheManager: @unchecked Sendable {
     // MARK: - Cache Operations
 
     func getFileWith(stringUrl: String, completionHandler: @escaping @Sendable (URL?) -> Void ) {
-        let cacheURL = cacheURL(URL(string: stringUrl)!)
+        guard let url = URL(string: stringUrl) else {
+            completionHandler(nil)
+            return
+        }
+        if url.isFileURL {
+            completionHandler(cacheHit(file: url) ? url : nil)
+            return
+        }
+        guard let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme), url.host != nil else {
+            completionHandler(nil)
+            return
+        }
+        let cacheURL = cacheURL(url)
 
         // return file path if already exists in cache directory
-        guard !cacheHit(file: cacheURL)  else {
-            // print("file exists in cache \(file.path)" )
-            completionHandler(cacheURL)
+        if let cached = getCacheValue(url) {
+            completionHandler(cached)
             return
         }
 
-        URLSession.shared.downloadTask(with: URL(string: stringUrl)!) { [weak self] urlOrNil, _, _ in
-            guard let tempURL = urlOrNil else { return }
-            completionHandler(self?.cache(tempURL, cacheURL))
+        session.downloadTask(with: url) { [weak self] urlOrNil, response, error in
+            guard error == nil, let tempURL = urlOrNil,
+                  let response = response as? HTTPURLResponse,
+                  response.statusCode == 200 else {
+                completionHandler(nil)
+                return
+            }
+            completionHandler(self?.cache(tempURL, cacheURL, originalURL: url))
         }.resume()
     }
 
@@ -222,6 +241,9 @@ final class CacheManager: @unchecked Sendable {
     }
 
     func cache(_ tempURL: URL, _ cacheURL: URL, originalURL: URL? = nil) -> URL? {
+        if ["webm", "mp4"].contains(cacheURL.pathExtension.lowercased()), !isValidVideoFile(file: tempURL) {
+            return nil
+        }
         do {
             // Get file size before moving
             let attributes = try fileManager.attributesOfItem(atPath: tempURL.path)
@@ -248,16 +270,17 @@ final class CacheManager: @unchecked Sendable {
     }
 
     func cacheHit(file: URL) -> Bool {
-        let cacheHit = fileManager.fileExists(atPath: file.path)
-        // debugPrint("cache \(cacheHit ? "hit" : "miss") \(file)")
-        return cacheHit
+        guard fileManager.fileExists(atPath: file.path) else { return false }
+        return !["webm", "mp4"].contains(file.pathExtension.lowercased()) || isValidVideoFile(file: file)
     }
 
-    func deleteAll(complete: ((Result<Void, Error>) -> Void)?) {
+    func deleteAll(complete: (@MainActor @Sendable (Result<Void, Error>) -> Void)?) {
         ImageCache.default.clearDiskCache { [weak self] in
             print("Removed Kingfisher Cache")
             self?.deleteLocal { result in
-                complete?(result)
+                Task { @MainActor in
+                    complete?(result)
+                }
             }
         }
     }
@@ -281,10 +304,11 @@ final class CacheManager: @unchecked Sendable {
     }
 
     func directoryFor(stringUrl: String) -> URL {
-        let fileComponents = URL(string: stringUrl)!.lastPathComponent.components(separatedBy: ".")
-        let fileURL = "\(fileComponents[0])-cached.\(fileComponents[1])"
-        let file = mainDirectoryUrl.appendingPathComponent(fileURL)
-        return file
+        let url = URL(string: stringUrl)
+        let name = url?.deletingPathExtension().lastPathComponent ?? "download"
+        let file = mainDirectoryUrl.appendingPathComponent("\(name)-cached")
+        guard let ext = url?.pathExtension, !ext.isEmpty else { return file }
+        return file.appendingPathExtension(ext)
     }
 
     func calculateTotalCache() {
@@ -298,12 +322,12 @@ final class CacheManager: @unchecked Sendable {
         }
     }
 
-    /// Basic validation to ensure cached WebM files are not corrupted.
+    /// Recognize supported video headers; this does not validate the entire media payload.
     func isValidWebm(file: URL) -> Bool {
         return isValidVideoFile(file: file)
     }
 
-    /// Validate video files (WebM and MP4)
+    /// Reject obvious non-video responses, such as HTML error pages, for WebM and MP4 downloads.
     func isValidVideoFile(file: URL) -> Bool {
         guard let handle = try? FileHandle(forReadingFrom: file) else { return false }
         defer { handle.closeFile() }
@@ -323,14 +347,7 @@ final class CacheManager: @unchecked Sendable {
             return true
         }
 
-        // Also check for basic file size (non-empty)
-        do {
-            let attributes = try FileManager.default.attributesOfItem(atPath: file.path)
-            let fileSize = attributes[.size] as? Int64 ?? 0
-            return fileSize > 0
-        } catch {
-            return false
-        }
+        return false
     }
 
 }

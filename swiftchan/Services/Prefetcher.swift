@@ -67,14 +67,15 @@ class Prefetcher {
             options: [
                 .alsoPrefetchToMemory,
                 .retryStrategy(DelayRetryStrategy(maxRetryCount: 5, retryInterval: .seconds(1)))
-            ]
-        ) { completedResources, skippedResources, failedResources in
+            ],
+            completionHandler: { skippedResources, failedResources, completedResources in
              debugPrint(
                 "These image resources are prefetched: \(completedResources.count), " +
                     "skipped: \(skippedResources.count), " +
                     "failed: \(failedResources.count)"
              )
-        }
+            }
+        )
         imagePrefetcher.start()
     }
     func prefetchVideos(urls: [URL]) {
@@ -90,7 +91,7 @@ class Prefetcher {
             // Mark as downloading
             activeDownloads.insert(url)
 
-            videoPrefetcher.addDownload(session: URLSession.shared, url: url) { [weak self] (tempURL, _, _) in
+            videoPrefetcher.addDownload(session: URLSession.shared, url: url) { [weak self] (tempURL, response, error) in
                 guard let self = self else { return }
 
                 // Remove from active downloads when complete
@@ -99,7 +100,9 @@ class Prefetcher {
                     self.videoPrefetcher.removeDownload(for: url)
                 }
 
-                if let tempURL = tempURL,
+                if error == nil,
+                   let response = response as? HTTPURLResponse, response.statusCode == 200,
+                   let tempURL = tempURL,
                    let result = CacheManager.shared.cache(tempURL, cacheURL, originalURL: url) {
                     debugPrint("successfully cached video url \(result)")
                 }
