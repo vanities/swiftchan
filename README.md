@@ -117,7 +117,7 @@ bundle exec fastlane tests
 TEST_DEVICE="iPhone Air" bundle exec fastlane tests
 ```
 
-The default test device is iPhone 17. Package versions are locked in `swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved`. KSPlayer remains pinned to the revision that fixed an Xcode Cloud Metal compilation issue.
+The default test device is iPhone 17. Package versions are locked in `swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved`, with an identical copy at `swiftchan.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` for the existing Xcode Cloud archive workflow. Commit both when updating packages; CI checks that they match. KSPlayer remains pinned to the revision that fixed an Xcode Cloud Metal compilation issue.
 
 Run `swiftlint lint` to check source style. The build never auto-corrects files.
 

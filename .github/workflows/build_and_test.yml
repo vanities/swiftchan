@@ -42,6 +42,11 @@ jobs:
           -clonedSourcePackagesDirPath build/SourcePackages
           -onlyUsePackageVersionsFromResolvedFile
 
+      - name: Verify Xcode Cloud package lockfile
+        run: |
+          cmp swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved swiftchan.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+          xcodebuild -resolvePackageDependencies -workspace swiftchan.xcodeproj/project.xcworkspace -scheme swiftchan -clonedSourcePackagesDirPath build/SourcePackages -onlyUsePackageVersionsFromResolvedFile
+
       - name: Build and test
         run: bundle exec fastlane tests
 
