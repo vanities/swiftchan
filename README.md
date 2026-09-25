@@ -59,7 +59,7 @@
 <img src="assets/screenshot.png" alt="screenshot" width="300"><img src="assets/board_screenshot.png" alt="board_screenshot" width="300"><img src="assets/thread_screenshot.png" alt="thread_screenshot" width="300"><img src="assets/webm.gif" alt="webm" width="300">
 
 
-Written completely in SwiftUI using mostly MVVM. Heavily inspired by TheChan. Plays webms and gifs natively in app by using MobileVLCKit.
+Written completely in SwiftUI using mostly MVVM. Heavily inspired by TheChan. Plays WebM and MP4 videos with KSPlayer/FFmpegKit and GIFs with Kingfisher. Requires iOS 18 or later.
 
 
 Has many settings to change including:
@@ -75,11 +75,14 @@ Here's why:
 
 
 ### Built With
-Dev requirements used in the app with CocoaPods and Swift Package Manager.
+Dependencies are managed with Swift Package Manager.
 
-* [FourChanApi](https://github.com/jackpal/FourChanAPI)
-* [URLImage](https://github.com/dmytro-anokhin/url-image)
-* [MobileVLCKit](https://code.videolan.org/videolan/VLCKit)
+* [FourChanAPI](https://github.com/vanities/FourChanAPI)
+* [Kingfisher](https://github.com/onevcat/Kingfisher)
+* [KSPlayer](https://github.com/kingslay/KSPlayer) / [FFmpegKit](https://github.com/kingslay/FFmpegKit)
+* [Defaults](https://github.com/sindresorhus/Defaults)
+* [SwiftUI Introspect](https://github.com/siteline/swiftui-introspect)
+* [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI)
 
 
 
@@ -91,9 +94,7 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-Download [xCode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
-
-Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
+Install [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) 26.6, Ruby 3.4 or later with Bundler, and SwiftLint (`brew install swiftlint`).
 
 ### Installation
 
@@ -101,11 +102,24 @@ Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
 ```sh
 git clone https://github.com/vanities/swiftchan
 ```
-2. Install pod pakages
+2. Install build tools and resolve locked dependencies:
 ```sh
-pod install
+cd swiftchan
+bundle install
+xcodebuild -resolvePackageDependencies -workspace swiftchan.xcworkspace -scheme swiftchan -clonedSourcePackagesDirPath build/SourcePackages -onlyUsePackageVersionsFromResolvedFile
 ```
-3. That's it! Open the workspacefile in Xcode.
+3. Open `swiftchan.xcworkspace` in Xcode.
+
+Run unit tests on an installed simulator:
+```sh
+bundle exec fastlane tests
+# Choose a different installed device if needed:
+TEST_DEVICE="iPhone Air" bundle exec fastlane tests
+```
+
+The default test device is iPhone 17. Package versions are locked in `swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved`. KSPlayer remains pinned to the revision that fixed an Xcode Cloud Metal compilation issue.
+
+Run `swiftlint lint` to check source style. The build never auto-corrects files.
 
 
 ### Testflight

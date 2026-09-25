@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB000001BBBB000100000001 /* CatalogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002BBBB000100000002 /* CatalogViewModelTests.swift */; };
+		BB000003BBBB000100000003 /* WebmValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000004BBBB000100000004 /* WebmValidationTests.swift */; };
 		09B1DFCA9F650DAC27B6DB21 /* RecurringFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */; };
 		1A5F76AD0CB8E1E22917C335 /* RecurringFavoriteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D12254DE163971EE1E9188 /* RecurringFavoriteViewModel.swift */; };
 		2C999DFDE990B515FFB0B779 /* AddRecurringFavoriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044AE15507088A1373984CA /* AddRecurringFavoriteSheet.swift */; };
@@ -130,6 +132,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BB000002BBBB000100000002 /* CatalogViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModelTests.swift; sourceTree = "<group>"; };
+		BB000004BBBB000100000004 /* WebmValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebmValidationTests.swift; sourceTree = "<group>"; };
 		3078F0A90C5AA80AB504C21B /* RecurringFavorite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecurringFavorite.swift; sourceTree = "<group>"; };
 		5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		83D12254DE163971EE1E9188 /* RecurringFavoriteViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecurringFavoriteViewModel.swift; sourceTree = "<group>"; };
@@ -358,6 +362,8 @@
 			isa = PBXGroup;
 			children = (
 				951817A2254CFB620032616E /* swiftchanTests.swift */,
+				BB000002BBBB000100000002 /* CatalogViewModelTests.swift */,
+				BB000004BBBB000100000004 /* WebmValidationTests.swift */,
 				951817A4254CFB620032616E /* Info.plist */,
 			);
 			path = swiftchanTests;
@@ -694,7 +700,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint --fix && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, install via 'brew install swiftlint'\"\nfi\n";
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint lint --quiet\nelse\n  echo \"warning: SwiftLint not installed, install via 'brew install swiftlint'\"\nfi\n";
 		};
 		AA000006AAAA000000000006 /* Fix Framework Bundle IDs */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -803,6 +809,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				951817A3254CFB620032616E /* swiftchanTests.swift in Sources */,
+				BB000001BBBB000100000001 /* CatalogViewModelTests.swift in Sources */,
+				BB000003BBBB000100000003 /* WebmValidationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1144,10 +1152,10 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		95322F9D286BE76D0067C268 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:onevcat/Kingfisher.git";
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 7.6.2;
+				minimumVersion = 8.13.0;
 			};
 		};
 		954D093E2BB63D18004079B6 /* XCRemoteSwiftPackageReference "FourChanAPI" */ = {
@@ -1155,31 +1163,31 @@
 			repositoryURL = "https://github.com/vanities/FourChanAPI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.12;
+				minimumVersion = 1.3.0;
 			};
 		};
 		95724CC32EA4704400405BBD /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:siteline/swiftui-introspect.git";
+			repositoryURL = "https://github.com/siteline/swiftui-introspect.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 26.0.0;
+				minimumVersion = 27.0.0;
 			};
 		};
 		9576495D2841BFB800F08103 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
 			};
 		};
 		95CEE15B271ABFCD0016EAC1 /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:sindresorhus/Defaults.git";
+			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
+				minimumVersion = 9.0.9;
 			};
 		};
 		AA000005AAAA000000000005 /* XCRemoteSwiftPackageReference "KSPlayer" */ = {

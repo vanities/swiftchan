@@ -45,13 +45,13 @@ struct CatalogView: View {
         let filteredPosts = catalogViewModel.getFilteredPostsWithFilters(searchText: catalogViewModel.searchText, filters: catalogViewModel.searchFilters)
 
         switch catalogViewModel.state {
-        case .initial:
+        case .initial, .loading:
             CatalogLoadingView(viewModel: catalogViewModel)
                 .task {
-                    await catalogViewModel.load()
+                    if catalogViewModel.state == .initial {
+                        await catalogViewModel.load()
+                    }
                 }
-        case .loading:
-            CatalogLoadingView(viewModel: catalogViewModel)
         case .loaded:
             ScrollViewReader { reader in
                 ScrollView(.vertical, showsIndicators: true) {
@@ -60,7 +60,9 @@ struct CatalogView: View {
                         alignment: .center,
                         spacing: 0
                     ) {
-                        let highlightedPostIndex = catalogViewModel.getCurrentSearchResultPostIndex()
+                        let highlightedPostID = catalogViewModel.getCurrentSearchResultPostIndex().map {
+                            catalogViewModel.posts[$0].id
+                        }
                         ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
                             if !post.post.isHidden(boardName: boardName) {
                                 NavigationLink(value: post) {
@@ -71,8 +73,8 @@ struct CatalogView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 .id(post.id)
-                                .opacity(isSearching && highlightedPostIndex != nil ?
-                                       (post.index == highlightedPostIndex ? 1.0 : 0.5) : 1.0)
+                                .opacity(isSearching && highlightedPostID != nil ?
+                                       (post.id == highlightedPostID ? 1.0 : 0.5) : 1.0)
                             }
                         }
                     }
@@ -90,6 +92,15 @@ struct CatalogView: View {
             .overlay(alignment: .bottom) {
                 if isSearching && !catalogViewModel.searchResultIndices.isEmpty {
                     searchToolbar
+                }
+            }
+            .safeAreaInset(edge: .top) {
+                if let error = catalogViewModel.refreshError {
+                    Text(error)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity)
+                        .padding(8)
+                        .background(.regularMaterial)
                 }
             }
             .overlay {
@@ -126,10 +137,8 @@ struct CatalogView: View {
             }
             .refreshable {
                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                Task {
-                    await catalogViewModel.load()
-                    catalogViewModel.prefetch()
-                }
+                await catalogViewModel.load()
+                catalogViewModel.prefetch()
             }
             .sheet(isPresented: $appState.showingCatalogMenu) {
                 Group {

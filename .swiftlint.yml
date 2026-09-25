@@ -1,3 +1,7 @@
+included:
+  - swiftchan
+  - swiftchanTests
+  - swiftchanUITests
 disabled_rules:
   - shorthand_operator
   - type_body_length

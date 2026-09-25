@@ -50,6 +50,8 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+vendor/bundle/
+.bundle/
 
 # CocoaPods
 #

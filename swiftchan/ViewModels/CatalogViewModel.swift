@@ -19,16 +19,20 @@ struct CatalogSearchFilters: Equatable {
 
 @Observable @MainActor
 class CatalogViewModel {
+    typealias CatalogLoader = (String, @escaping @Sendable (Double) -> Void) async throws -> Catalog
+    @ObservationIgnored private let fetchCatalog: CatalogLoader
+    @ObservationIgnored private var isLoading = false
     enum LoadingState {
         case initial, loading, loaded, error
 
     }
 
-    var boardName: String
+    let boardName: String
     let prefetcher = Prefetcher.shared
 
     private(set) var posts = [SwiftchanPost]()
     var state = LoadingState.initial
+    private(set) var refreshError: String?
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
@@ -42,7 +46,6 @@ class CatalogViewModel {
     @ObservationIgnored private var cachedFilteredPosts: [SwiftchanPost]?
     @ObservationIgnored private var cachedFilterSearchText: String = ""
     @ObservationIgnored private var cachedFilterFilters: CatalogSearchFilters = CatalogSearchFilters()
-    @ObservationIgnored private var cachedFilterPostsCount: Int = 0
 
     func getFilteredPosts(searchText: String) -> [SwiftchanPost] {
         return getFilteredPostsWithFilters(searchText: searchText, filters: CatalogSearchFilters())
@@ -52,8 +55,7 @@ class CatalogViewModel {
         // Return cached result if inputs haven't changed
         if let cached = cachedFilteredPosts,
            cachedFilterSearchText == searchText,
-           cachedFilterFilters == filters,
-           cachedFilterPostsCount == posts.count {
+           cachedFilterFilters == filters {
             return cached
         }
 
@@ -97,14 +99,14 @@ class CatalogViewModel {
         cachedFilteredPosts = filteredPosts
         cachedFilterSearchText = searchText
         cachedFilterFilters = filters
-        cachedFilterPostsCount = posts.count
 
         return filteredPosts
     }
 
     func updateSearchResults() {
         let filteredPosts = getFilteredPostsWithFilters(searchText: searchText, filters: searchFilters)
-        searchResultIndices = filteredPosts.map { $0.index }
+        let matchingIDs = Set(filteredPosts.map(\.id))
+        searchResultIndices = posts.indices.filter { matchingIDs.contains(posts[$0].id) }
 
         if currentSearchResultIndex >= searchResultIndices.count {
             currentSearchResultIndex = max(0, searchResultIndices.count - 1)
@@ -131,8 +133,12 @@ class CatalogViewModel {
         return searchResultIndices[currentSearchResultIndex]
     }
 
-    init(boardName: String) {
+    init(boardName: String, fetchCatalog: @escaping CatalogLoader = { board, progress in
+        try await FourChanAsyncService.shared.getCatalog(boardName: board, progress: progress)
+    }) {
         self.boardName = boardName
+        self.fetchCatalog = fetchCatalog
+        observeSortingChanges()
 
         // Set up reactive progress tracking
         downloadProgress.publisher(for: \.fractionCompleted)
@@ -150,13 +156,17 @@ class CatalogViewModel {
     }
 
     func load() async {
-        state = .loading
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+        if posts.isEmpty { state = .loading }
+        refreshError = nil
         downloadProgress.totalUnitCount = 100
         downloadProgress.completedUnitCount = 0
         progressText = "Fetching /\(boardName)/ catalog..."
 
         do {
-            let catalog = try await FourChanAsyncService.shared.getCatalog(boardName: boardName) { @Sendable progress in
+            let catalog = try await fetchCatalog(boardName) { @Sendable progress in
                 let mappedProgress = Int64(20 + (progress * 40))
                 Task { @MainActor [weak self] in
                     self?.downloadProgress.completedUnitCount = mappedProgress
@@ -180,34 +190,38 @@ class CatalogViewModel {
             }
 
             posts = tempPosts
+            cachedFilteredPosts = nil
             downloadProgress.completedUnitCount = 100
 
             if posts.count > 0 {
                 state = .loaded
                 handleSorting(value: UserDefaults.getSortFilesBy(boardName: boardName), attributeKey: "files")
                 handleSorting(value: UserDefaults.getSortRepliesBy(boardName: boardName), attributeKey: "replies")
-
-                NotificationCenter.default.publisher(for: .sortingRepliesDidChange)
-                    .sink { [weak self] _ in
-                        DispatchQueue.main.async {
-                            self?.handleSorting(value: UserDefaults.getSortRepliesBy(boardName: self!.boardName), attributeKey: "replies")
-                        }
-                    }
-                    .store(in: &cancellables)
-
-                NotificationCenter.default.publisher(for: .sortingFilesDidChange)
-                    .sink { [weak self] _ in
-                        DispatchQueue.main.async {
-                            self?.handleSorting(value: UserDefaults.getSortFilesBy(boardName: self!.boardName), attributeKey: "files")
-                        }
-                    }
-                    .store(in: &cancellables)
             } else {
                 state = .error
             }
+            updateSearchResults()
         } catch {
-            state = .error
+            state = posts.isEmpty ? .error : .loaded
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
+                refreshError = "Couldn’t refresh the catalog. Pull down to try again."
+            }
         }
+    }
+
+    private func observeSortingChanges() {
+        NotificationCenter.default.publisher(for: .sortingRepliesDidChange)
+            .merge(with: NotificationCenter.default.publisher(for: .sortingFilesDidChange))
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.posts.sort { $0.index < $1.index }
+                self.cachedFilteredPosts = nil
+                self.handleSorting(value: UserDefaults.getSortFilesBy(boardName: self.boardName), attributeKey: "files")
+                self.handleSorting(value: UserDefaults.getSortRepliesBy(boardName: self.boardName), attributeKey: "replies")
+                self.updateSearchResults()
+            }
+            .store(in: &cancellables)
     }
 
     func handleSorting(value: SortRow.SortType, attributeKey: String) {
@@ -223,6 +237,7 @@ class CatalogViewModel {
             )
         }
         cachedFilteredPosts = nil
+        updateSearchResults()
     }
 
     func prefetch() {
