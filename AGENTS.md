@@ -31,7 +31,9 @@ Swiftchan is a SwiftUI imageboard app using MVVM, SwiftData, and Swift Package M
 
 ## Dependencies
 
-Swift Package Manager manages FourChanAPI, Kingfisher, Defaults, SwiftUI Introspect, ConfettiSwiftUI, and KSPlayer/FFmpegKit. Commit the workspace's `Package.resolved` when updating packages; use HTTPS URLs for public dependencies so contributors and CI do not need SSH keys.
+Swift Package Manager manages FourChanAPI, Kingfisher, Defaults, SwiftUI Introspect, ConfettiSwiftUI, and KSPlayer/FFmpegKit. Use HTTPS URLs for public dependencies so contributors and CI do not need SSH keys.
+
+When updating packages, commit identical `Package.resolved` files at `swiftchan.xcworkspace/xcshareddata/swiftpm/Package.resolved` and `swiftchan.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`. Xcode Cloud's existing archive workflow opens the project and requires the second path. After resolving from the top-level workspace, copy its lockfile to the project path. CI checks that they match and resolves both entry points with automatic updates disabled.
 
 KSPlayer is intentionally pinned to `bb6d367c02f3247ef3f328dc0cfea34e77aef7c5` following an Xcode Cloud Metal compilation failure. Review that constraint before changing the revision. Consult current KSPlayer documentation and verify WebM/MP4 playback, paging, seeking, and gallery dismissal when changing playback behavior.
 
