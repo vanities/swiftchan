@@ -51,6 +51,14 @@ struct FavoritesView: View {
             .navigationTitle("Favorites")
             .searchable(text: $searchText, prompt: "Search favorites")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink {
+                        SavedRepliesView()
+                    } label: {
+                        Label("Saved Replies", systemImage: "bookmark")
+                    }
+                    .accessibilityIdentifier("Saved Replies")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Follow a General", systemImage: "plus") { showAddGeneral = true }
                         .accessibilityIdentifier("Follow General Button")

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000003AAAA000100000001 /* SavedReplyTests.swift */; };
+		AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000002AAAA000100000001 /* SavedRepliesView.swift */; };
+		AF000001AAAA000100000002 /* SavedReply.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000001AAAA000100000001 /* SavedReply.swift */; };
 		BF000004EEEE000100000002 /* FavoritesBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000004EEEE000100000001 /* FavoritesBackupTests.swift */; };
 		BF000003EEEE000100000002 /* FavoritesBackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000003EEEE000100000001 /* FavoritesBackupView.swift */; };
 		BF000002EEEE000100000002 /* FavoritesBackupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000002EEEE000100000001 /* FavoritesBackupStore.swift */; };
@@ -151,6 +154,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AF000003AAAA000100000001 /* SavedReplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReplyTests.swift; sourceTree = "<group>"; };
+		AF000002AAAA000100000001 /* SavedRepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRepliesView.swift; sourceTree = "<group>"; };
+		AF000001AAAA000100000001 /* SavedReply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReply.swift; sourceTree = "<group>"; };
 		BF000004EEEE000100000001 /* FavoritesBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupTests.swift; sourceTree = "<group>"; };
 		BF000003EEEE000100000001 /* FavoritesBackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupView.swift; sourceTree = "<group>"; };
 		BF000002EEEE000100000001 /* FavoritesBackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupStore.swift; sourceTree = "<group>"; };
@@ -297,6 +303,7 @@
 		1F62ABB509907B2E2D948712 /* Favorites */ = {
 			isa = PBXGroup;
 			children = (
+				AF000002AAAA000100000001 /* SavedRepliesView.swift */,
 				5DAF769CBA7D852E789BB9FE /* FavoritesView.swift */,
 				D01E215C9A3306E1A631FA2C /* FavoriteThreadRow.swift */,
 				E087391199AA472B45F68D1C /* RecurringFavoriteRow.swift */,
@@ -338,6 +345,7 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AF000001AAAA000100000001 /* SavedReply.swift */,
 				BF000001EEEE000100000001 /* FavoritesBackup.swift */,
 				EE000001EEEE000100000001 /* HiddenPostStore.swift */,
 				DD000002DDDD000100000001 /* GeneralSuggestion.swift */,
@@ -406,6 +414,7 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				AF000003AAAA000100000001 /* SavedReplyTests.swift */,
 				BF000004EEEE000100000001 /* FavoritesBackupTests.swift */,
 				EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */,
 				DD000004DDDD000100000001 /* ReadingProgressTests.swift */,
@@ -784,6 +793,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */,
+				AF000001AAAA000100000002 /* SavedReply.swift in Sources */,
 				954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */,
 				95CEE159271A67590016EAC1 /* SortRow.swift in Sources */,
 				9524F4B62580545C0006395F /* FileExport.swift in Sources */,
@@ -876,6 +887,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */,
 				BF000004EEEE000100000002 /* FavoritesBackupTests.swift in Sources */,
 				EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */,
 				DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */,

@@ -39,7 +39,7 @@ final class FavoritesBackupTests: XCTestCase {
     func testRejectsUnknownFormatsVersionsAndOversizedFiles() throws {
         let data = try example().encoded()
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
-        object["version"] = 2
+        object["version"] = 3
         XCTAssertThrowsError(try FavoritesBackup.decode(JSONSerialization.data(withJSONObject: object)))
         object["version"] = 1
         object["format"] = "another.app"

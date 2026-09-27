@@ -134,9 +134,11 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Use a post’s **… → Save Reply** action to keep its text and exact link in **Favorites → Saved Replies**. Search saved text, open the original post, share its link, or swipe to remove it. Text stays available even if the original thread expires; images and videos are not saved with it.
+
 In a thread, use **Jump → First Post / Latest Reply** to move through long discussions without repeated scrolling. Hidden posts are skipped.
 
-Use **Settings → Favorites Backup** to export saved thread links and named generals as JSON. Importing a backup adds missing entries while keeping existing names. Backups do not include media files, settings, or reading progress.
+Use **Settings → Favorites Backup** to export saved thread links, named generals, and saved replies as JSON. Importing a backup adds missing entries while keeping existing names and reply snapshots. Older backups still import; backups containing saved replies require a version of Swiftchan with reply bookmarks. Backups do not include media files, settings, or reading progress.
 
 Use **Open Link** on the Boards tab to jump to a board by entering its shortcut, such as `/biz/`, or paste a full board or thread URL.
 

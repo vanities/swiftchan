@@ -2,6 +2,27 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testSaveReplyAndReopenExactPostFromFavorites() {
+        let app = launchThreadFixture(rememberProgress: false)
+        openFixtureThread(in: app, anchor: "#p105")
+        app.buttons["Post Options 105"].tap()
+        app.buttons["Save Selected Reply"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Favorites"].tap()
+        app.buttons["Saved Replies"].tap()
+        XCTAssertTrue(app.staticTexts["/biz/ · #105"].waitForExistence(timeout: 5))
+        attachScreenshot("Saved Reply Text")
+        app.buttons["Open Saved Reply 105"].tap()
+        XCTAssertTrue(app.staticTexts["#105"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#105"].isHittable)
+        XCTAssertFalse(app.staticTexts["#100"].isHittable)
+        app.buttons["Post Options 105"].tap()
+        XCTAssertEqual(app.buttons["Save Selected Reply"].label, "Remove Saved Reply")
+        app.buttons["Save Selected Reply"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.staticTexts["No Saved Replies"].waitForExistence(timeout: 5))
+    }
+
     func testJumpBetweenFirstPostAndLatestReply() {
         let app = launchThreadFixture(rememberProgress: false)
         openFixtureThread(in: app)
@@ -11,7 +32,7 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["#114"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["#114"].isHittable)
         XCTAssertFalse(app.staticTexts["#100"].isHittable)
-        attachScreenshot("Jump To Latest Reply", app: app)
+        attachScreenshot("Jump To Latest Reply")
         app.buttons["Post Options 114"].tap()
         app.buttons["Hide Selected Post"].tap()
         XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
@@ -41,10 +62,10 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Settings"].tap()
         XCTAssertTrue(app.buttons["Export Favorites"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Export Favorites"].isEnabled)
-        attachScreenshot("Favorites Backup", app: app)
+        attachScreenshot("Favorites Backup")
         app.buttons["Export Favorites"].tap()
         XCTAssertTrue(app.buttons["Save"].waitForExistence(timeout: 10))
-        attachScreenshot("Export Favorites In Files", app: app)
+        attachScreenshot("Export Favorites In Files")
     }
 
     func testFollowNamedGeneralDirectlyFromFavoritesAndEditIt() {
@@ -52,7 +73,7 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Favorites"].tap()
         app.buttons["Follow General Button"].tap()
         fillGeneral(in: app, name: "Precious Metals General")
-        attachScreenshot("Follow Precious Metals General", app: app)
+        attachScreenshot("Follow Precious Metals General")
         app.buttons["Save General"].tap()
         XCTAssertTrue(app.staticTexts["Precious Metals General"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["/biz/ · /pmg/"].exists)
@@ -73,14 +94,17 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertEqual(nameField(in: app).value as? String, "Metals Watch")
         let name = nameField(in: app)
         name.tap()
-        name.typeText("Updated ")
+        // A literal marker avoids autocorrection and does not assume cursor placement.
+        name.typeText("12345")
+        let edited = NSPredicate(format: "value CONTAINS %@", "12345")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: edited, object: name)], timeout: 10), .completed)
         let editedName = name.value as? String ?? ""
-        XCTAssertTrue(editedName.contains("Updated "))
+        XCTAssertTrue(editedName.contains("12345"))
         XCTAssertNotEqual(editedName, "Metals Watch")
         app.buttons["Save General"].tap()
         XCTAssertTrue(app.staticTexts[editedName].waitForExistence(timeout: 5))
         XCTAssertEqual(app.staticTexts.matching(identifier: "/biz/ · /pmg/").count, 1)
-        attachScreenshot("Followed General", app: app)
+        attachScreenshot("Followed General")
     }
 
     func testOpenLinkRejectsUnrelatedURLWithoutNavigating() {
@@ -93,7 +117,7 @@ final class BrowsingUITests: XCTestCase {
         field.typeText("https://example.com")
         app.buttons["Open Link Confirm"].tap()
         XCTAssertTrue(app.staticTexts["Open Link Error"].waitForExistence(timeout: 5))
-        attachScreenshot("Invalid Link Feedback", app: app)
+        attachScreenshot("Invalid Link Feedback")
         app.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Open Link Button"].waitForExistence(timeout: 5))
     }
@@ -110,7 +134,7 @@ final class BrowsingUITests: XCTestCase {
         name.typeText("My ")
         let customName = name.value as? String ?? ""
         XCTAssertTrue(customName.contains("My "))
-        attachScreenshot("Follow From Thread", app: app)
+        attachScreenshot("Follow From Thread")
         app.buttons["Save General"].tap()
         app.buttons["Follow This General"].tap()
         XCTAssertTrue(app.navigationBars["Edit General"].waitForExistence(timeout: 5))
@@ -131,7 +155,7 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["#100"].isHittable)
         let jump = app.buttons["Jump To Unread"]
         XCTAssertTrue(jump.waitForExistence(timeout: 5))
-        attachScreenshot("Restored Position And Unread Replies", app: app)
+        attachScreenshot("Restored Position And Unread Replies")
         jump.tap()
         let scroll = app.scrollViews["Thread Posts"]
         for _ in 0..<10 where !app.staticTexts["#114"].isHittable { scroll.swipeUp() }
@@ -142,7 +166,7 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["#114"].isHittable)
         XCTAssertFalse(app.staticTexts["#100"].isHittable)
         XCTAssertFalse(app.buttons["Jump To Unread"].exists)
-        attachScreenshot("Reopened At Saved Position", app: app)
+        attachScreenshot("Reopened At Saved Position")
     }
 
     func testPostLinkTakesPriorityOverRememberedPosition() {
@@ -167,11 +191,11 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Post Options 105"].tap()
         XCTAssertTrue(app.buttons["Hide Selected Post"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Share Selected Post"].isHittable)
-        attachScreenshot("Post Sharing Options", app: app)
+        attachScreenshot("Post Sharing Options")
         app.buttons["Hide Selected Post"].tap()
         XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["#105"].exists)
-        attachScreenshot("Hidden Reply With Undo", app: app)
+        attachScreenshot("Hidden Reply With Undo")
         app.buttons["Undo Hide"].tap()
         XCTAssertTrue(app.staticTexts["#105"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["Undo Hide"].exists)
@@ -190,7 +214,7 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Manage Hidden Posts"].tap()
         let restore = app.buttons["Restore Hidden biz/100"]
         XCTAssertTrue(restore.waitForExistence(timeout: 5))
-        attachScreenshot("Manage Hidden Threads", app: app)
+        attachScreenshot("Manage Hidden Threads")
         restore.tap()
         XCTAssertTrue(app.staticTexts["Nothing Hidden"].waitForExistence(timeout: 5))
         app.buttons["Boards"].tap()
@@ -245,8 +269,8 @@ final class BrowsingUITests: XCTestCase {
         return field.exists ? field : app.textViews["General Name"]
     }
 
-    private func attachScreenshot(_ name: String, app: XCUIApplication) {
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+    private func attachScreenshot(_ name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)

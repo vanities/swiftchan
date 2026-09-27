@@ -6,6 +6,7 @@ struct FavoritesBackupView: View {
     @Environment(\.modelContext) private var context
     @Query private var threads: [FavoriteThread]
     @Query private var generals: [RecurringFavorite]
+    @Query private var replies: [SavedReply]
     @State private var document = FavoritesBackupDocument()
     @State private var exporting = false
     @State private var importing = false
@@ -19,12 +20,13 @@ struct FavoritesBackupView: View {
             Section {
                 LabeledContent("Saved threads", value: "\(threads.count)")
                 LabeledContent("Named generals", value: "\(generals.count)")
+                LabeledContent("Saved replies", value: "\(replies.count)")
             } footer: {
-                Text("Back up saved thread links and named generals. Media files, settings, and reading progress are not included.")
+                Text("Back up saved thread links, named generals, and saved reply text. Media files, settings, and reading progress are not included.")
             }
             Section {
                 Button("Export Favorites", systemImage: "square.and.arrow.up", action: exportFavorites)
-                    .disabled(threads.isEmpty && generals.isEmpty)
+                    .disabled(threads.isEmpty && generals.isEmpty && replies.isEmpty)
                     .accessibilityIdentifier("Export Favorites")
                 Button("Import Favorites", systemImage: "square.and.arrow.down") { importing = true }
                     .accessibilityIdentifier("Import Favorites")
@@ -57,7 +59,7 @@ struct FavoritesBackupView: View {
             Button("Cancel", role: .cancel) { pendingBackup = nil }
         } message: {
             if let backup = pendingBackup {
-                Text("This backup contains \(backup.threads.count) threads and \(backup.generals.count) named generals. Existing favorites will be kept.")
+                Text("This backup contains \(backup.threads.count) threads, \(backup.generals.count) named generals, and \(backup.replies?.count ?? 0) saved replies. Existing favorites will be kept.")
             }
         }
         .alert("Favorites Backup", isPresented: $showingMessage) {
@@ -81,7 +83,7 @@ struct FavoritesBackupView: View {
         pendingBackup = nil
         do {
             let plan = try FavoritesBackupStore.restore(backup, in: context)
-            report("Imported \(plan.threads.count) threads and \(plan.generals.count) named generals. Skipped \(plan.skipped) duplicates.")
+            report("Imported \(plan.threads.count) threads, \(plan.generals.count) named generals, and \(plan.replies.count) saved replies. Skipped \(plan.skipped) duplicates.")
         } catch {
             report(error.localizedDescription)
         }
