@@ -134,6 +134,10 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Use **Settings → Favorites Backup** to export saved thread links and named generals as JSON. Importing a backup adds missing entries while keeping existing names. Backups do not include media files, settings, or reading progress.
+
+Use **Open Link** on the Boards tab to jump to a board by entering its shortcut, such as `/biz/`, or paste a full board or thread URL.
+
 To share a specific reply, open its **… → Share Post** action. The link includes the post number and opens at that reply in Swiftchan or on the website.
 
 Use a post's **… → Hide** action to hide it, then tap **Undo** if needed. **Settings → Hidden Posts & Threads** lists hidden items by board and post number, with search, individual restore, and **Restore All**. Previously hidden items appear there too.

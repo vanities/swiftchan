@@ -66,6 +66,31 @@ final class RecurringFavoriteTests: XCTestCase {
         XCTAssertNotNil(favorite.lastMatchedAt)
     }
 
+    func testOnlyMatchingCommentsAreParsedAndOriginalCatalogIndicesArePreserved() async throws {
+        let response = try catalog(#"[{"no":1,"sub":"Other","com":"skip"},{"no":2,"sub":"/pmg/ old","com":"old"},{"no":3,"sub":"Other","com":"/pmg/ in body only"},{"no":4,"sub":"/PMG/ new","com":"new"}]"#)
+        var parsed: [String] = []
+        let model = RecurringFavoriteViewModel(fetchCatalog: { _ in response }, parseComment: {
+            parsed.append($0)
+            return AttributedString($0)
+        })
+        await model.findMatches(for: RecurringFavorite(searchPattern: "/pmg/", boardName: "biz"))
+        guard case .multipleMatches(let matches) = model.state else { return XCTFail("Expected matching generals") }
+        XCTAssertEqual(parsed.sorted(), ["new", "old"])
+        XCTAssertEqual(matches.map(\.id), [4, 2])
+        XCTAssertEqual(matches.map(\.index), [3, 1])
+        XCTAssertEqual(matches.map { String($0.comment.characters) }, ["new", "old"])
+    }
+
+    func testNoMatchingTitlesDoesNotParseAnyComments() async throws {
+        let response = try catalog(#"[{"no":1,"com":"/pmg/"},{"no":2,"sub":"Other","com":"skip"}]"#)
+        let model = RecurringFavoriteViewModel(fetchCatalog: { _ in response }, parseComment: { _ in
+            XCTFail("Unmatched catalog comments should not be parsed")
+            return AttributedString()
+        })
+        await model.findMatches(for: RecurringFavorite(searchPattern: "/pmg/", boardName: "biz"))
+        XCTAssertEqual(model.state, .noMatches)
+    }
+
     func testCancelledLookupDoesNotPublishResultsOrChangeSavedMetadata() async throws {
         let response = try catalog(#"[{"no":1,"sub":"/pmg/"}]"#)
         var continuation: CheckedContinuation<Catalog, Error>?
@@ -128,5 +153,36 @@ final class RecurringFavoriteTests: XCTestCase {
 
     private func catalog(_ threads: String) throws -> Catalog {
         try JSONDecoder().decode(Catalog.self, from: Data("[{\"page\":1,\"threads\":\(threads)}]".utf8))
+    }
+
+    func testBackupRestoreAddsMissingFavoritesAndKeepsExistingNames() throws {
+        let container = try FavoritesStore.makeContainer(configuration: ModelConfiguration(isStoredInMemoryOnly: true))
+        let context = ModelContext(container)
+        _ = try XCTUnwrap(RecurringFavoriteDraft(boardName: "biz", searchPattern: "pmg", displayName: "My Metals")).save(in: context)
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let backup = FavoritesBackup(threads: [.init(board: "biz", number: 100, title: "Saved thread", createdAt: date, savedAt: date)],
+                                     generals: [.init(board: "biz", tag: "/pmg/", name: "Imported name", createdAt: date),
+                                                .init(board: "g", tag: "/dpt/", name: "Daily Programming", createdAt: date)])
+        let first = try FavoritesBackupStore.restore(backup, in: context)
+        XCTAssertEqual(first.threads.count, 1)
+        XCTAssertEqual(first.generals.count, 1)
+        XCTAssertEqual(first.skipped, 1)
+        let second = try FavoritesBackupStore.restore(backup, in: context)
+        XCTAssertEqual(second.skipped, 3)
+        let saved = try FavoritesBackupStore.export(from: context)
+        XCTAssertEqual(saved.threads.count, 1)
+        XCTAssertEqual(saved.threads.first?.savedAt, date)
+        XCTAssertEqual(saved.generals.count, 2)
+        XCTAssertEqual(saved.generals.first { $0.board == "biz" }?.name, "My Metals")
+    }
+
+    func testInvalidBackupDoesNotPartiallyInsertFavorites() throws {
+        let container = try FavoritesStore.makeContainer(configuration: ModelConfiguration(isStoredInMemoryOnly: true))
+        let context = ModelContext(container)
+        let date = Date()
+        let backup = FavoritesBackup(threads: [.init(board: "biz", number: 100, title: "Valid", createdAt: date, savedAt: date),
+                                              .init(board: "biz", number: -1, title: "Invalid", createdAt: date, savedAt: date)], generals: [])
+        XCTAssertThrowsError(try FavoritesBackupStore.restore(backup, in: context))
+        XCTAssertEqual(try context.fetchCount(FetchDescriptor<FavoriteThread>()), 0)
     }
 }

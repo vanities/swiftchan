@@ -12,10 +12,13 @@ import FourChan
 class RecurringFavoriteViewModel {
     typealias CatalogLoader = (String) async throws -> Catalog
     @ObservationIgnored private let fetchCatalog: CatalogLoader
+    @ObservationIgnored private let parseComment: (String) -> AttributedString
     @ObservationIgnored private var activeRequest: UUID?
 
-    init(fetchCatalog: @escaping CatalogLoader = { try await FourChanAsyncService.shared.getCatalog(boardName: $0) }) {
+    init(fetchCatalog: @escaping CatalogLoader = { try await FourChanAsyncService.shared.getCatalog(boardName: $0) },
+         parseComment: @escaping (String) -> AttributedString = { CommentParser(comment: $0).getComment() }) {
         self.fetchCatalog = fetchCatalog
+        self.parseComment = parseComment
     }
 
     enum MatchState: Equatable {
@@ -54,23 +57,15 @@ class RecurringFavoriteViewModel {
             guard activeRequest == request else { return }
             try Task.checkCancellation()
 
-            var allPosts: [SwiftchanPost] = []
-            var index = 0
-
-            for page in catalog {
-                for thread in page.threads {
-                    let comment: AttributedString
-                    if let com = thread.com {
-                        comment = CommentParser(comment: com).getComment()
-                    } else {
-                        comment = AttributedString()
-                    }
-                    allPosts.append(SwiftchanPost(post: thread, boardName: favorite.boardName, comment: comment, index: index))
-                    index += 1
-                }
+            let pattern = favorite.searchPattern.lowercased()
+            // Filter cheap title strings before parsing rich comments for the matching threads.
+            let matchingThreads = catalog.flatMap(\.threads).enumerated().filter {
+                ($0.element.sub?.clean.lowercased() ?? "").contains(pattern)
+            }.sorted { $0.element.no > $1.element.no }
+            let matches = matchingThreads.map { index, thread in
+                SwiftchanPost(post: thread, boardName: favorite.boardName,
+                              comment: thread.com.map(parseComment) ?? AttributedString(), index: index)
             }
-
-            let matches = filterPosts(allPosts, pattern: favorite.searchPattern)
 
             favorite.lastMatchedAt = Date()
             favorite.lastMatchCount = matches.count
@@ -94,18 +89,6 @@ class RecurringFavoriteViewModel {
                 state = .error(error.localizedDescription)
             }
         }
-    }
-
-    private func filterPosts(_ posts: [SwiftchanPost], pattern: String) -> [SwiftchanPost] {
-        let searchPattern = pattern.lowercased()
-
-        // Only match against the OP title (subject)
-        let filtered = posts.filter { swiftChanPost in
-            let subject = swiftChanPost.post.sub?.clean.lowercased() ?? ""
-            return subject.contains(searchPattern)
-        }
-
-        return filtered.sorted { $0.post.no > $1.post.no }
     }
 
     func reset() {

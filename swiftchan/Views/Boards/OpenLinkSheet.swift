@@ -23,12 +23,12 @@ struct OpenLinkSheet: View {
                         if let value = values.first { text = value }
                     }
                 } header: {
-                    Text("Board or thread URL")
+                    Text("Board shortcut or thread URL")
                 } footer: {
-                    Text("Paste a 4chan or 4channel link to open it here.")
+                    Text("Enter a board such as /biz/, or paste a 4chan or 4channel link.")
                 }
                 if showError {
-                    Text("Enter a valid board or thread link from boards.4chan.org or boards.4channel.org.")
+                    Text("Enter a board such as /biz/, or a valid link from boards.4chan.org or boards.4channel.org.")
                         .foregroundStyle(.red)
                         .accessibilityIdentifier("Open Link Error")
                 }
