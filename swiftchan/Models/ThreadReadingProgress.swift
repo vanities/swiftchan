@@ -5,6 +5,15 @@ struct ThreadReadingProgress: Codable, Equatable {
     var postID: Int
     var highestReadID: Int
     var updatedAt: Date
+    var title: String?
+}
+
+struct RecentThread: Identifiable {
+    let board: String
+    let threadID: Int
+    let progress: ThreadReadingProgress
+    var id: String { "\(board)/\(threadID)" }
+    var title: String { progress.title ?? "Thread #\(threadID)" }
 }
 
 /// Small, bounded local reading metadata, independent of saved favorites and their schema.
@@ -24,6 +33,7 @@ final class ThreadReadingStore {
     }()
 
     private(set) var resetID = UUID()
+    private var revision = 0
     @ObservationIgnored private let defaults: UserDefaults?
     private let key = "threadReadingProgress.v1"
     private let limit: Int
@@ -40,11 +50,26 @@ final class ThreadReadingStore {
         entries["\(board.lowercased())/\(threadID)"]
     }
 
-    func record(board: String, threadID: Int, postID: Int, highestReadID: Int, now: Date = Date()) {
-        guard threadID > 0, postID > 0 else { return }
-        let identity = "\(board.lowercased())/\(threadID)"
+    var recentThreads: [RecentThread] {
+        _ = revision
+        return entries.compactMap { key, progress -> RecentThread? in
+            let parts = key.split(separator: "/")
+            guard parts.count == 2, let board = Deeplinker.normalizedBoard(String(parts[0])),
+                  let threadID = Int(parts[1]), threadID > 0 else { return nil }
+            return RecentThread(board: board, threadID: threadID, progress: progress)
+        }.sorted {
+            $0.progress.updatedAt == $1.progress.updatedAt ? $0.id < $1.id : $0.progress.updatedAt > $1.progress.updatedAt
+        }
+    }
+
+    func record(board: String, threadID: Int, postID: Int, highestReadID: Int, now: Date = Date(), title: String? = nil) {
+        guard threadID > 0, postID > 0, let board = Deeplinker.normalizedBoard(board) else { return }
+        let identity = "\(board)/\(threadID)"
+        let title = title.map { String($0.trimmingCharacters(in: .whitespacesAndNewlines).prefix(512)) }
+            .flatMap { $0.isEmpty ? nil : $0 }
         entries[identity] = ThreadReadingProgress(postID: postID,
-            highestReadID: max(postID, highestReadID, entries[identity]?.highestReadID ?? 0), updatedAt: now)
+            highestReadID: max(postID, highestReadID, entries[identity]?.highestReadID ?? 0), updatedAt: now,
+            title: title ?? entries[identity]?.title)
         if entries.count > limit {
             let retained = entries.sorted { $0.value.updatedAt > $1.value.updatedAt }.prefix(limit)
             entries = Dictionary(uniqueKeysWithValues: retained.map { ($0.key, $0.value) })
@@ -56,6 +81,13 @@ final class ThreadReadingStore {
         guard dirty, let data = try? JSONEncoder().encode(entries) else { return }
         defaults?.set(data, forKey: key)
         dirty = false
+        revision += 1
+    }
+
+    func remove(_ thread: RecentThread) {
+        entries.removeValue(forKey: thread.id)
+        dirty = true
+        flush()
     }
 
     func clear() {
@@ -63,6 +95,7 @@ final class ThreadReadingStore {
         resetID = UUID()
         defaults?.removeObject(forKey: key)
         dirty = false
+        revision += 1
     }
 }
 

@@ -2,6 +2,32 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testRecentThreadsResumePositionAndCanBeCleared() {
+        let app = launchThreadFixture()
+        openFixtureThread(in: app, anchor: "#p105")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Recent Threads"].tap()
+        let recent = app.buttons["Recent Thread biz/100"]
+        XCTAssertTrue(recent.waitForExistence(timeout: 5))
+        attachScreenshot("Recent Threads")
+        recent.tap()
+        XCTAssertTrue(app.staticTexts["#105"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#105"].isHittable)
+        XCTAssertFalse(app.staticTexts["#100"].isHittable)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Clear Recent Threads"].tap()
+        app.buttons["Clear All"].tap()
+        XCTAssertTrue(app.staticTexts["No Recent Threads"].waitForExistence(timeout: 5))
+    }
+
+    func testRecentThreadsDoNotCollectWhenRememberingIsDisabled() {
+        let app = launchThreadFixture(rememberProgress: false)
+        openFixtureThread(in: app)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Recent Threads"].tap()
+        XCTAssertTrue(app.staticTexts["No Recent Threads"].waitForExistence(timeout: 5))
+    }
+
     func testSaveReplyAndReopenExactPostFromFavorites() {
         let app = launchThreadFixture(rememberProgress: false)
         openFixtureThread(in: app, anchor: "#p105")

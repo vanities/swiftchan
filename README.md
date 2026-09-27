@@ -134,6 +134,8 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Tap the clock on **Boards → Recent Threads** to search recently read threads and resume your saved position. History uses the existing **Remember Reading Progress** setting and is limited to 300 threads. Remove an entry or clear the list to erase its reading progress too.
+
 Use a post’s **… → Save Reply** action to keep its text and exact link in **Favorites → Saved Replies**. Search saved text, open the original post, share its link, or swipe to remove it. Text stays available even if the original thread expires; images and videos are not saved with it.
 
 In a thread, use **Jump → First Post / Latest Reply** to move through long discussions without repeated scrolling. Hidden posts are skipped.

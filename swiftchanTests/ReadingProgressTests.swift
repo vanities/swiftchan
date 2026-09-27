@@ -3,6 +3,36 @@ import XCTest
 
 @MainActor
 final class ReadingProgressTests: XCTestCase {
+    func testRecentThreadsKeepTitlesOrderAndPersistIndividualRemoval() throws {
+        let name = "ReadingProgressTests.\(UUID())"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: name))
+        defer { defaults.removePersistentDomain(forName: name) }
+        let store = ThreadReadingStore(defaults: defaults, limit: 2)
+        store.record(board: "biz", threadID: 100, postID: 105, highestReadID: 105,
+                     now: Date(timeIntervalSince1970: 1), title: "Metals")
+        store.record(board: "g", threadID: 100, postID: 106, highestReadID: 106,
+                     now: Date(timeIntervalSince1970: 2), title: "Technology")
+        store.record(board: "biz", threadID: 100, postID: 108, highestReadID: 108,
+                     now: Date(timeIntervalSince1970: 3))
+        store.flush()
+        XCTAssertEqual(store.recentThreads.map(\.id), ["biz/100", "g/100"])
+        XCTAssertEqual(store.recentThreads.first?.title, "Metals")
+        let reloaded = ThreadReadingStore(defaults: defaults)
+        XCTAssertEqual(reloaded.recentThreads.first?.title, "Metals")
+        reloaded.remove(try XCTUnwrap(reloaded.recentThreads.first))
+        XCTAssertNil(reloaded.progress(board: "biz", threadID: 100))
+        XCTAssertEqual(ThreadReadingStore(defaults: defaults).recentThreads.map(\.id), ["g/100"])
+        reloaded.clear()
+        XCTAssertTrue(reloaded.recentThreads.isEmpty)
+    }
+
+    func testOldReadingRecordsWithoutTitlesStillDecode() throws {
+        let data = Data(#"{"postID":105,"highestReadID":108,"updatedAt":0}"#.utf8)
+        let progress = try JSONDecoder().decode(ThreadReadingProgress.self, from: data)
+        XCTAssertNil(progress.title)
+        XCTAssertEqual(RecentThread(board: "biz", threadID: 100, progress: progress).title, "Thread #100")
+    }
+
     func testProgressPersistsAcrossStoreInstancesAndIsScopedToBoardAndThread() throws {
         let name = "ReadingProgressTests.\(UUID())"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: name))

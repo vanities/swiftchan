@@ -556,7 +556,7 @@ struct ThreadView: View {
         reading.observe(visiblePostIDs: visiblePostIDs)
         if let postID = reading.postID {
             ThreadReadingStore.shared.record(board: viewModel.boardName, threadID: viewModel.id,
-                                             postID: postID, highestReadID: reading.highestReadID)
+                                             postID: postID, highestReadID: reading.highestReadID, title: viewModel.title)
         }
     }
 

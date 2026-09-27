@@ -118,7 +118,7 @@ struct SettingsView: View {
         Section(header: Text("Thread").font(.title)) {
             Toggle("Remember Reading Progress", isOn: $rememberThreadPositions)
             Button("Clear Reading Progress", role: .destructive) { showClearReadingConfirmation = true }
-                .confirmationDialog("Clear saved positions and unread progress?", isPresented: $showClearReadingConfirmation, titleVisibility: .visible) {
+                .confirmationDialog("Clear recent threads, saved positions, and unread progress?", isPresented: $showClearReadingConfirmation, titleVisibility: .visible) {
                     Button("Clear Reading Progress", role: .destructive) { ThreadReadingStore.shared.clear() }
                 }
             Toggle("Auto Refresh Enabled", isOn: $autoRefreshEnabled)

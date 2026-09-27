@@ -25,6 +25,14 @@ struct BoardsView: View {
             boardContent
                 .navigationTitle(Constants.title)
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        NavigationLink {
+                            RecentThreadsView()
+                        } label: {
+                            Label("Recent Threads", systemImage: "clock")
+                        }
+                        .accessibilityIdentifier("Recent Threads")
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Open Link", systemImage: "link") { showOpenLink = true }
                             .accessibilityIdentifier("Open Link Button")
