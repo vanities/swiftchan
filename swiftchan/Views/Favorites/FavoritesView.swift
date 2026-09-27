@@ -53,6 +53,14 @@ struct FavoritesView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink {
+                        ThreadWatcherView()
+                    } label: {
+                        Label("Thread Watcher", systemImage: "eye")
+                    }
+                    .accessibilityIdentifier("Thread Watcher")
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink {
                         SavedRepliesView()
                     } label: {
                         Label("Saved Replies", systemImage: "bookmark")

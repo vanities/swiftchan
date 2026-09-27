@@ -47,6 +47,7 @@ struct AddRecurringFavoriteSheet: View {
 
                 Section {
                     TextField("Name (optional)", text: $displayName, prompt: Text("Precious Metals General"), axis: .vertical)
+                        .autocorrectionDisabled()
                         .lineLimit(1...3)
                         .accessibilityIdentifier("General Name")
                 } header: {

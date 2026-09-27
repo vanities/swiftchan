@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecurringMatchSheet: View {
     let favorite: RecurringFavorite
+    var excludingThreadID: Int?
     @State private var viewModel = RecurringFavoriteViewModel()
     let onSelect: (SwiftchanPost) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -43,7 +44,7 @@ struct RecurringMatchSheet: View {
         }
         .presentationDetents([.medium, .large])
         .task(id: searchAttempt) {
-            await viewModel.findMatches(for: favorite)
+            await viewModel.findMatches(for: favorite, excludingThreadID: excludingThreadID)
             guard case .singleMatch(let post) = viewModel.state else { return }
             do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
             guard !Task.isCancelled, case .singleMatch(let current) = viewModel.state, current.id == post.id else { return }

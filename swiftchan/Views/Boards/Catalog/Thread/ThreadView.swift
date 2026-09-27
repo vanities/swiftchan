@@ -12,6 +12,7 @@ import SpriteKit
 import SwiftData
 
 struct ThreadView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
     @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled = false
     @AppStorage("autoRefreshThreadTime") private var autoRefreshThreadTime = 10
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = true
@@ -33,6 +34,9 @@ struct ThreadView: View {
     @State private var reading = ThreadReadingSession()
     @State private var visiblePostIDs: [Int] = []
     @State private var showFollowGeneral = false
+    @State private var rolloverGeneral: RecurringFavorite?
+    @State private var nextGeneral: ThreadDestination?
+    @State private var draftPost: DraftPost?
     @State private var recentlyHidden: HiddenPost?
     private let initialPostID: Int?
     @State private var isThreadVisible = false
@@ -84,7 +88,8 @@ struct ThreadView: View {
                                 spacing: 0
                             ) {
                                 ForEach(Array(viewModel.posts.enumerated()), id: \.element.no) { postIndex, post in
-                                    if !post.isHidden(boardName: viewModel.boardName) && viewModel.shouldShowPost(at: postIndex) {
+                                    if !post.isHidden(boardName: viewModel.boardName), viewModel.filterEffect(at: postIndex) != .hide,
+                                       viewModel.shouldShowPost(at: postIndex) {
                                         VStack(spacing: 0) {
                                             if rememberThreadPositions, post.no == newPostID {
                                                 Text("New replies")
@@ -289,6 +294,7 @@ struct ThreadView: View {
                 .onChange(of: viewModel.searchFilters) { _, _ in
                     viewModel.updateSearchResults()
                 }
+                .onChange(of: PostFilterStore.shared.rules) { viewModel.updateSearchResults() }
                 .sheet(isPresented: $showFollowGeneral) {
                     if let suggestion = GeneralSuggestion(title: viewModel.title) {
                         AddRecurringFavoriteSheet(searchPattern: suggestion.tag, boardName: viewModel.boardName,
@@ -314,6 +320,8 @@ struct ThreadView: View {
                             Image(systemName: isFavorited ? "heart.fill" : "heart")
                                 .foregroundColor(isFavorited ? .red : .primary)
                         }
+                        .accessibilityLabel(isFavorited ? "Remove Saved Thread" : "Save Thread")
+                        .accessibilityIdentifier("Toggle Thread Favorite")
                     }
                     ToolbarItem(id: "toolbar-item-archive", placement: .navigationBarTrailing) {
                         if viewModel.isArchived {
@@ -341,16 +349,20 @@ struct ThreadView: View {
                         updateAutoRefreshState()
                     }
                 }
-                .navigationDestination(isPresented: $showReply) {
-                    PostView(index: replyId)
+                .sheet(isPresented: $showReply) {
+                    QuotePreviewSheet(postID: viewModel.posts[replyId].no)
                         .environment(viewModel)
-                        .environment(presentationState)
-                        .environment(\.openURL, postLinkAction)
                 }
                 .sheet(isPresented: $appState.showingBottomSheet) {
                     if let post = appState.selectedBottomSheetPost,
                        let index = viewModel.posts.firstIndex(of: post) {
                         VStack(spacing: 24) {
+                            Button("Reply on 4chan", systemImage: "arrowshape.turn.up.left") {
+                                draftPost = DraftPost(id: post.no)
+                                appState.showingBottomSheet = false
+                                appState.selectedBottomSheetPost = nil
+                            }
+                            .accessibilityIdentifier("Draft Reply To Post")
                             let isSaved = savedReplies.contains { $0.boardName == viewModel.boardName && $0.postID == post.no }
                             Button(isSaved ? "Remove Saved Reply" : "Save Reply", systemImage: isSaved ? "bookmark.slash" : "bookmark") {
                                 saveReply(index: index)
@@ -371,7 +383,7 @@ struct ThreadView: View {
                             .accessibilityIdentifier("Hide Selected Post")
                         }
                         .padding()
-                        .presentationDetents([.height(230), .medium])
+                        .presentationDetents([.height(290), .medium])
                         .presentationDragIndicator(.visible)
                     }
                 }
@@ -435,6 +447,34 @@ struct ThreadView: View {
                 }
                 .padding()
             }
+        }
+        .background(theme.pageBackground)
+        .safeAreaInset(edge: .top) {
+            if viewModel.isArchived || viewModel.errorType == .notFound {
+                let generals = followedGenerals.filter { $0.boardName == viewModel.boardName }
+                if !generals.isEmpty {
+                    Menu {
+                        ForEach(generals) { general in
+                            Button(general.effectiveDisplayName) { rolloverGeneral = general }
+                        }
+                    } label: {
+                        Label("Find Next General", systemImage: "arrow.right.circle")
+                            .frame(maxWidth: .infinity).padding(10).background(.regularMaterial)
+                    }
+                    .accessibilityIdentifier("Find Next General")
+                }
+            }
+        }
+        .sheet(item: $rolloverGeneral) { general in
+            RecurringMatchSheet(favorite: general, excludingThreadID: viewModel.id) { post in
+                nextGeneral = ThreadDestination(board: post.boardName, id: post.id)
+            }
+        }
+        .navigationDestination(item: $nextGeneral) { destination in
+            ThreadView(boardName: destination.board, postNumber: destination.id)
+        }
+        .sheet(item: $draftPost) { post in
+            ReplyDraftSheet(board: viewModel.boardName, threadID: viewModel.id, postID: post.id)
         }
     }
 
@@ -544,7 +584,9 @@ struct ThreadView: View {
     }
 
     private var readablePostIDs: [Int] {
-        viewModel.posts.filter { !$0.isHidden(boardName: viewModel.boardName) }.map(\.no)
+        viewModel.posts.enumerated().filter {
+            !$0.element.isHidden(boardName: viewModel.boardName) && viewModel.filterEffect(at: $0.offset) != .hide
+        }.map { $0.element.no }
     }
 
     private var unreadPostIDs: [Int] { reading.unreadPostIDs(in: readablePostIDs) }
@@ -650,6 +692,8 @@ struct ThreadView: View {
         refreshFavoriteState()
     }
 }
+
+private struct DraftPost: Identifiable { let id: Int }
 
 extension ThreadView {
     @ViewBuilder

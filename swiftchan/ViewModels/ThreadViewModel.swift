@@ -45,6 +45,7 @@ final class ThreadViewModel {
     private(set) var errorType = ErrorType.generic
     private(set) var refreshError: String?
     private(set) var isArchived = false
+    private(set) var isFromArchive = false
     private(set) var progressText = ""
     private(set) var downloadProgress = Progress()
     private var cancellables: Set<AnyCancellable> = []
@@ -80,7 +81,7 @@ final class ThreadViewModel {
     }
 
     var archiveUrl: URL? {
-        FourplebsService.archiveUrl(board: boardName, threadNum: id)
+        isFromArchive ? FourplebsService.archiveUrl(board: boardName, threadNum: id) : nil
     }
 
     /// Lazily parses and caches the AttributedString for a post's comment.
@@ -161,7 +162,7 @@ final class ThreadViewModel {
                 LoadedPost(post: post, mediaURL: post.getMediaUrl(boardId: boardName),
                            thumbnailURL: post.getMediaUrl(boardId: boardName, thumbnail: true))
             }
-            apply(contents, archived: false)
+            apply(contents, archived: thread.posts.first?.archived == 1)
             return true
         } catch {
             handleFailure(error)
@@ -188,7 +189,7 @@ final class ThreadViewModel {
                 reportFailure(.notFound)
                 return false
             }
-            apply(contents, archived: true)
+            apply(contents, archived: true, fromArchive: true)
             return true
         } catch {
             handleFailure(error)
@@ -213,7 +214,7 @@ final class ThreadViewModel {
     }
 
     /// Install live and archived responses together so every index refers to the same snapshot.
-    private func apply(_ contents: [LoadedPost], archived: Bool) {
+    private func apply(_ contents: [LoadedPost], archived: Bool, fromArchive: Bool = false) {
         updateProgress(50, message: "Processing posts...")
         var mediaURLs: [URL] = []
         var thumbnailURLs: [URL] = []
@@ -238,6 +239,7 @@ final class ThreadViewModel {
         buildPostIdIndex()
         setMedia(mediaUrls: mediaURLs, thumbnailMediaUrls: thumbnailURLs)
         isArchived = archived
+        isFromArchive = fromArchive
         errorType = .generic
         updateSearchResults()
         updateProgress(100, message: "Complete!")
@@ -341,6 +343,7 @@ final class ThreadViewModel {
         let searchTextLowercased = searchText.lowercased()
 
         for (index, post) in posts.enumerated() {
+            if filterEffect(at: index) == .hide { continue }
             var matchesSearch = true
 
             if !searchText.isEmpty {
@@ -378,6 +381,12 @@ final class ThreadViewModel {
         }
 
         return filteredIndices
+    }
+
+    func filterEffect(at index: Int) -> PostFilterRule.Action? {
+        guard posts.indices.contains(index) else { return nil }
+        return PostFilterStore.shared.effect(board: boardName, post: posts[index],
+                                             text: index < searchableComments.count ? searchableComments[index] : "")
     }
 
     func updateSearchResults() {

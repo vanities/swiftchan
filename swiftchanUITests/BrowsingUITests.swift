@@ -2,6 +2,63 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testQuotePreviewChainDismissesBackToReadingPosition() {
+        let app = launchThreadFixture(extraArguments: ["--ui-quote-fixture"])
+        openFixtureThread(in: app, anchor: "#p105")
+        app.links[">>104"].tap()
+        XCTAssertTrue(app.navigationBars["#104"].waitForExistence(timeout: 5))
+        app.scrollViews["Quote Preview 104"].links[">>103"].tap()
+        XCTAssertTrue(app.navigationBars["#103"].waitForExistence(timeout: 5))
+        attachScreenshot("Quote Chain Preview")
+        app.navigationBars["#103"].buttons["Close Quote Preview"].tap()
+        XCTAssertTrue(app.staticTexts["#105"].isHittable)
+    }
+
+    func testArchivedGeneralFindsNewerThread() {
+        let app = launchThreadFixture(extraArguments: ["--ui-general-rollover"])
+        openFixtureThread(in: app)
+        app.buttons["Follow This General"].tap()
+        app.buttons["Save General"].tap()
+        app.buttons["Find Next General"].tap()
+        app.buttons["Precious Metals General"].tap()
+        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
+        attachScreenshot("Next General")
+    }
+
+    func testBoardFilterHidesMatchingPostInClassicCompactTheme() {
+        let app = launchThreadFixture(rememberProgress: false, extraArguments: ["-chanTheme", "Yotsuba B", "-compactPosts", "YES"])
+        app.buttons["Settings"].tap()
+        app.buttons["Filters & Highlights"].tap()
+        app.textFields["Filter Board"].tap()
+        app.textFields["Filter Board"].typeText("biz")
+        app.textFields["Filter Pattern"].tap()
+        app.textFields["Filter Pattern"].typeText("Reply 100.")
+        app.buttons["Add Filter"].tap()
+        app.buttons["Boards"].tap()
+        openFixtureThread(in: app)
+        XCTAssertTrue(app.staticTexts["#101"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["#100"].exists)
+        attachScreenshot("Yotsuba B Compact Filtered Thread")
+    }
+
+    func testReplyDraftQuotesPostAndWatcherChecksSavedThread() {
+        let app = launchThreadFixture(seedProgress: true)
+        openFixtureThread(in: app, anchor: "#p105")
+        app.buttons["Toggle Thread Favorite"].tap()
+        app.buttons["Post Options 105"].tap()
+        app.buttons["Draft Reply To Post"].tap()
+        let draft = app.textViews["Reply Draft"]
+        XCTAssertTrue(draft.waitForExistence(timeout: 5))
+        XCTAssertTrue((draft.value as? String ?? "").contains(">>105"))
+        attachScreenshot("Quoted Reply Draft")
+        app.buttons["Done"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Favorites"].tap()
+        app.buttons["Thread Watcher"].tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "unread")).firstMatch.waitForExistence(timeout: 5))
+        attachScreenshot("Thread Watcher")
+    }
+
     func testRecentThreadsResumePositionAndCanBeCleared() {
         let app = launchThreadFixture()
         openFixtureThread(in: app, anchor: "#p105")
@@ -249,11 +306,12 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["#100"].isHittable)
     }
 
-    private func launchThreadFixture(seedProgress: Bool = false, rememberProgress: Bool = true) -> XCUIApplication {
+    private func launchThreadFixture(seedProgress: Bool = false, rememberProgress: Bool = true, extraArguments: [String] = []) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-thread-fixture", "-biometricsEnabled", "NO", "-rememberThreadPositions", rememberProgress ? "YES" : "NO"]
         if seedProgress { app.launchArguments.append("--ui-reading-seed") }
+        app.launchArguments += extraArguments
         app.launch()
         return app
     }
@@ -287,6 +345,8 @@ final class BrowsingUITests: XCTestCase {
         app.textFields["General Tag"].typeText("/pmg/")
         nameField(in: app).tap()
         nameField(in: app).typeText(name)
+        let completeName = NSPredicate(format: "value == %@", name)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: completeName, object: nameField(in: app))], timeout: 10), .completed)
         XCTAssertTrue(app.buttons["Save General"].isEnabled)
     }
 

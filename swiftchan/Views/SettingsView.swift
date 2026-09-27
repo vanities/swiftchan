@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
+    @AppStorage("compactPosts") private var compactPosts = false
     @AppStorage("fullImageForThumbnails") var fullImageForThumbnails = true
     @AppStorage("showGifThumbnails") var showGifThumbnails = true
     @AppStorage("showGalleryPreview") var showGalleryPreview = false
@@ -27,6 +29,11 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 boardSection
+                Section("Appearance") {
+                    Picker("Theme", selection: $theme) { ForEach(ChanTheme.allCases) { Text($0.rawValue).tag($0) } }
+                    Toggle("Compact Posts", isOn: $compactPosts)
+                    NavigationLink("Filters & Highlights") { PostFiltersView() }
+                }
                 Section {
                     NavigationLink {
                         HiddenPostsView()

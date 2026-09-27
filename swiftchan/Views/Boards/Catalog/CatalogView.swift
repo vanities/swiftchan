@@ -64,7 +64,8 @@ struct CatalogView: View {
                             catalogViewModel.posts[$0].id
                         }
                         ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
-                            if !post.post.isHidden(boardName: boardName) {
+                            if !post.post.isHidden(boardName: boardName),
+                               PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
                                 NavigationLink(value: post) {
                                     OPView(
                                         boardName: boardName,

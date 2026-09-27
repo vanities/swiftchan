@@ -9,6 +9,8 @@ import SwiftUI
 import FourChan
 
 struct OPView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
+    @AppStorage("compactPosts") private var compact = false
     @AppStorage("showOPPreview") var showOPPreview: Bool = false
     @Environment(AppState.self) var appState
     @Namespace var fullscreenNspace
@@ -30,7 +32,8 @@ struct OPView: View {
     var body: some View {
         return ZStack(alignment: .topLeading) {
             Rectangle()
-                .fill(Colors.Op.background)
+                .fill(PostFilterStore.shared.effect(board: boardName, post: post, text: String(comment.characters)) == .highlight
+                      ? Color.yellow.opacity(0.25) : theme.postBackground)
                 .cornerRadius(Constants.backgroundCornerRadius)
                 .border(Colors.Op.border)
 
@@ -81,7 +84,7 @@ struct OPView: View {
                     // comment
                     Text(comment)
                         .textSelection(.enabled)
-                        .lineLimit(Constants.commentLineLimit)
+                        .lineLimit(compact ? 3 : Constants.commentLineLimit)
                 }
                 .accessibilityIdentifier(
                     AccessibilityIdentifiers.opButton(index)

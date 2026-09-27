@@ -134,6 +134,13 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+- Tap a `>>post` quote to preview it in a sheet. Follow quote chains inside the preview, then tap **Done** to return to your reading position.
+- **Favorites → Thread Watcher** checks saved threads for unread replies and archived/unavailable status. Checks are foreground-only, throttled to once per 30 seconds with requests spaced apart; it does not send background notifications.
+- **Settings → Filters & Highlights** saves literal keyword, poster ID, name, and tripcode rules for one board or all boards. Hide takes priority over highlight. Rules apply to catalog cards, thread posts, and quote previews, and stay on this device.
+- **Settings → Appearance** offers System, Yotsuba, and Yotsuba B colors plus compact posts.
+- An archived or unavailable thread offers **Find Next General** when you follow a general on that board. It searches for newer matching threads and keeps your saved name.
+- **Post options → Reply on 4chan** starts a quoted draft. **Copy Draft & Open 4chan** opens the official website, where you paste the draft, attach media, complete CAPTCHA, and submit. Drafts remain local until you copy them; **Discard Draft** removes the local draft. This is a website handoff, not native posting through the read-only API.
+
 Tap the clock on **Boards → Recent Threads** to search recently read threads and resume your saved position. History uses the existing **Remember Reading Progress** setting and is limited to 300 threads. Remove an entry or clear the list to erase its reading progress too.
 
 Use a post’s **… → Save Reply** action to keep its text and exact link in **Favorites → Saved Replies**. Search saved text, open the original post, share its link, or swipe to remove it. Text stays available even if the original thread expires; images and videos are not saved with it.
