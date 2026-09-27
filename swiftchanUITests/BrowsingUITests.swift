@@ -2,6 +2,27 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testSaveReplyAndReopenExactPostFromFavorites() {
+        let app = launchThreadFixture(rememberProgress: false)
+        openFixtureThread(in: app, anchor: "#p105")
+        app.buttons["Post Options 105"].tap()
+        app.buttons["Save Selected Reply"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Favorites"].tap()
+        app.buttons["Saved Replies"].tap()
+        XCTAssertTrue(app.staticTexts["/biz/ · #105"].waitForExistence(timeout: 5))
+        attachScreenshot("Saved Reply Text", app: app)
+        app.buttons["Open Saved Reply 105"].tap()
+        XCTAssertTrue(app.staticTexts["#105"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#105"].isHittable)
+        XCTAssertFalse(app.staticTexts["#100"].isHittable)
+        app.buttons["Post Options 105"].tap()
+        XCTAssertEqual(app.buttons["Save Selected Reply"].label, "Remove Saved Reply")
+        app.buttons["Save Selected Reply"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.staticTexts["No Saved Replies"].waitForExistence(timeout: 5))
+    }
+
     func testJumpBetweenFirstPostAndLatestReply() {
         let app = launchThreadFixture(rememberProgress: false)
         openFixtureThread(in: app)
@@ -73,9 +94,12 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertEqual(nameField(in: app).value as? String, "Metals Watch")
         let name = nameField(in: app)
         name.tap()
-        name.typeText("Updated ")
+        // A literal marker avoids autocorrection and does not assume cursor placement.
+        name.typeText("12345")
+        let edited = NSPredicate(format: "value CONTAINS %@", "12345")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: edited, object: name)], timeout: 10), .completed)
         let editedName = name.value as? String ?? ""
-        XCTAssertTrue(editedName.contains("Updated "))
+        XCTAssertTrue(editedName.contains("12345"))
         XCTAssertNotEqual(editedName, "Metals Watch")
         app.buttons["Save General"].tap()
         XCTAssertTrue(app.staticTexts[editedName].waitForExistence(timeout: 5))

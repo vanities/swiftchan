@@ -19,6 +19,8 @@ struct ThreadView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.modelContext) private var modelContext
     @Query private var followedGenerals: [RecurringFavorite]
+    @Query private var savedReplies: [SavedReply]
+    @State private var bookmarkError: String?
 
     @State private var presentationState = PresentationState()
     @State private var threadAutorefresher = ThreadAutoRefresher()
@@ -349,6 +351,13 @@ struct ThreadView: View {
                     if let post = appState.selectedBottomSheetPost,
                        let index = viewModel.posts.firstIndex(of: post) {
                         VStack(spacing: 24) {
+                            let isSaved = savedReplies.contains { $0.boardName == viewModel.boardName && $0.postID == post.no }
+                            Button(isSaved ? "Remove Saved Reply" : "Save Reply", systemImage: isSaved ? "bookmark.slash" : "bookmark") {
+                                saveReply(index: index)
+                                appState.showingBottomSheet = false
+                                appState.selectedBottomSheetPost = nil
+                            }
+                            .accessibilityIdentifier("Save Selected Reply")
                             ShareLink(item: viewModel.postURL(post.no)) {
                                 Label("Share Post", systemImage: "square.and.arrow.up")
                             }
@@ -362,7 +371,7 @@ struct ThreadView: View {
                             .accessibilityIdentifier("Hide Selected Post")
                         }
                         .padding()
-                        .presentationDetents([.height(180), .medium])
+                        .presentationDetents([.height(230), .medium])
                         .presentationDragIndicator(.visible)
                     }
                 }
@@ -385,6 +394,9 @@ struct ThreadView: View {
                         .background(.regularMaterial)
                     }
                 }
+                .alert("Couldn’t Save Reply", isPresented: Binding(get: { bookmarkError != nil }, set: { if !$0 { bookmarkError = nil } })) {
+                    Button("OK", role: .cancel) { bookmarkError = nil }
+                } message: { Text(bookmarkError ?? "") }
                 .toolbar(hideTabOnBoards ? .hidden : .automatic, for: .tabBar)
             case .error:
                 let _ = print("DEBUG View: errorType=\(viewModel.errorType), canLoadFromArchive=\(viewModel.canLoadFromArchive), board=\(viewModel.boardName)")
@@ -594,6 +606,18 @@ struct ThreadView: View {
         )
         descriptor.fetchLimit = 1
         isFavorited = ((try? modelContext.fetchCount(descriptor)) ?? 0) > 0
+    }
+
+    private func saveReply(index: Int) {
+        let post = viewModel.posts[index]
+        if let existing = savedReplies.first(where: { $0.boardName == viewModel.boardName && $0.postID == post.no }) {
+            modelContext.delete(existing)
+        } else {
+            let text = post.com.map { String(CommentParser(comment: $0).getComment().characters) } ?? ""
+            modelContext.insert(SavedReply(boardName: viewModel.boardName, threadID: viewModel.id,
+                                          postID: post.no, threadTitle: viewModel.title, text: text))
+        }
+        do { try modelContext.save() } catch { bookmarkError = error.localizedDescription }
     }
 
     private func toggleFavorite() {

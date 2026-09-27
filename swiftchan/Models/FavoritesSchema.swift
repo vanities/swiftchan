@@ -84,20 +84,26 @@ enum FavoritesSchemaV2: VersionedSchema {
     static var models: [any PersistentModel.Type] { [FavoriteThread.self, RecurringFavorite.self] }
 }
 
+enum FavoritesSchemaV3: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(3, 0, 0) }
+    static var models: [any PersistentModel.Type] { [FavoriteThread.self, RecurringFavorite.self, SavedReply.self] }
+}
+
 enum FavoritesMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [FavoritesSchemaV1.self, FavoritesSchemaV2.self] }
+    static var schemas: [any VersionedSchema.Type] { [FavoritesSchemaV1.self, FavoritesSchemaV2.self, FavoritesSchemaV3.self] }
     static var stages: [MigrationStage] {
         // V1's globally unique thread IDs already guarantee unique (board, thread) pairs.
         // No rows need to be discarded when replacing that constraint.
         [.custom(fromVersion: FavoritesSchemaV1.self, toVersion: FavoritesSchemaV2.self,
-                 willMigrate: nil, didMigrate: nil)]
+                 willMigrate: nil, didMigrate: nil),
+         .lightweight(fromVersion: FavoritesSchemaV2.self, toVersion: FavoritesSchemaV3.self)]
     }
 }
 
 @MainActor
 enum FavoritesStore {
     static func makeContainer(configuration: ModelConfiguration = ModelConfiguration()) throws -> ModelContainer {
-        try ModelContainer(for: Schema(versionedSchema: FavoritesSchemaV2.self),
+        try ModelContainer(for: Schema(versionedSchema: FavoritesSchemaV3.self),
                            migrationPlan: FavoritesMigrationPlan.self, configurations: configuration)
     }
 }
