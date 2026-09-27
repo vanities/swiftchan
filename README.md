@@ -134,6 +134,8 @@ If you want to test it with me on testflight or think we can get it on the app s
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+In a thread, use **Jump → First Post / Latest Reply** to move through long discussions without repeated scrolling. Hidden posts are skipped.
+
 Use **Settings → Favorites Backup** to export saved thread links and named generals as JSON. Importing a backup adds missing entries while keeping existing names. Backups do not include media files, settings, or reading progress.
 
 Use **Open Link** on the Boards tab to jump to a board by entering its shortcut, such as `/biz/`, or paste a full board or thread URL.

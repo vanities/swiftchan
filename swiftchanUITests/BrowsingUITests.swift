@@ -2,6 +2,31 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testJumpBetweenFirstPostAndLatestReply() {
+        let app = launchThreadFixture(rememberProgress: false)
+        openFixtureThread(in: app)
+        XCTAssertTrue(app.staticTexts["#100"].isHittable)
+        app.buttons["Thread Jump Menu"].tap()
+        app.buttons["Jump To Latest Reply"].tap()
+        XCTAssertTrue(app.staticTexts["#114"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#114"].isHittable)
+        XCTAssertFalse(app.staticTexts["#100"].isHittable)
+        attachScreenshot("Jump To Latest Reply", app: app)
+        app.buttons["Post Options 114"].tap()
+        app.buttons["Hide Selected Post"].tap()
+        XCTAssertTrue(app.buttons["Undo Hide"].waitForExistence(timeout: 5))
+        app.buttons["Thread Jump Menu"].tap()
+        app.buttons["Jump To First Post"].tap()
+        XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#100"].isHittable)
+        XCTAssertFalse(app.staticTexts["#114"].isHittable)
+        app.buttons["Thread Jump Menu"].tap()
+        app.buttons["Jump To Latest Reply"].tap()
+        XCTAssertTrue(app.staticTexts["#113"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#113"].isHittable)
+        XCTAssertFalse(app.staticTexts["#114"].exists)
+    }
+
     func testFavoritesBackupShowsSavedGeneralAndOpensExport() {
         let app = launchApp()
         app.buttons["Settings"].tap()

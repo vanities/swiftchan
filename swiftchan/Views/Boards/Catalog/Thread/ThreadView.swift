@@ -136,6 +136,33 @@ struct ThreadView: View {
                         .onScrollPhaseChange { _, phase in
                             if phase == .idle { ThreadReadingStore.shared.flush() }
                         }
+                        .safeAreaInset(edge: .bottom, spacing: 0) {
+                            if !isSearching, viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(),
+                               readablePostIDs.count > 1 {
+                                HStack {
+                                    Spacer()
+                                    Menu {
+                                        Button("First Post", systemImage: "arrow.up.to.line") {
+                                            if let first = readablePostIDs.first { reader.scrollTo(first, anchor: .top) }
+                                        }
+                                        .accessibilityIdentifier("Jump To First Post")
+                                        Button("Latest Reply", systemImage: "arrow.down.to.line") {
+                                            if let last = readablePostIDs.last { reader.scrollTo(last, anchor: .bottom) }
+                                        }
+                                        .accessibilityIdentifier("Jump To Latest Reply")
+                                    } label: {
+                                        Label("Jump", systemImage: "arrow.up.arrow.down")
+                                            .font(.subheadline.weight(.semibold))
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 10)
+                                            .background(.regularMaterial, in: Capsule())
+                                    }
+                                    .accessibilityLabel("Jump within thread")
+                                    .accessibilityIdentifier("Thread Jump Menu")
+                                    .padding(12)
+                                }
+                            }
+                        }
                         .safeAreaInset(edge: .top, spacing: 0) {
                             if rememberThreadPositions, !isSearching, viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(),
                                let firstUnread = unreadPostIDs.first {
