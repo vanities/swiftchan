@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA000006CCCC000100000002 /* ThreadWatcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000006CCCC000100000001 /* ThreadWatcherView.swift */; };
+		CA000005CCCC000100000002 /* ThreadWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000005CCCC000100000001 /* ThreadWatcher.swift */; };
+		CA000004CCCC000100000002 /* PostFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000004CCCC000100000001 /* PostFiltersView.swift */; };
+		CA000003CCCC000100000002 /* ChanPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000003CCCC000100000001 /* ChanPreferences.swift */; };
+		CA000002CCCC000100000002 /* ReplyDraftSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000002CCCC000100000001 /* ReplyDraftSheet.swift */; };
+		CA000001CCCC000100000002 /* QuotePreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000001CCCC000100000001 /* QuotePreviewSheet.swift */; };
 		AC000001CCCC000100000002 /* RecentThreadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC000001CCCC000100000001 /* RecentThreadsView.swift */; };
 		AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000003AAAA000100000001 /* SavedReplyTests.swift */; };
 		AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000002AAAA000100000001 /* SavedRepliesView.swift */; };
@@ -155,6 +161,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CA000006CCCC000100000001 /* ThreadWatcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadWatcherView.swift; sourceTree = "<group>"; };
+		CA000005CCCC000100000001 /* ThreadWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadWatcher.swift; sourceTree = "<group>"; };
+		CA000004CCCC000100000001 /* PostFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFiltersView.swift; sourceTree = "<group>"; };
+		CA000003CCCC000100000001 /* ChanPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChanPreferences.swift; sourceTree = "<group>"; };
+		CA000002CCCC000100000001 /* ReplyDraftSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyDraftSheet.swift; sourceTree = "<group>"; };
+		CA000001CCCC000100000001 /* QuotePreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotePreviewSheet.swift; sourceTree = "<group>"; };
 		AC000001CCCC000100000001 /* RecentThreadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentThreadsView.swift; sourceTree = "<group>"; };
 		AF000003AAAA000100000001 /* SavedReplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReplyTests.swift; sourceTree = "<group>"; };
 		AF000002AAAA000100000001 /* SavedRepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRepliesView.swift; sourceTree = "<group>"; };
@@ -311,6 +323,7 @@
 				E087391199AA472B45F68D1C /* RecurringFavoriteRow.swift */,
 				9CBC04E821A80DD362D9DDF2 /* RecurringMatchSheet.swift */,
 				BF000003EEEE000100000001 /* FavoritesBackupView.swift */,
+				CA000006CCCC000100000001 /* ThreadWatcherView.swift */,
 				9044AE15507088A1373984CA /* AddRecurringFavoriteSheet.swift */,
 			);
 			path = Favorites;
@@ -349,6 +362,7 @@
 			children = (
 				AF000001AAAA000100000001 /* SavedReply.swift */,
 				BF000001EEEE000100000001 /* FavoritesBackup.swift */,
+				CA000003CCCC000100000001 /* ChanPreferences.swift */,
 				EE000001EEEE000100000001 /* HiddenPostStore.swift */,
 				DD000002DDDD000100000001 /* GeneralSuggestion.swift */,
 				DD000001DDDD000100000001 /* ThreadReadingProgress.swift */,
@@ -452,6 +466,7 @@
 				958D2C98254D2DF200E54C41 /* ContentView.swift */,
 				95B7BE43256CBBCA00F75BC9 /* Boards */,
 				95C01FE827386D2B000D64B1 /* SettingsView.swift */,
+				CA000004CCCC000100000001 /* PostFiltersView.swift */,
 				950E3933255CD9BB00A00A74 /* Media */,
 				95D86F6F25EA301A005A7EBC /* Utility */,
 				2BA6BE71A1C0F2F67A42CF5E /* Favorites */,
@@ -468,6 +483,7 @@
 				9574CE06255E34E8000C99B6 /* CatalogViewModel.swift */,
 				9574CDFD255E30E8000C99B6 /* ThreadViewModel.swift */,
 				83D12254DE163971EE1E9188 /* RecurringFavoriteViewModel.swift */,
+				CA000005CCCC000100000001 /* ThreadWatcher.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -540,6 +556,8 @@
 			isa = PBXGroup;
 			children = (
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
+				CA000002CCCC000100000001 /* ReplyDraftSheet.swift */,
+				CA000001CCCC000100000001 /* QuotePreviewSheet.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
 				95D804CD25677FF4005A3128 /* RepliesView.swift */,
 				9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */,
@@ -810,6 +828,7 @@
 				AA000002AAAA000100000002 /* VideoPlayerControlsView.swift in Sources */,
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
 				BF000001EEEE000100000002 /* FavoritesBackup.swift in Sources */,
+				CA000003CCCC000100000002 /* ChanPreferences.swift in Sources */,
 				EE000001EEEE000100000002 /* HiddenPostStore.swift in Sources */,
 				EE000002EEEE000100000002 /* HiddenPostsView.swift in Sources */,
 				DD000001DDDD000100000002 /* ThreadReadingProgress.swift in Sources */,
@@ -827,6 +846,7 @@
 				958D0998254D346A00AD4849 /* CatalogView.swift in Sources */,
 				95C73106256CA1F700F18257 /* UserSettings.swift in Sources */,
 				95C01FE927386D2B000D64B1 /* SettingsView.swift in Sources */,
+				CA000004CCCC000100000002 /* PostFiltersView.swift in Sources */,
 				951053712566018D002E4051 /* Board.swift in Sources */,
 				95105379256608E5002E4051 /* CommentParser.swift in Sources */,
 				95BF206B28C5A23D00DCB2D1 /* GIFView.swift in Sources */,
@@ -834,6 +854,8 @@
 				9524E1AF256F8E4D00D08075 /* Blur.swift in Sources */,
 				9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
+				CA000002CCCC000100000002 /* ReplyDraftSheet.swift in Sources */,
+				CA000001CCCC000100000002 /* QuotePreviewSheet.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				95978F162CA7981600C520EF /* UINavigationController.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
@@ -880,9 +902,11 @@
 				B3097C1AEE48110A2ECBCCA5 /* FavoriteThreadRow.swift in Sources */,
 				09B1DFCA9F650DAC27B6DB21 /* RecurringFavorite.swift in Sources */,
 				1A5F76AD0CB8E1E22917C335 /* RecurringFavoriteViewModel.swift in Sources */,
+				CA000005CCCC000100000002 /* ThreadWatcher.swift in Sources */,
 				6B83449B7D7B012156947080 /* RecurringFavoriteRow.swift in Sources */,
 				4B1F4B029F952735A2843BFF /* RecurringMatchSheet.swift in Sources */,
 				BF000003EEEE000100000002 /* FavoritesBackupView.swift in Sources */,
+				CA000006CCCC000100000002 /* ThreadWatcherView.swift in Sources */,
 				2C999DFDE990B515FFB0B779 /* AddRecurringFavoriteSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

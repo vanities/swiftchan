@@ -5,6 +5,16 @@ import FourChan
 
 @MainActor
 final class RecurringFavoriteTests: XCTestCase {
+    func testGeneralRolloverOnlyOffersNewerMatchesAndKeepsName() async throws {
+        let response = try catalog(#"[{"no":50,"sub":"/pmg/ old"},{"no":100,"sub":"/pmg/ current"},{"no":200,"sub":"/pmg/ next"},{"no":300,"sub":"Other"}]"#)
+        let favorite = RecurringFavorite(searchPattern: "/pmg/", boardName: "biz", displayName: "My Metals")
+        let model = RecurringFavoriteViewModel(fetchCatalog: { _ in response })
+        await model.findMatches(for: favorite, excludingThreadID: 100)
+        guard case .singleMatch(let post) = model.state else { return XCTFail("Expected the newer general") }
+        XCTAssertEqual(post.id, 200)
+        XCTAssertEqual(favorite.displayName, "My Metals")
+    }
+
     func testPreciousMetalsFormNormalizesOptionalSlashesAndWhitespace() throws {
         let draft = try XCTUnwrap(RecurringFavoriteDraft(boardName: " /BIZ/ ", searchPattern: " PMG ", displayName: " Precious Metals General "))
         XCTAssertEqual(draft.boardName, "biz")

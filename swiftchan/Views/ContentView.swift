@@ -9,6 +9,7 @@ import SwiftUI
 import FourChan
 
 struct ContentView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("biometricsEnabled") private var biometricsEnabled = false
     @AppStorage("didUnlockBiometrics") private var didUnlockBiometrics = true
@@ -34,6 +35,7 @@ struct ContentView: View {
             }
         }
         .privacyView(enabled: $showPrivacyView)
+        .preferredColorScheme(theme == .system ? nil : .light)
         .environment(appState)
         .environment(\.openURL, OpenURLAction { url in
             appState.openLink(url) ? .handled : .systemAction

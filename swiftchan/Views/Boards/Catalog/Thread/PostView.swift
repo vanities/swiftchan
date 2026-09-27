@@ -9,6 +9,8 @@ import SwiftUI
 import FourChan
 
 struct PostView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
+    @AppStorage("compactPosts") private var compact = false
     @Environment(ThreadViewModel.self) private var viewModel
     @Environment(AppState.self) private var appState
     @Environment(PresentationState.self) private var presentationState: PresentationState
@@ -25,7 +27,7 @@ struct PostView: View {
 
         return ZStack(alignment: .topLeading) {
             Rectangle()
-                .fill(Colors.Post.background)
+                .fill(viewModel.filterEffect(at: index) == .highlight ? Color.yellow.opacity(0.25) : theme.postBackground)
                 .cornerRadius(5)
                 .border(Colors.Post.border)
 
@@ -50,7 +52,7 @@ struct PostView: View {
                                 thumbnailUrl: media.thumbnailUrl
                             )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
-                            .frame(width: UIScreen.halfWidth)
+                            .frame(width: compact ? 100 : UIScreen.halfWidth)
                             .scaledToFill() // VStack
                             .galleryTransitionSource(
                                 id: mediaIndex,
@@ -161,7 +163,8 @@ struct PostView: View {
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
-                    .padding(.vertical, 20)
+                    .font(compact ? .callout : .body)
+                    .padding(.vertical, compact ? 8 : 20)
                     .accessibilityIdentifier(AccessibilityIdentifiers.postText(index))
 
                 // replies
