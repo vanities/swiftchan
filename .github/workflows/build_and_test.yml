@@ -48,7 +48,8 @@ jobs:
           xcodebuild -resolvePackageDependencies -workspace swiftchan.xcodeproj/project.xcworkspace -scheme swiftchan -clonedSourcePackagesDirPath build/SourcePackages -onlyUsePackageVersionsFromResolvedFile
 
       - name: Build and test
-        run: bundle exec fastlane tests
+        timeout-minutes: 20
+        run: bash ci_scripts/test_with_diagnostics.sh
 
       - name: Upload test results
         if: always()
