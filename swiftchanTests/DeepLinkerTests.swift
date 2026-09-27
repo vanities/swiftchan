@@ -57,6 +57,18 @@ final class DeepLinkerTests: XCTestCase {
 }
 
 extension DeepLinkerTests {
+    func testBoardShortcutsAreNormalized() {
+        XCTAssertEqual(Deeplinker.parse("/biz/"), .board(name: "biz"))
+        XCTAssertEqual(Deeplinker.parse("  /BIZ/\n"), .board(name: "biz"))
+        XCTAssertEqual(Deeplinker.parse("/3/"), .board(name: "3"))
+    }
+
+    func testMalformedBoardShortcutsAreRejected() {
+        for text in ["/", "//", "///biz///", "//example.com/", "/biz/thread/123/", "/bad board/", "biz"] {
+            XCTAssertNil(Deeplinker.parse(text), text)
+        }
+    }
+
     func testPastedLinkTrimsWhitespaceAndAcceptsMissingScheme() {
         XCTAssertEqual(Deeplinker.parse("  boards.4chan.org/biz/\n"), .board(name: "biz"))
         XCTAssertNil(Deeplinker.parse(""))

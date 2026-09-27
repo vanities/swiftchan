@@ -2,6 +2,26 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testFavoritesBackupShowsSavedGeneralAndOpensExport() {
+        let app = launchApp()
+        app.buttons["Settings"].tap()
+        app.buttons["Manage Favorites Backup"].tap()
+        XCTAssertTrue(app.buttons["Export Favorites"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Export Favorites"].isEnabled)
+        XCTAssertTrue(app.buttons["Import Favorites"].isEnabled)
+        app.buttons["Favorites"].tap()
+        app.buttons["Follow General Button"].tap()
+        fillGeneral(in: app, name: "Precious Metals General")
+        app.buttons["Save General"].tap()
+        app.buttons["Settings"].tap()
+        XCTAssertTrue(app.buttons["Export Favorites"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Export Favorites"].isEnabled)
+        attachScreenshot("Favorites Backup", app: app)
+        app.buttons["Export Favorites"].tap()
+        XCTAssertTrue(app.buttons["Save"].waitForExistence(timeout: 10))
+        attachScreenshot("Export Favorites In Files", app: app)
+    }
+
     func testFollowNamedGeneralDirectlyFromFavoritesAndEditIt() {
         let app = launchApp()
         app.buttons["Favorites"].tap()

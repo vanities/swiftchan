@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF000004EEEE000100000002 /* FavoritesBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000004EEEE000100000001 /* FavoritesBackupTests.swift */; };
+		BF000003EEEE000100000002 /* FavoritesBackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000003EEEE000100000001 /* FavoritesBackupView.swift */; };
+		BF000002EEEE000100000002 /* FavoritesBackupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000002EEEE000100000001 /* FavoritesBackupStore.swift */; };
+		BF000001EEEE000100000002 /* FavoritesBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF000001EEEE000100000001 /* FavoritesBackup.swift */; };
 		EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */; };
 		EE000002EEEE000100000002 /* HiddenPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000002EEEE000100000001 /* HiddenPostsView.swift */; };
 		EE000001EEEE000100000002 /* HiddenPostStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE000001EEEE000100000001 /* HiddenPostStore.swift */; };
@@ -147,6 +151,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BF000004EEEE000100000001 /* FavoritesBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupTests.swift; sourceTree = "<group>"; };
+		BF000003EEEE000100000001 /* FavoritesBackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupView.swift; sourceTree = "<group>"; };
+		BF000002EEEE000100000001 /* FavoritesBackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackupStore.swift; sourceTree = "<group>"; };
+		BF000001EEEE000100000001 /* FavoritesBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBackup.swift; sourceTree = "<group>"; };
 		EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostStoreTests.swift; sourceTree = "<group>"; };
 		EE000002EEEE000100000001 /* HiddenPostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostsView.swift; sourceTree = "<group>"; };
 		EE000001EEEE000100000001 /* HiddenPostStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenPostStore.swift; sourceTree = "<group>"; };
@@ -293,6 +301,7 @@
 				D01E215C9A3306E1A631FA2C /* FavoriteThreadRow.swift */,
 				E087391199AA472B45F68D1C /* RecurringFavoriteRow.swift */,
 				9CBC04E821A80DD362D9DDF2 /* RecurringMatchSheet.swift */,
+				BF000003EEEE000100000001 /* FavoritesBackupView.swift */,
 				9044AE15507088A1373984CA /* AddRecurringFavoriteSheet.swift */,
 			);
 			path = Favorites;
@@ -329,6 +338,7 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				BF000001EEEE000100000001 /* FavoritesBackup.swift */,
 				EE000001EEEE000100000001 /* HiddenPostStore.swift */,
 				DD000002DDDD000100000001 /* GeneralSuggestion.swift */,
 				DD000001DDDD000100000001 /* ThreadReadingProgress.swift */,
@@ -396,6 +406,7 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				BF000004EEEE000100000001 /* FavoritesBackupTests.swift */,
 				EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */,
 				DD000004DDDD000100000001 /* ReadingProgressTests.swift */,
 				CC000006CCCC000100000006 /* RecurringFavoriteTests.swift */,
@@ -453,6 +464,7 @@
 		9580614A255263DB0003FFF3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BF000002EEEE000100000001 /* FavoritesBackupStore.swift */,
 				DD000003DDDD000100000001 /* ThreadUITestFixture.swift */,
 				9537082427F801FA00A4DF8F /* MultiActionItem.swift */,
 				95F6245F255CE64400E9147B /* URLExamples.swift */,
@@ -783,10 +795,12 @@
 				AA000001AAAA000100000001 /* VideoContainerView.swift in Sources */,
 				AA000002AAAA000100000002 /* VideoPlayerControlsView.swift in Sources */,
 				9559F79328443E7D00F5803F /* ThreadAutoRefresher.swift in Sources */,
+				BF000001EEEE000100000002 /* FavoritesBackup.swift in Sources */,
 				EE000001EEEE000100000002 /* HiddenPostStore.swift in Sources */,
 				EE000002EEEE000100000002 /* HiddenPostsView.swift in Sources */,
 				DD000001DDDD000100000002 /* ThreadReadingProgress.swift in Sources */,
 				DD000002DDDD000100000002 /* GeneralSuggestion.swift in Sources */,
+				BF000002EEEE000100000002 /* FavoritesBackupStore.swift in Sources */,
 				DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */,
 				CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
@@ -853,6 +867,7 @@
 				1A5F76AD0CB8E1E22917C335 /* RecurringFavoriteViewModel.swift in Sources */,
 				6B83449B7D7B012156947080 /* RecurringFavoriteRow.swift in Sources */,
 				4B1F4B029F952735A2843BFF /* RecurringMatchSheet.swift in Sources */,
+				BF000003EEEE000100000002 /* FavoritesBackupView.swift in Sources */,
 				2C999DFDE990B515FFB0B779 /* AddRecurringFavoriteSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -861,6 +876,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF000004EEEE000100000002 /* FavoritesBackupTests.swift in Sources */,
 				EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */,
 				DD000004DDDD000100000002 /* ReadingProgressTests.swift in Sources */,
 				CC000005CCCC000100000005 /* RecurringFavoriteTests.swift in Sources */,

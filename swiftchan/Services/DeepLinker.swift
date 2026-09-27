@@ -10,6 +10,12 @@ enum Deeplinker {
 
     static func parse(_ text: String) -> Deeplink? {
         var text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.hasPrefix("/"), text.hasSuffix("/"), text.count > 2 {
+            let board = String(text.dropFirst().dropLast())
+            if !board.contains("/"), let name = normalizedBoard(board) {
+                return .board(name: name)
+            }
+        }
         if text.lowercased().hasPrefix("boards.4chan.org/") || text.lowercased().hasPrefix("boards.4channel.org/") {
             text = "https://" + text
         }

@@ -34,6 +34,12 @@ struct SettingsView: View {
                         Label("Hidden Posts & Threads", systemImage: "eye.slash")
                     }
                     .accessibilityIdentifier("Manage Hidden Posts")
+                    NavigationLink {
+                        FavoritesBackupView()
+                    } label: {
+                        Label("Favorites Backup", systemImage: "square.and.arrow.up.on.square")
+                    }
+                    .accessibilityIdentifier("Manage Favorites Backup")
                 }
                 mediaSection
                 threadSection
