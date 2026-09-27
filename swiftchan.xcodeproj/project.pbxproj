@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC000001CCCC000100000002 /* RecentThreadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC000001CCCC000100000001 /* RecentThreadsView.swift */; };
 		AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000003AAAA000100000001 /* SavedReplyTests.swift */; };
 		AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000002AAAA000100000001 /* SavedRepliesView.swift */; };
 		AF000001AAAA000100000002 /* SavedReply.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000001AAAA000100000001 /* SavedReply.swift */; };
@@ -154,6 +155,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AC000001CCCC000100000001 /* RecentThreadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentThreadsView.swift; sourceTree = "<group>"; };
 		AF000003AAAA000100000001 /* SavedReplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReplyTests.swift; sourceTree = "<group>"; };
 		AF000002AAAA000100000001 /* SavedRepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRepliesView.swift; sourceTree = "<group>"; };
 		AF000001AAAA000100000001 /* SavedReply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReply.swift; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				CC000004CCCC000100000004 /* OpenLinkSheet.swift */,
+				AC000001CCCC000100000001 /* RecentThreadsView.swift */,
 				95181792254CFB600032616E /* BoardsView.swift */,
 				950846FD2752CA260098DF73 /* BoardSection.swift */,
 				955814B7254D24B900A966BA /* BoardView.swift */,
@@ -814,6 +817,7 @@
 				BF000002EEEE000100000002 /* FavoritesBackupStore.swift in Sources */,
 				DD000003DDDD000100000002 /* ThreadUITestFixture.swift in Sources */,
 				CC000003CCCC000100000003 /* OpenLinkSheet.swift in Sources */,
+				AC000001CCCC000100000002 /* RecentThreadsView.swift in Sources */,
 				95181793254CFB600032616E /* BoardsView.swift in Sources */,
 				95BEA02D2561816100F77A14 /* ThumbnailMediaView.swift in Sources */,
 				95105369256600C9002E4051 /* Post.swift in Sources */,
