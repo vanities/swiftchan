@@ -296,21 +296,6 @@ extension CaseIterable where Self: Equatable {
 // https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift/40629365#40629365
 extension String: @retroactive Error {}
 
-extension UIScreen {
-    static var height: CGFloat {
-        self.main.bounds.height
-    }
-    static var halfHeight: CGFloat {
-        self.height / 2
-    }
-    static var width: CGFloat {
-        self.main.bounds.width
-    }
-    static var halfWidth: CGFloat {
-        self.width / 2
-    }
-}
-
 extension Collection where Element: Identifiable {
     func index(matching element: Element) -> Self.Index? {
         firstIndex(where: { $0.id == element.id })

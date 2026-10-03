@@ -35,78 +35,10 @@ struct GalleryView: View {
     }
 
     var body: some View {
-        @Bindable var state = state
-
-        return ZStack {
+        ZStack {
             Color.black.ignoresSafeArea()
 
-            VerticalPagerView(
-                selection: $selection,
-                pageCount: viewModel.media.count,
-                canScroll: canPage,
-                onPageChanged: { index in
-                    updateActiveMedia(to: index)
-                },
-                onDragChanged: { translation in
-                    handlePagerDragChanged(translation)
-                },
-                onDragEnded: {
-                    handlePagerDragEnded()
-                },
-                onScrollViewCaptured: { scrollView in
-                    guard pagerScrollView !== scrollView else { return }
-                    DispatchQueue.main.async {
-                        pagerScrollView = scrollView
-                        scrollView.alwaysBounceVertical = true
-                        scrollView.alwaysBounceHorizontal = false
-                    }
-                },
-                content: { pageIndex in
-                    mediaView(for: pageIndex)
-                }
-            )
-            .onChange(of: state.galleryIndex) { _, newValue in
-                guard selection != newValue,
-                      viewModel.media.indices.contains(newValue) else { return }
-                // Only move the pager here. Activation (and video playback) is
-                // driven by onPageChanged, which fires when the transition ends.
-                selection = newValue
-            }
-            .onChange(of: viewModel.media) { _, newMedia in
-                guard newMedia.indices.contains(selection) else {
-                    let newIndex = max(0, min(selection, max(newMedia.count - 1, 0)))
-                    if newIndex != selection {
-                        selection = newIndex
-                    }
-                    updateActiveMedia(to: newIndex)
-                    return
-                }
-            }
-            .onAppear {
-                let resolvedIndex: Int
-                if viewModel.media.indices.contains(index) {
-                    resolvedIndex = index
-                } else {
-                    resolvedIndex = max(0, min(index, max(viewModel.media.count - 1, 0)))
-                }
-                selection = resolvedIndex
-                updateActiveMedia(to: resolvedIndex)
-                isZoomed = false
-                isSeeking = false
-                refreshPagingState()
-            }
-
-            if showPreview {
-                VStack {
-                    Spacer()
-                    GalleryPreviewView(selection: $state.galleryIndex)
-                        .transition(.opacity)
-                        .padding(.bottom, 60)
-                }
-            }
-        }
-        .overlay(alignment: .topLeading) {
-            closeButton
+            gallerySurface
         }
         .onDisappear {
             restorePagerScrolling()
@@ -118,6 +50,84 @@ struct GalleryView: View {
         .statusBar(hidden: true)
     }
 
+    private var gallerySurface: some View {
+        ZStack { galleryPager; galleryChrome }
+    }
+
+    private var galleryPager: some View {
+        VerticalPagerView(
+            selection: $selection,
+            pageCount: viewModel.media.count,
+            canScroll: canPage,
+            onPageChanged: { index in
+                updateActiveMedia(to: index)
+            },
+            onDragChanged: { translation in
+                handlePagerDragChanged(translation)
+            },
+            onDragEnded: {
+                handlePagerDragEnded()
+            },
+            onScrollViewCaptured: { scrollView in
+                guard pagerScrollView !== scrollView else { return }
+                DispatchQueue.main.async {
+                    pagerScrollView = scrollView
+                    scrollView.alwaysBounceVertical = true
+                    scrollView.alwaysBounceHorizontal = false
+                }
+            },
+            content: { pageIndex in
+                mediaView(for: pageIndex)
+            }
+        )
+        .onChange(of: state.galleryIndex) { _, newValue in
+            guard selection != newValue,
+                  viewModel.media.indices.contains(newValue) else { return }
+            // Only move the pager here. Activation (and video playback) is
+            // driven by onPageChanged, which fires when the transition ends.
+            selection = newValue
+        }
+        .onChange(of: viewModel.media) { _, newMedia in
+            guard newMedia.indices.contains(selection) else {
+                let newIndex = max(0, min(selection, max(newMedia.count - 1, 0)))
+                if newIndex != selection {
+                    selection = newIndex
+                }
+                updateActiveMedia(to: newIndex)
+                return
+            }
+        }
+        .onAppear {
+            let resolvedIndex: Int
+            if viewModel.media.indices.contains(index) {
+                resolvedIndex = index
+            } else {
+                resolvedIndex = max(0, min(index, max(viewModel.media.count - 1, 0)))
+            }
+            selection = resolvedIndex
+            updateActiveMedia(to: resolvedIndex)
+            isZoomed = false
+            isSeeking = false
+            refreshPagingState()
+        }
+    }
+
+    private var galleryChrome: some View {
+        @Bindable var state = state
+        return ZStack {
+            if showPreview {
+                VStack {
+                    Spacer()
+                    GalleryPreviewView(selection: $state.galleryIndex)
+                        .transition(.opacity)
+                        .padding(.bottom, 60)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .topLeading) { closeButton }
+    }
+
     private var closeButton: some View {
         Button {
             state.presentingGallery = false
@@ -127,10 +137,12 @@ struct GalleryView: View {
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.white)
                 .shadow(radius: 4)
+                .frame(width: 44, height: 44)
         }
         .padding(16)
         .opacity(isZoomed ? 0 : 1)
         .animation(.easeInOut(duration: 0.15), value: isZoomed)
+        .accessibilityLabel("Close gallery")
         .accessibilityIdentifier(AccessibilityIdentifiers.galleryCloseButton)
     }
 
@@ -237,28 +249,28 @@ extension GalleryView: Buildable {
 }
 
 #if DEBUG
-#Preview {
-    let viewModel = ThreadViewModel(boardName: "pol", id: 0)
-    let urls = [
-        URLExamples.image,
-        URLExamples.gif,
-        URLExamples.webm
-    ]
-    viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
+    #Preview {
+        let viewModel = ThreadViewModel(boardName: "pol", id: 0)
+        let urls = [
+            URLExamples.image,
+            URLExamples.gif,
+            URLExamples.webm
+        ]
+        viewModel.setMedia(mediaUrls: urls, thumbnailMediaUrls: urls)
 
-    return Group {
-        GalleryView(index: 0)
-            .environment(viewModel)
-            .environment(PresentationState())
-            .environment(AppState())
-        GalleryView(index: 1)
-            .environment(viewModel)
-            .environment(PresentationState())
-            .environment(AppState())
-        GalleryView(index: 2)
-            .environment(viewModel)
-            .environment(PresentationState())
-            .environment(AppState())
+        return Group {
+            GalleryView(index: 0)
+                .environment(viewModel)
+                .environment(PresentationState())
+                .environment(AppState())
+            GalleryView(index: 1)
+                .environment(viewModel)
+                .environment(PresentationState())
+                .environment(AppState())
+            GalleryView(index: 2)
+                .environment(viewModel)
+                .environment(PresentationState())
+                .environment(AppState())
+        }
     }
-}
 #endif
