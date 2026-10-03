@@ -53,15 +53,21 @@ struct CatalogView: View {
                 }
         case .loaded:
             GeometryReader { geometry in
+                let layout = workspaceLayout(in: geometry)
                 if geometry.size.width >= 760 {
                     NavigationSplitView {
                         catalogPosts(filteredPosts, workspace: true)
-                            .navigationSplitViewColumnWidth(min: 260, ideal: 320, max: 400)
+                            .navigationSplitViewColumnWidth(
+                                min: layout.sidebarWidth ?? 260,
+                                ideal: layout.sidebarWidth ?? 320,
+                                max: layout.sidebarWidth ?? 400
+                            )
                     } detail: {
                         NavigationStack {
                             Group {
                                 if let selectedThread {
-                                    ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id)
+                                    ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id,
+                                               showsNavigationTitle: false)
                                         .id(selectedThread.id)
                                         .accessibilityIdentifier("CatalogThreadDetail")
                                 } else {
@@ -78,6 +84,7 @@ struct CatalogView: View {
                                 }
                             }
                         }
+                        .padding(.leading, layout.hingeGap)
                     }
                     .navigationSplitViewStyle(.balanced)
                     .accessibilityIdentifier("BoardThreadWorkspace")
@@ -172,6 +179,22 @@ struct CatalogView: View {
             }
             .foregroundColor(Color.red)
         }
+    }
+
+    private func workspaceLayout(in geometry: GeometryProxy) -> (sidebarWidth: CGFloat?, hingeGap: CGFloat) {
+        #if IPHONE_DUO_LAYOUTS
+            if #available(iOS 27.1, *),
+               let fold = geometry.reservedRegions(kind: .division).first(where: {
+                   $0.frame.height > $0.frame.width && $0.frame.minX > 0 && $0.frame.maxX < geometry.size.width
+               }) {
+                // Preserve the same navigation containers across pose changes,
+                // while moving both columns' content clear of the physical hinge.
+                let leadingWidth = fold.frame.minX - fold.margins.leading
+                let gap = fold.frame.width + fold.margins.leading + fold.margins.trailing
+                return (leadingWidth, gap)
+            }
+        #endif
+        return (nil, 0)
     }
 
     private func catalogPosts(_ posts: [SwiftchanPost], workspace: Bool) -> some View {

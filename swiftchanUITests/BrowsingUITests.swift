@@ -2,6 +2,33 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testFoldedWorkspaceKeepsThreadBeyondHinge() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1"
+                          && ProcessInfo.processInfo.environment["DUO_FOLDED"] == "1",
+                          "Run with the Duo's active vertical 40-point hinge region.")
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
+        app.buttons["Open Link Button"].tap()
+        let link = app.textFields["Open Link URL"]
+        XCTAssertTrue(link.waitForExistence(timeout: 5))
+        link.tap()
+        link.typeText("https://boards.4chan.org/biz/")
+        app.buttons["Open Link Confirm"].tap()
+        let boardRow = app.buttons["CatalogThread100"]
+        XCTAssertTrue(boardRow.waitForExistence(timeout: 10))
+        boardRow.tap()
+        XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 10))
+        let detail = app.thumbnailMediaImage(0)
+        XCTAssertTrue(detail.exists)
+        print("DUO_WORKSPACE_FRAMES: board=\(boardRow.frame); detail=\(detail.frame)")
+        captureDuo(app, "folded-hinge-workspace")
+        XCTAssertLessThanOrEqual(boardRow.frame.maxX, 455.5,
+                                 "Keep board rows before the active hinge region.")
+        XCTAssertGreaterThanOrEqual(detail.frame.minX, 495.5,
+                                    "The selected thread must begin beyond the active hinge region.")
+    }
+
     func testDuoWalkthroughAndGallery() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1", "Run on an open Duo with TEST_RUNNER_DUO_CAPTURE=1.")
         XCUIDevice.shared.orientation = .landscapeLeft
