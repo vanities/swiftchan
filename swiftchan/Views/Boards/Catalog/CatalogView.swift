@@ -13,6 +13,7 @@ struct CatalogView: View {
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
 
     @Environment(AppState.self) var appState
+    @Environment(\.dismiss) private var dismiss
 
     var boardName: String
     @State var catalogViewModel: CatalogViewModel
@@ -20,10 +21,8 @@ struct CatalogView: View {
     @State var isSearching: Bool = false
     @State var showAddRecurringSheet: Bool = false
 
-    let columns = [
-        GridItem(.flexible(), spacing: 0, alignment: .top),
-        GridItem(.flexible(), spacing: 0, alignment: .top)
-    ]
+    @State private var selectedThread: SwiftchanPost?
+    @State private var usesThreadWorkspace = false
 
     @State private var scene: SKScene = {
         let s = SnowScene()
@@ -53,42 +52,45 @@ struct CatalogView: View {
                     }
                 }
         case .loaded:
-            ScrollViewReader { reader in
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .center,
-                        spacing: 0
-                    ) {
-                        let highlightedPostID = catalogViewModel.getCurrentSearchResultPostIndex().map {
-                            catalogViewModel.posts[$0].id
-                        }
-                        ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
-                            if !post.post.isHidden(boardName: boardName),
-                               PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
-                                NavigationLink(value: post) {
-                                    OPView(
-                                        boardName: boardName,
-                                        post: post
-                                    )
+            GeometryReader { geometry in
+                if geometry.size.width >= 760 {
+                    NavigationSplitView {
+                        catalogPosts(filteredPosts, workspace: true)
+                            .navigationSplitViewColumnWidth(min: 260, ideal: 320, max: 400)
+                    } detail: {
+                        NavigationStack {
+                            Group {
+                                if let selectedThread {
+                                    ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id)
+                                        .id(selectedThread.id)
+                                        .accessibilityIdentifier("CatalogThreadDetail")
+                                } else {
+                                    ContentUnavailableView {
+                                        Label("Open a Thread", systemImage: "text.bubble")
+                                    } description: {
+                                        Text("Choose a discussion on the left. Browse the board while you read.")
+                                    }
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                .id(post.id)
-                                .opacity(isSearching && highlightedPostID != nil ?
-                                       (post.id == highlightedPostID ? 1.0 : 0.5) : 1.0)
+                            }
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Back to boards", systemImage: "chevron.left") { dismiss() }
+                                }
                             }
                         }
                     }
+                    .navigationSplitViewStyle(.balanced)
+                    .accessibilityIdentifier("BoardThreadWorkspace")
+                } else {
+                    catalogPosts(filteredPosts, workspace: false)
                 }
-                .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
-                    if let postIndex = catalogViewModel.getCurrentSearchResultPostIndex(),
-                       postIndex < catalogViewModel.posts.count {
-                        let postId = catalogViewModel.posts[postIndex].id
-                        withAnimation {
-                            reader.scrollTo(postId, anchor: .center)
-                        }
-                    }
-                }
+            }
+            .onGeometryChange(for: Bool.self) { $0.size.width >= 760 } action: { usesThreadWorkspace = $0 }
+            .navigationDestination(item: Binding(
+                get: { usesThreadWorkspace ? nil : selectedThread },
+                set: { if !usesThreadWorkspace { selectedThread = $0 } }
+            )) { post in
+                ThreadView(boardName: post.boardName, postNumber: post.id)
             }
             .overlay(alignment: .bottom) {
                 if isSearching && !catalogViewModel.searchResultIndices.isEmpty {
@@ -123,12 +125,6 @@ struct CatalogView: View {
                 trailing: settingsButton
 
             )
-            .navigationDestination(for: SwiftchanPost.self) { post in
-                ThreadView(
-                    boardName: post.boardName,
-                    postNumber: post.post.id
-                )
-            }
             .searchable(text: $catalogViewModel.searchText, isPresented: $isSearching)
             .onChange(of: catalogViewModel.searchText) { _, _ in
                 catalogViewModel.updateSearchResults()
@@ -176,6 +172,71 @@ struct CatalogView: View {
             }
             .foregroundColor(Color.red)
         }
+    }
+
+    private func catalogPosts(_ posts: [SwiftchanPost], workspace: Bool) -> some View {
+        ScrollViewReader { reader in
+            ScrollView(.vertical) {
+                LazyVGrid(columns: workspace ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: 155), spacing: 0)],
+                          alignment: .center, spacing: workspace ? 8 : 0) {
+                    ForEach(posts) { post in
+                        if !post.post.isHidden(boardName: boardName),
+                           PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
+                            Button {
+                                selectedThread = post
+                            } label: {
+                                if workspace {
+                                    catalogRow(post)
+                                } else {
+                                    OPView(boardName: boardName, post: post)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("CatalogThread\(post.id)")
+                            .id(post.id)
+                            .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
+                                (catalogViewModel.getCurrentSearchResultPostIndex().map { catalogViewModel.posts[$0].id } == post.id ? 1 : 0.5) : 1)
+                        }
+                    }
+                }
+                .padding(workspace ? 10 : 0)
+            }
+            .accessibilityIdentifier("Catalog Threads")
+            .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
+                if let index = catalogViewModel.getCurrentSearchResultPostIndex(), catalogViewModel.posts.indices.contains(index) {
+                    withAnimation { reader.scrollTo(catalogViewModel.posts[index].id, anchor: .center) }
+                }
+            }
+        }
+    }
+
+    private func catalogRow(_ post: SwiftchanPost) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 10) {
+                if let url = post.post.getMediaUrl(boardId: boardName),
+                   let thumbnail = post.post.getMediaUrl(boardId: boardName, thumbnail: true) {
+                    ThumbnailMediaView(url: url, thumbnailUrl: thumbnail)
+                        .frame(width: 72, height: 72)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .allowsHitTesting(false)
+                }
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(post.post.sub?.clean ?? "Thread #\(post.id)")
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(3)
+                    Text("\(post.post.replies ?? 0) replies · \(post.post.images ?? 0) images")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Text(post.comment).font(.subheadline).lineLimit(3)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(selectedThread?.id == post.id ? Color.accentColor.opacity(0.12) : Color(uiColor: .secondarySystemGroupedBackground),
+                    in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selectedThread?.id == post.id ? Color.accentColor.opacity(0.5) : .clear))
     }
 
     var settingsButton: some View {

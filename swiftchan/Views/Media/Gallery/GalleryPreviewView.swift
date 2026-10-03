@@ -12,35 +12,32 @@ struct GalleryPreviewView: View {
     @Binding var selection: Int
 
     var body: some View {
-        return ScrollViewReader { value in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center,
-                       spacing: nil) {
-                    ForEach(viewModel.media.indices, id: \.self) { index in
-                        let media = viewModel.media[index]
-                        let url = media.url
-                        let thumbnailUrl = media.thumbnailUrl
-
-                        ThumbnailMediaView(
-                            url: url,
-                            thumbnailUrl: thumbnailUrl
-                        )
-                        .onTapGesture {
-                            selection = index
+        GeometryReader { geometry in
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(viewModel.media.indices, id: \.self) { index in
+                            let media = viewModel.media[index]
+                            ThumbnailMediaView(url: media.url, thumbnailUrl: media.thumbnailUrl)
+                                .frame(width: min(120, max(44, geometry.size.width / 5)), height: 88)
+                                .clipped()
+                                .border(selection == index ? Color.green : Color.clear, width: 2)
+                                .contentShape(.rect)
+                                .onTapGesture { selection = index }
+                                .id(index)
                         }
-                        .id(index)
-                        .border(selection == index ? Color.green : Color.clear, width: 2)
-                        .frame(width: UIScreen.width/5)
+                    }
+                    .padding(.horizontal, 8)
+                }
+                .onChange(of: selection) {
+                    withAnimation(.linear(duration: 0.2)) {
+                        proxy.scrollTo(selection, anchor: .center)
                     }
                 }
-                       .onChange(of: selection) {
-                           withAnimation(.linear(duration: 0.2)) {
-                               value.scrollTo(selection)
-                           }
-                       }
+                .onAppear { proxy.scrollTo(selection, anchor: .center) }
             }
         }
-        .frame(width: UIScreen.width, height: UIScreen.height / 10)
+        .frame(height: 96)
     }
 }
 

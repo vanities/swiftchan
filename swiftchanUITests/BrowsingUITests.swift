@@ -2,6 +2,58 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testDuoWalkthroughAndGallery() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1", "Run on an open Duo with TEST_RUNNER_DUO_CAPTURE=1.")
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture", "-showGalleryPreview", "YES"])
+        captureDuo(app, "01-boards")
+        app.buttons["Favorites"].tap()
+        captureDuo(app, "02-favorites")
+        app.buttons["Settings"].tap()
+        captureDuo(app, "03-settings")
+        app.buttons["Filters & Highlights"].tap()
+        captureDuo(app, "04-filters")
+        app.buttons["Boards"].tap()
+        app.buttons["Open Link Button"].tap()
+        let boardLink = app.textFields["Open Link URL"]
+        XCTAssertTrue(boardLink.waitForExistence(timeout: 5))
+        boardLink.tap()
+        boardLink.typeText("https://boards.4chan.org/biz/")
+        app.buttons["Open Link Confirm"].tap()
+        XCTAssertTrue(app.buttons["CatalogThread100"].waitForExistence(timeout: 10))
+        app.buttons["CatalogThread100"].tap()
+        XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch.exists)
+        captureDuo(app, "04b-board-and-thread")
+        app.buttons["CatalogThread200"].tap()
+        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
+        captureDuo(app, "04c-switch-thread")
+        app.buttons["Back to boards"].tap()
+        openFixtureThread(in: app)
+        captureDuo(app, "05-thread")
+        app.tapThumbnailMedia(0)
+        XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 10))
+        captureDuo(app, "06-gallery")
+        app.galleryMediaImage(0).tap()
+        captureDuo(app, "07-gallery-filmstrip")
+        app.galleryMediaImage(0).swipeUp()
+        XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 10))
+        XCTAssertTrue(app.galleryMediaImage(1).isHittable)
+        captureDuo(app, "08-gallery-next-image")
+        app.buttons["Close gallery"].tap()
+        app.buttons["Follow This General"].tap()
+        captureDuo(app, "09-follow-general")
+        app.buttons["Cancel"].tap()
+        app.buttons["Post Options 100"].tap()
+        captureDuo(app, "10-post-actions")
+    }
+
+    private func captureDuo(_ app: XCUIApplication, _ name: String) {
+        print("DUO_CAPTURE:swiftchan-\(name)")
+        Thread.sleep(forTimeInterval: 4)
+        attachScreenshot("Duo \(name)")
+    }
+
     func testQuotePreviewChainDismissesBackToReadingPosition() {
         let app = launchThreadFixture(extraArguments: ["--ui-quote-fixture"])
         openFixtureThread(in: app, anchor: "#p105")

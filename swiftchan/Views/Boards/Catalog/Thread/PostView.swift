@@ -52,7 +52,9 @@ struct PostView: View {
                                 thumbnailUrl: media.thumbnailUrl
                             )
                             .accessibilityIdentifier(AccessibilityIdentifiers.thumbnailMediaImage(index))
-                            .frame(width: compact ? 100 : UIScreen.halfWidth)
+                            .containerRelativeFrame(.horizontal) { width, _ in
+                                min(compact ? 100 : 240, width * 0.45)
+                            }
                             .scaledToFill() // VStack
                             .galleryTransitionSource(
                                 id: mediaIndex,
