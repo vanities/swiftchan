@@ -126,6 +126,40 @@ struct GalleryView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .topLeading) { closeButton }
+        .overlay(alignment: .topTrailing) {
+            if viewModel.media.indices.contains(selection) {
+                ReverseImageSearchMenu(media: viewModel.media[selection], identifier: "Gallery Image Search")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(12)
+                    .background(.black.opacity(0.65), in: Capsule())
+                    .padding(16)
+                    .opacity(isZoomed || isSeeking ? 0 : 1)
+                    .allowsHitTesting(!isZoomed && !isSeeking)
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if viewModel.media.indices.contains(selection) {
+                Text("\(selection + 1) of \(viewModel.media.count)")
+                    .font(.caption.monospacedDigit().weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.black.opacity(0.65), in: Capsule())
+                    .padding(16)
+                    .padding(.bottom, positionBottomPadding)
+                    .opacity(isZoomed || isSeeking ? 0 : 1)
+                    .allowsHitTesting(false)
+                    .accessibilityLabel("Media \(selection + 1) of \(viewModel.media.count)")
+                    .accessibilityIdentifier("Gallery Position")
+            }
+        }
+    }
+
+    private var positionBottomPadding: CGFloat {
+        if showPreview { return 100 }
+        guard viewModel.media.indices.contains(selection) else { return 0 }
+        return ReverseImageSearchProvider.usesThumbnail(for: viewModel.media[selection]) ? 80 : 0
     }
 
     private var closeButton: some View {
@@ -167,7 +201,7 @@ struct GalleryView: View {
                     canShowPreview = !seeking
                     canShowContextMenu = !seeking
                 }
-                .mediaDownloadMenu(url: media.url, canShowContextMenu: $canShowContextMenu)
+                .mediaDownloadMenu(url: media.url, thumbnailURL: media.thumbnailUrl, canShowContextMenu: $canShowContextMenu)
                 .accessibilityIdentifier(
                     AccessibilityIdentifiers.galleryMediaImage(media.index)
                 )

@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA000003DDDD000100000002 /* ReverseImageSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA000003DDDD000100000001 /* ReverseImageSearchTests.swift */; };
+		DA000002DDDD000100000002 /* ReverseImageSearchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA000002DDDD000100000001 /* ReverseImageSearchMenu.swift */; };
+		DA000001DDDD000100000002 /* ReverseImageSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA000001DDDD000100000001 /* ReverseImageSearch.swift */; };
 		CA000006CCCC000100000002 /* ThreadWatcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000006CCCC000100000001 /* ThreadWatcherView.swift */; };
 		CA000005CCCC000100000002 /* ThreadWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000005CCCC000100000001 /* ThreadWatcher.swift */; };
 		CA000004CCCC000100000002 /* PostFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000004CCCC000100000001 /* PostFiltersView.swift */; };
 		CA000003CCCC000100000002 /* ChanPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000003CCCC000100000001 /* ChanPreferences.swift */; };
 		CA000002CCCC000100000002 /* ReplyDraftSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000002CCCC000100000001 /* ReplyDraftSheet.swift */; };
-		CA000001CCCC000100000002 /* QuotePreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000001CCCC000100000001 /* QuotePreviewSheet.swift */; };
+		CA000001CCCC000100000002 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA000001CCCC000100000001 /* PostDetailView.swift */; };
 		AC000001CCCC000100000002 /* RecentThreadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC000001CCCC000100000001 /* RecentThreadsView.swift */; };
 		AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000003AAAA000100000001 /* SavedReplyTests.swift */; };
 		AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF000002AAAA000100000001 /* SavedRepliesView.swift */; };
@@ -161,12 +164,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DA000003DDDD000100000001 /* ReverseImageSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseImageSearchTests.swift; sourceTree = "<group>"; };
+		DA000002DDDD000100000001 /* ReverseImageSearchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseImageSearchMenu.swift; sourceTree = "<group>"; };
+		DA000001DDDD000100000001 /* ReverseImageSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseImageSearch.swift; sourceTree = "<group>"; };
 		CA000006CCCC000100000001 /* ThreadWatcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadWatcherView.swift; sourceTree = "<group>"; };
 		CA000005CCCC000100000001 /* ThreadWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadWatcher.swift; sourceTree = "<group>"; };
 		CA000004CCCC000100000001 /* PostFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFiltersView.swift; sourceTree = "<group>"; };
 		CA000003CCCC000100000001 /* ChanPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChanPreferences.swift; sourceTree = "<group>"; };
 		CA000002CCCC000100000001 /* ReplyDraftSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyDraftSheet.swift; sourceTree = "<group>"; };
-		CA000001CCCC000100000001 /* QuotePreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotePreviewSheet.swift; sourceTree = "<group>"; };
+		CA000001CCCC000100000001 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		AC000001CCCC000100000001 /* RecentThreadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentThreadsView.swift; sourceTree = "<group>"; };
 		AF000003AAAA000100000001 /* SavedReplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedReplyTests.swift; sourceTree = "<group>"; };
 		AF000002AAAA000100000001 /* SavedRepliesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRepliesView.swift; sourceTree = "<group>"; };
@@ -339,6 +345,7 @@
 		950E3933255CD9BB00A00A74 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				DA000002DDDD000100000001 /* ReverseImageSearchMenu.swift */,
 				959E6152255CD4750003638E /* Gallery */,
 				950E393A255CD9EE00A00A74 /* Image */,
 				AA000004AAAA000000000004 /* Video */,
@@ -360,6 +367,7 @@
 		9510536725660071002E4051 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DA000001DDDD000100000001 /* ReverseImageSearch.swift */,
 				AF000001AAAA000100000001 /* SavedReply.swift */,
 				BF000001EEEE000100000001 /* FavoritesBackup.swift */,
 				CA000003CCCC000100000001 /* ChanPreferences.swift */,
@@ -430,6 +438,7 @@
 		951817A1254CFB620032616E /* swiftchanTests */ = {
 			isa = PBXGroup;
 			children = (
+				DA000003DDDD000100000001 /* ReverseImageSearchTests.swift */,
 				AF000003AAAA000100000001 /* SavedReplyTests.swift */,
 				BF000004EEEE000100000001 /* FavoritesBackupTests.swift */,
 				EE000003EEEE000100000001 /* HiddenPostStoreTests.swift */,
@@ -557,7 +566,7 @@
 			children = (
 				9599CA95254DF8C0002EB026 /* ThreadView.swift */,
 				CA000002CCCC000100000001 /* ReplyDraftSheet.swift */,
-				CA000001CCCC000100000001 /* QuotePreviewSheet.swift */,
+				CA000001CCCC000100000001 /* PostDetailView.swift */,
 				9599CA9F254DFDA1002EB026 /* PostView.swift */,
 				95D804CD25677FF4005A3128 /* RepliesView.swift */,
 				9559F79228443E7D00F5803F /* ThreadAutoRefresher.swift */,
@@ -814,6 +823,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA000002DDDD000100000002 /* ReverseImageSearchMenu.swift in Sources */,
+				DA000001DDDD000100000002 /* ReverseImageSearch.swift in Sources */,
 				AF000002AAAA000100000002 /* SavedRepliesView.swift in Sources */,
 				AF000001AAAA000100000002 /* SavedReply.swift in Sources */,
 				954FB5832730BDF0009CC52F /* RoundedCorners.swift in Sources */,
@@ -855,7 +866,7 @@
 				9559F78F2843B07D00F5803F /* NSFWTagView.swift in Sources */,
 				9599CA96254DF8C0002EB026 /* ThreadView.swift in Sources */,
 				CA000002CCCC000100000002 /* ReplyDraftSheet.swift in Sources */,
-				CA000001CCCC000100000002 /* QuotePreviewSheet.swift in Sources */,
+				CA000001CCCC000100000002 /* PostDetailView.swift in Sources */,
 				95181791254CFB600032616E /* swiftchanApp.swift in Sources */,
 				95978F162CA7981600C520EF /* UINavigationController.swift in Sources */,
 				9587A51C255726D80028A143 /* CacheService.swift in Sources */,
@@ -915,6 +926,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA000003DDDD000100000002 /* ReverseImageSearchTests.swift in Sources */,
 				AF000003AAAA000100000002 /* SavedReplyTests.swift in Sources */,
 				BF000004EEEE000100000002 /* FavoritesBackupTests.swift in Sources */,
 				EE000003EEEE000100000002 /* HiddenPostStoreTests.swift in Sources */,

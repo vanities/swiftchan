@@ -17,7 +17,8 @@
                     post["sub"] = "/pmg/ - Precious Metals General"
                     if arguments.contains("--ui-general-rollover"), id == 100 { post["archived"] = 1 }
                 }
-                if arguments.contains("--ui-media-fixture"), number < id + 3 {
+                if arguments.contains("--ui-media-fixture"),
+                   number < id + 3 || (arguments.contains("--ui-quote-fixture") && number == 104) {
                     let timestamp = 9_000_000_000 + number
                     post["tim"] = timestamp
                     post["filename"] = "collection-study-\(number - id + 1)"
@@ -29,7 +30,7 @@
                     post["fsize"] = 100_000
                     seedMedia(timestamp: timestamp, index: number - id)
                 }
-                if arguments.contains("--ui-quote-fixture"), number == 105 || number == 104 {
+                if arguments.contains("--ui-quote-fixture"), (103...105).contains(number) {
                     post["com"] = "<a class=\"quotelink\" href=\"#p\(number - 1)\">&gt;&gt;\(number - 1)</a><br>Quoted reply \(number)"
                 }
                 return post

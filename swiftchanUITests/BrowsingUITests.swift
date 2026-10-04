@@ -113,16 +113,133 @@ final class BrowsingUITests: XCTestCase {
         attachScreenshot("Duo \(name)")
     }
 
-    func testQuotePreviewChainDismissesBackToReadingPosition() {
-        let app = launchThreadFixture(extraArguments: ["--ui-quote-fixture"])
+    func testQuotedPostsPushWithImagesAndNestedRepliesThenReturnToReadingPosition() {
+        let app = launchThreadFixture(extraArguments: ["--ui-quote-fixture", "--ui-media-fixture"])
         openFixtureThread(in: app, anchor: "#p105")
         app.links[">>104"].tap()
         XCTAssertTrue(app.navigationBars["#104"].waitForExistence(timeout: 5))
-        app.scrollViews["Quote Preview 104"].links[">>103"].tap()
+        XCTAssertFalse(app.sheets.firstMatch.exists)
+        XCTAssertFalse(app.buttons["Close Quote Preview"].exists)
+        XCTAssertTrue(app.thumbnailMediaImage(4).isHittable)
+        attachScreenshot("Quoted Post With Image")
+        app.tapThumbnailMedia(4)
+        XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.galleryMediaImage(3).isHittable)
+        app.buttons["Close gallery"].tap()
+        app.scrollViews["Post Detail 104"].links[">>103"].tap()
         XCTAssertTrue(app.navigationBars["#103"].waitForExistence(timeout: 5))
-        attachScreenshot("Quote Chain Preview")
-        app.navigationBars["#103"].buttons["Close Quote Preview"].tap()
+        app.scrollViews["Post Detail 103"].links[">>102"].tap()
+        XCTAssertTrue(app.navigationBars["#102"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.thumbnailMediaImage(2).isHittable)
+        app.buttons["1 REPLY"].tap()
+        XCTAssertTrue(app.staticTexts["#103"].waitForExistence(timeout: 5))
+        app.buttons["1 REPLY"].tap()
+        XCTAssertTrue(app.staticTexts["#104"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.thumbnailMediaImage(4).isHittable)
+        attachScreenshot("Nested Replies With Images")
+        app.tapThumbnailMedia(4)
+        XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.galleryMediaImage(3).isHittable)
+        app.buttons["Close gallery"].tap()
+        XCTAssertTrue(app.navigationBars["Replies to #103"].waitForExistence(timeout: 5))
+        app.links[">>103"].tap()
+        XCTAssertTrue(app.navigationBars["#103"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.sheets.firstMatch.exists)
+        for _ in 0..<6 { app.navigationBars.buttons.element(boundBy: 0).tap() }
         XCTAssertTrue(app.staticTexts["#105"].isHittable)
+        attachScreenshot("Returned To Thread Reading Position")
+    }
+
+    func testUnreadNavigationSharesTheBottomJumpMenu() {
+        let app = launchThreadFixture(seedProgress: true)
+        openFixtureThread(in: app)
+        XCTAssertTrue(app.buttons["Thread Jump Menu"].isHittable)
+        XCTAssertFalse(app.buttons["Jump To Unread"].exists)
+        app.buttons["Thread Jump Menu"].tap()
+        XCTAssertTrue(app.buttons["Jump To First Post"].isHittable)
+        XCTAssertTrue(app.buttons["Jump To Latest Reply"].isHittable)
+        XCTAssertTrue(app.buttons["Jump To Unread"].isHittable)
+        attachScreenshot("One Menu For Thread Navigation")
+        app.buttons["Jump To Latest Reply"].tap()
+        XCTAssertTrue(app.staticTexts["#114"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["#114"].isHittable)
+        app.buttons["Thread Jump Menu"].tap()
+        XCTAssertFalse(app.buttons["Jump To Unread"].exists)
+        app.buttons["Jump To First Post"].tap()
+        XCTAssertTrue(app.staticTexts["#100"].isHittable)
+    }
+
+    func testImageSearchIsAvailableFromPostsAndPagedGalleryMedia() {
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture"])
+        openFixtureThread(in: app)
+        let search = app.buttons["Image Search Post 100"]
+        XCTAssertTrue(search.isHittable)
+        search.tap()
+        assertImageSearchProviders(in: app)
+        XCTAssertTrue(app.buttons["Open Original Media"].isHittable)
+        attachScreenshot("Post Image Search")
+        app.navigationBars.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        app.tapThumbnailMedia(0)
+        XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
+        let position = app.staticTexts["Gallery Position"]
+        XCTAssertEqual(position.label, "Media 1 of 3")
+        attachScreenshot("Gallery Search Button And Position")
+        app.buttons["Gallery Image Search"].tap()
+        assertImageSearchProviders(in: app)
+        attachScreenshot("Gallery Image Search")
+        position.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        app.galleryMediaImage(0).swipeUp()
+        XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 5))
+        let nextPosition = NSPredicate(format: "label == %@", "Media 2 of 3")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: nextPosition, object: position)], timeout: 5), .completed)
+        app.buttons["Gallery Image Search"].tap()
+        assertImageSearchProviders(in: app)
+        XCTAssertTrue(app.buttons["Open Original Media"].isHittable)
+        attachScreenshot("Search After Gallery Paging")
+        app.buttons["Image Search IQDB"].tap()
+        let browser = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        XCTAssertTrue(browser.wait(for: .runningForeground, timeout: 10))
+        attachScreenshot("Image Search Browser Handoff")
+        app.activate()
+        XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
+        XCTAssertEqual(position.label, "Media 2 of 3")
+        app.buttons["Close gallery"].tap()
+        XCTAssertTrue(search.isHittable)
+    }
+
+    func testCopyQuoteUsesTheSelectedPostAndKeepsReadingPosition() {
+        let app = launchThreadFixture()
+        openFixtureThread(in: app, anchor: "#p105")
+        app.buttons["Post Options 105"].tap()
+        let copy = app.buttons["Copy Selected Post Quote"]
+        XCTAssertTrue(copy.waitForExistence(timeout: 5))
+        attachScreenshot("Copy Quote Post Action")
+        copy.tap()
+        XCTAssertFalse(app.sheets.firstMatch.exists)
+        XCTAssertTrue(app.staticTexts["#105"].isHittable)
+        app.buttons["Post Options 105"].tap()
+        app.buttons["Draft Reply To Post"].tap()
+        let draft = app.textViews["Reply Draft"]
+        XCTAssertTrue(draft.waitForExistence(timeout: 5))
+        draft.tap()
+        draft.press(forDuration: 1.2)
+        let selectAll = app.descendants(matching: .any).matching(identifier: "Select All").firstMatch
+        XCTAssertTrue(selectAll.waitForExistence(timeout: 5))
+        selectAll.tap()
+        draft.typeText("Paste here")
+        XCTAssertEqual(draft.value as? String, "Paste here")
+        draft.press(forDuration: 1.2)
+        let paste = app.descendants(matching: .any).matching(identifier: "Paste").firstMatch
+        XCTAssertTrue(paste.waitForExistence(timeout: 5))
+        paste.tap()
+        XCTAssertTrue((draft.value as? String ?? "").contains(">>105"))
+        attachScreenshot("Copied Quote Pasted Into Reply Draft")
+    }
+
+    private func assertImageSearchProviders(in app: XCUIApplication) {
+        for provider in ["Google Lens", "Yandex", "TinEye", "SauceNAO", "IQDB", "trace.moe"] {
+            XCTAssertTrue(app.buttons["Image Search \(provider)"].isHittable)
+        }
     }
 
     func testArchivedGeneralFindsNewerThread() {
@@ -347,6 +464,8 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(savedPost.waitForExistence(timeout: 5))
         XCTAssertTrue(savedPost.isHittable)
         XCTAssertFalse(app.staticTexts["#100"].isHittable)
+        XCTAssertFalse(app.buttons["Jump To Unread"].exists)
+        app.buttons["Thread Jump Menu"].tap()
         let jump = app.buttons["Jump To Unread"]
         XCTAssertTrue(jump.waitForExistence(timeout: 5))
         attachScreenshot("Restored Position And Unread Replies")

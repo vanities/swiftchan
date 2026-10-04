@@ -12,15 +12,15 @@ class PresentationState {
     var presentingGallery: Bool = false
     var galleryIndex: Int = 0
     var presentingIndex: Int = 0
-    var presentingReplies: Bool = false
+    var activePostContext: UUID?
+    var presentingReplies: Bool { activePostContext != nil }
 }
 
 extension EnvironmentValues {
     /// Namespace used for the thumbnail → gallery zoom transition.
     @Entry var galleryNamespace: Namespace.ID?
-    /// True for PostViews rendered inside RepliesView, so only one context
-    /// registers a matchedTransitionSource for a given media index at a time.
-    @Entry var inRepliesContext: Bool = false
+    /// Identifies each pushed post/replies page; nil identifies the main thread.
+    @Entry var postContextID: UUID?
 }
 
 extension View {

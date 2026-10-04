@@ -10,6 +10,7 @@ import UIKit
 
 struct MediaContextMenu: View {
     let url: URL
+    let thumbnailURL: URL
 
     @State private var notificationGenerator = UINotificationFeedbackGenerator()
     @Binding var isExportingDocument: Bool
@@ -21,6 +22,13 @@ struct MediaContextMenu: View {
     @ViewBuilder
     var body: some View {
         if canShowContextMenu {
+            let media = Media(index: 0, url: url, thumbnailUrl: thumbnailURL)
+            if ReverseImageSearchProvider.sourceURL(for: media) != nil {
+                Menu("Reverse Image Search", systemImage: "photo.badge.magnifyingglass") {
+                    ReverseImageSearchLinks(media: media)
+                }
+                Link("Open Original", destination: url)
+            }
             Button {
                 UIPasteboard.general.string = url.absoluteString
                 debugPrint("📋 Copied URL to pasteboard: \(url.absoluteString)")
