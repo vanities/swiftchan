@@ -2,6 +2,38 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testDuoWorkspaceSurvivesBackgroundActivation() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1",
+                          "Run on Duo's open inner display.")
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
+        app.buttons["Open Link Button"].tap()
+        let link = app.textFields["Open Link URL"]
+        XCTAssertTrue(link.waitForExistence(timeout: 5))
+        link.tap()
+        link.typeText("https://boards.4chan.org/biz/")
+        app.buttons["Open Link Confirm"].tap()
+        XCTAssertTrue(app.buttons["CatalogThread200"].waitForExistence(timeout: 10))
+        app.buttons["CatalogThread200"].tap()
+        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
+        let workspace = app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch
+        XCTAssertTrue(workspace.exists)
+        let readingAnchor = app.staticTexts["#205"]
+        for _ in 0..<12 {
+            if readingAnchor.isHittable { break }
+            app.scrollViews["CatalogThreadDetail"].swipeUp()
+        }
+        XCTAssertTrue(readingAnchor.isHittable)
+        captureDuo(app, "workspace-before-background")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        captureDuo(app, "workspace-after-background")
+        XCTAssertTrue(workspace.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
+        XCTAssertTrue(readingAnchor.waitForExistence(timeout: 10))
+        XCTAssertTrue(readingAnchor.isHittable)
+    }
+
     func testFoldedWorkspaceKeepsThreadBeyondHinge() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1"
                           && ProcessInfo.processInfo.environment["DUO_FOLDED"] == "1",
