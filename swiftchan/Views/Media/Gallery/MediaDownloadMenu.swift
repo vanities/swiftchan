@@ -8,13 +8,14 @@
 import SwiftUI
 
 extension View {
-    func mediaDownloadMenu(url: URL, canShowContextMenu: Binding<Bool>) -> some View {
-        modifier(MediaDownloadMenuModifier(url: url, canShowContextMenu: canShowContextMenu))
+    func mediaDownloadMenu(url: URL, thumbnailURL: URL, canShowContextMenu: Binding<Bool>) -> some View {
+        modifier(MediaDownloadMenuModifier(url: url, thumbnailURL: thumbnailURL, canShowContextMenu: canShowContextMenu))
     }
 }
 
 struct MediaDownloadMenuModifier: ViewModifier {
     let url: URL
+    let thumbnailURL: URL
     @Binding var canShowContextMenu: Bool
 
     @State var isExportingDocument: Bool = false
@@ -45,6 +46,7 @@ struct MediaDownloadMenuModifier: ViewModifier {
             .contextMenu {
                 MediaContextMenu(
                     url: url,
+                    thumbnailURL: thumbnailURL,
                     isExportingDocument: $isExportingDocument,
                     canShowContextMenu: $canShowContextMenu,
                     presentingToast: $presentingToast,

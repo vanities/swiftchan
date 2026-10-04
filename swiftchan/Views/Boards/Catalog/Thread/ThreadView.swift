@@ -366,6 +366,13 @@ struct ThreadView: View {
                                 appState.selectedBottomSheetPost = nil
                             }
                             .accessibilityIdentifier("Draft Reply To Post")
+                            Button("Copy Quote", systemImage: "quote.bubble") {
+                                UIPasteboard.general.string = ">>\(post.no)"
+                                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                                appState.showingBottomSheet = false
+                                appState.selectedBottomSheetPost = nil
+                            }
+                            .accessibilityIdentifier("Copy Selected Post Quote")
                             let isSaved = savedReplies.contains { $0.boardName == viewModel.boardName && $0.postID == post.no }
                             Button(isSaved ? "Remove Saved Reply" : "Save Reply", systemImage: isSaved ? "bookmark.slash" : "bookmark") {
                                 saveReply(index: index)
@@ -386,7 +393,7 @@ struct ThreadView: View {
                             .accessibilityIdentifier("Hide Selected Post")
                         }
                         .padding()
-                        .presentationDetents([.height(290), .medium])
+                        .presentationDetents([.height(350), .medium])
                         .presentationDragIndicator(.visible)
                     }
                 }

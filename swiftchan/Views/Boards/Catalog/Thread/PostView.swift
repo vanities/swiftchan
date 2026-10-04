@@ -72,7 +72,9 @@ struct PostView: View {
                                 Text(filename + fileExtension)
                                     .font(Font.system(size: 8))
                             }
-
+                            ReverseImageSearchMenu(media: media, identifier: "Image Search Post \(post.no)")
+                                .font(.caption)
+                                .padding(.top, 4)
                         }
                         .padding(.leading, -5)
                     }
