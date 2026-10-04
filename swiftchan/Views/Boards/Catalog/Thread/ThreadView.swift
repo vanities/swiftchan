@@ -27,8 +27,8 @@ struct ThreadView: View {
     @State private var threadAutorefresher = ThreadAutoRefresher()
     @State var viewModel: ThreadViewModel
     @State private var opacity: Double = 1
-    @State private var showReply: Bool = false
-    @State private var replyId: Int = 0
+    @State private var linkedPost: PostDestination?
+    @State private var replyReturnPostID: Int?
     @State private var showPostUnavailable = false
     @AppStorage("rememberThreadPositions") private var rememberThreadPositions = true
     @State private var reading = ThreadReadingSession()
@@ -124,7 +124,7 @@ struct ThreadView: View {
                                 recordVisiblePosts()
                             }
                             .onChange(of: presentationState.galleryIndex) { _, _  in
-                                if !presentationState.presentingReplies && !showReply {
+                                if !presentationState.presentingReplies && linkedPost == nil {
                                     scrollToPost(reader: reader)
                                 }
                             }
@@ -138,6 +138,14 @@ struct ThreadView: View {
                             }
                         }
                         .accessibilityIdentifier("Thread Posts")
+                        .task(id: linkedPost) {
+                            if linkedPost == nil, let postID = replyReturnPostID {
+                                // Restore the reading anchor after navigation and gallery layout changes.
+                                await Task.yield()
+                                reader.scrollTo(postID, anchor: .top)
+                                replyReturnPostID = nil
+                            }
+                        }
                         .onScrollTargetVisibilityChange(idType: Int.self, threshold: 0.1) { ids in
                             visiblePostIDs = ids
                             recordVisiblePosts()
@@ -151,6 +159,12 @@ struct ThreadView: View {
                                 HStack {
                                     Spacer()
                                     Menu {
+                                        if rememberThreadPositions, let firstUnread = unreadPostIDs.first {
+                                            Button("\(unreadPostIDs.count) Unread \(unreadPostIDs.count == 1 ? "Reply" : "Replies")", systemImage: "arrow.down") {
+                                                reader.scrollTo(firstUnread, anchor: .top)
+                                            }
+                                            .accessibilityIdentifier("Jump To Unread")
+                                        }
                                         Button("First Post", systemImage: "arrow.up.to.line") {
                                             if let first = readablePostIDs.first { reader.scrollTo(first, anchor: .top) }
                                         }
@@ -170,24 +184,6 @@ struct ThreadView: View {
                                     .accessibilityIdentifier("Thread Jump Menu")
                                     .padding(12)
                                 }
-                            }
-                        }
-                        .safeAreaInset(edge: .top, spacing: 0) {
-                            if rememberThreadPositions, !isSearching, viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(),
-                               let firstUnread = unreadPostIDs.first {
-                                Button {
-                                    reader.scrollTo(firstUnread, anchor: .top)
-                                } label: {
-                                    HStack {
-                                        Text("\(unreadPostIDs.count) unread \(unreadPostIDs.count == 1 ? "reply" : "replies")")
-                                        Spacer()
-                                        Label("Jump", systemImage: "arrow.down")
-                                    }
-                                    .font(.subheadline)
-                                    .padding(10)
-                                    .background(.regularMaterial)
-                                }
-                                .accessibilityIdentifier("Jump To Unread")
                             }
                         }
                     }
@@ -275,6 +271,9 @@ struct ThreadView: View {
                 .onChange(of: autoRefreshThreadTime) { updateAutoRefreshState() }
                 .onChange(of: presentationState.presentingReplies) {
                     if presentationState.presentingReplies {
+                        if replyReturnPostID == nil {
+                            replyReturnPostID = reading.postID ?? visiblePostIDs.min()
+                        }
                         threadAutorefresher.cancelTimer()
                     } else {
                         updateAutoRefreshState()
@@ -344,16 +343,18 @@ struct ThreadView: View {
                     }
                     .defaultCustomization(.hidden)
                 }
-                .onChange(of: showReply) {
-                    if showReply {
+                .onChange(of: linkedPost) {
+                    if linkedPost != nil {
                         threadAutorefresher.cancelTimer()
                     } else {
                         updateAutoRefreshState()
                     }
                 }
-                .sheet(isPresented: $showReply) {
-                    QuotePreviewSheet(postID: viewModel.posts[replyId].no)
+                .navigationDestination(item: $linkedPost) { destination in
+                    PostDetailView(postID: destination.id)
                         .environment(viewModel)
+                        .environment(presentationState)
+                        .environment(\.galleryNamespace, galleryNamespace)
                 }
                 .sheet(isPresented: $appState.showingBottomSheet) {
                     if let post = appState.selectedBottomSheetPost,
@@ -595,7 +596,7 @@ struct ThreadView: View {
 
     private func recordVisiblePosts() {
         guard rememberThreadPositions, isThreadVisible, scenePhase == .active, !isSearching,
-              viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(), !showReply,
+              viewModel.searchText.isEmpty, viewModel.searchFilters == SearchFilters(), linkedPost == nil,
               !presentationState.presentingGallery, !presentationState.presentingReplies, !showFollowGeneral else { return }
         reading.observe(visiblePostIDs: visiblePostIDs)
         if let postID = reading.postID {
@@ -608,8 +609,8 @@ struct ThreadView: View {
         OpenURLAction { url in
             if case .post(let id) = Deeplinker.getType(url: url) {
                 if let index = viewModel.getPostIndexFromId(id) {
-                    replyId = index
-                    showReply = true
+                    replyReturnPostID = reading.postID ?? visiblePostIDs.min()
+                    linkedPost = PostDestination(id: viewModel.posts[index].no)
                 } else {
                     showPostUnavailable = true
                 }
@@ -628,7 +629,7 @@ struct ThreadView: View {
     private func updateAutoRefreshState() {
         if isThreadVisible, scenePhase == .active, !viewModel.isArchived,
            !presentationState.presentingGallery, !presentationState.presentingReplies,
-           !showReply {
+           linkedPost == nil {
             threadAutorefresher.startTimer()
         } else {
             threadAutorefresher.cancelTimer()

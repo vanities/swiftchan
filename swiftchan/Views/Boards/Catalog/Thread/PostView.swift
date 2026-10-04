@@ -15,7 +15,7 @@ struct PostView: View {
     @Environment(AppState.self) private var appState
     @Environment(PresentationState.self) private var presentationState: PresentationState
     @Environment(\.galleryNamespace) private var galleryNamespace
-    @Environment(\.inRepliesContext) private var inRepliesContext
+    @Environment(\.postContextID) private var postContextID
 
     let index: Int
 
@@ -59,9 +59,8 @@ struct PostView: View {
                             .galleryTransitionSource(
                                 id: mediaIndex,
                                 namespace: galleryNamespace,
-                                // Only one context may own a source id: the thread
-                                // list normally, RepliesView while it is pushed.
-                                isActive: inRepliesContext == presentationState.presentingReplies
+                                // Only the visible thread, post, or replies page owns the source.
+                                isActive: postContextID == presentationState.activePostContext
                             )
                             .onTapGesture {
                                 viewModel.media[mediaIndex].isSelected = true
@@ -177,12 +176,8 @@ struct PostView: View {
                                 RepliesView(replies: replies)
                                     .environment(viewModel)
                                     .environment(presentationState)
-                                    .onAppear {
-                                        presentationState.presentingReplies = true
-                                    }
-                                    .onDisappear {
-                                        presentationState.presentingReplies = false
-                                    }
+                                    .navigationTitle("Replies to #\(post.no)")
+                                    .navigationBarTitleDisplayMode(.inline)
                             }
                         },
                         label: {
