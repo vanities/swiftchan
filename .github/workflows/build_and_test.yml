@@ -16,7 +16,7 @@ jobs:
   build:
     name: Build and Test
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
       TEST_DEVICE: iPhone 17
@@ -48,7 +48,7 @@ jobs:
           xcodebuild -resolvePackageDependencies -workspace swiftchan.xcodeproj/project.xcworkspace -scheme swiftchan -clonedSourcePackagesDirPath build/SourcePackages -onlyUsePackageVersionsFromResolvedFile
 
       - name: Build and test
-        timeout-minutes: 25
+        timeout-minutes: 35
         run: bash ci_scripts/test_with_diagnostics.sh
 
       - name: Upload test results

@@ -6,13 +6,13 @@ Swiftchan is a SwiftUI imageboard app using MVVM, SwiftData, and Swift Package M
 
 ## iPad testing
 
-Read [docs/ipad-testing.md](docs/ipad-testing.md) for regular-width reading/workspaces, native orientation preparation, fixture safety, and simulator videos. Check iPad mini portrait and iPad Pro landscape, and adapt to the available window. Capture native main display 1 and verify actual window/PNG geometry. Use `uv run` for Python helpers; keep `CLAUDE.md` linked to this file.
+Read [docs/ipad-testing.md](docs/ipad-testing.md) for regular-width reading and catalog navigation, native orientation preparation, fixture safety, and simulator videos. Check iPad mini portrait and iPad Pro landscape, and adapt to the available window. Capture native main display 1 and verify actual window/PNG geometry. Use `uv run` for Python helpers; keep `CLAUDE.md` linked to this file.
 
 ## iPhone Duo testing
 
 Read [docs/iphone-duo-testing.md](docs/iphone-duo-testing.md) before Duo layout, pose, or recording work. Native `agent-device@0.21.20` hinge control is verified for open, book, and closed; use the scoped Duo toolchain and confirm angle plus app-visible geometry. A manual tabletop quarter-turn is verified; automated physical rotation remains unverified. Capture the lit panel explicitly and distinguish live continuity from saved-state reopening. Use `uv run` for Python helpers. Keep `CLAUDE.md` as the compatibility symlink to this file.
 
-Keep the catalog's OP card grid in both compact navigation and board/thread workspaces. Compact phones, the closed Duo, and an active native Duo division use two columns. With the Duo flat or on iPad, derive additional columns from the catalog pane's available width; a narrow iPad sidebar may still fit only two. Check the real two-to-more-to-two transition without relaunching or losing the selected thread and visible reply.
+Keep the catalog's OP card grid across devices. Compact phones, the closed Duo, and an active native Duo division use two columns; flat Duo and iPad derive additional columns from the full catalog width. Tapping a card pushes a full-screen thread on every device, including Tabletop and iPad. Do not keep the catalog above or beside the selected thread. Back must restore the catalog's scroll position. Check the real two-to-more-to-two fold transition and background/foreground restoration of a visible reply.
 
 ## Setup and validation
 
@@ -53,6 +53,6 @@ KSPlayer is intentionally pinned to `bb6d367c02f3247ef3f328dc0cfea34e77aef7c5` f
 - UI tests live in `swiftchanUITests/`. The shared scheme runs `BrowsingUITests` for following/editing generals, link validation, reading restoration, and unread navigation. These tests use a debug-only in-memory favorites store (`--ui-testing`); Thread UI tests opt into a deterministic debug-only fixture with `--ui-thread-fixture`; older live-network UI tests remain excluded.
 - Add focused regressions for behavior fixes. Prefer fixtures and injected loaders over live network dependencies.
 - GitHub Actions builds and runs unit and focused UI tests for pull requests.
-- The build/test step has a 25-minute limit within the 30-minute job, allowing cold dependency compilation plus the full UI suite. Gallery paging returns to the post associated with the selected media; test that post after dismissing the gallery instead of expecting the first post to remain onscreen.
+- The build/test step has a 35-minute limit within the 40-minute job. A cold hosted build plus the full UI suite exceeded the earlier 25-minute limit while tests were still passing; keep time for compilation and slower simulator interaction. Gallery paging returns to the post associated with the selected media; test that post after dismissing the gallery instead of expecting the first post to remain onscreen. Favorites export checks must identify the actual `Browse View (Picker)` plus either `DOCPicker.filenameTextField` or Save. Verify the expected backup filename whenever its field is exposed. Captured hosted runs show that Browse can expose the filename without Save, while a folder can expose Save without the filename field.
 - `bundle exec fastlane beta` signs and uploads a TestFlight release, then bumps the build number. Run it only when releasing is requested.
 - Certificates are managed with Fastlane match (`make renew_certs` / `make get_certs`).
