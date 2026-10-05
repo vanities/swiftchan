@@ -496,7 +496,11 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Export Favorites"].isEnabled)
         attachScreenshot("Favorites Backup")
         app.buttons["Export Favorites"].tap()
-        XCTAssertTrue(app.buttons["Save"].waitForExistence(timeout: 10))
+        // A fresh Files picker can start at Browse, without Save until a
+        // destination is chosen. Verify the export's filename in either state.
+        let filename = app.textFields["DOCPicker.filenameTextField"]
+        XCTAssertTrue(filename.waitForExistence(timeout: 20))
+        XCTAssertTrue(["Swiftchan Favorites", "Swiftchan Favorites.json"].contains(filename.value as? String ?? ""))
         attachScreenshot("Export Favorites In Files")
     }
 
