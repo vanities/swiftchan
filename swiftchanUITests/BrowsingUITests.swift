@@ -147,9 +147,14 @@ final class BrowsingUITests: XCTestCase {
     }
 
     private func returnToCatalog(in app: XCUIApplication) {
-        let back = app.navigationBars.buttons.firstMatch
-        XCTAssertTrue(back.waitForExistence(timeout: 5))
-        back.tap()
+        let sideBack = app.buttons["BackButton"].firstMatch
+        if sideBack.waitForExistence(timeout: 1) {
+            sideBack.tap()
+        } else {
+            let back = app.navigationBars.buttons.firstMatch
+            XCTAssertTrue(back.waitForExistence(timeout: 5))
+            back.tap()
+        }
     }
 
     private func scrollToReadingAnchor(in app: XCUIApplication) {
@@ -173,13 +178,13 @@ final class BrowsingUITests: XCTestCase {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1", "Run on an open Duo with TEST_RUNNER_DUO_CAPTURE=1.")
         let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture", "-showGalleryPreview", "YES"])
         captureDuo(app, "01-boards")
-        app.buttons["Favorites"].tap()
+        app.buttons["Favorites"].firstMatch.tap()
         captureDuo(app, "02-favorites")
-        app.buttons["Settings"].tap()
+        app.buttons["Settings"].firstMatch.tap()
         captureDuo(app, "03-settings")
         app.buttons["Filters & Highlights"].tap()
         captureDuo(app, "04-filters")
-        app.buttons["Boards"].tap()
+        app.buttons["Boards"].firstMatch.tap()
         app.buttons["Open Link Button"].tap()
         let boardLink = app.textFields["Open Link URL"]
         XCTAssertTrue(boardLink.waitForExistence(timeout: 5))
