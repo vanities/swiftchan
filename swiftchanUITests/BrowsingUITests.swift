@@ -166,19 +166,6 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(anchor.isHittable)
     }
 
-    private func captureGallery(_ app: XCUIApplication, _ name: String) {
-        if ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1" {
-            let frame = app.windows.firstMatch.frame
-            if ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"] == "landscapeLeft" {
-                XCTAssertGreaterThan(frame.width, frame.height)
-            } else if ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"] == "portrait" {
-                XCTAssertGreaterThan(frame.height, frame.width)
-            }
-            print("GALLERY_CAPTURE_WINDOW: \(frame)")
-        }
-        captureCatalogNavigation(app, name)
-    }
-
     private func captureCatalogNavigation(_ app: XCUIApplication, _ name: String) {
         if ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1" {
             captureDuo(app, name)
@@ -356,14 +343,14 @@ final class BrowsingUITests: XCTestCase {
         try XCTSkipUnless(orientation == "portrait" || orientation == "landscapeLeft", "Native gallery capture preparation only.")
         prepareGalleryCaptureOrientation()
         let app = launchThreadFixture(extraArguments: ["--ui-media-fixture"])
-        let frame = app.windows.firstMatch.frame
-        XCTAssertEqual(frame.height > frame.width, orientation == "portrait")
-        print("GALLERY_ORIENTATION_READY: \(frame)")
+        assertGalleryCaptureOrientation(in: app)
+        print("GALLERY_ORIENTATION_READY")
     }
 
     func testGalleryTapControlsPreservePreviewZoomAndLongPressActions() {
         prepareGalleryCaptureOrientation()
         let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "-showGalleryPreview", "YES"])
+        assertGalleryCaptureOrientation(in: app)
         openFixtureThread(in: app)
         app.tapThumbnailMedia(0)
         let close = app.buttons["Close gallery"]
@@ -373,16 +360,16 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(close.waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
         XCTAssertFalse(preview.exists)
-        captureGallery(app, "gallery_01_clean")
+        captureCatalogNavigation(app, "gallery_01_clean")
         app.galleryMediaImage(0).tap()
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         XCTAssertTrue(preview.exists)
         XCTAssertEqual(position.label, "Media 1 of 3")
-        captureGallery(app, "gallery_02_controls_revealed")
+        captureCatalogNavigation(app, "gallery_02_controls_revealed")
         app.galleryMediaImage(0).tap()
         assertGalleryControlsHidden(in: app)
         XCTAssertFalse(preview.exists)
-        captureGallery(app, "gallery_03_controls_hidden")
+        captureCatalogNavigation(app, "gallery_03_controls_hidden")
         let originalWidth = app.galleryMediaImage(0).frame.width
         app.galleryMediaImage(0).doubleTap()
         XCTAssertGreaterThan(app.galleryMediaImage(0).frame.width, originalWidth * 1.5)
@@ -394,12 +381,12 @@ final class BrowsingUITests: XCTestCase {
         app.galleryMediaImage(0).press(forDuration: 1)
         XCTAssertTrue(app.buttons["Reverse Image Search"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Open Original"].exists)
-        captureGallery(app, "gallery_04_long_press_actions")
+        captureCatalogNavigation(app, "gallery_04_long_press_actions")
         close.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         app.galleryMediaImage(0).swipeUp()
         XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
-        captureGallery(app, "gallery_05_next_page_clean")
+        captureCatalogNavigation(app, "gallery_05_next_page_clean")
         close.tap()
         app.tapThumbnailMedia(1)
         XCTAssertTrue(close.waitForExistence(timeout: 5))
@@ -410,12 +397,13 @@ final class BrowsingUITests: XCTestCase {
     func testVideoGalleryHidesThumbnailSearchUntilTapped() {
         prepareGalleryCaptureOrientation()
         let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-video-media-fixture", "-showGalleryPreview", "NO"])
+        assertGalleryCaptureOrientation(in: app)
         openFixtureThread(in: app)
         app.tapThumbnailMedia(2)
         let close = app.buttons["Close gallery"]
         XCTAssertTrue(close.waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
-        captureGallery(app, "gallery_video_01_clean")
+        captureCatalogNavigation(app, "gallery_video_01_clean")
         let media = app.descendants(matching: .any)["2 Gallery Media Image"].firstMatch
         XCTAssertTrue(media.waitForExistence(timeout: 5))
         media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
@@ -424,10 +412,10 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertEqual(search.label, "Search Thumbnail")
         XCTAssertEqual(app.staticTexts["Gallery Position"].label, "Media 3 of 3")
         XCTAssertTrue(app.sliders.firstMatch.exists)
-        captureGallery(app, "gallery_video_02_controls_revealed")
+        captureCatalogNavigation(app, "gallery_video_02_controls_revealed")
         media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
         assertGalleryControlsHidden(in: app)
-        captureGallery(app, "gallery_video_03_controls_hidden")
+        captureCatalogNavigation(app, "gallery_video_03_controls_hidden")
         close.tap()
         XCTAssertFalse(close.exists)
     }
@@ -459,6 +447,16 @@ final class BrowsingUITests: XCTestCase {
         paste.tap()
         XCTAssertTrue((draft.value as? String ?? "").contains(">>105"))
         attachScreenshot("Copied Quote Pasted Into Reply Draft")
+    }
+
+    private func assertGalleryCaptureOrientation(in app: XCUIApplication) {
+        let orientation = ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"]
+        guard orientation == "portrait" || orientation == "landscapeLeft" else { return }
+        let frame = app.windows.firstMatch.frame
+        XCTAssertGreaterThan(frame.width, 0)
+        XCTAssertGreaterThan(frame.height, 0)
+        XCTAssertEqual(frame.height > frame.width, orientation == "portrait")
+        print("GALLERY_CAPTURE_WINDOW: \(frame)")
     }
 
     private func prepareGalleryCaptureOrientation() {
