@@ -9,7 +9,8 @@
         static func load(board: String, id: Int) throws -> ChanThread? {
             let arguments = ProcessInfo.processInfo.arguments
             guard arguments.contains("--ui-thread-fixture"), board == "biz",
-                  id == 100 || ((arguments.contains("--ui-general-rollover") || arguments.contains("--ui-catalog-fixture")) && id == 200) else { return nil }
+                  id == 100 || ((arguments.contains("--ui-general-rollover") || arguments.contains("--ui-catalog-fixture")) && id == 200)
+                    || (arguments.contains("--ui-catalog-grid-fixture") && (100...1200).contains(id) && id.isMultiple(of: 100)) else { return nil }
             let posts: [[String: Any]] = (id...(id + 14)).map { number in
                 var post: [String: Any] = ["no": number, "time": 1_700_000_000, "name": "Anonymous",
                                            "com": "Reply \(number). " + String(repeating: "A sample discussion about collecting coins and precious metals. ", count: 6)]
@@ -71,10 +72,13 @@
         static func catalog(board: String) throws -> Catalog? {
             let arguments = ProcessInfo.processInfo.arguments
             guard board == "biz" else { return nil }
-            if arguments.contains("--ui-catalog-fixture") {
-                let threads: [[String: Any]] = [100, 200].map { id in
-                    seedMedia(timestamp: 9_000_000_000 + id, index: id == 100 ? 0 : 1)
-                    return ["no": id, "sub": id == 100 ? "Coin collecting — this week's finds" : "Designing a display for a collection",
+            if arguments.contains("--ui-catalog-fixture") || arguments.contains("--ui-catalog-grid-fixture") {
+                let ids = arguments.contains("--ui-catalog-grid-fixture") ? (1...12).map { $0 * 100 } : [100, 200]
+                let titles = ["Coin collecting — this week's finds", "Designing a display for a collection",
+                              "Favorite local museums", "Organizing a stamp collection", "Weekend flea market finds", "Photographing small objects"]
+                let threads: [[String: Any]] = ids.map { id in
+                    seedMedia(timestamp: 9_000_000_000 + id, index: id / 100 - 1)
+                    return ["no": id, "sub": titles[(id / 100 - 1) % titles.count],
                             "com": "A sample discussion about collecting coins and precious metals.", "replies": 14, "images": 3,
                             "tim": 9_000_000_000 + id, "ext": ".png", "tn_w": 250, "tn_h": 188]
                 }

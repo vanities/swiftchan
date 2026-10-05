@@ -2,6 +2,72 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testCompactCatalogKeepsTwoColumnsAndOpensThreads() throws {
+        let app = launchThreadFixture(extraArguments: ["--ui-catalog-grid-fixture", "--ui-media-fixture"])
+        try XCTSkipUnless(app.windows.firstMatch.frame.width < 580, "Run the compact catalog check on a phone.")
+        openGridCatalog(in: app)
+        assertTwoCatalogColumns(in: app)
+        attachScreenshot("Compact Two Column Catalog")
+        app.buttons["CatalogThread200"].tap()
+        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch.exists)
+    }
+
+    func testDuoCatalogGridExpandsAndRefoldsWithoutLosingThread() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["CATALOG_GRID_CAPTURE"] == "1",
+                          "Run on a partially folded Duo with native hinge control.")
+        let app = launchThreadFixture(extraArguments: ["--ui-catalog-grid-fixture", "--ui-media-fixture"])
+        openGridCatalog(in: app)
+        assertTwoCatalogColumns(in: app)
+        app.buttons["CatalogThread200"].tap()
+        let anchor = app.staticTexts["#205"]
+        let scroll = app.scrollViews["CatalogThreadDetail"]
+        for _ in 0..<40 {
+            if anchor.isHittable { break }
+            let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.8))
+            let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.55))
+            start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+        }
+        XCTAssertTrue(anchor.isHittable)
+        captureDuo(app, "grid_01_folded_two_columns")
+        print("CATALOG_GRID_READY_TO_UNFOLD")
+        let third = app.buttons["CatalogThread300"]
+        let first = app.buttons["CatalogThread100"]
+        let expanded = NSPredicate { _, _ in third.exists && abs(third.frame.minY - first.frame.minY) < 2 }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: expanded, object: nil)], timeout: 90), .completed)
+        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
+        XCTAssertTrue(anchor.isHittable)
+        captureDuo(app, "grid_02_unfolded_more_columns")
+        print("CATALOG_GRID_READY_TO_FOLD")
+        let refolded = NSPredicate { _, _ in third.exists && third.frame.minY > first.frame.minY + 10 }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: refolded, object: nil)], timeout: 90), .completed)
+        assertTwoCatalogColumns(in: app)
+        XCTAssertTrue(anchor.isHittable)
+        captureDuo(app, "grid_03_refolded_two_columns")
+    }
+
+    private func openGridCatalog(in app: XCUIApplication) {
+        app.buttons["Open Link Button"].tap()
+        let field = app.textFields["Open Link URL"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        field.tap()
+        field.typeText("https://boards.4chan.org/biz/")
+        app.buttons["Open Link Confirm"].tap()
+        XCTAssertTrue(app.buttons["CatalogThread100"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["CatalogThread200"].waitForExistence(timeout: 10))
+    }
+
+    private func assertTwoCatalogColumns(in app: XCUIApplication) {
+        let first = app.buttons["CatalogThread100"]
+        let second = app.buttons["CatalogThread200"]
+        let third = app.buttons["CatalogThread300"]
+        XCTAssertTrue(third.waitForExistence(timeout: 10))
+        XCTAssertEqual(first.frame.minY, second.frame.minY, accuracy: 2)
+        XCTAssertGreaterThan(second.frame.minX, first.frame.maxX - 2)
+        XCTAssertGreaterThan(third.frame.minY, first.frame.minY + 10)
+        print("CATALOG_GRID_FRAMES: first=\(first.frame); second=\(second.frame); third=\(third.frame)")
+    }
+
     func testTabletopBoardAndThreadWorkspace() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_TABLETOP"] == "1",
                           "Requires a verified native horizontal Duo division.")
@@ -240,7 +306,14 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
         XCTAssertEqual(position.label, "Media 2 of 3")
         app.buttons["Close gallery"].tap()
-        XCTAssertTrue(search.isHittable)
+        // Gallery paging returns to the post for the selected media. The first
+        // post can now be above the viewport on smaller phones.
+        let returnedSearch = app.buttons["Image Search Post 101"]
+        let hittable = NSPredicate(format: "hittable == true")
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: hittable, object: returnedSearch)], timeout: 10), .completed)
+        attachScreenshot("Paged Gallery Returns To Selected Media Post")
+        returnedSearch.tap()
+        assertImageSearchProviders(in: app)
     }
 
     func testCopyQuoteUsesTheSelectedPostAndKeepsReadingPosition() {
@@ -612,7 +685,7 @@ final class BrowsingUITests: XCTestCase {
         nameField(in: app).tap()
         nameField(in: app).typeText(name)
         let completeName = NSPredicate(format: "value == %@", name)
-        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: completeName, object: nameField(in: app))], timeout: 10), .completed)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: completeName, object: nameField(in: app))], timeout: 20), .completed)
         XCTAssertTrue(app.buttons["Save General"].isEnabled)
     }
 

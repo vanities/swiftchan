@@ -57,13 +57,15 @@ struct CatalogView: View {
         case .loaded:
             GeometryReader { geometry in
                 let layout = workspaceLayout(in: geometry)
+                let twoColumnGrid = hasActiveDuoDivision(in: geometry)
+                    || (horizontalSizeClass == .compact && !hasDuoDivision(in: geometry))
                 Group {
                     if usesThreadWorkspace {
 #if IPHONE_DUO_LAYOUTS
                         if #available(iOS 27.1, *), usesDuoArrangement {
                             let insets = duoDivisionInsets(in: geometry)
                             ArrangementView {
-                                catalogPosts(filteredPosts, workspace: true)
+                                catalogPosts(filteredPosts, workspace: true, twoColumns: twoColumnGrid)
                                     .padding(insets.primary)
                             } secondary: {
                                 workspaceThread
@@ -84,7 +86,7 @@ struct CatalogView: View {
                         sideBySideWorkspace(filteredPosts, layout: layout)
 #endif
                     } else {
-                        catalogPosts(filteredPosts, workspace: false)
+                        catalogPosts(filteredPosts, workspace: false, twoColumns: twoColumnGrid)
                     }
                 }
                 .onChange(of: scenePhase) { _, phase in
@@ -225,6 +227,15 @@ struct CatalogView: View {
         return false
     }
 
+    private func hasActiveDuoDivision(in geometry: GeometryProxy) -> Bool {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            return !geometry.reservedRegions(kind: .division).isEmpty
+        }
+#endif
+        return false
+    }
+
     @ViewBuilder
     private var workspaceThread: some View {
         if let selectedThread {
@@ -243,7 +254,7 @@ struct CatalogView: View {
 
     private func sideBySideWorkspace(_ posts: [SwiftchanPost], layout: (sidebarWidth: CGFloat?, hingeGap: CGFloat)) -> some View {
         NavigationSplitView {
-            catalogPosts(posts, workspace: true)
+            catalogPosts(posts, workspace: true, twoColumns: horizontalSizeClass == .compact)
                 .navigationSplitViewColumnWidth(
                     min: layout.sidebarWidth ?? 260,
                     ideal: layout.sidebarWidth ?? 320,
@@ -280,69 +291,44 @@ struct CatalogView: View {
         return (nil, 0)
     }
 
-    private func catalogPosts(_ posts: [SwiftchanPost], workspace: Bool) -> some View {
-        ScrollViewReader { reader in
-            ScrollView(.vertical) {
-                LazyVGrid(columns: workspace ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: 155), spacing: 0)],
-                          alignment: .center, spacing: workspace ? 8 : 0) {
-                    ForEach(posts) { post in
-                        if !post.post.isHidden(boardName: boardName),
-                           PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
-                            Button {
-                                selectedThread = post
-                            } label: {
-                                if workspace {
-                                    catalogRow(post)
-                                } else {
+    private func catalogPosts(_ posts: [SwiftchanPost], workspace: Bool, twoColumns: Bool) -> some View {
+        GeometryReader { geometry in
+            let inset: CGFloat = workspace ? 10 : 0
+            let count = twoColumns ? 2 : max(2, Int((geometry.size.width - inset * 2) / 140))
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 0, alignment: .top), count: count)
+            ScrollViewReader { reader in
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: columns, alignment: .center, spacing: 0) {
+                        ForEach(posts) { post in
+                            if !post.post.isHidden(boardName: boardName),
+                               PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
+                                Button {
+                                    selectedThread = post
+                                } label: {
                                     OPView(boardName: boardName, post: post)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: OPView.Constants.backgroundCornerRadius)
+                                                .strokeBorder(selectedThread?.id == post.id ? Color.accentColor : .clear, lineWidth: 2)
+                                        }
                                 }
+                                .buttonStyle(.plain)
+                                .accessibilityIdentifier("CatalogThread\(post.id)")
+                                .id(post.id)
+                                .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
+                                    (catalogViewModel.getCurrentSearchResultPostIndex().map { catalogViewModel.posts[$0].id } == post.id ? 1 : 0.5) : 1)
                             }
-                            .buttonStyle(.plain)
-                            .accessibilityIdentifier("CatalogThread\(post.id)")
-                            .id(post.id)
-                            .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
-                                (catalogViewModel.getCurrentSearchResultPostIndex().map { catalogViewModel.posts[$0].id } == post.id ? 1 : 0.5) : 1)
                         }
                     }
+                    .padding(inset)
                 }
-                .padding(workspace ? 10 : 0)
-            }
-            .accessibilityIdentifier("Catalog Threads")
-            .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
-                if let index = catalogViewModel.getCurrentSearchResultPostIndex(), catalogViewModel.posts.indices.contains(index) {
-                    withAnimation { reader.scrollTo(catalogViewModel.posts[index].id, anchor: .center) }
+                .accessibilityIdentifier("Catalog Threads")
+                .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
+                    if let index = catalogViewModel.getCurrentSearchResultPostIndex(), catalogViewModel.posts.indices.contains(index) {
+                        withAnimation { reader.scrollTo(catalogViewModel.posts[index].id, anchor: .center) }
+                    }
                 }
             }
         }
-    }
-
-    private func catalogRow(_ post: SwiftchanPost) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
-                if let url = post.post.getMediaUrl(boardId: boardName),
-                   let thumbnail = post.post.getMediaUrl(boardId: boardName, thumbnail: true) {
-                    ThumbnailMediaView(url: url, thumbnailUrl: thumbnail)
-                        .frame(width: 72, height: 72)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .allowsHitTesting(false)
-                }
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(post.post.sub?.clean ?? "Thread #\(post.id)")
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(3)
-                    Text("\(post.post.replies ?? 0) replies · \(post.post.images ?? 0) images")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            Text(post.comment).font(.subheadline).lineLimit(3)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(selectedThread?.id == post.id ? Color.accentColor.opacity(0.12) : Color(uiColor: .secondarySystemGroupedBackground),
-                    in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selectedThread?.id == post.id ? Color.accentColor.opacity(0.5) : .clear))
     }
 
     var settingsButton: some View {

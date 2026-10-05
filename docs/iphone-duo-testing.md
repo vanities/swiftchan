@@ -83,6 +83,8 @@ Use the workspace. Verify the board catalog beside the selected thread, a visibl
 
 The live native Tabletop-to-flat check passes with thread 200 and reply 205 visible before and after background reactivation. All four app process IDs remain unchanged; the other assertions cover Bible chapters 3/4, Mango reading page 2, and advancing real Earmark playback. The Tabletop tour also passes catalog/thread switching, all primary routes, and media actions.
 
+Build 1.3 (4) preserves the OP card catalog grid in the workspace. The closed outer display and an active native division keep two columns. Flat Duo uses the actual catalog pane width to add columns. `testDuoCatalogGridExpandsAndRefoldsWithoutLosingThread` passes a foreground 130-to-180-to-130-degree transition: two columns, four columns, then two, with thread 200 and reply 205 still visible. Run it with `TEST_RUNNER_CATALOG_GRID_CAPTURE=1`, preserve the verified manual tabletop quarter-turn, and use native hinge watchers at `CATALOG_GRID_READY_TO_UNFOLD` and `CATALOG_GRID_READY_TO_FOLD`. The twelve-card fixture is debug-only. The follow-up videos and native PNGs live in `../iphone-duo-review/2026-10-04-grid/`; earlier build 3 clips retain their original provenance.
+
 Installed app bundle ID: `vanities.swiftchan`.
 
 ## Sources
