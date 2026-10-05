@@ -166,7 +166,7 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(anchor.isHittable)
     }
 
-    private func captureCatalogNavigation(_ app: XCUIApplication, _ name: String) {
+    private func captureGallery(_ app: XCUIApplication, _ name: String) {
         if ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1" {
             let frame = app.windows.firstMatch.frame
             if ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"] == "landscapeLeft" {
@@ -175,6 +175,12 @@ final class BrowsingUITests: XCTestCase {
                 XCTAssertGreaterThan(frame.height, frame.width)
             }
             print("GALLERY_CAPTURE_WINDOW: \(frame)")
+        }
+        captureCatalogNavigation(app, name)
+    }
+
+    private func captureCatalogNavigation(_ app: XCUIApplication, _ name: String) {
+        if ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1" {
             captureDuo(app, name)
         } else {
             attachScreenshot(name)
@@ -367,16 +373,16 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(close.waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
         XCTAssertFalse(preview.exists)
-        captureCatalogNavigation(app, "gallery_01_clean")
+        captureGallery(app, "gallery_01_clean")
         app.galleryMediaImage(0).tap()
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         XCTAssertTrue(preview.exists)
         XCTAssertEqual(position.label, "Media 1 of 3")
-        captureCatalogNavigation(app, "gallery_02_controls_revealed")
+        captureGallery(app, "gallery_02_controls_revealed")
         app.galleryMediaImage(0).tap()
         assertGalleryControlsHidden(in: app)
         XCTAssertFalse(preview.exists)
-        captureCatalogNavigation(app, "gallery_03_controls_hidden")
+        captureGallery(app, "gallery_03_controls_hidden")
         let originalWidth = app.galleryMediaImage(0).frame.width
         app.galleryMediaImage(0).doubleTap()
         XCTAssertGreaterThan(app.galleryMediaImage(0).frame.width, originalWidth * 1.5)
@@ -388,12 +394,12 @@ final class BrowsingUITests: XCTestCase {
         app.galleryMediaImage(0).press(forDuration: 1)
         XCTAssertTrue(app.buttons["Reverse Image Search"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Open Original"].exists)
-        captureCatalogNavigation(app, "gallery_04_long_press_actions")
+        captureGallery(app, "gallery_04_long_press_actions")
         close.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         app.galleryMediaImage(0).swipeUp()
         XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
-        captureCatalogNavigation(app, "gallery_05_next_page_clean")
+        captureGallery(app, "gallery_05_next_page_clean")
         close.tap()
         app.tapThumbnailMedia(1)
         XCTAssertTrue(close.waitForExistence(timeout: 5))
@@ -409,7 +415,7 @@ final class BrowsingUITests: XCTestCase {
         let close = app.buttons["Close gallery"]
         XCTAssertTrue(close.waitForExistence(timeout: 5))
         assertGalleryControlsHidden(in: app)
-        captureCatalogNavigation(app, "gallery_video_01_clean")
+        captureGallery(app, "gallery_video_01_clean")
         let media = app.descendants(matching: .any)["2 Gallery Media Image"].firstMatch
         XCTAssertTrue(media.waitForExistence(timeout: 5))
         media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
@@ -418,10 +424,10 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertEqual(search.label, "Search Thumbnail")
         XCTAssertEqual(app.staticTexts["Gallery Position"].label, "Media 3 of 3")
         XCTAssertTrue(app.sliders.firstMatch.exists)
-        captureCatalogNavigation(app, "gallery_video_02_controls_revealed")
+        captureGallery(app, "gallery_video_02_controls_revealed")
         media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
         assertGalleryControlsHidden(in: app)
-        captureCatalogNavigation(app, "gallery_video_03_controls_hidden")
+        captureGallery(app, "gallery_video_03_controls_hidden")
         close.tap()
         XCTAssertFalse(close.exists)
     }
