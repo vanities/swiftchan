@@ -613,7 +613,8 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Export Favorites"].tap()
         // Files exposes different export controls at Browse and within a folder.
         // Require the actual save picker and verify its filename when exposed.
-        XCTAssertTrue(app.otherElements["Browse View (Picker)"].firstMatch.waitForExistence(timeout: 20))
+        // A cold hosted simulator can take over 30 seconds to initialize Files.
+        XCTAssertTrue(app.otherElements["Browse View (Picker)"].firstMatch.waitForExistence(timeout: 60))
         let filename = app.textFields["DOCPicker.filenameTextField"]
         let ready = NSPredicate { _, _ in filename.exists || app.buttons["Save"].exists }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ready, object: nil)], timeout: 20), .completed)
