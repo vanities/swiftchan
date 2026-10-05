@@ -13,6 +13,9 @@ struct CatalogView: View {
     @AppStorage("hideTabOnBoards") var hideTabOnBoards = false
 
     @Environment(AppState.self) var appState
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var boardName: String
     @State var catalogViewModel: CatalogViewModel
@@ -20,10 +23,9 @@ struct CatalogView: View {
     @State var isSearching: Bool = false
     @State var showAddRecurringSheet: Bool = false
 
-    let columns = [
-        GridItem(.flexible(), spacing: 0, alignment: .top),
-        GridItem(.flexible(), spacing: 0, alignment: .top)
-    ]
+    @State private var selectedThread: SwiftchanPost?
+    @State private var usesThreadWorkspace = false
+    @State private var usesDuoArrangement = false
 
     @State private var scene: SKScene = {
         let s = SnowScene()
@@ -53,42 +55,59 @@ struct CatalogView: View {
                     }
                 }
         case .loaded:
-            ScrollViewReader { reader in
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .center,
-                        spacing: 0
-                    ) {
-                        let highlightedPostID = catalogViewModel.getCurrentSearchResultPostIndex().map {
-                            catalogViewModel.posts[$0].id
-                        }
-                        ForEach(Array(filteredPosts.enumerated()), id: \.element.id) { _, post in
-                            if !post.post.isHidden(boardName: boardName),
-                               PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
-                                NavigationLink(value: post) {
-                                    OPView(
-                                        boardName: boardName,
-                                        post: post
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .id(post.id)
-                                .opacity(isSearching && highlightedPostID != nil ?
-                                       (post.id == highlightedPostID ? 1.0 : 0.5) : 1.0)
+            GeometryReader { geometry in
+                let layout = workspaceLayout(in: geometry)
+                let twoColumnGrid = hasActiveDuoDivision(in: geometry)
+                    || (horizontalSizeClass == .compact && !hasDuoDivision(in: geometry))
+                Group {
+                    if usesThreadWorkspace {
+#if IPHONE_DUO_LAYOUTS
+                        if #available(iOS 27.1, *), usesDuoArrangement {
+                            let insets = duoDivisionInsets(in: geometry)
+                            ArrangementView {
+                                catalogPosts(filteredPosts, workspace: true, twoColumns: twoColumnGrid)
+                                    .padding(insets.primary)
+                            } secondary: {
+                                workspaceThread
+                                    .padding(insets.secondary)
                             }
+                            .arrangementViewStyle(.split)
+                            .accessibilityIdentifier("BoardThreadWorkspace")
+                            .navigationBarBackButtonHidden(true)
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Back to boards", systemImage: "chevron.left") { dismiss() }
+                                }
+                            }
+                        } else {
+                            sideBySideWorkspace(filteredPosts, layout: layout)
                         }
+#else
+                        sideBySideWorkspace(filteredPosts, layout: layout)
+#endif
+                    } else {
+                        catalogPosts(filteredPosts, workspace: false, twoColumns: twoColumnGrid)
                     }
                 }
-                .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
-                    if let postIndex = catalogViewModel.getCurrentSearchResultPostIndex(),
-                       postIndex < catalogViewModel.posts.count {
-                        let postId = catalogViewModel.posts[postIndex].id
-                        withAnimation {
-                            reader.scrollTo(postId, anchor: .center)
-                        }
-                    }
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { usesThreadWorkspace = wantsWorkspace(in: geometry) }
                 }
+                .onGeometryChange(for: Bool.self) { hasDuoDivision(in: $0) } action: { hasDivision in
+                    // Background snapshots may omit reserved regions. Once the
+                    // device exposes a division, retain its container identity.
+                    if hasDivision { usesDuoArrangement = true }
+                }
+            }
+            .onGeometryChange(for: Bool.self) { wantsWorkspace(in: $0) } action: { isWide in
+                // Background snapshots can briefly use compact dimensions. Keep
+                // them from pushing the selected thread onto the navigation stack.
+                if scenePhase == .active { usesThreadWorkspace = isWide }
+            }
+            .navigationDestination(item: Binding(
+                get: { usesThreadWorkspace ? nil : selectedThread },
+                set: { if !usesThreadWorkspace { selectedThread = $0 } }
+            )) { post in
+                ThreadView(boardName: post.boardName, postNumber: post.id)
             }
             .overlay(alignment: .bottom) {
                 if isSearching && !catalogViewModel.searchResultIndices.isEmpty {
@@ -119,16 +138,11 @@ struct CatalogView: View {
                 catalogViewModel.stopPrefetching()
             }
             .navigationBarTitle(boardName)
+            .navigationBarTitleDisplayMode(usesThreadWorkspace ? .inline : .automatic)
             .navigationBarItems(
                 trailing: settingsButton
 
             )
-            .navigationDestination(for: SwiftchanPost.self) { post in
-                ThreadView(
-                    boardName: post.boardName,
-                    postNumber: post.post.id
-                )
-            }
             .searchable(text: $catalogViewModel.searchText, isPresented: $isSearching)
             .onChange(of: catalogViewModel.searchText) { _, _ in
                 catalogViewModel.updateSearchResults()
@@ -175,6 +189,145 @@ struct CatalogView: View {
                 }
             }
             .foregroundColor(Color.red)
+        }
+    }
+
+    private func wantsWorkspace(in geometry: GeometryProxy) -> Bool {
+        geometry.size.width >= 760 || (horizontalSizeClass == .regular && geometry.size.width >= 580)
+    }
+
+    private func duoDivisionInsets(in geometry: GeometryProxy) -> (primary: EdgeInsets, secondary: EdgeInsets) {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            // Keep the same container when the hinge becomes inactive. Replacing
+            // it with NavigationSplitView can hide the catalog and recreate the thread.
+            var primary = EdgeInsets()
+            var secondary = EdgeInsets()
+            if let fold = geometry.reservedRegions(kind: .division).first {
+                if fold.frame.width > fold.frame.height {
+                    primary.bottom = fold.margins.bottom
+                    secondary.top = fold.margins.top
+                } else {
+                    primary.trailing = fold.margins.trailing
+                    secondary.leading = fold.margins.leading
+                }
+            }
+            return (primary, secondary)
+        }
+#endif
+        return (EdgeInsets(), EdgeInsets())
+    }
+
+    private func hasDuoDivision(in geometry: GeometryProxy) -> Bool {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            return !geometry.reservedRegions(kind: .division, options: .includeInactive).isEmpty
+        }
+#endif
+        return false
+    }
+
+    private func hasActiveDuoDivision(in geometry: GeometryProxy) -> Bool {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            return !geometry.reservedRegions(kind: .division).isEmpty
+        }
+#endif
+        return false
+    }
+
+    @ViewBuilder
+    private var workspaceThread: some View {
+        if let selectedThread {
+            ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id,
+                       showsNavigationTitle: false)
+                .id(selectedThread.id)
+                .accessibilityIdentifier("CatalogThreadDetail")
+        } else {
+            ContentUnavailableView {
+                Label("Open a Thread", systemImage: "text.bubble")
+            } description: {
+                Text("Choose a discussion from the board. Browse the board while you read.")
+            }
+        }
+    }
+
+    private func sideBySideWorkspace(_ posts: [SwiftchanPost], layout: (sidebarWidth: CGFloat?, hingeGap: CGFloat)) -> some View {
+        NavigationSplitView {
+            catalogPosts(posts, workspace: true, twoColumns: horizontalSizeClass == .compact)
+                .navigationSplitViewColumnWidth(
+                    min: layout.sidebarWidth ?? 260,
+                    ideal: layout.sidebarWidth ?? 320,
+                    max: layout.sidebarWidth ?? 400
+                )
+        } detail: {
+            NavigationStack {
+                workspaceThread
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Back to boards", systemImage: "chevron.left") { dismiss() }
+                        }
+                    }
+            }
+            .padding(.leading, layout.hingeGap)
+        }
+        .navigationSplitViewStyle(.balanced)
+        .accessibilityIdentifier("BoardThreadWorkspace")
+    }
+
+    private func workspaceLayout(in geometry: GeometryProxy) -> (sidebarWidth: CGFloat?, hingeGap: CGFloat) {
+        #if IPHONE_DUO_LAYOUTS
+            if #available(iOS 27.1, *),
+               let fold = geometry.reservedRegions(kind: .division).first(where: {
+                   $0.frame.height > $0.frame.width && $0.frame.minX > 0 && $0.frame.maxX < geometry.size.width
+               }) {
+                // Preserve the same navigation containers across pose changes,
+                // while moving both columns' content clear of the physical hinge.
+                let leadingWidth = fold.frame.minX - fold.margins.leading
+                let gap = fold.frame.width + fold.margins.leading + fold.margins.trailing
+                return (leadingWidth, gap)
+            }
+        #endif
+        return (nil, 0)
+    }
+
+    private func catalogPosts(_ posts: [SwiftchanPost], workspace: Bool, twoColumns: Bool) -> some View {
+        GeometryReader { geometry in
+            let inset: CGFloat = workspace ? 10 : 0
+            let count = twoColumns ? 2 : max(2, Int((geometry.size.width - inset * 2) / 140))
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 0, alignment: .top), count: count)
+            ScrollViewReader { reader in
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: columns, alignment: .center, spacing: 0) {
+                        ForEach(posts) { post in
+                            if !post.post.isHidden(boardName: boardName),
+                               PostFilterStore.shared.effect(board: boardName, post: post.post, text: String(post.comment.characters)) != .hide {
+                                Button {
+                                    selectedThread = post
+                                } label: {
+                                    OPView(boardName: boardName, post: post)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: OPView.Constants.backgroundCornerRadius)
+                                                .strokeBorder(selectedThread?.id == post.id ? Color.accentColor : .clear, lineWidth: 2)
+                                        }
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityIdentifier("CatalogThread\(post.id)")
+                                .id(post.id)
+                                .opacity(isSearching && !catalogViewModel.searchResultIndices.isEmpty ?
+                                    (catalogViewModel.getCurrentSearchResultPostIndex().map { catalogViewModel.posts[$0].id } == post.id ? 1 : 0.5) : 1)
+                            }
+                        }
+                    }
+                    .padding(inset)
+                }
+                .accessibilityIdentifier("Catalog Threads")
+                .onChange(of: catalogViewModel.currentSearchResultIndex) { _, _ in
+                    if let index = catalogViewModel.getCurrentSearchResultPostIndex(), catalogViewModel.posts.indices.contains(index) {
+                        withAnimation { reader.scrollTo(catalogViewModel.posts[index].id, anchor: .center) }
+                    }
+                }
+            }
         }
     }
 

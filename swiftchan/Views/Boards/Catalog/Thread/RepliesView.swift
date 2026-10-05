@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct RepliesView: View {
+    @AppStorage("chanTheme") private var theme = ChanTheme.system
     let replies: [Int]
 
     let columns = [GridItem(.flexible(), spacing: 0, alignment: .center)]
 
-    @State private var showReply: Bool = false
-    @State private var replyId: Int = 0
+    @State private var linkedPost: PostDestination?
+    @State private var contextID = UUID()
     @State private var showPostUnavailable = false
-    @Environment(\.openURL) private var openURL
+    @Environment(AppState.self) private var appState
 
     @Environment(PresentationState.self) private var presentationState: PresentationState
     @Environment(ThreadViewModel.self) private var viewModel
@@ -26,33 +27,43 @@ struct RepliesView: View {
                       alignment: .center,
                       spacing: 0) {
                 ForEach(replies, id: \.self) { index in
-                    PostView(index: index)
+                    if viewModel.posts.indices.contains(index),
+                       !viewModel.posts[index].isHidden(boardName: viewModel.boardName), viewModel.filterEffect(at: index) != .hide {
+                        PostView(index: index)
+                    }
                 }
             }
+            .padding(3)
         }
-        .environment(\.inRepliesContext, true)
+        .background(theme.pageBackground)
+        .environment(\.postContextID, contextID)
         .environment(\.openURL, postLinkAction)
+        .onAppear {
+            presentationState.activePostContext = contextID
+        }
+        .onDisappear {
+            if !presentationState.presentingGallery, presentationState.activePostContext == contextID {
+                presentationState.activePostContext = nil
+            }
+        }
         .alert("Post Unavailable", isPresented: $showPostUnavailable) {
             Button("OK", role: .cancel) { }
         } message: {
             Text("This post is not in the loaded thread. It may have been deleted.")
         }
-        .navigationDestination(isPresented: $showReply) {
-            PostView(index: replyId)
+        .navigationDestination(item: $linkedPost) { destination in
+            PostDetailView(postID: destination.id)
                 .environment(viewModel)
                 .environment(presentationState)
-                .environment(\.openURL, postLinkAction)
         }
     }
     private var postLinkAction: OpenURLAction {
         OpenURLAction { url in
             guard case .post(let id) = Deeplinker.getType(url: url) else {
-                openURL(url)
-                return .handled
+                return appState.openLink(url) ? .handled : .systemAction
             }
             if let index = viewModel.getPostIndexFromId(id) {
-                replyId = index
-                showReply = true
+                linkedPost = PostDestination(id: viewModel.posts[index].no)
             } else {
                 showPostUnavailable = true
             }

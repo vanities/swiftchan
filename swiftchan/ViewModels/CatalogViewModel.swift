@@ -134,7 +134,10 @@ class CatalogViewModel {
     }
 
     init(boardName: String, fetchCatalog: @escaping CatalogLoader = { board, progress in
-        try await FourChanAsyncService.shared.getCatalog(boardName: board, progress: progress)
+#if DEBUG
+        if let fixture = try ThreadUITestFixture.catalog(board: board) { return fixture }
+#endif
+        return try await FourChanAsyncService.shared.getCatalog(boardName: board, progress: progress)
     }) {
         self.boardName = boardName
         self.fetchCatalog = fetchCatalog
