@@ -2,6 +2,42 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
+    func testTabletopBoardAndThreadWorkspace() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_TABLETOP"] == "1",
+                          "Requires a verified native horizontal Duo division.")
+        continueAfterFailure = false
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
+        app.buttons["Open Link Button"].tap()
+        let link = app.textFields["Open Link URL"]
+        XCTAssertTrue(link.waitForExistence(timeout: 5))
+        link.tap()
+        link.typeText("https://boards.4chan.org/biz/")
+        app.buttons["Open Link Confirm"].tap()
+        let row = app.buttons["CatalogThread100"]
+        XCTAssertTrue(row.waitForExistence(timeout: 10))
+        row.tap()
+        let post = app.staticTexts["#100"]
+        XCTAssertTrue(post.waitForExistence(timeout: 10))
+        let workspace = app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch
+        XCTAssertTrue(workspace.exists)
+        print("DUO_TABLETOP_WORKSPACE:catalog=\(row.frame);post=\(post.frame);window=\(app.windows.firstMatch.frame)")
+        XCTAssertLessThanOrEqual(row.frame.maxY, 436.5)
+        XCTAssertGreaterThanOrEqual(post.frame.minY, 514.5)
+        captureDuo(app, "tabletop_01_board_and_thread")
+        app.buttons["CatalogThread200"].tap()
+        let selected = app.staticTexts["#200"]
+        XCTAssertTrue(selected.waitForExistence(timeout: 10))
+        XCTAssertTrue(selected.isHittable)
+        captureDuo(app, "tabletop_02_switch_thread")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(workspace.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
+        XCTAssertTrue(selected.isHittable)
+        XCTAssertGreaterThanOrEqual(selected.frame.minY, 514.5)
+        captureDuo(app, "tabletop_03_retained_selection")
+    }
+
     func testDuoWorkspaceSurvivesBackgroundActivation() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1",
                           "Run on Duo's open inner display.")

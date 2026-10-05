@@ -15,6 +15,7 @@ struct CatalogView: View {
     @Environment(AppState.self) var appState
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var boardName: String
     @State var catalogViewModel: CatalogViewModel
@@ -24,6 +25,7 @@ struct CatalogView: View {
 
     @State private var selectedThread: SwiftchanPost?
     @State private var usesThreadWorkspace = false
+    @State private var usesDuoArrangement = false
 
     @State private var scene: SKScene = {
         let s = SnowScene()
@@ -56,49 +58,45 @@ struct CatalogView: View {
             GeometryReader { geometry in
                 let layout = workspaceLayout(in: geometry)
                 Group {
-                    if geometry.size.width >= 760 {
-                        NavigationSplitView {
-                            catalogPosts(filteredPosts, workspace: true)
-                                .navigationSplitViewColumnWidth(
-                                    min: layout.sidebarWidth ?? 260,
-                                    ideal: layout.sidebarWidth ?? 320,
-                                    max: layout.sidebarWidth ?? 400
-                                )
-                        } detail: {
-                            NavigationStack {
-                                Group {
-                                    if let selectedThread {
-                                        ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id,
-                                                   showsNavigationTitle: false)
-                                            .id(selectedThread.id)
-                                            .accessibilityIdentifier("CatalogThreadDetail")
-                                    } else {
-                                        ContentUnavailableView {
-                                            Label("Open a Thread", systemImage: "text.bubble")
-                                        } description: {
-                                            Text("Choose a discussion on the left. Browse the board while you read.")
-                                        }
-                                    }
-                                }
-                                .toolbar {
-                                    ToolbarItem(placement: .cancellationAction) {
-                                        Button("Back to boards", systemImage: "chevron.left") { dismiss() }
-                                    }
+                    if usesThreadWorkspace {
+#if IPHONE_DUO_LAYOUTS
+                        if #available(iOS 27.1, *), usesDuoArrangement {
+                            let insets = duoDivisionInsets(in: geometry)
+                            ArrangementView {
+                                catalogPosts(filteredPosts, workspace: true)
+                                    .padding(insets.primary)
+                            } secondary: {
+                                workspaceThread
+                                    .padding(insets.secondary)
+                            }
+                            .arrangementViewStyle(.split)
+                            .accessibilityIdentifier("BoardThreadWorkspace")
+                            .navigationBarBackButtonHidden(true)
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Back to boards", systemImage: "chevron.left") { dismiss() }
                                 }
                             }
-                            .padding(.leading, layout.hingeGap)
+                        } else {
+                            sideBySideWorkspace(filteredPosts, layout: layout)
                         }
-                        .navigationSplitViewStyle(.balanced)
-                        .accessibilityIdentifier("BoardThreadWorkspace")
+#else
+                        sideBySideWorkspace(filteredPosts, layout: layout)
+#endif
                     } else {
                         catalogPosts(filteredPosts, workspace: false)
                     }
                 }
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { usesThreadWorkspace = geometry.size.width >= 760 }
+                    if phase == .active { usesThreadWorkspace = wantsWorkspace(in: geometry) }
+                }
+                .onGeometryChange(for: Bool.self) { hasDuoDivision(in: $0) } action: { hasDivision in
+                    // Background snapshots may omit reserved regions. Once the
+                    // device exposes a division, retain its container identity.
+                    if hasDivision { usesDuoArrangement = true }
                 }
             }
-            .onGeometryChange(for: Bool.self) { $0.size.width >= 760 } action: { isWide in
+            .onGeometryChange(for: Bool.self) { wantsWorkspace(in: $0) } action: { isWide in
                 // Background snapshots can briefly use compact dimensions. Keep
                 // them from pushing the selected thread onto the navigation stack.
                 if scenePhase == .active { usesThreadWorkspace = isWide }
@@ -138,6 +136,7 @@ struct CatalogView: View {
                 catalogViewModel.stopPrefetching()
             }
             .navigationBarTitle(boardName)
+            .navigationBarTitleDisplayMode(usesThreadWorkspace ? .inline : .automatic)
             .navigationBarItems(
                 trailing: settingsButton
 
@@ -189,6 +188,80 @@ struct CatalogView: View {
             }
             .foregroundColor(Color.red)
         }
+    }
+
+    private func wantsWorkspace(in geometry: GeometryProxy) -> Bool {
+        geometry.size.width >= 760 || (horizontalSizeClass == .regular && geometry.size.width >= 580)
+    }
+
+    private func duoDivisionInsets(in geometry: GeometryProxy) -> (primary: EdgeInsets, secondary: EdgeInsets) {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            // Keep the same container when the hinge becomes inactive. Replacing
+            // it with NavigationSplitView can hide the catalog and recreate the thread.
+            var primary = EdgeInsets()
+            var secondary = EdgeInsets()
+            if let fold = geometry.reservedRegions(kind: .division).first {
+                if fold.frame.width > fold.frame.height {
+                    primary.bottom = fold.margins.bottom
+                    secondary.top = fold.margins.top
+                } else {
+                    primary.trailing = fold.margins.trailing
+                    secondary.leading = fold.margins.leading
+                }
+            }
+            return (primary, secondary)
+        }
+#endif
+        return (EdgeInsets(), EdgeInsets())
+    }
+
+    private func hasDuoDivision(in geometry: GeometryProxy) -> Bool {
+#if IPHONE_DUO_LAYOUTS
+        if #available(iOS 27.1, *) {
+            return !geometry.reservedRegions(kind: .division, options: .includeInactive).isEmpty
+        }
+#endif
+        return false
+    }
+
+    @ViewBuilder
+    private var workspaceThread: some View {
+        if let selectedThread {
+            ThreadView(boardName: selectedThread.boardName, postNumber: selectedThread.id,
+                       showsNavigationTitle: false)
+                .id(selectedThread.id)
+                .accessibilityIdentifier("CatalogThreadDetail")
+        } else {
+            ContentUnavailableView {
+                Label("Open a Thread", systemImage: "text.bubble")
+            } description: {
+                Text("Choose a discussion from the board. Browse the board while you read.")
+            }
+        }
+    }
+
+    private func sideBySideWorkspace(_ posts: [SwiftchanPost], layout: (sidebarWidth: CGFloat?, hingeGap: CGFloat)) -> some View {
+        NavigationSplitView {
+            catalogPosts(posts, workspace: true)
+                .navigationSplitViewColumnWidth(
+                    min: layout.sidebarWidth ?? 260,
+                    ideal: layout.sidebarWidth ?? 320,
+                    max: layout.sidebarWidth ?? 400
+                )
+        } detail: {
+            NavigationStack {
+                workspaceThread
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Back to boards", systemImage: "chevron.left") { dismiss() }
+                        }
+                    }
+            }
+            .padding(.leading, layout.hingeGap)
+        }
+        .navigationSplitViewStyle(.balanced)
+        .accessibilityIdentifier("BoardThreadWorkspace")
     }
 
     private func workspaceLayout(in geometry: GeometryProxy) -> (sidebarWidth: CGFloat?, hingeGap: CGFloat) {

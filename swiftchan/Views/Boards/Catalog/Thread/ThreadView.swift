@@ -33,6 +33,7 @@ struct ThreadView: View {
     @AppStorage("rememberThreadPositions") private var rememberThreadPositions = true
     @State private var reading = ThreadReadingSession()
     @State private var visiblePostIDs: [Int] = []
+    @State private var scrollPostID: Int?
     @State private var showFollowGeneral = false
     @State private var rolloverGeneral: RecurringFavorite?
     @State private var nextGeneral: ThreadDestination?
@@ -138,6 +139,8 @@ struct ThreadView: View {
                             }
                         }
                         .accessibilityIdentifier("Thread Posts")
+                        // Track a post rather than a pixel offset when the pane reflows.
+                        .scrollPosition(id: $scrollPostID, anchor: .top)
                         .task(id: linkedPost) {
                             if linkedPost == nil, let postID = replyReturnPostID {
                                 // Restore the reading anchor after navigation and gallery layout changes.

@@ -53,6 +53,8 @@ The hinge helper depends on private simulator HID behavior and the selected simu
 
 `orientation portrait` and `orientation landscape-right` returned success here, but the live native probe still reported the same 951 x 669 pt viewport and active vertical division. Therefore automated tabletop rotation is **unverified**. Do not label a book capture as tabletop, or treat an orientation command's success message as proof. A tabletop check must observe an active horizontal division in the app and inspect the actual rendered controls. Use the simulator's physical rotation control when available, and retain this manual requirement until app-visible geometry confirms a working automation path.
 
+The user's physical quarter-turn was verified on 2026-10-04: the native viewport became 669 x 951 pt, with an active horizontal division at y=455.5, height=40, width=669 pt, and 20 pt top/bottom margins. This proves the manual tabletop geometry; it does not prove an automated rotation command. Capture harnesses must preserve that orientation instead of setting landscape again during setup. Native arrangement views can then place primary and secondary content above and below the fold.
+
 ## Screenshots, video, and continuity evidence
 
 Always name the lit display. On this simulator:
@@ -73,7 +75,9 @@ Distinguish these outcomes: a prepared state; saved state restored after reopeni
 
 ## App-specific checks
 
-Use the workspace. Verify the board catalog beside the selected thread, a visible scrolled reply, and background/foreground restoration. Background snapshot geometry must not push a standalone thread route.
+Use the workspace. Verify the board catalog beside the selected thread, a visible scrolled reply, and background/foreground restoration. Background snapshot geometry must not push a standalone thread route. Once the device exposes a division (including inactive regions), retain the native ArrangementView container across folding and background snapshots. Keep the remembered workspace mode while inactive. Use a post-ID scroll position binding so pane resizing keeps the reading post visible rather than preserving a stale pixel offset. Keep navigation outside the arrangement.
+
+The live native Tabletop-to-flat check passes with thread 200 and reply 205 visible before and after background reactivation. All four app process IDs remain unchanged; the other assertions cover Bible chapters 3/4, Mango reading page 2, and advancing real Earmark playback. The Tabletop tour also passes catalog/thread switching, all primary routes, and media actions.
 
 Installed app bundle ID: `vanities.swiftchan`.
 
