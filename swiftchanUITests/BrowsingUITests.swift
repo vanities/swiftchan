@@ -496,11 +496,15 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Export Favorites"].isEnabled)
         attachScreenshot("Favorites Backup")
         app.buttons["Export Favorites"].tap()
-        // A fresh Files picker can start at Browse, without Save until a
-        // destination is chosen. Verify the export's filename in either state.
+        // Files exposes different export controls at Browse and within a folder.
+        // Require the actual save picker and verify its filename when exposed.
+        XCTAssertTrue(app.otherElements["Browse View (Picker)"].firstMatch.waitForExistence(timeout: 20))
         let filename = app.textFields["DOCPicker.filenameTextField"]
-        XCTAssertTrue(filename.waitForExistence(timeout: 20))
-        XCTAssertTrue(["Swiftchan Favorites", "Swiftchan Favorites.json"].contains(filename.value as? String ?? ""))
+        let ready = NSPredicate { _, _ in filename.exists || app.buttons["Save"].exists }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ready, object: nil)], timeout: 20), .completed)
+        if filename.exists {
+            XCTAssertTrue(["Swiftchan Favorites", "Swiftchan Favorites.json"].contains(filename.value as? String ?? ""))
+        }
         attachScreenshot("Export Favorites In Files")
     }
 
