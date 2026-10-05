@@ -284,7 +284,7 @@ final class BrowsingUITests: XCTestCase {
     }
 
     func testImageSearchIsAvailableFromPostsAndPagedGalleryMedia() {
-        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture"])
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "-showGalleryPreview", "NO"])
         openFixtureThread(in: app)
         let search = app.buttons["Image Search Post 100"]
         XCTAssertTrue(search.isHittable)
@@ -296,14 +296,24 @@ final class BrowsingUITests: XCTestCase {
         app.tapThumbnailMedia(0)
         XCTAssertTrue(app.buttons["Close gallery"].waitForExistence(timeout: 5))
         let position = app.staticTexts["Gallery Position"]
+        assertGalleryControlsHidden(in: app)
+        attachScreenshot("Gallery Opens Without Search Or Counter")
+        app.galleryMediaImage(0).tap()
+        XCTAssertTrue(position.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Gallery Image Search"].isHittable)
         XCTAssertEqual(position.label, "Media 1 of 3")
-        attachScreenshot("Gallery Search Button And Position")
+        app.galleryMediaImage(0).tap()
+        assertGalleryControlsHidden(in: app)
+        app.galleryMediaImage(0).tap()
         app.buttons["Gallery Image Search"].tap()
         assertImageSearchProviders(in: app)
-        attachScreenshot("Gallery Image Search")
         position.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         app.galleryMediaImage(0).swipeUp()
         XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 5))
+        assertGalleryControlsHidden(in: app)
+        attachScreenshot("Next Gallery Page Has No Search Or Counter")
+        app.galleryMediaImage(1).tap()
+        XCTAssertTrue(position.waitForExistence(timeout: 5))
         let nextPosition = NSPredicate(format: "label == %@", "Media 2 of 3")
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: nextPosition, object: position)], timeout: 5), .completed)
         app.buttons["Gallery Image Search"].tap()
@@ -326,6 +336,88 @@ final class BrowsingUITests: XCTestCase {
         attachScreenshot("Paged Gallery Returns To Selected Media Post")
         returnedSearch.tap()
         assertImageSearchProviders(in: app)
+    }
+
+    func testPrepareGalleryCaptureOrientation() throws {
+        let orientation = ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"]
+        try XCTSkipUnless(orientation == "portrait" || orientation == "landscapeLeft", "Native gallery capture preparation only.")
+        prepareGalleryCaptureOrientation()
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture"])
+        assertGalleryCaptureOrientation(in: app)
+        print("GALLERY_ORIENTATION_READY")
+    }
+
+    func testGalleryTapControlsPreservePreviewZoomAndLongPressActions() {
+        prepareGalleryCaptureOrientation()
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "-showGalleryPreview", "YES"])
+        assertGalleryCaptureOrientation(in: app)
+        openFixtureThread(in: app)
+        app.tapThumbnailMedia(0)
+        let close = app.buttons["Close gallery"]
+        let search = app.buttons["Gallery Image Search"]
+        let position = app.staticTexts["Gallery Position"]
+        let preview = app.descendants(matching: .any)["Gallery Preview"].firstMatch
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        assertGalleryControlsHidden(in: app)
+        XCTAssertFalse(preview.exists)
+        captureCatalogNavigation(app, "gallery_01_clean")
+        app.galleryMediaImage(0).tap()
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertTrue(preview.exists)
+        XCTAssertEqual(position.label, "Media 1 of 3")
+        captureCatalogNavigation(app, "gallery_02_controls_revealed")
+        app.galleryMediaImage(0).tap()
+        assertGalleryControlsHidden(in: app)
+        XCTAssertFalse(preview.exists)
+        captureCatalogNavigation(app, "gallery_03_controls_hidden")
+        let originalWidth = app.galleryMediaImage(0).frame.width
+        app.galleryMediaImage(0).doubleTap()
+        XCTAssertGreaterThan(app.galleryMediaImage(0).frame.width, originalWidth * 1.5)
+        assertGalleryControlsHidden(in: app)
+        Thread.sleep(forTimeInterval: 0.6)
+        app.galleryMediaImage(0).doubleTap()
+        let unzoomed = NSPredicate { _, _ in abs(app.galleryMediaImage(0).frame.width - originalWidth) < 1 }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: unzoomed, object: nil)], timeout: 5), .completed)
+        app.galleryMediaImage(0).press(forDuration: 1)
+        XCTAssertTrue(app.buttons["Reverse Image Search"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Open Original"].exists)
+        captureCatalogNavigation(app, "gallery_04_long_press_actions")
+        close.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        app.galleryMediaImage(0).swipeUp()
+        XCTAssertTrue(app.galleryMediaImage(1).waitForExistence(timeout: 5))
+        assertGalleryControlsHidden(in: app)
+        captureCatalogNavigation(app, "gallery_05_next_page_clean")
+        close.tap()
+        app.tapThumbnailMedia(1)
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        assertGalleryControlsHidden(in: app)
+        close.tap()
+    }
+
+    func testVideoGalleryHidesThumbnailSearchUntilTapped() {
+        prepareGalleryCaptureOrientation()
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-video-media-fixture", "-showGalleryPreview", "NO"])
+        assertGalleryCaptureOrientation(in: app)
+        openFixtureThread(in: app)
+        app.tapThumbnailMedia(2)
+        let close = app.buttons["Close gallery"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        assertGalleryControlsHidden(in: app)
+        captureCatalogNavigation(app, "gallery_video_01_clean")
+        let media = app.descendants(matching: .any)["2 Gallery Media Image"].firstMatch
+        XCTAssertTrue(media.waitForExistence(timeout: 5))
+        media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+        let search = app.buttons["Gallery Image Search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertEqual(search.label, "Search Thumbnail")
+        XCTAssertEqual(app.staticTexts["Gallery Position"].label, "Media 3 of 3")
+        XCTAssertTrue(app.sliders.firstMatch.exists)
+        captureCatalogNavigation(app, "gallery_video_02_controls_revealed")
+        media.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+        assertGalleryControlsHidden(in: app)
+        captureCatalogNavigation(app, "gallery_video_03_controls_hidden")
+        close.tap()
+        XCTAssertFalse(close.exists)
     }
 
     func testCopyQuoteUsesTheSelectedPostAndKeepsReadingPosition() {
@@ -355,6 +447,29 @@ final class BrowsingUITests: XCTestCase {
         paste.tap()
         XCTAssertTrue((draft.value as? String ?? "").contains(">>105"))
         attachScreenshot("Copied Quote Pasted Into Reply Draft")
+    }
+
+    private func assertGalleryCaptureOrientation(in app: XCUIApplication) {
+        let orientation = ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"]
+        guard orientation == "portrait" || orientation == "landscapeLeft" else { return }
+        let frame = app.windows.firstMatch.frame
+        XCTAssertGreaterThan(frame.width, 0)
+        XCTAssertGreaterThan(frame.height, 0)
+        XCTAssertEqual(frame.height > frame.width, orientation == "portrait")
+        print("GALLERY_CAPTURE_WINDOW: \(frame)")
+    }
+
+    private func prepareGalleryCaptureOrientation() {
+        switch ProcessInfo.processInfo.environment["GALLERY_CAPTURE_ORIENTATION"] {
+        case "portrait": XCUIDevice.shared.orientation = .portrait
+        case "landscapeLeft": XCUIDevice.shared.orientation = .landscapeLeft
+        default: break
+        }
+    }
+
+    private func assertGalleryControlsHidden(in app: XCUIApplication) {
+        XCTAssertFalse(app.staticTexts["Gallery Position"].exists)
+        XCTAssertFalse(app.buttons["Gallery Image Search"].exists)
     }
 
     private func assertImageSearchProviders(in app: XCUIApplication) {
@@ -498,7 +613,8 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Export Favorites"].tap()
         // Files exposes different export controls at Browse and within a folder.
         // Require the actual save picker and verify its filename when exposed.
-        XCTAssertTrue(app.otherElements["Browse View (Picker)"].firstMatch.waitForExistence(timeout: 20))
+        // A cold hosted simulator can take over 30 seconds to initialize Files.
+        XCTAssertTrue(app.otherElements["Browse View (Picker)"].firstMatch.waitForExistence(timeout: 60))
         let filename = app.textFields["DOCPicker.filenameTextField"]
         let ready = NSPredicate { _, _ in filename.exists || app.buttons["Save"].exists }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ready, object: nil)], timeout: 20), .completed)

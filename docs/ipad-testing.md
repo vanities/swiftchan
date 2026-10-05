@@ -32,3 +32,13 @@ The shared workspace review is `../iphone-duo-review/2026-10-04-current/review/`
 The follow-up catalog grid review is `../iphone-duo-review/2026-10-04-grid/`. Keep its build 4 clips and validation separate from the earlier build 3 Swiftchan footage.
 
 The full-screen navigation review is `../iphone-duo-review/2026-10-05-fullscreen/`, for build 1.3 (5). Its mini portrait and Pro landscape captures verify the actual full-width thread and Back restoring the scrolled catalog.
+
+## Gallery controls
+
+Build 1.3 (6) opens each gallery page without the image/thumbnail search button or media counter. A single media tap reveals both, and another hides them. The optional thumbnail strip follows the same tap. Paging, zooming, and seeking clear the overlays; the close button and long-press media actions remain available when not zoomed. Check preview enabled and disabled, double-tap zoom, vertical paging, and returning to the selected post.
+
+The gallery UI regressions use invented image artwork and a local silent WebM fixture. For native recordings, run `testPrepareGalleryCaptureOrientation` with `TEST_RUNNER_GALLERY_CAPTURE_ORIENTATION=portrait` or `landscapeLeft` before starting the recorder; the walkthrough also asserts the app's actual window orientation before opening the gallery. Set `TEST_RUNNER_DUO_CAPTURE=1` to pause at capture markers. Leave the orientation override unset when preserving a verified Duo pose.
+
+With `xcodebuild`, the `TEST_RUNNER_` prefix is stripped when forwarding these variables to XCTest: the test reads `GALLERY_CAPTURE_ORIENTATION` and `DUO_CAPTURE`. Orientation assertions apply only to gallery captures. Record simulator walkthroughs sequentially; concurrent capture runs against shared test products produced stale display frames and unstable automation sessions. The build 6 gallery review is `../iphone-duo-review/2026-10-05-gallery/`.
+
+During iPad video presentation, XCTest can report a zero-sized accessibility window while the gallery controls remain present. Check the real app window before opening media, then verify every native PNG's orientation in the capture harness. Do not treat a zero accessibility frame as the video display's geometry.
