@@ -98,3 +98,9 @@ Read the complete relevant Apple documents and upstream tool instructions when c
 - [Apple: Interacting with your app in the iOS or iPadOS Simulator](https://developer.apple.com/documentation/xcode/interacting-with-your-app-in-the-ios-or-ipados-simulator)
 - [MobileBuildMCP 2.7.0](https://github.com/getsentry/MobileBuildMCP/releases/tag/v2.7.0) and [2.7.1](https://github.com/getsentry/MobileBuildMCP/releases/tag/v2.7.1)
 - [Agent Device foldable-panel ADR](https://github.com/callstack/agent-device/blob/main/docs/adr/0025-foldable-apple-panels.md), especially the 2026-09-22 headless amendment and the accepted quarter-turn evidence gap
+
+## Gallery controls
+
+Build 1.3 (6) opens each gallery page without the image/thumbnail search button or media counter. A single media tap reveals both, and another hides them. The optional thumbnail strip follows the same tap. Paging, zooming, and seeking clear the overlays; the close button and long-press media actions remain available when not zoomed. Check preview enabled and disabled, double-tap zoom, vertical paging, and returning to the selected post.
+
+The gallery UI regressions use invented image artwork and a local silent WebM fixture. For native recordings, run `testPrepareGalleryCaptureOrientation` with `TEST_RUNNER_GALLERY_CAPTURE_ORIENTATION=portrait` or `landscapeLeft` before starting the recorder; the walkthrough also asserts the app's actual window orientation. Set `TEST_RUNNER_DUO_CAPTURE=1` to pause at capture markers. Leave the orientation override unset when preserving a verified Duo pose.

@@ -23,13 +23,15 @@
                     let timestamp = 9_000_000_000 + number
                     post["tim"] = timestamp
                     post["filename"] = "collection-study-\(number - id + 1)"
-                    post["ext"] = ".png"
+                    let isVideo = arguments.contains("--ui-video-media-fixture") && number == id + 2
+                    post["ext"] = isVideo ? ".webm" : ".png"
                     post["w"] = 1200
                     post["h"] = 900
                     post["tn_w"] = 250
                     post["tn_h"] = 188
                     post["fsize"] = 100_000
                     seedMedia(timestamp: timestamp, index: number - id)
+                    if isVideo { seedVideo(timestamp: timestamp) }
                 }
                 if arguments.contains("--ui-quote-fixture"), (103...105).contains(number) {
                     post["com"] = "<a class=\"quotelink\" href=\"#p\(number - 1)\">&gt;&gt;\(number - 1)</a><br>Quoted reply \(number)"
@@ -67,6 +69,31 @@
             }
             ImageCache.default.store(image, forKey: "https://i.4cdn.org/biz/\(timestamp).png", toDisk: false)
             ImageCache.default.store(image, forKey: "https://i.4cdn.org/biz/\(timestamp)s.jpg", toDisk: false)
+        }
+
+        /// Two seconds of silent teal WebM; avoids network-dependent video gallery tests.
+        private static func seedVideo(timestamp: Int) {
+            let encoded = """
+            GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAJ+EU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZU
+            rmtTrIHWTbuMU6uEElTDZ1OsggEyTbuMU6uEHFO7a1OsggJo7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxM
+            YXZmNjMuMS4xMDFXQYxMYXZmNjMuMS4xMDFEiYhAn0AAAAAAABZUrmvXrgEAAAAAAABO14EBc8WI5n7UnqvrF9WcgQAitZyDdW5k
+            iIEAhoVWX1ZQOIOBASPjg4QdzWUA4JCwgaC6gXiagQJVsIRVuYEBVe6BAOwBAAAAAAAAAgAAElTDZ/pzc59jwIBnyJlFo4dFTkNP
+            REVSRIeMTGF2ZjYzLjEuMTAxc3PVY8CLY8WI5n7UnqvrF9VnyKBFo4dFTkNPREVSRIeTTGF2YzYzLjEuMTAxIGxpYnZweGfIoUWj
+            iERVUkFUSU9ORIeTMDA6MDA6MDIuMDAwMDAwMDAwAB9DtnVAseeBAKPegQAAgBAHAJ0BKqAAeAAARwiFhYiFhIgCAgJ1qgP4AgaT
+            kRV2lQnFLSoTilpUJxS0qE4paVCcUtKhOKWlQnFLSoTilpSgAP77aJf/PTNeYP8nP/25H+3I/25H/7bCAKOYgQH0ABECAAEQEAAY
+            ABhYL/QACICBDLAAo5iBA+gAEQIAARAQABgAGFgv9AAIgIEMsACjmIEF3AARAgABEBAAGAAYWC/0AAiAgQywABxTu2uRu4+zgQC3
+            iveBAfGCAbHwgQM=
+            """
+            guard let data = Data(base64Encoded: encoded, options: .ignoreUnknownCharacters),
+                  let url = URL(string: "https://i.4cdn.org/biz/\(timestamp).webm") else { return }
+            let file = CacheManager.shared.cacheURL(url)
+            do {
+                try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try data.write(to: file, options: .atomic)
+            } catch {
+                assertionFailure("Unable to seed video fixture: \(error)")
+            }
         }
 
         static func catalog(board: String) throws -> Catalog? {

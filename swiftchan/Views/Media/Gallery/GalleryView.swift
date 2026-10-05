@@ -19,8 +19,7 @@ struct GalleryView: View {
 
     @State private var selection: Int
     @State private var canPage = true
-    @State private var canShowPreview = true
-    @State private var showPreview = false
+    @State private var showControls = false
     @State private var canShowContextMenu = true
     @State private var isSeeking = false
     @State private var isZoomed = false
@@ -43,7 +42,6 @@ struct GalleryView: View {
         .onDisappear {
             restorePagerScrolling()
         }
-        .gesture(canShowPreview && showGalleryPreview ? showPreviewTap() : nil)
         // Block the zoom transition's pan-to-dismiss while pinch-zoomed into
         // media or scrubbing video, so those gestures keep priority.
         .interactiveDismissDisabled(isZoomed || isSeeking)
@@ -51,8 +49,16 @@ struct GalleryView: View {
     }
 
     private var gallerySurface: some View {
-        ZStack { galleryPager; galleryChrome }
+        ZStack {
+            galleryPager
+                .simultaneousGesture(galleryControlsTap())
+            galleryChrome
+        }
     }
+
+    private var canShowControls: Bool { !isZoomed && !isSeeking }
+
+    private var showPreview: Bool { showControls && showGalleryPreview }
 
     private var galleryPager: some View {
         VerticalPagerView(
@@ -119,6 +125,7 @@ struct GalleryView: View {
                 VStack {
                     Spacer()
                     GalleryPreviewView(selection: $state.galleryIndex)
+                        .accessibilityIdentifier("Gallery Preview")
                         .transition(.opacity)
                         .padding(.bottom, 60)
                 }
@@ -127,19 +134,17 @@ struct GalleryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .topLeading) { closeButton }
         .overlay(alignment: .topTrailing) {
-            if viewModel.media.indices.contains(selection) {
+            if showControls && canShowControls && viewModel.media.indices.contains(selection) {
                 ReverseImageSearchMenu(media: viewModel.media[selection], identifier: "Gallery Image Search")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                     .padding(12)
                     .background(.black.opacity(0.65), in: Capsule())
                     .padding(16)
-                    .opacity(isZoomed || isSeeking ? 0 : 1)
-                    .allowsHitTesting(!isZoomed && !isSeeking)
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            if viewModel.media.indices.contains(selection) {
+            if showControls && canShowControls && viewModel.media.indices.contains(selection) {
                 Text("\(selection + 1) of \(viewModel.media.count)")
                     .font(.caption.monospacedDigit().weight(.semibold))
                     .foregroundStyle(.white)
@@ -148,7 +153,6 @@ struct GalleryView: View {
                     .background(.black.opacity(0.65), in: Capsule())
                     .padding(16)
                     .padding(.bottom, positionBottomPadding)
-                    .opacity(isZoomed || isSeeking ? 0 : 1)
                     .allowsHitTesting(false)
                     .accessibilityLabel("Media \(selection + 1) of \(viewModel.media.count)")
                     .accessibilityIdentifier("Gallery Position")
@@ -188,18 +192,19 @@ struct GalleryView: View {
                 .onMediaChanged { zoomed in
                     isZoomed = zoomed
                     refreshPagingState()
-                    canShowPreview = !zoomed
                     canShowContextMenu = !zoomed
                     if zoomed {
-                        showPreview = false
+                        showControls = false
                     }
                     onMediaChanged?(zoomed)
                 }
                 .onSeekChanged { seeking in
                     isSeeking = seeking
                     refreshPagingState()
-                    canShowPreview = !seeking
                     canShowContextMenu = !seeking
+                    if seeking {
+                        showControls = false
+                    }
                 }
                 .mediaDownloadMenu(url: media.url, thumbnailURL: media.thumbnailUrl, canShowContextMenu: $canShowContextMenu)
                 .accessibilityIdentifier(
@@ -215,6 +220,7 @@ struct GalleryView: View {
 
         onPageDragChanged?(.zero)
         canShowContextMenu = true
+        showControls = false
         isZoomed = false
         isSeeking = false
         refreshPagingState()
@@ -240,11 +246,12 @@ struct GalleryView: View {
         viewModel.prefetch(currentIndex: index)
     }
 
-    func showPreviewTap() -> some Gesture {
+    private func galleryControlsTap() -> some Gesture {
         TapGesture()
             .onEnded {
+                guard canShowControls else { return }
                 withAnimation(.linear(duration: 0.2)) {
-                    showPreview.toggle()
+                    showControls.toggle()
                 }
             }
     }
