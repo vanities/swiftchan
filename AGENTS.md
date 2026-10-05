@@ -6,13 +6,13 @@ Swiftchan is a SwiftUI imageboard app using MVVM, SwiftData, and Swift Package M
 
 ## iPad testing
 
-Read [docs/ipad-testing.md](docs/ipad-testing.md) for regular-width reading/workspaces, native orientation preparation, fixture safety, and simulator videos. Check iPad mini portrait and iPad Pro landscape, and adapt to the available window. Capture native main display 1 and verify actual window/PNG geometry. Use `uv run` for Python helpers; keep `CLAUDE.md` linked to this file.
+Read [docs/ipad-testing.md](docs/ipad-testing.md) for regular-width reading and catalog navigation, native orientation preparation, fixture safety, and simulator videos. Check iPad mini portrait and iPad Pro landscape, and adapt to the available window. Capture native main display 1 and verify actual window/PNG geometry. Use `uv run` for Python helpers; keep `CLAUDE.md` linked to this file.
 
 ## iPhone Duo testing
 
 Read [docs/iphone-duo-testing.md](docs/iphone-duo-testing.md) before Duo layout, pose, or recording work. Native `agent-device@0.21.20` hinge control is verified for open, book, and closed; use the scoped Duo toolchain and confirm angle plus app-visible geometry. A manual tabletop quarter-turn is verified; automated physical rotation remains unverified. Capture the lit panel explicitly and distinguish live continuity from saved-state reopening. Use `uv run` for Python helpers. Keep `CLAUDE.md` as the compatibility symlink to this file.
 
-Keep the catalog's OP card grid in both compact navigation and board/thread workspaces. Compact phones, the closed Duo, and an active native Duo division use two columns. With the Duo flat or on iPad, derive additional columns from the catalog pane's available width; a narrow iPad sidebar may still fit only two. Check the real two-to-more-to-two transition without relaunching or losing the selected thread and visible reply.
+Keep the catalog's OP card grid across devices. Compact phones, the closed Duo, and an active native Duo division use two columns; flat Duo and iPad derive additional columns from the full catalog width. Tapping a card pushes a full-screen thread on every device, including Tabletop and iPad. Do not keep the catalog above or beside the selected thread. Back must restore the catalog's scroll position. Check the real two-to-more-to-two fold transition and background/foreground restoration of a visible reply.
 
 ## Setup and validation
 

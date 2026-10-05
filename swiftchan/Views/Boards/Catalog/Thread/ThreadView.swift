@@ -40,7 +40,6 @@ struct ThreadView: View {
     @State private var draftPost: DraftPost?
     @State private var recentlyHidden: HiddenPost?
     private let initialPostID: Int?
-    private let showsNavigationTitle: Bool
     @State private var isThreadVisible = false
     @State private var isSearching: Bool = false
     @Namespace private var galleryNamespace
@@ -56,9 +55,8 @@ struct ThreadView: View {
 
     @State private var isFavorited: Bool = false
 
-    init(boardName: String, postNumber: PostNumber, postID: Int? = nil, showsNavigationTitle: Bool = true) {
+    init(boardName: String, postNumber: PostNumber, postID: Int? = nil) {
         initialPostID = postID
-        self.showsNavigationTitle = showsNavigationTitle
         self._viewModel = State(
             wrappedValue: ThreadViewModel(
                 boardName: boardName,
@@ -290,7 +288,7 @@ struct ThreadView: View {
                 }
                 .environment(presentationState)
                 .environment(\.galleryNamespace, galleryNamespace)
-                .navigationTitle(showsNavigationTitle ? viewModel.title : "")
+                .navigationTitle(viewModel.title)
                 .searchable(text: $viewModel.searchText, isPresented: $isSearching)
                 .onChange(of: viewModel.searchText) { _, _ in
                     viewModel.updateSearchResults()

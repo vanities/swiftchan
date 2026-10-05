@@ -2,48 +2,110 @@ import XCTest
 
 @MainActor
 final class BrowsingUITests: XCTestCase {
-    func testCompactCatalogKeepsTwoColumnsAndOpensThreads() throws {
+    func testCatalogOpensThreadsFullScreenAndReturnsToGrid() {
         let app = launchThreadFixture(extraArguments: ["--ui-catalog-grid-fixture", "--ui-media-fixture"])
-        try XCTSkipUnless(app.windows.firstMatch.frame.width < 580, "Run the compact catalog check on a phone.")
         openGridCatalog(in: app)
-        assertTwoCatalogColumns(in: app)
-        attachScreenshot("Compact Two Column Catalog")
-        app.buttons["CatalogThread200"].tap()
-        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
-        XCTAssertFalse(app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch.exists)
+        if app.windows.firstMatch.frame.width < 580 { assertTwoCatalogColumns(in: app) }
+        let catalog = app.scrollViews["Catalog Threads"]
+        let last = app.buttons["CatalogThread1200"]
+        for _ in 0..<8 {
+            if last.isHittable { break }
+            catalog.swipeUp()
+        }
+        XCTAssertTrue(last.isHittable)
+        captureCatalogNavigation(app, "fullscreen_01_scrolled_catalog")
+        last.tap()
+        assertFullScreenThread(in: app, postID: 1200)
+        captureCatalogNavigation(app, "fullscreen_02_selected_thread")
+        returnToCatalog(in: app)
+        XCTAssertTrue(last.waitForExistence(timeout: 10))
+        XCTAssertTrue(last.isHittable, "Back should retain the catalog's scroll position.")
+        captureCatalogNavigation(app, "fullscreen_03_returned_catalog")
     }
 
-    func testDuoCatalogGridExpandsAndRefoldsWithoutLosingThread() throws {
+    func testDuoCatalogGridExpandsAndRefoldsThenOpensThreadFullScreen() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["CATALOG_GRID_CAPTURE"] == "1",
                           "Run on a partially folded Duo with native hinge control.")
         let app = launchThreadFixture(extraArguments: ["--ui-catalog-grid-fixture", "--ui-media-fixture"])
         openGridCatalog(in: app)
         assertTwoCatalogColumns(in: app)
-        app.buttons["CatalogThread200"].tap()
-        let anchor = app.staticTexts["#205"]
-        let scroll = app.scrollViews["CatalogThreadDetail"]
-        for _ in 0..<40 {
-            if anchor.isHittable { break }
-            let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.8))
-            let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.55))
-            start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
-        }
-        XCTAssertTrue(anchor.isHittable)
-        captureDuo(app, "grid_01_folded_two_columns")
+        captureDuo(app, "fullscreen_grid_01_folded_catalog")
         print("CATALOG_GRID_READY_TO_UNFOLD")
         let third = app.buttons["CatalogThread300"]
         let first = app.buttons["CatalogThread100"]
         let expanded = NSPredicate { _, _ in third.exists && abs(third.frame.minY - first.frame.minY) < 2 }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: expanded, object: nil)], timeout: 90), .completed)
-        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
-        XCTAssertTrue(anchor.isHittable)
-        captureDuo(app, "grid_02_unfolded_more_columns")
+        captureDuo(app, "fullscreen_grid_02_flat_catalog")
+        app.buttons["CatalogThread200"].tap()
+        assertFullScreenThread(in: app, postID: 200)
+        captureDuo(app, "fullscreen_grid_03_flat_thread")
+        returnToCatalog(in: app)
+        XCTAssertTrue(app.buttons["CatalogThread200"].waitForExistence(timeout: 10))
+        captureDuo(app, "fullscreen_grid_04_returned_catalog")
         print("CATALOG_GRID_READY_TO_FOLD")
         let refolded = NSPredicate { _, _ in third.exists && third.frame.minY > first.frame.minY + 10 }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: refolded, object: nil)], timeout: 90), .completed)
         assertTwoCatalogColumns(in: app)
-        XCTAssertTrue(anchor.isHittable)
-        captureDuo(app, "grid_03_refolded_two_columns")
+        captureDuo(app, "fullscreen_grid_05_refolded_catalog")
+        app.buttons["CatalogThread200"].tap()
+        assertFullScreenThread(in: app, postID: 200)
+        scrollToReadingAnchor(in: app)
+        captureDuo(app, "fullscreen_grid_06_refolded_thread")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(app.staticTexts["#205"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["#205"].isHittable)
+        XCTAssertFalse(app.buttons["CatalogThread100"].isHittable)
+        assertThreadFillsWindow(in: app)
+        captureDuo(app, "fullscreen_grid_07_resumed_thread")
+        returnToCatalog(in: app)
+        assertTwoCatalogColumns(in: app)
+        captureDuo(app, "fullscreen_grid_08_back_to_catalog")
+    }
+
+    func testTabletopThreadOpensFullScreen() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_TABLETOP"] == "1",
+                          "Requires a verified native horizontal Duo division.")
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-grid-fixture"])
+        openGridCatalog(in: app)
+        app.buttons["CatalogThread100"].tap()
+        assertFullScreenThread(in: app, postID: 100)
+        captureDuo(app, "tabletop_fullscreen_thread")
+        returnToCatalog(in: app)
+        assertTwoCatalogColumns(in: app)
+    }
+
+    func testDuoFullScreenThreadSurvivesBackgroundActivation() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1",
+                          "Run on Duo's inner display.")
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-grid-fixture"])
+        openGridCatalog(in: app)
+        app.buttons["CatalogThread200"].tap()
+        assertFullScreenThread(in: app, postID: 200)
+        scrollToReadingAnchor(in: app)
+        captureDuo(app, "fullscreen_before_background")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(app.staticTexts["#205"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["#205"].isHittable)
+        assertThreadFillsWindow(in: app)
+        captureDuo(app, "fullscreen_after_background")
+    }
+
+    func testFoldedCatalogKeepsCardsClearOfVerticalHinge() throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1"
+                          && ProcessInfo.processInfo.environment["DUO_FOLDED"] == "1",
+                          "Run with the Duo's active vertical hinge region.")
+        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-grid-fixture"])
+        openGridCatalog(in: app)
+        assertTwoCatalogColumns(in: app)
+        let first = app.buttons["CatalogThread100"]
+        let second = app.buttons["CatalogThread200"]
+        XCTAssertGreaterThanOrEqual(second.frame.minX - first.frame.maxX, 40,
+                                    "Keep both card columns clear of the active vertical division.")
+        captureDuo(app, "folded_catalog_hinge_gutter")
+        second.tap()
+        assertFullScreenThread(in: app, postID: 200)
     }
 
     private func openGridCatalog(in app: XCUIApplication) {
@@ -68,104 +130,47 @@ final class BrowsingUITests: XCTestCase {
         print("CATALOG_GRID_FRAMES: first=\(first.frame); second=\(second.frame); third=\(third.frame)")
     }
 
-    func testTabletopBoardAndThreadWorkspace() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_TABLETOP"] == "1",
-                          "Requires a verified native horizontal Duo division.")
-        continueAfterFailure = false
-        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
-        app.buttons["Open Link Button"].tap()
-        let link = app.textFields["Open Link URL"]
-        XCTAssertTrue(link.waitForExistence(timeout: 5))
-        link.tap()
-        link.typeText("https://boards.4chan.org/biz/")
-        app.buttons["Open Link Confirm"].tap()
-        let row = app.buttons["CatalogThread100"]
-        XCTAssertTrue(row.waitForExistence(timeout: 10))
-        row.tap()
-        let post = app.staticTexts["#100"]
-        XCTAssertTrue(post.waitForExistence(timeout: 10))
-        let workspace = app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch
-        XCTAssertTrue(workspace.exists)
-        print("DUO_TABLETOP_WORKSPACE:catalog=\(row.frame);post=\(post.frame);window=\(app.windows.firstMatch.frame)")
-        XCTAssertLessThanOrEqual(row.frame.maxY, 436.5)
-        XCTAssertGreaterThanOrEqual(post.frame.minY, 514.5)
-        captureDuo(app, "tabletop_01_board_and_thread")
-        app.buttons["CatalogThread200"].tap()
-        let selected = app.staticTexts["#200"]
-        XCTAssertTrue(selected.waitForExistence(timeout: 10))
-        XCTAssertTrue(selected.isHittable)
-        captureDuo(app, "tabletop_02_switch_thread")
-        XCUIDevice.shared.press(.home)
-        app.activate()
-        XCTAssertTrue(workspace.waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
-        XCTAssertTrue(selected.isHittable)
-        XCTAssertGreaterThanOrEqual(selected.frame.minY, 514.5)
-        captureDuo(app, "tabletop_03_retained_selection")
+    private func assertFullScreenThread(in app: XCUIApplication, postID: Int) {
+        XCTAssertTrue(app.staticTexts["#\(postID)"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["CatalogThread100"].isHittable)
+        XCTAssertFalse(app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch.exists)
+        assertThreadFillsWindow(in: app)
     }
 
-    func testDuoWorkspaceSurvivesBackgroundActivation() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1",
-                          "Run on Duo's open inner display.")
-        XCUIDevice.shared.orientation = .landscapeLeft
-        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
-        app.buttons["Open Link Button"].tap()
-        let link = app.textFields["Open Link URL"]
-        XCTAssertTrue(link.waitForExistence(timeout: 5))
-        link.tap()
-        link.typeText("https://boards.4chan.org/biz/")
-        app.buttons["Open Link Confirm"].tap()
-        XCTAssertTrue(app.buttons["CatalogThread200"].waitForExistence(timeout: 10))
-        app.buttons["CatalogThread200"].tap()
-        XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
-        let workspace = app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch
-        XCTAssertTrue(workspace.exists)
-        let readingAnchor = app.staticTexts["#205"]
-        for _ in 0..<12 {
-            if readingAnchor.isHittable { break }
-            app.scrollViews["CatalogThreadDetail"].swipeUp()
+    private func assertThreadFillsWindow(in app: XCUIApplication) {
+        let scroll = app.scrollViews["Thread Posts"]
+        XCTAssertTrue(scroll.waitForExistence(timeout: 10))
+        let window = app.windows.firstMatch.frame
+        XCTAssertGreaterThan(scroll.frame.width, window.width * 0.8)
+        XCTAssertGreaterThan(scroll.frame.height, window.height * 0.6)
+        print("FULLSCREEN_THREAD_FRAMES: thread=\(scroll.frame); window=\(window)")
+    }
+
+    private func returnToCatalog(in app: XCUIApplication) {
+        let back = app.navigationBars.buttons.firstMatch
+        XCTAssertTrue(back.waitForExistence(timeout: 5))
+        back.tap()
+    }
+
+    private func scrollToReadingAnchor(in app: XCUIApplication) {
+        let anchor = app.staticTexts["#205"]
+        for _ in 0..<20 {
+            if anchor.isHittable { break }
+            app.scrollViews["Thread Posts"].swipeUp()
         }
-        XCTAssertTrue(readingAnchor.isHittable)
-        captureDuo(app, "workspace-before-background")
-        XCUIDevice.shared.press(.home)
-        app.activate()
-        captureDuo(app, "workspace-after-background")
-        XCTAssertTrue(workspace.waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["CatalogThread200"].isHittable)
-        XCTAssertTrue(readingAnchor.waitForExistence(timeout: 10))
-        XCTAssertTrue(readingAnchor.isHittable)
+        XCTAssertTrue(anchor.isHittable)
     }
 
-    func testFoldedWorkspaceKeepsThreadBeyondHinge() throws {
-        try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1"
-                          && ProcessInfo.processInfo.environment["DUO_FOLDED"] == "1",
-                          "Run with the Duo's active vertical 40-point hinge region.")
-        continueAfterFailure = false
-        XCUIDevice.shared.orientation = .landscapeLeft
-        let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture"])
-        app.buttons["Open Link Button"].tap()
-        let link = app.textFields["Open Link URL"]
-        XCTAssertTrue(link.waitForExistence(timeout: 5))
-        link.tap()
-        link.typeText("https://boards.4chan.org/biz/")
-        app.buttons["Open Link Confirm"].tap()
-        let boardRow = app.buttons["CatalogThread100"]
-        XCTAssertTrue(boardRow.waitForExistence(timeout: 10))
-        boardRow.tap()
-        XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 10))
-        let detail = app.thumbnailMediaImage(0)
-        XCTAssertTrue(detail.exists)
-        print("DUO_WORKSPACE_FRAMES: board=\(boardRow.frame); detail=\(detail.frame)")
-        captureDuo(app, "folded-hinge-workspace")
-        XCTAssertLessThanOrEqual(boardRow.frame.maxX, 455.5,
-                                 "Keep board rows before the active hinge region.")
-        XCTAssertGreaterThanOrEqual(detail.frame.minX, 495.5,
-                                    "The selected thread must begin beyond the active hinge region.")
+    private func captureCatalogNavigation(_ app: XCUIApplication, _ name: String) {
+        if ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1" {
+            captureDuo(app, name)
+        } else {
+            attachScreenshot(name)
+        }
     }
 
     func testDuoWalkthroughAndGallery() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["DUO_CAPTURE"] == "1", "Run on an open Duo with TEST_RUNNER_DUO_CAPTURE=1.")
-        XCUIDevice.shared.orientation = .landscapeLeft
         let app = launchThreadFixture(extraArguments: ["--ui-media-fixture", "--ui-catalog-fixture", "-showGalleryPreview", "YES"])
         captureDuo(app, "01-boards")
         app.buttons["Favorites"].tap()
@@ -184,12 +189,14 @@ final class BrowsingUITests: XCTestCase {
         XCTAssertTrue(app.buttons["CatalogThread100"].waitForExistence(timeout: 10))
         app.buttons["CatalogThread100"].tap()
         XCTAssertTrue(app.staticTexts["#100"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.descendants(matching: .any)["BoardThreadWorkspace"].firstMatch.exists)
-        captureDuo(app, "04b-board-and-thread")
+        assertFullScreenThread(in: app, postID: 100)
+        captureDuo(app, "04b-fullscreen-thread")
+        returnToCatalog(in: app)
         app.buttons["CatalogThread200"].tap()
         XCTAssertTrue(app.staticTexts["#200"].waitForExistence(timeout: 10))
-        captureDuo(app, "04c-switch-thread")
-        app.buttons["Back to boards"].tap()
+        captureDuo(app, "04c-fullscreen-second-thread")
+        returnToCatalog(in: app)
+        returnToCatalog(in: app)
         openFixtureThread(in: app)
         captureDuo(app, "05-thread")
         app.tapThumbnailMedia(0)
@@ -205,7 +212,7 @@ final class BrowsingUITests: XCTestCase {
         app.buttons["Follow This General"].tap()
         captureDuo(app, "09-follow-general")
         app.buttons["Cancel"].tap()
-        app.buttons["Post Options 100"].tap()
+        app.buttons["Post Options 101"].tap()
         captureDuo(app, "10-post-actions")
     }
 
